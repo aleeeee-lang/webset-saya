@@ -7,10 +7,14 @@
    <style>
  body {text-align:center; background-color:rgb(147, 238, 238);
     }
-tbale ,th,td,tr {border:1px solid black;
-                 border-collapse:collapse;
-                }
+tbale {border:1px solid black;
+       border-collapse:collapse;
+      }
+th,td { border:1px solid black
+      }
     th {background-color:rgb(230, 230, 163);
+       }
+    tr {height:20px;
        }
     </style>
 </head>
@@ -39,20 +43,27 @@ tbale ,th,td,tr {border:1px solid black;
 <p>now i first came to my job in jakarta the name compeny is <b>intiva</b></p>
 <h4>this is my attendence so i will make a table for it </h4>
 <table style=" width:30%; height:5vh; border:1px solid black; margin:auto;">
-    <tr style="height:20px;">
+<tr>
         <th>monday</th>
-        <th>tuesday</th>
+        <td><input type="text"></td>
+    </tr>
+    <tr>
+        <th>Tuesday</th>
+        <td><input type="text"></td>
+    </tr> 
+    <tr>
         <th>wednesday</th>
-        <th>thursday</th>
+        <td><input type="text"></td>
+    </tr>
+    <tr>
+        <th>thrusday</th>
+        <td><input type="text"></td>
+    </tr>
+    <tr>
         <th>friday</th>
-    </tr>
-    <tr style="height:20px;">
-        <th><input type="text"></th>
-        <th><input type="text"></th>
-        <th><input type="text"></th>
-        <th><input type="text"></th>
-        <th><input type="text"></th>
-    </tr>
+        <td><input type="text"></td>
+    </tr>         
+    
 </table>
 <br>
 <button type="button"

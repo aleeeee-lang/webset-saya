@@ -52,32 +52,30 @@ th,td { border:1px solid black
 </p>
 <p>now i first came to my job in jakarta the name compeny is <b>intiva</b></p>
 <h4>this is my attendence so i will make a table for it </h4>
-<table style=" width:30%; height:5vh; border:1px solid black; margin:auto;">
- <tr>
-        <th>monday</th>
-        <td><input type="text" id="monday"></td>
-    </tr>
-    <tr>
-        <th>Tuesday</th>
-        <td><input type="text" id="tuesday"></td>
-    </tr> 
-    <tr>
-        <th>wednesday</th>
-        <td><input type="text" id="wednesday"></td>
-    </tr>
-    <tr>
-        <th>thrusday</th>
-        <td><input type="text" id="thursday"></td>
-    </tr>
-    <tr>
-        <th>friday</th>
-        <td><input type="text" id="friday"></td>
-    </tr>      
-    
-    
-</table>
-    <br>
-    <button type="button" onclick="saveAttendance()">Simpan Attendance</button>
+<h4>This is my attendance</h4>
+
+<label>Name:</label>
+<input type="text" id="name" placeholder="Enter your name">
+<br><br>
+
+<label>Date:</label>
+<input type="date" id="date">
+<br><br>
+
+<label>Time:</label>
+<input type="time" id="time">
+<br><br>
+
+<label>Status:</label>
+<select id="status">
+    <option value="Hadir">Hadir</option>
+    <option value="Izin">Izin</option>
+    <option value="Sakit">Sakit</option>
+    <option value="Alpa">Alpa</option>
+</select>
+<br><br>
+
+<button type="button" onclick="saveAttendance()">Absen</button>
 <br>
 <h4>
     <ul>
@@ -115,30 +113,39 @@ usemap="#map_gambar">
     });
 </script>
     <script>
-        async function saveAttendance() {
-            const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+   async function saveAttendance() {
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const status = document.getElementById("status").value;
 
-            for (const day of days) {
-                const status = document.getElementById(day).value;
+    if (name === "" || date === "" || time === "") {
+        alert("Name, date, and time must be filled!");
+        return;
+    }
 
-                if (status !== "") {
-                    const { error } = await supabaseClient
-                        .from("attendance")
-                        .insert({
-                            day: day,
-                            status: status
-                        });
+    const day = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
+        weekday: "long"
+    });
 
-                    if (error) {
-                        console.error(error);
-                        alert("Gagal menyimpan data!");
-                        return;
-                    }
-                }
-            }
+    const { error } = await supabaseClient
+        .from("attendance")
+        .insert({
+            name: name,
+            day: day,
+            date: date,
+            time: time,
+            status: status
+        });
 
-            alert("Attendance berhasil disimpan!");
-        }
-    </script>
+    if (error) {
+        console.error(error);
+        alert("Gagal menyimpan attendance!");
+        return;
+    }
+
+    alert("Attendance berhasil disimpan!");
+}
+</script>
 </body>
 </html>

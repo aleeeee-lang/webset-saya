@@ -113,7 +113,8 @@ usemap="#map_gambar">
     });
 </script>
     <script>
-   async function saveAttendance() {
+async function saveAttendance() {
+
     const name = document.getElementById("name").value;
     const date = document.getElementById("date").value;
     const time = document.getElementById("time").value;
@@ -131,11 +132,11 @@ usemap="#map_gambar">
     const { error } = await supabaseClient
         .from("attendance")
         .insert({
-            name: name,
             day: day,
+            name: name,
+            status: status,
             date: date,
-            time: time,
-            status: status
+            time: time
         });
 
     if (error) {

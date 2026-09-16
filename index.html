@@ -7,7 +7,7 @@
    <style>
  body {text-align:center; background-color:rgb(147, 238, 238);
     }
-tbale {border:1px solid black;
+table {border:1px solid black;
        border-collapse:collapse;
       }
 th,td { border:1px solid black
@@ -19,7 +19,7 @@ th,td { border:1px solid black
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-    const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co/rest/v1/";
+    const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co";
     const supabaseKey = "sb_publishable_O9MWlDg0y7UwaAOt89j1MQ_QcKGVkII";
 
     const supabase = window.supabase.createClient(
@@ -76,6 +76,8 @@ th,td { border:1px solid black
     
     
 </table>
+    <br>
+    <button type="button" onclick="saveAttendance()">Simpan Attendance</button>
 <br>
 <h4>
     <ul>
@@ -112,5 +114,31 @@ usemap="#map_gambar">
         });
     });
 </script>
+    <script>
+        async function saveAttendance() {
+            const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+
+            for (const day of days) {
+                const status = document.getElementById(day).value;
+
+                if (status !== "") {
+                    const { error } = await supabase
+                        .from("attendance")
+                        .insert({
+                            day: day,
+                            status: status
+                        });
+
+                    if (error) {
+                        console.error(error);
+                        alert("Gagal menyimpan data!");
+                        return;
+                    }
+                }
+            }
+
+            alert("Attendance berhasil disimpan!");
+        }
+    </script>
 </body>
 </html>

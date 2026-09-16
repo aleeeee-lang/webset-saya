@@ -77,6 +77,15 @@ th,td { border:1px solid black
 <br><br>
 
 <button type="button" onclick="saveAttendance()">Absen</button>
+    <h4>Face Attendance</h4>
+
+<video id="video" width="400" autoplay></video>
+
+<br><br>
+
+<button type="button" onclick="startCamera()">
+    Open Camera
+</button>
 <br>
 <h4>
     <ul>
@@ -147,6 +156,31 @@ async function saveAttendance() {
     }
 
     alert("Attendance berhasil disimpan!");
+}
+</script>
+    <h4>Face Attendance</h4>
+
+<video id="video" width="400" autoplay></video>
+
+<br><br>
+
+<button type="button" onclick="startCamera()">
+    Open Camera
+</button>
+
+<script>
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true
+        });
+
+        document.getElementById("video").srcObject = stream;
+
+    } catch (error) {
+        console.error(error);
+        alert("Camera tidak bisa dibuka!");
+    }
 }
 </script>
 </body>

@@ -99,6 +99,8 @@ th,td { border:1px solid black
 <br><br>
 
 <canvas id="canvas" width="400" height="300"></canvas>
+    <br>
+<img id="photoPreview" width="400" style="display:none;">
 
 <h4>
     <ul>
@@ -173,6 +175,7 @@ async function saveAttendance() {
 </script>
    <script>
 let cameraStream = null;
+let capturedPhoto = null;
 
 async function startCamera() {
     try {
@@ -191,7 +194,6 @@ async function startCamera() {
 function takePhoto() {
     const video = document.getElementById("video");
     const canvas = document.getElementById("canvas");
-
     const context = canvas.getContext("2d");
 
     context.drawImage(
@@ -201,6 +203,17 @@ function takePhoto() {
         canvas.width,
         canvas.height
     );
+
+    // Tampilkan foto
+    const photoPreview = document.getElementById("photoPreview");
+
+    photoPreview.src = canvas.toDataURL("image/jpeg");
+    photoPreview.style.display = "block";
+
+    // Simpan foto sementara
+    canvas.toBlob(function(blob) {
+        capturedPhoto = blob;
+    }, "image/jpeg", 0.8);
 
     alert("Foto berhasil diambil!");
 }

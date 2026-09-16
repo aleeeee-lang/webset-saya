@@ -29,6 +29,7 @@ th,td { border:1px solid black
     );
 </script>
     <link rel="icon" type="image/png" href="favicon.png.png">
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
 <body>
     <h1 style="color:rgb(123, 190, 123); font-family:courier;">
@@ -86,6 +87,7 @@ th,td { border:1px solid black
 <button type="button" onclick="startCamera()">
     Open Camera
 </button>
+<p id="faceStatus">Loading...</p>
 <br>
 <h4>
     <ul>
@@ -164,10 +166,6 @@ async function saveAttendance() {
 
 <br><br>
 
-<button type="button" onclick="startCamera()">
-    Open Camera
-</button>
-
 <script>
 async function startCamera() {
     try {
@@ -177,9 +175,14 @@ async function startCamera() {
 
         document.getElementById("video").srcObject = stream;
 
+        document.getElementById("faceStatus").innerText =
+            "Camera aktif. Siap mendeteksi wajah.";
+
     } catch (error) {
         console.error(error);
-        alert("Camera tidak bisa dibuka!");
+
+        document.getElementById("faceStatus").innerText =
+            "Camera tidak bisa dibuka.";
     }
 }
 </script>

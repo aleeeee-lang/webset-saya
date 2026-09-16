@@ -78,17 +78,28 @@ th,td { border:1px solid black
 <br><br>
 
 <button type="button" onclick="saveAttendance()">Absen</button>
-    <h4>Face Attendance</h4>
+    
+<h4>Face Attendance</h4>
 
-<video id="video" width="400" autoplay></video>
+<video id="video" width="400" autoplay muted></video>
 
 <br><br>
 
 <button type="button" onclick="startCamera()">
-    Open Camera
+    📷 Buka Kamera
 </button>
-<p id="faceStatus">Loading...</p>
-<br>
+
+<button type="button" onclick="takePhoto()">
+    📸 Ambil Foto
+</button>
+
+<button type="button" onclick="stopCamera()">
+    ❌ Tutup Kamera
+</button>
+<br><br>
+
+<canvas id="canvas" width="400" height="300"></canvas>
+
 <h4>
     <ul>
         <li>her name=.......</li>
@@ -160,29 +171,48 @@ async function saveAttendance() {
     alert("Attendance berhasil disimpan!");
 }
 </script>
-    <h4>Face Attendance</h4>
+   <script>
+let cameraStream = null;
 
-<video id="video" width="400" autoplay></video>
-
-<br><br>
-
-<script>
 async function startCamera() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        cameraStream = await navigator.mediaDevices.getUserMedia({
             video: true
         });
 
-        document.getElementById("video").srcObject = stream;
-
-        document.getElementById("faceStatus").innerText =
-            "Camera aktif. Siap mendeteksi wajah.";
+        document.getElementById("video").srcObject = cameraStream;
 
     } catch (error) {
         console.error(error);
+        alert("Kamera tidak bisa dibuka!");
+    }
+}
 
-        document.getElementById("faceStatus").innerText =
-            "Camera tidak bisa dibuka.";
+function takePhoto() {
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+
+    const context = canvas.getContext("2d");
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    alert("Foto berhasil diambil!");
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+
+        cameraStream = null;
+        document.getElementById("video").srcObject = null;
     }
 }
 </script>

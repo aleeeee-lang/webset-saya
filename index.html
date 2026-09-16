@@ -17,6 +17,16 @@ th,td { border:1px solid black
     tr {height:20px;
        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co/rest/v1/";
+    const supabaseKey = "sb_publishable_O9MWlDg0y7UwaAOt89j1MQ_QcKGVkII";
+
+    const supabase = window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey
+    );
+</script>
 </head>
 <body>
     <h1 style="color:rgb(123, 190, 123); font-family:courier;">

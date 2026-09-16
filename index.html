@@ -122,7 +122,7 @@ usemap="#map_gambar">
                 const status = document.getElementById(day).value;
 
                 if (status !== "") {
-                    const { error } = await supabaseclient
+                    const { error } = await supabaseClient
                         .from("attendance")
                         .insert({
                             day: day,

@@ -4,20 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pertemuan 1</title>
-   <style>
- body {text-align:center; background-color:rgb(147, 238, 238);
-    }
-table {border:1px solid black;
-       border-collapse:collapse;
-      }
-th,td { border:1px solid black
-      }
-    th {background-color:rgb(230, 230, 163);
-       }
-    tr {height:20px;
-       }
-    </style>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <script>
+  body {
+    text-align: center;
+    background-color: rgb(147, 238, 238);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+th {
+    background-color: rgb(230, 230, 163);
+}
+
+tr {
+    height: 20px;
+}
+
+input,
+select {
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+video,
+canvas,
+#photoPreview {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+#attendanceList {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+#attendanceList div {
+    background-color: white;
+    text-align: left;
+}
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co";
@@ -35,7 +83,7 @@ th,td { border:1px solid black
     <h1 style="color:rgb(123, 190, 123); font-family:courier;">
         <span style="color: darkgoldenrod; text-decoration:underline;"> my name is handsome</span></h1>
     <h3>but many peopel call to me aly</h3>
-    <p>now i wannna study about html and i strart from saying bismillah and insyaallah will be alhamdulillah one day latter</p>
+    <p>now i wanna study about html and i start from saying bismillah and insyaallah will be alhamdulillah one day later</p>
     <a href="https://id.pngtree.com/free-png-vectors/anak-anak-belajar-coding">
     <img src="pngtree-kids-learning-coding-png-image_4517716.png" alt="the children study about coding" width="200" height="200">
     </a>
@@ -86,27 +134,29 @@ th,td { border:1px solid black
 <br><br>
 
 <button type="button" onclick="startCamera()">
-    📷 Buka Kamera
+    📷 open Kamera
 </button>
 
 <button type="button" onclick="takePhoto()">
-    📸 Ambil Foto
+    📸 take Foto
 </button>
 
 <button type="button" onclick="stopCamera()">
-    ❌ Tutup Kamera
+    ❌ close Kamera
 </button>
 <br><br>
 
 <canvas id="canvas" width="400" height="300"></canvas>
     <br>
 <img id="photoPreview" width="400" style="display:none;">
+    <h2>Attendance History</h2>
+<div id="attendanceList"></div>
 
 <h4>
     <ul>
         <li>her name=.......</li>
         <li>insyallah she can be own me</li>
-        <li>alhamdulliah for to day i have gotten much knolwdge</li>
+        <li>alhamdulliah for to day i have gotten much knowledge</li>
     </ul>
 </h4>
 <button type="button"
@@ -228,6 +278,53 @@ function stopCamera() {
         document.getElementById("video").srcObject = null;
     }
 }
+</script>
+    <script>
+
+async function loadAttendance() {
+
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .order("date", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        alert("Gagal mengambil data attendance!");
+        return;
+    }
+
+    const attendanceList =
+        document.getElementById("attendanceList");
+
+    attendanceList.innerHTML = "";
+
+    data.forEach(function(item) {
+
+        attendanceList.innerHTML += `
+            <div style="
+                border: 1px solid black;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 10px;
+            ">
+
+                <h3>${item.name}</h3>
+
+                <p>📅 ${item.day}, ${item.date}</p>
+
+                <p>⏰ ${item.time}</p>
+
+                <p>📌 Status: ${item.status}</p>
+
+            </div>
+        `;
+
+    });
+}
+
+loadAttendance();
+
 </script>
 </body>
 </html>

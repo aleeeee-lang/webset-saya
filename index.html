@@ -149,6 +149,37 @@ canvas,
 <canvas id="canvas" width="400" height="300"></canvas>
     <br>
 <img id="photoPreview" width="400" style="display:none;">
+    
+   <h2>Attendance Dashboard</h2>
+
+<div id="dashboard">
+
+    <div>
+        <h3>Total</h3>
+        <p id="totalAttendance">0</p>
+    </div>
+
+    <div>
+        <h3>Hadir</h3>
+        <p id="totalHadir">0</p>
+    </div>
+
+    <div>
+        <h3>Izin</h3>
+        <p id="totalIzin">0</p>
+    </div>
+
+    <div>
+        <h3>Sakit</h3>
+        <p id="totalSakit">0</p>
+    </div>
+
+    <div>
+        <h3>Alpa</h3>
+        <p id="totalAlpa">0</p>
+    </div>
+
+</div>
    <h2>Attendance History</h2>
 
 <input
@@ -416,6 +447,33 @@ async function loadAttendance() {
 }
 } //
 loadAttendance();
+       async function loadDashboard() {
+
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("status");
+
+    if (error) {
+        console.error(error);
+        alert("Gagal mengambil data dashboard!");
+        return;
+    }
+
+    const total = data.length;
+
+    const hadir = data.filter(item => item.status === "Hadir").length;
+    const izin = data.filter(item => item.status === "Izin").length;
+    const sakit = data.filter(item => item.status === "Sakit").length;
+    const alpa = data.filter(item => item.status === "Alpa").length;
+
+    document.getElementById("totalAttendance").textContent = total;
+    document.getElementById("totalHadir").textContent = hadir;
+    document.getElementById("totalIzin").textContent = izin;
+    document.getElementById("totalSakit").textContent = sakit;
+    document.getElementById("totalAlpa").textContent = alpa;
+}
+
+loadDashboard();
 
 </script>
 </body>

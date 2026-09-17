@@ -379,20 +379,42 @@ async function loadAttendance() {
         return;
     }
 
-    data.forEach(function(item) {
+   for (const item of data) {
 
-        attendanceList.innerHTML += `
-            <div>
-                <h3>${item.name}</h3>
-                <p>📅 ${item.day}, ${item.date}</p>
-                <p>⏰ ${item.time}</p>
-                <p>📌 Status: ${item.status}</p>
-            </div>
-        `;
+    let photoHTML = "";
 
-    });
+    if (item.photo_url) {
+
+        const { data: signedData, error: signedError } =
+            await supabaseClient
+                .storage
+                .from("attendance-photos")
+                .createSignedUrl(item.photo_url, 3600);
+
+        if (!signedError && signedData) {
+            photoHTML = `
+                <img
+                    src="${signedData.signedUrl}"
+                    width="200"
+                    style="border-radius:10px;"
+                    alt="Attendance photo"
+                >
+            `;
+        }
+    }
+
+    attendanceList.innerHTML += `
+        <div>
+            <h3>${item.name}</h3>
+            <p>📅 ${item.day}, ${item.date}</p>
+            <p>⏰ ${item.time}</p>
+            <p>📌 Status: ${item.status}</p>
+
+            ${photoHTML}
+        </div>
+    `;
 }
-
+} //
 loadAttendance();
 
 </script>

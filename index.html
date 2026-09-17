@@ -91,6 +91,34 @@ canvas,
     font-weight: bold;
     margin: 10px 0;
 }
+        #attendanceChart {
+    max-width: 700px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+#attendanceChart > div {
+    margin-bottom: 15px;
+}
+
+#attendanceChart span {
+    font-weight: bold;
+}
+
+.bar {
+    width: 100%;
+    height: 25px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.bar div {
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -205,6 +233,41 @@ canvas,
         <p id="totalAlpa">0</p>
     </div>
 
+</div>
+    <h2>Attendance Chart</h2>
+
+<div id="attendanceChart">
+    <div>
+        <span>Hadir</span>
+        <div class="bar">
+            <div id="barHadir"></div>
+        </div>
+          <p id="percentHadir">0%</p>
+    </div>
+
+    <div>
+        <span>Izin</span>
+        <div class="bar">
+            <div id="barIzin"></div>
+        </div>
+          <p id="percentIzin">0%</p>
+    </div>
+
+    <div>
+        <span>Sakit</span>
+        <div class="bar">
+            <div id="barSakit"></div>
+        </div>
+          <p id="percentSakit">0%</p>
+    </div>
+
+    <div>
+        <span>Alpa</span>
+        <div class="bar">
+            <div id="barAlpa"></div>
+        </div>
+          <p id="percentAlpa0%</p>
+    </div>
 </div>
    <h2>Attendance History</h2>
 
@@ -329,6 +392,9 @@ async function saveAttendance() {
     }
 
     alert("Attendance berhasil disimpan!");
+    await loadDashboard();
+await loadChart();
+await loadAttendance();
 }
 </script>
    <script>
@@ -500,6 +566,58 @@ loadAttendance();
 }
 
 loadDashboard();
+       async function loadChart() {
+
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("status");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const total = data.length;
+
+    const hadir = data.filter(item => item.status === "Hadir").length;
+    const izin = data.filter(item => item.status === "Izin").length;
+    const sakit = data.filter(item => item.status === "Sakit").length;
+    const alpa = data.filter(item => item.status === "Alpa").length;
+
+    if (total === 0) {
+        return;
+    }
+
+   const persenHadir = hadir / total * 100;
+const persenIzin = izin / total * 100;
+const persenSakit = sakit / total * 100;
+const persenAlpa = alpa / total * 100;
+
+document.getElementById("barHadir").style.width =
+    persenHadir + "%";
+
+document.getElementById("barIzin").style.width =
+    persenIzin + "%";
+
+document.getElementById("barSakit").style.width =
+    persenSakit + "%";
+
+document.getElementById("barAlpa").style.width =
+    persenAlpa + "%";
+           document.getElementById("percentHadir").textContent =
+    persenHadir.toFixed(0) + "%";
+
+document.getElementById("percentIzin").textContent =
+    persenIzin.toFixed(0) + "%";
+
+document.getElementById("percentSakit").textContent =
+    persenSakit.toFixed(0) + "%";
+
+document.getElementById("percentAlpa").textContent =
+    persenAlpa.toFixed(0) + "%";
+}
+
+loadChart();
 
 </script>
 </body>

@@ -203,6 +203,7 @@ canvas,
 <canvas id="canvas" width="400" height="300"></canvas>
     <br>
 <img id="photoPreview" width="400" style="display:none;">
+    <p id="faceStatus">Face detection belum aktif</p>
     
    <h2>Attendance Dashboard</h2>
 
@@ -616,6 +617,24 @@ document.getElementById("percentSakit").textContent =
 document.getElementById("percentAlpa").textContent =
     persenAlpa.toFixed(0) + "%";
 }
+      async function loadFaceModels() {
+
+    try {
+
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+            "https://justadudewhohacks.github.io/face-api.js/models"
+        );
+
+        console.log("Face model berhasil dimuat!");
+
+    } catch (error) {
+
+        console.error("Face model gagal dimuat:", error);
+
+    }
+}
+
+loadFaceModels();
 
 loadChart();
 

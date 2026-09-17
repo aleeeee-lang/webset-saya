@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pertemuan 1</title>
-    <script>
+    <style>
   body {
     text-align: center;
     background-color: rgb(147, 238, 238);
@@ -65,7 +65,7 @@ canvas,
     background-color: white;
     text-align: left;
 }
-    </script>
+    <style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co";
@@ -149,7 +149,31 @@ canvas,
 <canvas id="canvas" width="400" height="300"></canvas>
     <br>
 <img id="photoPreview" width="400" style="display:none;">
-    <h2>Attendance History</h2>
+   <h2>Attendance History</h2>
+
+<input
+    type="text"
+    id="searchName"
+    placeholder="Cari nama..."
+    oninput="loadAttendance()"
+>
+
+<input
+    type="date"
+    id="filterDate"
+    onchange="loadAttendance()"
+>
+
+<select id="filterStatus" onchange="loadAttendance()">
+    <option value="">Semua Status</option>
+    <option value="Hadir">Hadir</option>
+    <option value="Izin">Izin</option>
+    <option value="Sakit">Sakit</option>
+    <option value="Alpa">Alpa</option>
+</select>
+
+<br><br>
+
 <div id="attendanceList"></div>
 
 <h4>
@@ -279,14 +303,37 @@ function stopCamera() {
     }
 }
 </script>
-    <script>
+   <script>
 
 async function loadAttendance() {
 
-    const { data, error } = await supabaseClient
+    const searchName =
+        document.getElementById("searchName").value.trim();
+
+    const filterDate =
+        document.getElementById("filterDate").value;
+
+    const filterStatus =
+        document.getElementById("filterStatus").value;
+
+    let query = supabaseClient
         .from("attendance")
         .select("*")
         .order("date", { ascending: false });
+
+    if (searchName !== "") {
+        query = query.ilike("name", `%${searchName}%`);
+    }
+
+    if (filterDate !== "") {
+        query = query.eq("date", filterDate);
+    }
+
+    if (filterStatus !== "") {
+        query = query.eq("status", filterStatus);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         console.error(error);
@@ -299,24 +346,20 @@ async function loadAttendance() {
 
     attendanceList.innerHTML = "";
 
+    if (data.length === 0) {
+        attendanceList.innerHTML =
+            "<p>Data attendance tidak ditemukan.</p>";
+        return;
+    }
+
     data.forEach(function(item) {
 
         attendanceList.innerHTML += `
-            <div style="
-                border: 1px solid black;
-                padding: 15px;
-                margin: 10px 0;
-                border-radius: 10px;
-            ">
-
+            <div>
                 <h3>${item.name}</h3>
-
                 <p>📅 ${item.day}, ${item.date}</p>
-
                 <p>⏰ ${item.time}</p>
-
                 <p>📌 Status: ${item.status}</p>
-
             </div>
         `;
 

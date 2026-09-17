@@ -211,7 +211,7 @@ usemap="#map_gambar">
         });
     });
 </script>
-    <script>
+  <script>
 async function saveAttendance() {
 
     const name = document.getElementById("name").value;
@@ -228,6 +228,32 @@ async function saveAttendance() {
         weekday: "long"
     });
 
+    // Upload foto ke Supabase Storage
+    let photoUrl = null;
+
+    if (capturedPhoto) {
+
+        const fileName =
+            Date.now() + "-" + name.replace(/\s+/g, "-") + ".jpg";
+
+        const { error: uploadError } =
+            await supabaseClient
+                .storage
+                .from("attendance-photos")
+                .upload(fileName, capturedPhoto, {
+                    contentType: "image/jpeg"
+                });
+
+        if (uploadError) {
+            console.error(uploadError);
+            alert("Foto gagal diupload!");
+            return;
+        }
+
+        photoUrl = fileName;
+    }
+
+    // Simpan data attendance
     const { error } = await supabaseClient
         .from("attendance")
         .insert({
@@ -235,7 +261,8 @@ async function saveAttendance() {
             name: name,
             status: status,
             date: date,
-            time: time
+            time: time,
+            photo_url: photoUrl
         });
 
     if (error) {

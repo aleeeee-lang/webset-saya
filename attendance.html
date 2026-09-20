@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance - Attendly</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         ATTENDANCE HEADER
+    ========================== -->
+
+    <header class="attendance-topbar">
+
+        <div class="attendance-title">
+
+            <h1>
+                Attendance
+            </h1>
+
+            <p>
+                Take your attendance today
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logoutUser()"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="attendance-main">
+
+
+        <!-- =========================
+             PROFILE
+        ========================== -->
+
+        <section class="attendance-profile">
+
+            <div class="profile-photo">
+
+                <img
+                    src="image/profile.png"
+                    alt="Profile photo"
+                >
+
+            </div>
+
+
+            <div class="profile-info">
+
+                <h2>
+                    Aly
+                </h2>
+
+                <p>
+                    Student
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             DATE & TIME
+        ========================== -->
+
+        <section class="attendance-date-time">
+
+
+            <!-- DATE -->
+
+            <div class="date-time-item">
+
+               <div class="date-time-icon calendar-icon">
+    <span class="calendar-top"></span>
+    <strong id="calendarDay">20</strong>
+</div>
+                <div>
+
+                    <span>
+                        Date
+                    </span>
+
+                    <strong id="attendanceDate">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- TIME -->
+
+            <div class="date-time-item">
+
+               <div class="date-time-icon clock-icon">
+    <div class="analog-clock">
+        <div class="clock-hand hour-hand"></div>
+        <div class="clock-hand minute-hand"></div>
+        <div class="clock-hand second-hand"></div>
+        <div class="clock-center"></div>
+    </div>
+</div>
+
+                <div>
+
+                    <span>
+                        Time
+                    </span>
+
+                    <strong id="currentTime">
+                        00:00:00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             STATUS
+        ========================== -->
+
+        <section class="attendance-card">
+
+
+            <div class="status-row">
+
+                <label>
+                    Status
+                </label>
+
+
+                <div class="status-display">
+
+                    <span
+                        id="selectedStatusLight"
+                        class="status-light"
+                    ></span>
+
+                    <span id="selectedStatus">
+                        Belum dipilih
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- STATUS OPTIONS -->
+
+            <div class="status-options">
+
+
+                <!-- HADIR -->
+
+                <label class="status-option hadir">
+
+                    <input
+                        type="radio"
+                        name="status"
+                        value="Hadir"
+                    >
+
+                    <span class="status-light"></span>
+
+                    <span>
+                        Hadir
+                    </span>
+
+                </label>
+
+
+
+                <!-- IZIN -->
+
+                <label class="status-option izin">
+
+                    <input
+                        type="radio"
+                        name="status"
+                        value="Izin"
+                    >
+
+                    <span class="status-light"></span>
+
+                    <span>
+                        Izin
+                    </span>
+
+                </label>
+
+
+
+                <!-- SAKIT -->
+
+                <label class="status-option sakit">
+
+                    <input
+                        type="radio"
+                        name="status"
+                        value="Sakit"
+                    >
+
+                    <span class="status-light"></span>
+
+                    <span>
+                        Sakit
+                    </span>
+
+                </label>
+
+
+
+                <!-- ALPA -->
+
+                <label class="status-option alpa">
+
+                    <input
+                        type="radio"
+                        name="status"
+                        value="Alpa"
+                    >
+
+                    <span class="status-light"></span>
+
+                    <span>
+                        Alpa
+                    </span>
+
+                </label>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             REASON
+        ========================== -->
+
+        <section class="attendance-card">
+
+            <label for="reason">
+                Reason
+            </label>
+
+
+            <textarea
+                id="reason"
+                placeholder="Why are you absent?"
+                rows="4"
+            ></textarea>
+
+        </section>
+
+
+
+        <!-- =========================
+             CAMERA
+        ========================== -->
+
+        <section class="attendance-card camera-card">
+
+
+            <div class="camera-header">
+
+                <h2>
+                    Take Your Photo
+                </h2>
+
+                <p>
+                    Make sure your face is clearly visible.
+                </p>
+
+            </div>
+
+
+
+            <!-- CAMERA -->
+
+            <div class="camera-box">
+
+                <video
+                    id="video"
+                    autoplay
+                    playsinline
+                ></video>
+
+            </div>
+
+
+
+            <!-- CAMERA BUTTONS -->
+
+            <div class="camera-buttons">
+
+                <button
+                    type="button"
+                    onclick="startCamera()"
+                >
+                    Open Camera
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="takePhoto()"
+                >
+                    Take Photo
+                </button>
+
+            </div>
+
+
+
+            <!-- CANVAS -->
+
+            <canvas
+                id="canvas"
+                style="display:none;"
+            ></canvas>
+
+
+
+            <!-- PHOTO PREVIEW -->
+
+            <img
+                id="photoPreview"
+                alt="Captured photo"
+                style="display:none;"
+            >
+
+
+
+            <!-- FACE STATUS -->
+
+            <p id="faceStatus">
+                Face detection belum aktif
+            </p>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             SUBMIT
+        ========================== -->
+
+        <button
+            type="button"
+            class="submit-button"
+            onclick="saveAttendance()"
+        >
+            Submit Attendance
+        </button>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
+
+   <nav class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html">
+        <span>⌂</span>
+        <small>Home</small>
+    </a>
+
+
+    <!-- ATTENDANCE -->
+    <a href="attendance.html" class="active">
+        <span>📷</span>
+        <small>Attendance</small>
+    </a>
+
+
+    <!-- DASHBOARD -->
+    <a href="dashboard.html">
+        <span>▥</span>
+        <small>Dashboard</small>
+    </a>
+
+
+    <!-- HISTORY -->
+    <a href="history.html">
+        <span>🕘</span>
+        <small>History</small>
+    </a>
+
+
+    <!-- MY -->
+    <a href="my-attendance.html">
+        <span>👤</span>
+        <small>My</small>
+    </a>
+
+</nav>
+
+
+        
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+    <script src="js/camera.js"></script>
+
+    <script src="js/attendance.js"></script>
+
+
+
+    <!-- =========================
+         AUTO DATE & TIME
+    ========================== -->
+
+    <script>
+
+        function updateDateTime() {
+
+            const now = new Date();
+
+
+            /* DATE */
+
+            const date = now.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+            /* TIME */
+
+            const time = now.toLocaleTimeString(
+                "en-GB",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+
+            document.getElementById(
+    "calendarDay"
+).textContent = now.getDate();
+
+            const day = now.getDate();
+
+document.getElementById("calendarDay").textContent = day;
+
+
+            /* UPDATE DATE */
+
+            document.getElementById(
+                "attendanceDate"
+            ).textContent = date;
+
+
+            /* UPDATE TIME */
+
+            document.getElementById(
+                "currentTime"
+            ).textContent = time;
+
+        }
+
+
+        updateDateTime();
+
+
+        setInterval(
+            updateDateTime,
+            1000
+        );
+
+    </script>
+
+    <script>
+    function updateAnalogClock() {
+
+        const now = new Date();
+
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+
+        // Hitung sudut masing-masing jarum
+        const hourDegree =
+            (hours % 12) * 30 +
+            minutes * 0.5;
+
+        const minuteDegree =
+            minutes * 6 +
+            seconds * 0.1;
+
+        const secondDegree =
+            seconds * 6;
+
+
+        // Gerakkan jarum
+        document.querySelector(".hour-hand").style.transform =
+            `translateX(-50%) rotate(${hourDegree}deg)`;
+
+        document.querySelector(".minute-hand").style.transform =
+            `translateX(-50%) rotate(${minuteDegree}deg)`;
+
+        document.querySelector(".second-hand").style.transform =
+            `translateX(-50%) rotate(${secondDegree}deg)`;
+    }
+
+
+    // Jalankan langsung
+    updateAnalogClock();
+
+
+    // Update setiap 1 detik
+    setInterval(
+        updateAnalogClock,
+        1000
+    );
+</script>
+
+
+
+    <!-- =========================
+         STATUS
+    ========================== -->
+
+    <script>
+
+        const statusOptions =
+            document.querySelectorAll(
+                'input[name="status"]'
+            );
+
+
+        const selectedStatus =
+            document.getElementById(
+                "selectedStatus"
+            );
+
+
+        const selectedStatusLight =
+            document.getElementById(
+                "selectedStatusLight"
+            );
+
+
+        statusOptions.forEach(
+            function (option) {
+
+                option.addEventListener(
+                    "change",
+                    function () {
+
+
+                        /* UPDATE TEXT */
+
+                        selectedStatus.textContent =
+                            this.value;
+
+
+                        /* RESET LIGHT */
+
+                        selectedStatusLight.className =
+                            "status-light";
+
+
+                        /* UPDATE LIGHT COLOR */
+
+                        if (
+                            this.value === "Hadir"
+                        ) {
+
+                            selectedStatusLight.classList.add(
+                                "hadir"
+                            );
+
+                        }
+
+                        else if (
+                            this.value === "Izin"
+                        ) {
+
+                            selectedStatusLight.classList.add(
+                                "izin"
+                            );
+
+                        }
+
+                        else if (
+                            this.value === "Sakit"
+                        ) {
+
+                            selectedStatusLight.classList.add(
+                                "sakit"
+                            );
+
+                        }
+
+                        else if (
+                            this.value === "Alpa"
+                        ) {
+
+                            selectedStatusLight.classList.add(
+                                "alpa"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>

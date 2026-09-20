@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard - Attendly</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         DASHBOARD MAIN
+    ====================================================== -->
+
+    <main class="dashboard-main">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <section class="dashboard-header">
+
+            <div>
+
+                <p class="dashboard-label">
+                    ATTENDLY DASHBOARD
+                </p>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p class="dashboard-welcome">
+                    Welcome back, Aly 👋
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ATTENDANCE OVERVIEW
+        ================================================== -->
+
+        <section class="dashboard-overview">
+
+            <div class="overview-text">
+
+                <p>
+                    Attendance Overview
+                </p>
+
+                <h2>
+                    Your attendance summary
+                </h2>
+
+                <span>
+                    Keep your attendance consistent and stay on track.
+                </span>
+
+            </div>
+
+
+            <div class="overview-total">
+
+                <strong id="totalAttendance">
+                    0
+                </strong>
+
+                <span>
+                    Total Attendance
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STATUS CARDS
+        ================================================== -->
+
+        <section class="dashboard-status-grid">
+
+
+            <!-- HADIR -->
+
+            <div class="dashboard-status-card hadir">
+
+                <div class="dashboard-status-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Hadir
+                    </span>
+
+                    <strong id="totalHadir">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- IZIN -->
+
+            <div class="dashboard-status-card izin">
+
+                <div class="dashboard-status-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <span>
+                        Izin
+                    </span>
+
+                    <strong id="totalIzin">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SAKIT -->
+
+            <div class="dashboard-status-card sakit">
+
+                <div class="dashboard-status-icon">
+                    +
+                </div>
+
+                <div>
+
+                    <span>
+                        Sakit
+                    </span>
+
+                    <strong id="totalSakit">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ALPA -->
+
+            <div class="dashboard-status-card alpa">
+
+                <div class="dashboard-status-icon">
+                    ×
+                </div>
+
+                <div>
+
+                    <span>
+                        Alpa
+                    </span>
+
+                    <strong id="totalAlpa">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             ATTENDANCE CALENDAR
+        ================================================== -->
+
+        <section class="dashboard-card dashboard-calendar-card">
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <p>
+                        ATTENDANCE
+                    </p>
+
+                    <h2>
+                        Attendance Calendar
+                    </h2>
+
+                </div>
+
+                <span id="calendarMonth">
+                    September 2026
+                </span>
+
+            </div>
+
+
+            <div
+                id="attendanceCalendar"
+                class="attendance-calendar"
+            >
+
+                <!-- Calendar akan dibuat oleh JavaScript -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECENT ATTENDANCE
+        ================================================== -->
+
+        <section class="dashboard-card">
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <p>
+                        ACTIVITY
+                    </p>
+
+                    <h2>
+                        Recent Attendance
+                    </h2>
+
+                </div>
+
+                <a href="my-attendance.html">
+                    View All
+                </a>
+
+            </div>
+
+
+            <div
+                id="recentAttendance"
+                class="recent-attendance"
+            >
+
+                <div class="empty-attendance">
+
+                    <span>
+                        📋
+                    </span>
+
+                    <p>
+                        No attendance data yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ATTENDANCE STATISTICS
+        ================================================== -->
+
+        <section class="dashboard-card">
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <p>
+                        STATISTICS
+                    </p>
+
+                    <h2>
+                        Attendance Statistics
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="statistics-content">
+
+
+                <!-- PROGRESS -->
+
+                <div class="attendance-progress">
+
+                    <div class="progress-header">
+
+                        <span>
+                            Attendance Rate
+                        </span>
+
+                        <strong id="attendancePercentage">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="attendanceProgress"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- INFO -->
+
+                <div class="statistics-info">
+
+                    <div>
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="statTotal">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Present
+                        </span>
+
+                        <strong id="statPresent">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Absent
+                        </span>
+
+                        <strong id="statAbsent">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ATTENDANCE INSIGHT
+        ================================================== -->
+
+        <section class="dashboard-insight">
+
+            <div class="insight-icon">
+                💡
+            </div>
+
+
+            <div>
+
+                <p>
+                    ATTENDANCE INSIGHT
+                </p>
+
+                <h2 id="attendanceInsightTitle">
+                    Keep going!
+                </h2>
+
+                <span id="attendanceInsightText">
+                    Your attendance information will appear here.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             QUICK ACTION
+        ================================================== -->
+
+        <section class="dashboard-quick-action">
+
+            <div>
+
+                <p>
+                    READY?
+                </p>
+
+                <h2>
+                    Take your attendance today
+                </h2>
+
+                <span>
+                    Don't forget to record your attendance.
+                </span>
+
+            </div>
+
+
+            <a
+                href="attendance.html"
+                class="dashboard-attendance-button"
+            >
+                Attendance →
+            </a>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         BOTTOM NAVIGATION
+    ====================================================== -->
+
+    <nav class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html">
+        <span>⌂</span>
+        <small>Home</small>
+    </a>
+
+
+    <!-- ATTENDANCE -->
+    <a href="attendance.html">
+        <span>📷</span>
+        <small>Attendance</small>
+    </a>
+
+
+    <!-- DASHBOARD -->
+    <a href="dashboard.html" class="active">
+        <span>▥</span>
+        <small>Dashboard</small>
+    </a>
+
+
+    <!-- HISTORY -->
+    <a href="history.html">
+        <span>🕘</span>
+        <small>History</small>
+    </a>
+
+
+    <!-- MY -->
+    <a href="my-attendance.html">
+        <span>👤</span>
+        <small>My</small>
+    </a>
+
+</nav>
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+
+
+    <!-- =====================================================
+         DASHBOARD JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        async function loadDashboard() {
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("attendance")
+                .select("*")
+                .order(
+                    "date",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(
+                    "Dashboard error:",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            /* ================================================
+               TOTAL STATUS
+            ================================================= */
+
+            const total =
+                data.length;
+
+
+            const hadir =
+                data.filter(
+                    item =>
+                        item.status === "Hadir"
+                ).length;
+
+
+            const izin =
+                data.filter(
+                    item =>
+                        item.status === "Izin"
+                ).length;
+
+
+            const sakit =
+                data.filter(
+                    item =>
+                        item.status === "Sakit"
+                ).length;
+
+
+            const alpa =
+                data.filter(
+                    item =>
+                        item.status === "Alpa"
+                ).length;
+
+
+
+            /* ================================================
+               STATUS CARDS
+            ================================================= */
+
+            document.getElementById(
+                "totalAttendance"
+            ).textContent = total;
+
+
+            document.getElementById(
+                "totalHadir"
+            ).textContent = hadir;
+
+
+            document.getElementById(
+                "totalIzin"
+            ).textContent = izin;
+
+
+            document.getElementById(
+                "totalSakit"
+            ).textContent = sakit;
+
+
+            document.getElementById(
+                "totalAlpa"
+            ).textContent = alpa;
+
+
+
+            /* ================================================
+               STATISTICS
+            ================================================= */
+
+            const percentage =
+                total > 0
+                    ? Math.round(
+                        (hadir / total) * 100
+                    )
+                    : 0;
+
+
+            document.getElementById(
+                "attendancePercentage"
+            ).textContent =
+                percentage + "%";
+
+
+            document.getElementById(
+                "attendanceProgress"
+            ).style.width =
+                percentage + "%";
+
+
+            document.getElementById(
+                "statTotal"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "statPresent"
+            ).textContent =
+                hadir;
+
+
+            document.getElementById(
+                "statAbsent"
+            ).textContent =
+                izin + sakit + alpa;
+
+
+
+            /* ================================================
+               RECENT ATTENDANCE
+            ================================================= */
+
+            const recent =
+                data.slice(0, 5);
+
+
+            const recentContainer =
+                document.getElementById(
+                    "recentAttendance"
+                );
+
+
+            if (recent.length === 0) {
+
+                recentContainer.innerHTML = `
+                    
+                    <div class="empty-attendance">
+
+                        <span>📋</span>
+
+                        <p>
+                            No attendance data yet.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            recentContainer.innerHTML = "";
+
+
+            recent.forEach(
+                function (item) {
+
+                    recentContainer.innerHTML += `
+
+                        <div class="recent-attendance-item">
+
+                            <div class="recent-date">
+
+                                <strong>
+                                    ${item.date}
+                                </strong>
+
+                                <span>
+                                    ${item.time || "-"}
+                                </span>
+
+                            </div>
+
+
+                            <div class="recent-name">
+
+                                <strong>
+                                    ${item.name || "Student"}
+                                </strong>
+
+                                <span>
+                                    ${item.day || ""}
+                                </span>
+
+                            </div>
+
+
+                            <div class="recent-status ${item.status.toLowerCase()}">
+
+                                ${item.status}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+
+            /* ================================================
+               INSIGHT
+            ================================================= */
+
+            const insightTitle =
+                document.getElementById(
+                    "attendanceInsightTitle"
+                );
+
+
+            const insightText =
+                document.getElementById(
+                    "attendanceInsightText"
+                );
+
+
+            if (total === 0) {
+
+                insightTitle.textContent =
+                    "No attendance yet";
+
+
+                insightText.textContent =
+                    "Start recording your attendance to see your statistics.";
+
+            }
+
+            else if (percentage >= 90) {
+
+                insightTitle.textContent =
+                    "Excellent attendance!";
+
+
+                insightText.textContent =
+                    "Keep maintaining your attendance consistently.";
+
+            }
+
+            else if (percentage >= 75) {
+
+                insightTitle.textContent =
+                    "Good attendance";
+
+
+                insightText.textContent =
+                    "Your attendance is going well. Keep improving it.";
+
+            }
+
+            else {
+
+                insightTitle.textContent =
+                    "Keep improving";
+
+
+                insightText.textContent =
+                    "Try to maintain a more consistent attendance record.";
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           RUN DASHBOARD
+        ====================================================== */
+
+        loadDashboard();
+
+    </script>
+
+
+</body>
+
+</html>

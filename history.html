@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>History - Attendly</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="attendance-topbar">
+
+        <div class="attendance-title">
+
+            <h1>
+                History
+            </h1>
+
+            <p>
+                Your attendance records
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logoutUser()"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="history-main">
+
+
+        <!-- =========================
+             FILTER
+        ========================== -->
+
+        <section class="history-filter-card">
+
+
+            <div class="history-month">
+
+                <span>
+                    MONTH
+                </span>
+
+                <button
+                    type="button"
+                    class="history-select"
+                >
+                    September 2026 ▾
+                </button>
+
+            </div>
+
+
+            <div class="history-status">
+
+                <span>
+                    STATUS
+                </span>
+
+                <button
+                    type="button"
+                    class="history-select"
+                >
+                    All Status ▾
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
+
+        <section class="history-summary">
+
+
+            <div class="history-summary-item">
+
+                <strong>
+                    18
+                </strong>
+
+                <span>
+                    Present
+                </span>
+
+            </div>
+
+
+            <div class="history-summary-item">
+
+                <strong>
+                    2
+                </strong>
+
+                <span>
+                    Permission
+                </span>
+
+            </div>
+
+
+            <div class="history-summary-item">
+
+                <strong>
+                    1
+                </strong>
+
+                <span>
+                    Sick
+                </span>
+
+            </div>
+
+
+            <div class="history-summary-item">
+
+                <strong>
+                    0
+                </strong>
+
+                <span>
+                    Absent
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             HISTORY LIST
+        ========================== -->
+
+        <section class="history-list">
+
+
+            <!-- TODAY -->
+
+            <div class="history-date-group">
+
+                <p class="history-date">
+                    TODAY
+                </p>
+
+
+                <div class="history-card">
+
+
+                    <div class="history-status-icon hadir">
+                        ✓
+                    </div>
+
+
+                    <div class="history-content">
+
+                        <strong>
+                            Present
+                        </strong>
+
+                        <span>
+                            20 September 2026
+                        </span>
+
+                        <small>
+                            Check-in at 07:42
+                        </small>
+
+                    </div>
+
+
+                    <div class="history-time">
+                        07:42
+                    </div>
+
+
+                    <span class="history-arrow">
+                        ›
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 19 SEPTEMBER -->
+
+            <div class="history-date-group">
+
+                <p class="history-date">
+                    19 SEPTEMBER
+                </p>
+
+
+                <div class="history-card">
+
+
+                    <div class="history-status-icon hadir">
+                        ✓
+                    </div>
+
+
+                    <div class="history-content">
+
+                        <strong>
+                            Present
+                        </strong>
+
+                        <span>
+                            19 September 2026
+                        </span>
+
+                        <small>
+                            Check-in at 07:38
+                        </small>
+
+                    </div>
+
+
+                    <div class="history-time">
+                        07:38
+                    </div>
+
+
+                    <span class="history-arrow">
+                        ›
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 18 SEPTEMBER -->
+
+            <div class="history-date-group">
+
+                <p class="history-date">
+                    18 SEPTEMBER
+                </p>
+
+
+                <div class="history-card">
+
+
+                    <div class="history-status-icon izin">
+                        !
+                    </div>
+
+
+                    <div class="history-content">
+
+                        <strong>
+                            Permission
+                        </strong>
+
+                        <span>
+                            18 September 2026
+                        </span>
+
+                        <small>
+                            Personal reason
+                        </small>
+
+                    </div>
+
+
+                    <div class="history-time">
+                        08:10
+                    </div>
+
+
+                    <span class="history-arrow">
+                        ›
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 17 SEPTEMBER -->
+
+            <div class="history-date-group">
+
+                <p class="history-date">
+                    17 SEPTEMBER
+                </p>
+
+
+                <div class="history-card">
+
+
+                    <div class="history-status-icon sakit">
+                        +
+                    </div>
+
+
+                    <div class="history-content">
+
+                        <strong>
+                            Sick
+                        </strong>
+
+                        <span>
+                            17 September 2026
+                        </span>
+
+                        <small>
+                            Health reason
+                        </small>
+
+                    </div>
+
+
+                    <div class="history-time">
+                        07:55
+                    </div>
+
+
+                    <span class="history-arrow">
+                        ›
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 16 SEPTEMBER -->
+
+            <div class="history-date-group">
+
+                <p class="history-date">
+                    16 SEPTEMBER
+                </p>
+
+
+                <div class="history-card">
+
+
+                    <div class="history-status-icon alpa">
+                        !
+                    </div>
+
+
+                    <div class="history-content">
+
+                        <strong>
+                            Absent
+                        </strong>
+
+                        <span>
+                            16 September 2026
+                        </span>
+
+                        <small>
+                            No attendance
+                        </small>
+
+                    </div>
+
+
+                    <div class="history-time">
+                        --
+                    </div>
+
+
+                    <span class="history-arrow">
+                        ›
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             EMPTY STATE
+        ========================== -->
+
+        <section
+            class="history-empty"
+            style="display:none;"
+        >
+
+            <div class="history-empty-icon">
+                📋
+            </div>
+
+            <h2>
+                No attendance history
+            </h2>
+
+            <p>
+                Your attendance records will appear here.
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
+
+   <nav class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html">
+        <span>⌂</span>
+        <small>Home</small>
+    </a>
+
+
+    <!-- ATTENDANCE -->
+    <a href="attendance.html">
+        <span>📷</span>
+        <small>Attendance</small>
+    </a>
+
+
+    <!-- DASHBOARD -->
+    <a href="dashboard.html">
+        <span>▥</span>
+        <small>Dashboard</small>
+    </a>
+
+
+    <!-- HISTORY -->
+    <a href="history.html" class="active">
+        <span>🕘</span>
+        <small>History</small>
+    </a>
+
+
+    <!-- MY -->
+    <a href="my-attendance.html">
+        <span>👤</span>
+        <small>My</small>
+    </a>
+
+</nav>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+
+</body>
+
+</html>

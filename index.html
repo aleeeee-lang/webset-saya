@@ -1,643 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pertemuan 1</title>
-    <style>
-  body {
-    text-align: center;
-    background-color: rgb(147, 238, 238);
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
 
-table {
-    border: 1px solid black;
-    border-collapse: collapse;
-    width: 100%;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-th,
-td {
-    border: 1px solid black;
-    padding: 8px;
-}
+    <title>Attendly</title>
 
-th {
-    background-color: rgb(230, 230, 163);
-}
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
-tr {
-    height: 20px;
-}
-
-input,
-select {
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid gray;
-}
-
-button {
-    padding: 10px 15px;
-    margin: 5px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-video,
-canvas,
-#photoPreview {
-    max-width: 100%;
-    border-radius: 10px;
-}
-
-#attendanceList {
-    max-width: 600px;
-    margin: 20px auto;
-}
-
-#attendanceList div {
-    background-color: white;
-    text-align: left;
-}
-        #dashboard {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin: 20px auto;
-    max-width: 900px;
-}
-
-#dashboard div {
-    background-color: white;
-    width: 140px;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-}
-
-#dashboard h3 {
-    margin: 5px 0;
-}
-
-#dashboard p {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 10px 0;
-}
-        #attendanceChart {
-    max-width: 700px;
-    margin: 20px auto;
-    text-align: left;
-}
-
-#attendanceChart > div {
-    margin-bottom: 15px;
-}
-
-#attendanceChart span {
-    font-weight: bold;
-}
-
-.bar {
-    width: 100%;
-    height: 25px;
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 5px;
-}
-
-.bar div {
-    height: 100%;
-    width: 0%;
-    border-radius: 10px;
-}
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-    const supabaseUrl = "https://vqpxumrodadqqaxuyehy.supabase.co";
-    const supabaseKey = "sb_publishable_O9MWlDg0y7UwaAOt89j1MQ_QcKGVkII";
-
-    const supabaseClient = window.supabase.createClient(
-        supabaseUrl,
-        supabaseKey
-    );
-</script>
-    <link rel="icon" type="image/png" href="favicon.png.png">
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
+
+
 <body>
-    <h1 style="color:rgb(123, 190, 123); font-family:courier;">
-        <span style="color: darkgoldenrod; text-decoration:underline;"> my name is handsome</span></h1>
-    <h3>but many peopel call to me aly</h3>
-    <p>now i wanna study about html and i start from saying bismillah and insyaallah will be alhamdulillah one day later</p>
-    <a href="https://id.pngtree.com/free-png-vectors/anak-anak-belajar-coding">
-    <img src="pngtree-kids-learning-coding-png-image_4517716.png" alt="the children study about coding" width="200" height="200">
-    </a>
-    <p> <i>B.j HABIBE</i> <q>sad success does not belong to the Success intelligent. success belongs to those who constantly 
-        <mark>strive.</mark></q>
-</p>
-<p style="background-image: url('1.jpeg'); background-size:cover; background-repeat: no-repeat; padding:20px; color: rgb(16, 16, 15);"><b>i wanna tell you
-     my experience in my first compeny</b><br>
-    this morning i woke up aorund at 6 am after i woke up i imedietly take my phone 
-    becaue i wanted to see my social media suches WA or IG but something i only schorling my phone on tiktok, oke this my dailyactivity
-    but this is bad habit because if you wake up and immediatly take your phone your bring will  be strugle to face the days moment but 
-    if you first your mornig you began from take wudhu perform this is wil be better for you. oke change your life if you feel and you 
-    you still have about bad habbit lets friends change now and don't say i have time to change it maybe tomorrow i can do it. this is 
-    mean wrong for you life because if you have a behavo like that wil be distrabe your future, and if you have a big goal but you don't 
-    change your life and still like that you will face strugle to acchive it. and the last from my avoid always belive with your life 
-    and you can cahnge your life and is not your life but also your world</p>
-<p>now i first came to my job in jakarta the name compeny is <b>intiva</b></p>
-<h4>this is my attendence so i will make a table for it </h4>
-<h4>This is my attendance</h4>
 
-<label>Name:</label>
-<input type="text" id="name" placeholder="Enter your name">
-<br><br>
 
-<label>Date:</label>
-<input type="date" id="date">
-<br><br>
+    <!-- =========================
+         TOP BAR
+    ========================== -->
 
-<label>Time:</label>
-<input type="time" id="time">
-<br><br>
+    <header class="home-topbar">
 
-<label>Status:</label>
-<select id="status">
-    <option value="Hadir">Hadir</option>
-    <option value="Izin">Izin</option>
-    <option value="Sakit">Sakit</option>
-    <option value="Alpa">Alpa</option>
-</select>
-<br><br>
+        <div class="brand">
 
-<button type="button" onclick="saveAttendance()">Absen</button>
-    
-<h4>Face Attendance</h4>
+            <div class="brand-icon">
+                A
+            </div>
 
-<video id="video" width="400" autoplay muted></video>
+            <h2>
+                Attendly
+            </h2>
 
-<br><br>
-
-<button type="button" onclick="startCamera()">
-    📷 open Kamera
-</button>
-
-<button type="button" onclick="takePhoto()">
-    📸 take Foto
-</button>
-
-<button type="button" onclick="stopCamera()">
-    ❌ close Kamera
-</button>
-<br><br>
-
-<canvas id="canvas" width="400" height="300"></canvas>
-    <br>
-<img id="photoPreview" width="400" style="display:none;">
-    <p id="faceStatus">Face detection belum aktif</p>
-    
-   <h2>Attendance Dashboard</h2>
-
-<div id="dashboard">
-
-    <div>
-        <h3>Total</h3>
-        <p id="totalAttendance">0</p>
-    </div>
-
-    <div>
-        <h3>Hadir</h3>
-        <p id="totalHadir">0</p>
-    </div>
-
-    <div>
-        <h3>Izin</h3>
-        <p id="totalIzin">0</p>
-    </div>
-
-    <div>
-        <h3>Sakit</h3>
-        <p id="totalSakit">0</p>
-    </div>
-
-    <div>
-        <h3>Alpa</h3>
-        <p id="totalAlpa">0</p>
-    </div>
-
-</div>
-    <h2>Attendance Chart</h2>
-
-<div id="attendanceChart">
-    <div>
-        <span>Hadir</span>
-        <div class="bar">
-            <div id="barHadir"></div>
         </div>
-          <p id="percentHadir">0%</p>
-    </div>
 
-    <div>
-        <span>Izin</span>
-        <div class="bar">
-            <div id="barIzin"></div>
+
+        <div class="home-actions">
+
+            <!-- NOTIFICATION -->
+
+            <button
+                type="button"
+                class="notification-button"
+            >
+                🔔
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+
+            <!-- PROFILE -->
+
+            <a
+                href="my-attendance.html"
+                class="profile-button"
+            >
+                👤
+            </a>
+
         </div>
-          <p id="percentIzin">0%</p>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="home-main">
+
+
+        <!-- =========================
+             WELCOME
+        ========================== -->
+
+        <section class="home-welcome">
+
+            <p class="welcome-small">
+                Welcome back
+            </p>
+
+            <h1>
+                Hello, Aly 👋
+            </h1>
+
+            <p class="welcome-description">
+                Stay organized and keep your attendance on track.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             HERO
+        ========================== -->
+
+      <!-- =========================
+     HERO
+========================= -->
+
+<section class="attendance-hero">
+
+    <div class="hero-full-image">
+
+        <img
+            src="image/attendance-hero.png"
+            alt="Attendly attendance"
+        >
+
+        <a
+            href="attendance.html"
+            class="hero-checkin-link"
+            aria-label="Check In"
+        ></a>
+
     </div>
 
-    <div>
-        <span>Sakit</span>
-        <div class="bar">
-            <div id="barSakit"></div>
+</section>
+
+
+
+        <!-- =========================
+             MAIN MENU
+        ========================== -->
+
+        <div class="home-section-header">
+
+            <div>
+
+                <p>
+                    FEATURES
+                </p>
+
+                <h2>
+                    Main Menu
+                </h2>
+
+            </div>
+
         </div>
-          <p id="percentSakit">0%</p>
-    </div>
 
-    <div>
-        <span>Alpa</span>
-        <div class="bar">
-            <div id="barAlpa"></div>
-        </div>
-          <p id="percentAlpa">0%</p>
-    </div>
-</div>
-   <h2>Attendance History</h2>
 
-<input
-    type="text"
-    id="searchName"
-    placeholder="Cari nama..."
-    oninput="loadAttendance()"
->
 
-<input
-    type="date"
-    id="filterDate"
-    onchange="loadAttendance()"
->
+        <!-- =========================
+             MENU GRID
+        ========================== -->
 
-<select id="filterStatus" onchange="loadAttendance()">
-    <option value="">Semua Status</option>
-    <option value="Hadir">Hadir</option>
-    <option value="Izin">Izin</option>
-    <option value="Sakit">Sakit</option>
-    <option value="Alpa">Alpa</option>
-</select>
+        <section class="home-menu-grid">
 
-<br><br>
 
-<div id="attendanceList"></div>
+            <!-- ATTENDANCE -->
 
-<h4>
-    <ul>
-        <li>her name=.......</li>
-        <li>insyallah she can be own me</li>
-        <li>alhamdulliah for to day i have gotten much knowledge</li>
-    </ul>
-</h4>
-<button type="button"
-onclick="document.getElementById('demo').innerHTML = Date()">click here</button>
-<p id="demo"></p>
-<br>
-<img src="1.jpeg" alt="my picture" width="300" height="300"><br>
-<h4>this is map image</h4>
-    <p>if you press this picture you will go to the link in the picture</p>
-<img src="workplace.jpg" alt="leptop"
-usemap="#map_gambar">
-<map name="map_gambar">
-    <area shape="rect" coords="29,39,278,351" href="https://en.wikipedia.org/wiki/Laptop" alt="leptop" 
-    title="leptop">
-    <area shape="rect" coords="285,168,337,250" href="https://en.wikipedia.org/wiki/Mobile_phone"
-     alt="handphone" title="hand phone">
-    <area shape="rect" coords="296,263,382,341" href="https://en.wikipedia.org/wiki/Coffee" alt="coffe"
-    title="coofe">
-</map>
-    <script>
-    const inputs = document.querySelectorAll("input");
+            <a
+                href="attendance.html"
+                class="home-menu-card attendance-card-home"
+            >
 
-    inputs.forEach(function(input) {
-        input.value = localStorage.getItem(input.id) || "";
+                <div class="home-menu-icon">
+                    📷
+                </div>
 
-        input.addEventListener("input", function() {
-            localStorage.setItem(input.id, input.value);
-        });
-    });
-</script>
-  <script>
-async function saveAttendance() {
+                <h3>
+                    Attendance
+                </h3>
 
-    const name = document.getElementById("name").value;
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-    const status = document.getElementById("status").value;
+                <p>
+                    Check in
+                </p>
 
-    if (name === "" || date === "" || time === "") {
-        alert("Name, date, and time must be filled!");
-        return;
-    }
+            </a>
 
-    const day = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
-        weekday: "long"
-    });
 
-    // Upload foto ke Supabase Storage
-    let photoUrl = null;
 
-    if (capturedPhoto) {
+            <!-- DASHBOARD -->
 
-        const fileName =
-            Date.now() + "-" + name.replace(/\s+/g, "-") + ".jpg";
+            <a
+                href="dashboard.html"
+                class="home-menu-card dashboard-card-home"
+            >
 
-        const { error: uploadError } =
-            await supabaseClient
-                .storage
-                .from("attendance-photos")
-                .upload(fileName, capturedPhoto, {
-                    contentType: "image/jpeg"
-                });
+                <div class="home-menu-icon">
+                    📊
+                </div>
 
-        if (uploadError) {
-            console.error(uploadError);
-            alert("Foto gagal diupload!");
-            return;
-        }
+                <h3>
+                    Dashboard
+                </h3>
 
-        photoUrl = fileName;
-    }
+                <p>
+                    Statistics
+                </p>
 
-    // Simpan data attendance
-    const { error } = await supabaseClient
-        .from("attendance")
-        .insert({
-            day: day,
-            name: name,
-            status: status,
-            date: date,
-            time: time,
-            photo_url: photoUrl
-        });
+            </a>
 
-    if (error) {
-        console.error(error);
-        alert("Gagal menyimpan attendance!");
-        return;
-    }
 
-    alert("Attendance berhasil disimpan!");
-    await loadDashboard();
-await loadChart();
-await loadAttendance();
-}
-</script>
-   <script>
-let cameraStream = null;
-let capturedPhoto = null;
 
-async function startCamera() {
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: true
-        });
+            <!-- HISTORY -->
 
-        document.getElementById("video").srcObject = cameraStream;
+            <a
+                href="history.html"
+                class="home-menu-card history-card-home"
+            >
 
-    } catch (error) {
-        console.error(error);
-        alert("Kamera tidak bisa dibuka!");
-    }
-}
+                <div class="home-menu-icon">
+                    📋
+                </div>
 
-function takePhoto() {
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
-    const context = canvas.getContext("2d");
+                <h3>
+                    History
+                </h3>
 
-    context.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+                <p>
+                    Attendance records
+                </p>
 
-    // Tampilkan foto
-    const photoPreview = document.getElementById("photoPreview");
+            </a>
 
-    photoPreview.src = canvas.toDataURL("image/jpeg");
-    photoPreview.style.display = "block";
 
-    // Simpan foto sementara
-    canvas.toBlob(function(blob) {
-        capturedPhoto = blob;
-    }, "image/jpeg", 0.8);
 
-    alert("Foto berhasil diambil!");
-}
+            <!-- MY ATTENDANCE -->
 
-function stopCamera() {
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(function(track) {
-            track.stop();
-        });
+            <a
+                href="my-attendance.html"
+                class="home-menu-card my-attendance-card-home"
+            >
 
-        cameraStream = null;
-        document.getElementById("video").srcObject = null;
-    }
-}
-</script>
-   <script>
+                <div class="home-menu-icon">
+                    👤
+                </div>
 
-async function loadAttendance() {
+                <h3>
+                    My Attendance
+                </h3>
 
-    const searchName =
-        document.getElementById("searchName").value.trim();
+                <p>
+                    My personal record
+                </p>
 
-    const filterDate =
-        document.getElementById("filterDate").value;
+            </a>
 
-    const filterStatus =
-        document.getElementById("filterStatus").value;
 
-    let query = supabaseClient
-        .from("attendance")
-        .select("*")
-        .order("date", { ascending: false });
 
-    if (searchName !== "") {
-        query = query.ilike("name", `%${searchName}%`);
-    }
+            <!-- INFORMATION -->
 
-    if (filterDate !== "") {
-        query = query.eq("date", filterDate);
-    }
+            <a
+                href="information.html"
+                class="home-menu-card information-card-home"
+            >
 
-    if (filterStatus !== "") {
-        query = query.eq("status", filterStatus);
-    }
+                <div class="home-menu-icon">
+                    ℹ️
+                </div>
 
-    const { data, error } = await query;
+                <h3>
+                    Information
+                </h3>
 
-    if (error) {
-        console.error(error);
-        alert("Gagal mengambil data attendance!");
-        return;
-    }
+                <p>
+                    Information & links
+                </p>
 
-    const attendanceList =
-        document.getElementById("attendanceList");
+            </a>
 
-    attendanceList.innerHTML = "";
 
-    if (data.length === 0) {
-        attendanceList.innerHTML =
-            "<p>Data attendance tidak ditemukan.</p>";
-        return;
-    }
+        </section>
 
-   for (const item of data) {
 
-    let photoHTML = "";
 
-    if (item.photo_url) {
+        <!-- =========================
+             INFORMATION BANNER
+        ========================== -->
 
-        const { data: signedData, error: signedError } =
-            await supabaseClient
-                .storage
-                .from("attendance-photos")
-                .createSignedUrl(item.photo_url, 3600);
+        <section class="home-info-banner">
 
-        if (!signedError && signedData) {
-            photoHTML = `
+            <div class="info-banner-image">
+
                 <img
-                    src="${signedData.signedUrl}"
-                    width="200"
-                    style="border-radius:10px;"
-                    alt="Attendance photo"
+                    src="image/attendance-banner.jfif"
+                    alt="Organized attendance"
                 >
-            `;
-        }
-    }
 
-    attendanceList.innerHTML += `
-        <div>
-            <h3>${item.name}</h3>
-            <p>📅 ${item.day}, ${item.date}</p>
-            <p>⏰ ${item.time}</p>
-            <p>📌 Status: ${item.status}</p>
+            </div>
 
-            ${photoHTML}
-        </div>
-    `;
-}
-} //
-loadAttendance();
-       async function loadDashboard() {
 
-    const { data, error } = await supabaseClient
-        .from("attendance")
-        .select("status");
+            <div class="info-banner-content">
 
-    if (error) {
-        console.error(error);
-        alert("Gagal mengambil data dashboard!");
-        return;
-    }
+                <p>
+                    ATTENDLY
+                </p>
 
-    const total = data.length;
+                <h2>
+                    Keep your attendance organized.
+                </h2>
 
-    const hadir = data.filter(item => item.status === "Hadir").length;
-    const izin = data.filter(item => item.status === "Izin").length;
-    const sakit = data.filter(item => item.status === "Sakit").length;
-    const alpa = data.filter(item => item.status === "Alpa").length;
+                <span>
+                    Check your records and stay up to date with Attendly.
+                </span>
 
-    document.getElementById("totalAttendance").textContent = total;
-    document.getElementById("totalHadir").textContent = hadir;
-    document.getElementById("totalIzin").textContent = izin;
-    document.getElementById("totalSakit").textContent = sakit;
-    document.getElementById("totalAlpa").textContent = alpa;
-}
+            </div>
 
-loadDashboard();
-       async function loadChart() {
 
-    const { data, error } = await supabaseClient
-        .from("attendance")
-        .select("status");
+            <a
+                href="my-attendance.html"
+                class="info-arrow"
+            >
+                →
+            </a>
 
-    if (error) {
-        console.error(error);
-        return;
-    }
+        </section>
 
-    const total = data.length;
 
-    const hadir = data.filter(item => item.status === "Hadir").length;
-    const izin = data.filter(item => item.status === "Izin").length;
-    const sakit = data.filter(item => item.status === "Sakit").length;
-    const alpa = data.filter(item => item.status === "Alpa").length;
+    </main>
 
-    if (total === 0) {
-        return;
-    }
 
-   const persenHadir = hadir / total * 100;
-const persenIzin = izin / total * 100;
-const persenSakit = sakit / total * 100;
-const persenAlpa = alpa / total * 100;
 
-document.getElementById("barHadir").style.width =
-    persenHadir + "%";
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
 
-document.getElementById("barIzin").style.width =
-    persenIzin + "%";
+   <nav class="bottom-nav">
 
-document.getElementById("barSakit").style.width =
-    persenSakit + "%";
+    <!-- HOME -->
+    <a href="index.html" class="active">
+        <span>⌂</span>
+        <small>Home</small>
+    </a>
 
-document.getElementById("barAlpa").style.width =
-    persenAlpa + "%";
-           document.getElementById("percentHadir").textContent =
-    persenHadir.toFixed(0) + "%";
 
-document.getElementById("percentIzin").textContent =
-    persenIzin.toFixed(0) + "%";
+    <!-- ATTENDANCE -->
+    <a href="attendance.html">
+        <span>📷</span>
+        <small>Attendance</small>
+    </a>
 
-document.getElementById("percentSakit").textContent =
-    persenSakit.toFixed(0) + "%";
 
-document.getElementById("percentAlpa").textContent =
-    persenAlpa.toFixed(0) + "%";
-}
-      async function loadFaceModels() {
+    <!-- DASHBOARD -->
+    <a href="dashboard.html">
+        <span>▥</span>
+        <small>Dashboard</small>
+    </a>
 
-    try {
 
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-            "https://justadudewhohacks.github.io/face-api.js/models"
-        );
+    <!-- HISTORY -->
+    <a
+        href="history.html">
+        <span>🕘</span>
+        <small>History</small>
+    </a>
 
-        console.log("Face model berhasil dimuat!");
 
-    } catch (error) {
+    <!-- MY -->
+    <a href="my-attendance.html">
+        <span>👤</span>
+        <small>My</small>
+    </a>
 
-        console.error("Face model gagal dimuat:", error);
-
-    }
-}
-
-loadFaceModels();
-
-loadChart();
-
-</script>
+</nav>
 </body>
+
 </html>

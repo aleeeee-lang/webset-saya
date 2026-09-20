@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Attendance - Attendly</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="attendance-topbar">
+
+        <div class="attendance-title">
+
+            <h1>
+                My Attendance
+            </h1>
+
+            <p>
+                Your attendance overview
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logoutUser()"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="my-attendance-main">
+
+
+        <!-- =========================
+             ATTENDANCE SCORE
+        ========================== -->
+
+        <section class="attendance-score-card">
+
+            <p class="score-label">
+                ATTENDANCE SCORE
+            </p>
+
+
+            <h2>
+                92%
+            </h2>
+
+
+            <p class="score-description">
+                Excellent consistency
+            </p>
+
+
+            <div class="score-progress">
+
+                <div class="score-progress-fill"></div>
+
+            </div>
+
+
+            <div class="score-summary">
+
+                <div>
+                    <strong>
+                        18
+                    </strong>
+
+                    <span>
+                        Present
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        2
+                    </strong>
+
+                    <span>
+                        Permission
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        1
+                    </strong>
+
+                    <span>
+                        Sick
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        0
+                    </strong>
+
+                    <span>
+                        Absent
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             QUICK STATS
+        ========================== -->
+
+        <section class="attendance-quick-stats">
+
+
+            <div class="quick-stat-card">
+
+                <div class="quick-stat-icon">
+                    🔥
+                </div>
+
+                <div>
+
+                    <strong>
+                        7 Days
+                    </strong>
+
+                    <span>
+                        Current Streak
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-stat-card">
+
+                <div class="quick-stat-icon">
+                    📅
+                </div>
+
+                <div>
+
+                    <strong>
+                        21 Days
+                    </strong>
+
+                    <span>
+                        Active Days
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             ACTIVITY HEADER
+        ========================== -->
+
+        <div class="my-attendance-section-header">
+
+            <div>
+
+                <span>
+                    ATTENDANCE ACTIVITY
+                </span>
+
+                <h2>
+                    Recent Activity
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="activity-filter"
+            >
+                This Month ▾
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             ACTIVITY
+        ========================== -->
+
+        <section class="attendance-activity">
+
+
+            <!-- TODAY -->
+
+            <div class="activity-group">
+
+                <p class="activity-date">
+                    TODAY
+                </p>
+
+
+                <div class="activity-card">
+
+                    <div class="activity-status-icon hadir">
+                        ✓
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <strong>
+                            Present
+                        </strong>
+
+                        <span>
+                            20 September · 07:42
+                        </span>
+
+                    </div>
+
+
+                    <span class="activity-arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- YESTERDAY -->
+
+            <div class="activity-group">
+
+                <p class="activity-date">
+                    YESTERDAY
+                </p>
+
+
+                <div class="activity-card">
+
+                    <div class="activity-status-icon hadir">
+                        ✓
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <strong>
+                            Present
+                        </strong>
+
+                        <span>
+                            19 September · 07:38
+                        </span>
+
+                    </div>
+
+
+                    <span class="activity-arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 18 SEPTEMBER -->
+
+            <div class="activity-group">
+
+                <p class="activity-date">
+                    18 SEPTEMBER
+                </p>
+
+
+                <div class="activity-card">
+
+                    <div class="activity-status-icon izin">
+                        !
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <strong>
+                            Permission
+                        </strong>
+
+                        <span>
+                            08:10 · Personal reason
+                        </span>
+
+                    </div>
+
+
+                    <span class="activity-arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 17 SEPTEMBER -->
+
+            <div class="activity-group">
+
+                <p class="activity-date">
+                    17 SEPTEMBER
+                </p>
+
+
+                <div class="activity-card">
+
+                    <div class="activity-status-icon hadir">
+                        ✓
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <strong>
+                            Present
+                        </strong>
+
+                        <span>
+                            17 September · 07:45
+                        </span>
+
+                    </div>
+
+
+                    <span class="activity-arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             MONTHLY CALENDAR
+        ========================== -->
+
+        <section class="monthly-calendar-card">
+
+
+            <div class="calendar-header">
+
+                <div>
+
+                    <span>
+                        MONTHLY OVERVIEW
+                    </span>
+
+                    <h2>
+                        September 2026
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="calendar-arrow"
+                >
+                    ›
+                </button>
+
+            </div>
+
+
+
+            <!-- DAYS -->
+
+            <div class="calendar-week">
+
+                <span>M</span>
+                <span>T</span>
+                <span>W</span>
+                <span>T</span>
+                <span>F</span>
+                <span>S</span>
+                <span>S</span>
+
+            </div>
+
+
+
+            <!-- CALENDAR -->
+
+            <div class="calendar-days">
+
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span class="empty">6</span>
+                <span class="empty">7</span>
+
+
+                <span>8</span>
+                <span>9</span>
+                <span class="izin-day">10</span>
+                <span>11</span>
+                <span class="sakit-day">12</span>
+                <span class="empty">13</span>
+                <span class="empty">14</span>
+
+
+                <span>15</span>
+                <span>16</span>
+                <span>17</span>
+                <span>18</span>
+                <span>19</span>
+                <span class="empty">20</span>
+                <span class="empty">21</span>
+
+
+                <span>22</span>
+                <span>23</span>
+                <span>24</span>
+                <span>25</span>
+                <span>26</span>
+                <span class="empty">27</span>
+                <span class="empty">28</span>
+
+
+                <span>29</span>
+                <span>30</span>
+
+            </div>
+
+
+
+            <!-- LEGEND -->
+
+            <div class="calendar-legend">
+
+                <span>
+                    <i class="legend hadir"></i>
+                    Present
+                </span>
+
+                <span>
+                    <i class="legend izin"></i>
+                    Permission
+                </span>
+
+                <span>
+                    <i class="legend sakit"></i>
+                    Sick
+                </span>
+
+                <span>
+                    <i class="legend alpa"></i>
+                    Absent
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ATTENDANCE INSIGHT
+        ========================== -->
+
+        <section class="attendance-insight">
+
+            <div class="insight-icon">
+                💡
+            </div>
+
+
+            <div>
+
+                <span>
+                    ATTENDANCE INSIGHT
+                </span>
+
+                <h3>
+                    You're doing great!
+                </h3>
+
+                <p>
+                    Your attendance has been consistent
+                    this month.
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
+
+   <nav class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html">
+        <span>⌂</span>
+        <small>Home</small>
+    </a>
+
+
+    <!-- ATTENDANCE -->
+    <a href="attendance.html">
+        <span>📷</span>
+        <small>Attendance</small>
+    </a>
+
+
+    <!-- DASHBOARD -->
+    <a href="dashboard.html">
+        <span>▥</span>
+        <small>Dashboard</small>
+    </a>
+
+
+    <!-- HISTORY -->
+    <a href="history.html">
+        <span>🕘</span>
+        <small>History</small>
+    </a>
+
+
+    <!-- MY -->
+    <a href="my-attendance.html" class="active">
+        <span>👤</span>
+        <small>My</small>
+    </a>
+
+</nav>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+</body>
+
+</html>

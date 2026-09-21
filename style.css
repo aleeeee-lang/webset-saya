@@ -517,7 +517,6 @@ button {
     border-radius: 50%;
 
     background: white;
-
     color: #635bff;
 
     text-decoration: none;
@@ -528,8 +527,10 @@ button {
 
 .info-arrow span {
     display: block;
-    transform: translateY(-7px);
+    position: relative;
+    top: -5px;
 }
+   
 
 
 /* =========================================================

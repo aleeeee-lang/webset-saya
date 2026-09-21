@@ -588,6 +588,21 @@ button {
 
     text-decoration: none;
 }
+.nav-person-icon {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-person-icon svg {
+    width: 22px;
+    height: 22px;
+
+    display: block;
+}
 
 .bottom-nav a span {
     font-size: 19px;

@@ -604,6 +604,22 @@ button {
     align-items: center;
     justify-content: center;
 }
+.nav-camera-icon {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-camera-icon svg {
+    width: 22px;
+    height: 22px;
+
+    display: block;
+}
+
 
 .nav-home-icon svg {
     width: 22px;

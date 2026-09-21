@@ -403,22 +403,21 @@ button {
 ========================================================= */
 
 .home-menu-icon {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 
     border-radius: 14px;
 
     background: #eeeeff;
 
-    font-size: 25px;
+    font-size: 23px;
 }
-
 
 /* DIFFERENT ICON BACKGROUNDS */
 

@@ -1406,6 +1406,18 @@ button {
     flex-shrink: 0;
 }
 
+   .status-display {
+    width: 100%;
+    
+    margin-left: 0;
+
+    transform: none;
+
+    min-height: 48px;
+
+    padding: 12px 15px;
+}
+
 
 /* =========================================================
    DATE & TIME TEXT

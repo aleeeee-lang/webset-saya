@@ -340,7 +340,7 @@ button {
 ========================================================= */
 
 .home-menu-card {
-    min-height: 155px;
+    min-height: 150px;
 
     padding: 20px;
 
@@ -357,23 +357,13 @@ button {
     text-decoration: none;
 
     box-shadow:
-        0 6px 22px
+        0 5px 18px
         rgba(0, 0, 0, 0.06);
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease;
 }
-
-
-.home-menu-card:hover {
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 12px 28px
-        rgba(0, 0, 0, 0.10);
-}
-
 
 /* =========================================================
    THREE CARDS ON TOP

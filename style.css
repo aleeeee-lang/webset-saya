@@ -524,7 +524,10 @@ button {
 
     font-size: 28px;
     line-height: 1;
+}
 
+.info-arrow span {
+    display: block;
     transform: translateY(-2px);
 }
 

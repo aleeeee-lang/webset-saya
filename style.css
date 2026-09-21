@@ -1562,23 +1562,28 @@ button {
 
     /* MENU */
 
-    .home-menu-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+  .home-menu-grid {
+    display: grid;
 
-        gap: 12px;
-    }
+    grid-template-columns: repeat(2, 1fr);
 
-
-   .attendance-card-home,
-.dashboard-card-home,
-.history-card-home {
-    grid-column: span 2;
+    gap: 12px;
 }
 
+
+.attendance-card-home,
+.dashboard-card-home,
+.history-card-home,
 .my-attendance-card-home,
 .information-card-home {
-    grid-column: span 3;
+    grid-column: span 1;
+}
+
+
+/* CARD TERAKHIR MEMENUHI 2 KOLOM */
+
+.information-card-home {
+    grid-column: span 2;
 }
 
 

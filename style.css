@@ -1558,13 +1558,16 @@ button {
     }
 
 
-    .attendance-card-home,
-    .dashboard-card-home,
-    .history-card-home,
-    .my-attendance-card-home,
-    .information-card-home {
-        grid-column: span 1;
-    }
+   .attendance-card-home,
+.dashboard-card-home,
+.history-card-home {
+    grid-column: span 2;
+}
+
+.my-attendance-card-home,
+.information-card-home {
+    grid-column: span 3;
+}
 
 
     .home-menu-card {

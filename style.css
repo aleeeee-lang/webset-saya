@@ -596,6 +596,21 @@ button {
     align-items: center;
     justify-content: center;
 }
+.nav-home-icon {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-home-icon svg {
+    width: 22px;
+    height: 22px;
+
+    display: block;
+}
 
 .nav-person-icon svg {
     width: 22px;

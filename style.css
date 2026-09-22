@@ -3515,3 +3515,77 @@ button {
 
     display: none;
 }
+   /* =========================
+   TOP BAR ICONS
+========================= */
+
+.home-topbar .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-topbar .top-action-button {
+    width: 44px;
+    height: 44px;
+
+    padding: 0;
+    margin: 0;
+
+    border: none;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #374151;
+
+    cursor: pointer;
+
+    position: relative;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.home-topbar .top-notification-icon,
+.home-topbar .top-user-icon {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.home-topbar .top-notification-icon svg,
+.home-topbar .top-user-icon svg {
+    width: 25px;
+    height: 25px;
+
+    display: block;
+
+    color: currentColor;
+}
+
+.home-topbar .notification-dot {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    top: 0;
+    right: 0;
+
+    background: #ff3b5c;
+
+    border-radius: 50%;
+
+    border: 2px solid #ffffff;
+
+    display: none;
+}

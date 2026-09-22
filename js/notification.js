@@ -3,6 +3,6 @@ const notificationPanel = document.getElementById("notificationPanel");
 
 notificationButton.addEventListener("click", function () {
 
-    notificationPanel.classList.toggle("active");
+    alert("Lonceng berhasil diklik!");
 
 });

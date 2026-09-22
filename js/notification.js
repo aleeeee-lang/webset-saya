@@ -1,6 +1,16 @@
-const notificationButton = document.getElementById("notificationButton");
-const notificationPanel = document.getElementById("notificationPanel");
+document.addEventListener("DOMContentLoaded", function () {
 
-notificationButton.addEventListener("click", function () {
-    notificationPanel.classList.toggle("active");
+    const notificationButton =
+        document.getElementById("notificationButton");
+
+    const notificationPanel =
+        document.getElementById("notificationPanel");
+
+
+    notificationButton.addEventListener("click", function () {
+
+        notificationPanel.classList.toggle("active");
+
+    });
+
 });

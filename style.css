@@ -2820,30 +2820,53 @@ textarea {
     }
 
 
-    /* TOP ICONS */
+  /* TOP ICONS */
 
-    .top-action-button {
-        width: 40px;
-        height: 40px;
-    }
+.top-action-button {
+    width: 40px;
+    height: 40px;
+}
 
-    .top-notification-icon {
-        width: 25px;
-        height: 25px;
-    }
+.top-notification-icon {
+    width: 25px;
+    height: 25px;
+}
 
-    .top-notification-icon svg {
-        width: 25px;
-        height: 25px;
-    }
-    .home-welcome h1 {
-        font-size: 27px;
-    }
+.top-notification-icon svg {
+    width: 25px;
+    height: 25px;
+}
 
-    .welcome-description {
-        font-size: 14px;
-    }
 
+/* NOTIFICATION PANEL - MOBILE */
+
+.notification-panel {
+    width: 280px;
+
+    top: 52px;
+    right: -5px;
+
+    padding: 16px;
+}
+
+.notification-panel h3 {
+    font-size: 16px;
+}
+
+.notification-empty {
+    font-size: 12px;
+}
+
+
+/* WELCOME */
+
+.home-welcome h1 {
+    font-size: 27px;
+}
+
+.welcome-description {
+    font-size: 14px;
+}
 
     /* HOME MENU */
 

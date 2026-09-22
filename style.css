@@ -2782,19 +2782,15 @@ textarea {
         height: 40px;
     }
 
-    .top-notification-icon,
-    .top-user-icon {
+    .top-notification-icon {
         width: 25px;
         height: 25px;
     }
 
-    .top-notification-icon svg,
-    .top-user-icon svg {
+    .top-notification-icon svg {
         width: 25px;
         height: 25px;
     }
-
-
     .home-welcome h1 {
         font-size: 27px;
     }

@@ -1,15 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const notificationButton =
-        document.getElementById("notificationButton");
-
-    const notificationPanel =
-        document.getElementById("notificationPanel");
-
+    const notificationButton = document.getElementById("notificationButton");
 
     notificationButton.addEventListener("click", function () {
 
-        notificationPanel.classList.toggle("active");
+        alert("LONCENG BERHASIL DIKLIK!");
 
     });
 

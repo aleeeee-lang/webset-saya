@@ -94,7 +94,7 @@ textarea {
 
 /* =========================================================
    TOP ACTIONS
-   NOTIFICATION + PROFILE
+   NOTIFICATION 
 ========================================================= */
 
 .top-actions {
@@ -102,6 +102,8 @@ textarea {
     align-items: center;
 
     gap: 12px;
+   position: relative;
+    z-index: 3000;
 }
 
 .top-action-button {
@@ -130,6 +132,9 @@ textarea {
 
     appearance: none;
     -webkit-appearance: none;
+
+   position: relative;
+    z-index: 3000;
 }
 
 

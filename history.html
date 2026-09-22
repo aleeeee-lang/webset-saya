@@ -61,12 +61,9 @@
     <main class="history-main">
 
 
-        <!-- =========================
-             FILTER
-        ========================== -->
+        <!-- FILTER -->
 
         <section class="history-filter-card">
-
 
             <div class="history-month">
 
@@ -99,17 +96,13 @@
 
             </div>
 
-
         </section>
 
 
 
-        <!-- =========================
-             SUMMARY
-        ========================== -->
+        <!-- SUMMARY -->
 
         <section class="history-summary">
-
 
             <div class="history-summary-item">
 
@@ -162,14 +155,11 @@
 
             </div>
 
-
         </section>
 
 
 
-        <!-- =========================
-             HISTORY LIST
-        ========================== -->
+        <!-- HISTORY LIST -->
 
         <section class="history-list">
 
@@ -184,7 +174,6 @@
 
 
                 <div class="history-card">
-
 
                     <div class="history-status-icon hadir">
                         ✓
@@ -217,7 +206,6 @@
                         ›
                     </span>
 
-
                 </div>
 
             </div>
@@ -234,7 +222,6 @@
 
 
                 <div class="history-card">
-
 
                     <div class="history-status-icon hadir">
                         ✓
@@ -267,7 +254,6 @@
                         ›
                     </span>
 
-
                 </div>
 
             </div>
@@ -284,7 +270,6 @@
 
 
                 <div class="history-card">
-
 
                     <div class="history-status-icon izin">
                         !
@@ -317,7 +302,6 @@
                         ›
                     </span>
 
-
                 </div>
 
             </div>
@@ -334,7 +318,6 @@
 
 
                 <div class="history-card">
-
 
                     <div class="history-status-icon sakit">
                         +
@@ -367,7 +350,6 @@
                         ›
                     </span>
 
-
                 </div>
 
             </div>
@@ -384,7 +366,6 @@
 
 
                 <div class="history-card">
-
 
                     <div class="history-status-icon alpa">
                         !
@@ -417,7 +398,6 @@
                         ›
                     </span>
 
-
                 </div>
 
             </div>
@@ -427,13 +407,11 @@
 
 
 
-        <!-- =========================
-             EMPTY STATE
-        ========================== -->
+        <!-- EMPTY STATE -->
 
         <section
             class="history-empty"
-            style="display:none;"
+            style="display: none;"
         >
 
             <div class="history-empty-icon">
@@ -459,46 +437,126 @@
          BOTTOM NAVIGATION
     ========================== -->
 
-   <nav class="bottom-nav">
-
-    <!-- HOME -->
-    <a href="index.html">
-        <span>⌂</span>
-        <small>Home</small>
-    </a>
+    <nav class="bottom-nav">
 
 
-    <!-- ATTENDANCE -->
-    <a href="attendance.html">
-        <span>📷</span>
-        <small>Attendance</small>
-    </a>
+        <!-- HOME -->
+
+        <a href="index.html">
+
+            <span class="nav-home-icon">
+
+                <!-- SVG HOME -->
+
+            </span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
 
 
-    <!-- DASHBOARD -->
-    <a href="dashboard.html">
-        <span>▥</span>
-        <small>Dashboard</small>
-    </a>
+
+        <!-- ATTENDANCE -->
+
+        <a href="attendance.html">
+
+            <span class="nav-camera-icon">
+
+                <!-- SVG CAMERA -->
+
+            </span>
+
+            <small>
+                Attendance
+            </small>
+
+        </a>
 
 
-    <!-- HISTORY -->
-    <a href="history.html" class="active">
-        <span>🕘</span>
-        <small>History</small>
-    </a>
+
+        <!-- DASHBOARD -->
+
+        <a href="dashboard.html">
+
+            <span class="nav-dashboard-icon">
+
+                <!-- SVG DASHBOARD -->
+
+            </span>
+
+            <small>
+                Dashboard
+            </small>
+
+        </a>
 
 
-    <!-- MY -->
-    <a href="my-attendance.html">
-        <span>👤</span>
-        <small>My</small>
-    </a>
 
-</nav>
+        <!-- HISTORY -->
+
+        <a
+            href="history.html"
+            class="active"
+        >
+
+            <span>
+                🕘
+            </span>
+
+            <small>
+                History
+            </small>
+
+        </a>
+
+
+
+        <!-- MY -->
+
+        <a href="my-attendance.html">
+
+            <span class="nav-person-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="7"
+                        r="3.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                My
+            </small>
+
+        </a>
+
+
+    </nav>
+
+
 
     <!-- =========================
-         JAVASCRIPT
+         SUPABASE
     ========================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

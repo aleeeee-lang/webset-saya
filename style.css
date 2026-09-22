@@ -197,6 +197,9 @@ textarea {
 /* =========================================================
    NOTIFICATION
 ========================================================= */
+.top-actions {
+    position: relative;
+}
 
 .notification-panel {
     position: absolute;

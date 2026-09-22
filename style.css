@@ -18,19 +18,13 @@ html {
 
 body {
     margin: 0;
-    padding: 20px;
-    padding-bottom: 110px;
+    padding: 20px 20px 110px;
 
     font-family: Arial, sans-serif;
 
     background: #f6f7ff;
     color: #20243a;
 }
-
-
-/* =========================================================
-   LINKS & BUTTONS
-========================================================= */
 
 a {
     color: inherit;
@@ -62,7 +56,6 @@ button {
 .brand {
     display: flex;
     align-items: center;
-
     gap: 10px;
 }
 
@@ -76,20 +69,14 @@ button {
 
     border-radius: 12px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
     font-size: 20px;
     font-weight: bold;
 
-    box-shadow:
-        0 6px 15px
-        rgba(99, 91, 255, 0.25);
+    box-shadow: 0 6px 15px rgba(99, 91, 255, 0.25);
 }
 
 .brand h2 {
@@ -101,19 +88,100 @@ button {
 }
 
 
-/* =========================================================
-   HOME ACTIONS
-========================================================= */
+/* TOP ACTIONS */
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-action-button {
+    width: 44px;
+    height: 44px;
+
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    border: none;
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: #111827;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.top-notification-icon,
+.top-user-icon {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.top-notification-icon svg,
+.top-user-icon svg,
+.top-action-button svg {
+    width: 25px;
+    height: 25px;
+
+    display: block;
+
+    color: currentColor;
+}
+
+.top-action-button svg {
+    width: 28px;
+    height: 28px;
+
+    color: #111827;
+}
+
+.top-action-button svg path,
+.top-action-button svg circle {
+    stroke: #111827;
+
+    opacity: 1;
+}
+
+.notification-dot {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 7px;
+    height: 7px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #ff3b5c;
+
+    display: none;
+}
+
+
+/* OLD HOME ACTION SUPPORT */
 
 .home-actions {
     display: flex;
     align-items: center;
-
     gap: 10px;
 }
-
-
-/* NOTIFICATION */
 
 .notification-button {
     position: relative;
@@ -134,29 +202,8 @@ button {
 
     cursor: pointer;
 
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.07);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
 }
-
-.notification-dot {
-    position: absolute;
-
-    top: 8px;
-    right: 8px;
-
-    width: 8px;
-    height: 8px;
-
-    border-radius: 50%;
-
-    background: #ff4d67;
-
-    border: 2px solid white;
-}
-
-
-/* PROFILE */
 
 .profile-button {
     width: 44px;
@@ -174,9 +221,7 @@ button {
 
     font-size: 21px;
 
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.07);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
 }
 
 
@@ -238,16 +283,12 @@ button {
 
     background: white;
 
-    box-shadow:
-        0 12px 35px
-        rgba(99, 91, 255, 0.25);
+    box-shadow: 0 12px 35px rgba(99, 91, 255, 0.25);
 }
 
 .hero-full-image {
     position: relative;
-
     display: block;
-
     width: 100%;
 }
 
@@ -257,9 +298,6 @@ button {
     width: 100%;
     height: auto;
 }
-
-
-/* CHECK IN CLICK AREA */
 
 .hero-checkin-link {
     position: absolute;
@@ -293,7 +331,6 @@ button {
     color: #777;
 
     font-size: 12px;
-
     letter-spacing: 1.5px;
 }
 
@@ -310,15 +347,9 @@ button {
 
 .home-menu-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(6, 1fr);
-
+    grid-template-columns: repeat(6, 1fr);
     gap: 10px;
 }
-
-
-/* MENU CARD */
 
 .home-menu-card {
     min-height: 150px;
@@ -332,14 +363,11 @@ button {
     border-radius: 20px;
 
     background: white;
-
     color: #20243a;
 
     text-decoration: none;
 
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
 
     transition:
         transform 0.2s ease,
@@ -349,17 +377,12 @@ button {
 .home-menu-card:hover {
     transform: translateY(-4px);
 
-    box-shadow:
-        0 10px 25px
-        rgba(0, 0, 0, 0.10);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.10);
 }
 
 .home-menu-card:active {
     transform: scale(0.96);
 }
-
-
-/* THREE CARDS ON TOP */
 
 .attendance-card-home,
 .dashboard-card-home,
@@ -367,26 +390,20 @@ button {
     grid-column: span 2;
 }
 
-
-/* TWO CARDS BELOW */
-
 .my-attendance-card-home,
 .information-card-home {
     grid-column: span 3;
 }
 
-
-/* MENU ICON */
-
 .home-menu-icon {
     width: 46px;
     height: 46px;
 
+    margin-bottom: 10px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin-bottom: 10px;
 
     border-radius: 14px;
 
@@ -394,9 +411,6 @@ button {
 
     font-size: 23px;
 }
-
-
-/* DIFFERENT ICON BACKGROUNDS */
 
 .attendance-card-home .home-menu-icon {
     background: #e7ecff;
@@ -418,17 +432,11 @@ button {
     background: #fff2d8;
 }
 
-
-/* MENU TITLE */
-
 .home-menu-card h3 {
     margin: 0 0 5px;
 
     font-size: 17px;
 }
-
-
-/* MENU DESCRIPTION */
 
 .home-menu-card p {
     margin: 0;
@@ -436,7 +444,6 @@ button {
     color: #777;
 
     font-size: 13px;
-
     line-height: 1.4;
 }
 
@@ -447,7 +454,6 @@ button {
 
 .home-info-banner {
     width: 100%;
-
     min-height: 155px;
 
     margin-top: 25px;
@@ -459,22 +465,15 @@ button {
 
     border-radius: 22px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
-    box-shadow:
-        0 10px 30px
-        rgba(99, 91, 255, 0.20);
+    box-shadow: 0 10px 30px rgba(99, 91, 255, 0.20);
 }
 
 .info-banner-content {
     flex: 1;
-
     padding: 25px 30px;
 }
 
@@ -482,7 +481,6 @@ button {
     margin: 0 0 7px;
 
     font-size: 12px;
-
     letter-spacing: 2px;
 
     opacity: 0.8;
@@ -527,10 +525,10 @@ button {
 
 .info-arrow span {
     display: block;
+
     position: relative;
     top: -5px;
 }
-   
 
 
 /* =========================================================
@@ -547,28 +545,18 @@ button {
 
     transform: translateX(-50%);
 
-    width: min(
-        550px,
-        calc(100% - 30px)
-    );
+    width: min(550px, calc(100% - 30px));
 
     padding: 9px;
 
     display: flex;
     justify-content: space-around;
 
-    background: rgba(
-        255,
-        255,
-        255,
-        0.96
-    );
+    background: rgba(255, 255, 255, 0.96);
 
     border-radius: 20px;
 
-    box-shadow:
-        0 10px 30px
-        rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
 .bottom-nav a {
@@ -588,54 +576,11 @@ button {
 
     text-decoration: none;
 }
-.nav-person-icon {
-    width: 22px;
-    height: 22px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.nav-home-icon {
-    width: 22px;
-    height: 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.nav-camera-icon {
-    width: 22px;
-    height: 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-camera-icon svg {
-    width: 22px;
-    height: 22px;
-
-    display: block;
-}
-
-.nav-dashboard-icon {
-    width: 22px;
-    height: 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-dashboard-icon svg {
-    width: 22px;
-    height: 22px;
-
-    display: block;
-}
-
+.nav-person-icon,
+.nav-home-icon,
+.nav-camera-icon,
+.nav-dashboard-icon,
 .nav-history-icon {
     width: 22px;
     height: 22px;
@@ -645,22 +590,12 @@ button {
     justify-content: center;
 }
 
-.nav-history-icon svg {
-    width: 22px;
-    height: 22px;
-
-    display: block;
-}
-
-
-.nav-home-icon svg {
-    width: 22px;
-    height: 22px;
-
-    display: block;
-}
-
-.nav-person-icon svg {
+.nav-person-icon svg,
+.nav-home-icon svg,
+.nav-camera-icon svg,
+.nav-dashboard-icon svg,
+.nav-history-icon svg,
+.bottom-nav a span svg {
     width: 22px;
     height: 22px;
 
@@ -669,12 +604,6 @@ button {
 
 .bottom-nav a span {
     font-size: 19px;
-}
-
-.bottom-nav a span svg {
-    width: 22px;
-    height: 22px;
-    display: block;
 }
 
 .bottom-nav a small {
@@ -709,7 +638,6 @@ button {
     margin: 0;
 
     font-size: 30px;
-
     color: #20243a;
 }
 
@@ -731,16 +659,13 @@ button {
     max-width: 900px;
 
     margin: 25px auto 0;
-
     padding: 25px;
 
     background: white;
 
     border-radius: 25px;
 
-    box-shadow:
-        0 8px 30px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
 }
 
 
@@ -753,7 +678,6 @@ button {
     align-items: center;
 
     gap: 14px;
-
     margin-bottom: 22px;
 }
 
@@ -766,14 +690,11 @@ button {
     overflow: hidden;
 
     border-radius: 50%;
+    border: 3px solid white;
 
     background: #eeeeff;
 
-    border: 3px solid white;
-
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.08);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
 }
 
 .profile-photo img {
@@ -808,18 +729,14 @@ button {
     width: 100%;
 
     margin-bottom: 25px;
-
     padding: 0;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 15px;
 
     background: transparent;
-
     box-shadow: none;
 }
 
@@ -830,12 +747,15 @@ button {
     gap: 12px;
 }
 
-.date-time-icon {
+.date-time-icon,
+.calendar-icon {
     width: 45px;
     height: 45px;
 
     flex-shrink: 0;
+}
 
+.date-time-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -886,7 +806,6 @@ button {
     height: 31px;
 
     border: 3px solid #635bff;
-
     border-radius: 50%;
 
     background: white;
@@ -898,11 +817,11 @@ button {
     left: 50%;
     bottom: 50%;
 
+    transform: translateX(-50%);
+
     transform-origin: bottom center;
 
     border-radius: 5px;
-
-    transform: translateX(-50%);
 }
 
 .hour-hand {
@@ -948,9 +867,6 @@ button {
 .calendar-icon {
     position: relative;
 
-    width: 45px;
-    height: 45px;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -960,13 +876,11 @@ button {
     border-radius: 13px;
 
     background: #eeeeff;
-
     color: #635bff;
 }
 
 .calendar-icon strong {
     font-size: 17px;
-
     line-height: 1;
 }
 
@@ -986,18 +900,16 @@ button {
 
 
 /* =========================================================
-   ATTENDANCE CARD
+   ATTENDANCE CARD & INPUT
 ========================================================= */
 
 .attendance-card {
     width: 100%;
 
     margin: 0;
-
     padding: 0;
 
     background: transparent;
-
     border-radius: 0;
 
     box-shadow: none;
@@ -1016,11 +928,6 @@ button {
     font-weight: bold;
 }
 
-
-/* =========================================================
-   INPUT
-========================================================= */
-
 .attendance-card input,
 .attendance-card select,
 .attendance-card textarea {
@@ -1029,11 +936,9 @@ button {
     padding: 13px;
 
     border: 1px solid #ddd;
-
     border-radius: 12px;
 
     font-family: inherit;
-
     font-size: 15px;
 
     outline: none;
@@ -1052,9 +957,7 @@ button {
 
 .status-options {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 12px;
 
@@ -1090,9 +993,6 @@ button {
     display: none;
 }
 
-
-/* STATUS LIGHT */
-
 .status-light {
     width: 11px;
     height: 11px;
@@ -1101,12 +1001,11 @@ button {
 
     border-radius: 50%;
 
-    animation:
-        statusGlow 1.8s ease-in-out infinite;
+    animation: statusGlow 1.8s ease-in-out infinite;
 }
 
 
-/* HADIR */
+/* STATUS COLORS */
 
 .status-option.hadir .status-light,
 .status-display .status-light.hadir {
@@ -1118,9 +1017,6 @@ button {
         0 0 18px rgba(34, 197, 94, 0.8);
 }
 
-
-/* IZIN */
-
 .status-option.izin .status-light,
 .status-display .status-light.izin {
     background: #f59e0b;
@@ -1131,9 +1027,6 @@ button {
         0 0 18px rgba(245, 158, 11, 0.8);
 }
 
-
-/* SAKIT */
-
 .status-option.sakit .status-light,
 .status-display .status-light.sakit {
     background: #3b82f6;
@@ -1143,9 +1036,6 @@ button {
         0 0 10px #3b82f6,
         0 0 18px rgba(59, 130, 246, 0.8);
 }
-
-
-/* ALPA */
 
 .status-option.alpa .status-light,
 .status-display .status-light.alpa {
@@ -1169,19 +1059,15 @@ button {
 
 .status-row label {
     margin: 0;
-
     flex-shrink: 0;
 }
 
 .status-display {
     width: 50%;
-
     min-height: 48px;
 
-    margin-top: 0;
-    margin-bottom: 12px;
-    margin-left: 90px;
-
+    margin:
+        0 0 12px 90px;
     padding: 12px 15px;
 
     display: flex;
@@ -1193,7 +1079,6 @@ button {
     border-radius: 14px;
 
     background: #f7f7ff;
-
     color: #635bff;
 
     font-size: 15px;
@@ -1203,21 +1088,17 @@ button {
 }
 
 
-/* =========================================================
-   STATUS ANIMATION
-========================================================= */
+/* STATUS ANIMATION */
 
 @keyframes statusGlow {
     0%,
     100% {
         opacity: 0.7;
-
         transform: scale(0.9);
     }
 
     50% {
         opacity: 1;
-
         transform: scale(1.15);
     }
 }
@@ -1268,14 +1149,9 @@ button {
     object-fit: cover;
 }
 
-
-/* CAMERA BUTTONS */
-
 .camera-buttons {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 12px;
 
@@ -1284,23 +1160,18 @@ button {
 
 .camera-buttons button {
     width: 100%;
-
     min-height: 48px;
 
     padding: 12px 10px;
 
     border: none;
-
     border-radius: 12px;
 
     background: #eeeeff;
-
     color: #635bff;
 
     font-family: inherit;
-
     font-size: 14px;
-
     font-weight: bold;
 
     cursor: pointer;
@@ -1316,9 +1187,6 @@ button {
     background: #e4e3ff;
 }
 
-
-/* PHOTO PREVIEW */
-
 #photoPreview {
     width: 100%;
 
@@ -1327,18 +1195,13 @@ button {
     border-radius: 18px;
 }
 
-
-/* FACE STATUS */
-
 #faceStatus {
     margin-top: 15px;
-
     padding: 10px;
 
     border-radius: 10px;
 
     background: #f6f7ff;
-
     color: #555;
 
     text-align: center;
@@ -1353,30 +1216,21 @@ button {
 
 .submit-button {
     width: 100%;
-
     min-height: 48px;
 
-    margin-top: 25px;
-    margin-bottom: 20px;
-
+    margin: 25px 0 20px;
     padding: 14px;
 
     display: block;
 
     border: none;
-
     border-radius: 13px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
     font-size: 16px;
-
     font-weight: bold;
 
     cursor: pointer;
@@ -1391,7 +1245,6 @@ button {
     padding: 9px 16px;
 
     border: none;
-
     border-radius: 10px;
 
     font-size: 14px;
@@ -1413,12 +1266,8 @@ button {
     max-width: 900px;
 
     margin: 0 auto;
-
     padding-bottom: 30px;
 }
-
-
-/* HEADER */
 
 .dashboard-header {
     margin-bottom: 25px;
@@ -1430,9 +1279,7 @@ button {
     color: #635bff;
 
     font-size: 12px;
-
     font-weight: bold;
-
     letter-spacing: 2px;
 }
 
@@ -1468,24 +1315,17 @@ button {
 
     border-radius: 22px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
-    box-shadow:
-        0 10px 30px
-        rgba(99, 91, 255, 0.22);
+    box-shadow: 0 10px 30px rgba(99, 91, 255, 0.22);
 }
 
 .overview-text p {
     margin: 0 0 6px;
 
     font-size: 12px;
-
     letter-spacing: 1.5px;
 
     opacity: 0.8;
@@ -1514,12 +1354,7 @@ button {
 
     border-radius: 18px;
 
-    background: rgba(
-        255,
-        255,
-        255,
-        0.16
-    );
+    background: rgba(255, 255, 255, 0.16);
 }
 
 .overview-total strong {
@@ -1540,7 +1375,7 @@ button {
 
 
 /* =========================================================
-   DASHBOARD STATUS GRID
+   DASHBOARD STATUS
 ========================================================= */
 
 .dashboard-status-grid {
@@ -1549,9 +1384,7 @@ button {
     margin-top: 15px;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 12px;
 }
@@ -1570,9 +1403,7 @@ button {
 
     background: white;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
 
 .dashboard-status-icon {
@@ -1588,7 +1419,6 @@ button {
     border-radius: 13px;
 
     font-size: 20px;
-
     font-weight: bold;
 }
 
@@ -1610,30 +1440,23 @@ button {
     font-size: 23px;
 }
 
-
-/* STATUS COLORS */
-
 .dashboard-status-card.hadir .dashboard-status-icon {
     background: #e5faf0;
-
     color: #22a861;
 }
 
 .dashboard-status-card.izin .dashboard-status-icon {
     background: #fff3d9;
-
     color: #e59a00;
 }
 
 .dashboard-status-card.sakit .dashboard-status-icon {
     background: #e8f1ff;
-
     color: #3b82f6;
 }
 
 .dashboard-status-card.alpa .dashboard-status-icon {
     background: #ffe8eb;
-
     color: #ef4444;
 }
 
@@ -1646,20 +1469,14 @@ button {
     width: 100%;
 
     margin-top: 18px;
-
     padding: 22px;
 
     border-radius: 20px;
 
     background: white;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
-
-
-/* SECTION TITLE */
 
 .dashboard-section-title {
     display: flex;
@@ -1677,7 +1494,6 @@ button {
     color: #777;
 
     font-size: 10px;
-
     letter-spacing: 1.5px;
 }
 
@@ -1699,7 +1515,6 @@ button {
     color: #635bff;
 
     font-size: 12px;
-
     font-weight: bold;
 
     text-decoration: none;
@@ -1712,9 +1527,7 @@ button {
 
 .attendance-calendar {
     display: grid;
-
-    grid-template-columns:
-        repeat(7, 1fr);
+    grid-template-columns: repeat(7, 1fr);
 
     gap: 7px;
 }
@@ -1729,7 +1542,6 @@ button {
     border-radius: 10px;
 
     background: #f7f7ff;
-
     color: #555;
 
     font-size: 12px;
@@ -1737,39 +1549,30 @@ button {
 
 .calendar-day.present {
     background: #e5faf0;
-
     color: #159447;
-
     font-weight: bold;
 }
 
 .calendar-day.permission {
     background: #fff3d9;
-
     color: #d48b00;
-
     font-weight: bold;
 }
 
 .calendar-day.sick {
     background: #e8f1ff;
-
     color: #2874d8;
-
     font-weight: bold;
 }
 
 .calendar-day.absent {
     background: #ffe8eb;
-
     color: #dc3545;
-
     font-weight: bold;
 }
 
 .calendar-day.today {
     outline: 2px solid #635bff;
-
     outline-offset: 1px;
 }
 
@@ -1789,9 +1592,7 @@ button {
     padding: 13px;
 
     display: grid;
-
-    grid-template-columns:
-        1.2fr 1fr auto;
+    grid-template-columns: 1.2fr 1fr auto;
 
     align-items: center;
 
@@ -1828,7 +1629,6 @@ button {
     border-radius: 9px;
 
     font-size: 10px;
-
     font-weight: bold;
 
     text-align: center;
@@ -1922,23 +1722,16 @@ button {
 
     border-radius: 20px;
 
-    background: linear-gradient(
-        90deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(90deg, #6861ff, #8d6bff);
 
-    transition:
-        width 0.5s ease;
+    transition: width 0.5s ease;
 }
 
 .statistics-info {
     margin-top: 20px;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 
     gap: 10px;
 }
@@ -1986,16 +1779,13 @@ button {
 
 .dashboard-insight {
     margin-top: 18px;
-
     padding: 20px;
 
     border-radius: 20px;
 
     background: #fff8e8;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.04);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
 }
 
 .dashboard-insight .insight-icon {
@@ -2021,10 +1811,8 @@ button {
     color: #b17a00;
 
     font-size: 10px;
-
-    letter-spacing: 1.5px;
-
     font-weight: bold;
+    letter-spacing: 1.5px;
 }
 
 .dashboard-insight h2 {
@@ -2048,7 +1836,6 @@ button {
 
 .dashboard-quick-action {
     margin-top: 18px;
-
     padding: 22px;
 
     display: flex;
@@ -2059,24 +1846,17 @@ button {
 
     border-radius: 20px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
-    box-shadow:
-        0 8px 25px
-        rgba(99, 91, 255, 0.20);
+    box-shadow: 0 8px 25px rgba(99, 91, 255, 0.20);
 }
 
 .dashboard-quick-action p {
     margin: 0 0 5px;
 
     font-size: 10px;
-
     letter-spacing: 1.5px;
 
     opacity: 0.75;
@@ -2090,7 +1870,6 @@ button {
 
 .dashboard-quick-action span {
     font-size: 12px;
-
     opacity: 0.8;
 }
 
@@ -2102,11 +1881,9 @@ button {
     border-radius: 12px;
 
     background: white;
-
     color: #635bff;
 
     font-size: 13px;
-
     font-weight: bold;
 
     text-decoration: none;
@@ -2114,7 +1891,7 @@ button {
 
 
 /* =========================================================
-   MY ATTENDANCE PAGE
+   MY ATTENDANCE
 ========================================================= */
 
 .my-attendance-main {
@@ -2132,24 +1909,17 @@ button {
 
     border-radius: 24px;
 
-    background: linear-gradient(
-        135deg,
-        #6861ff,
-        #8d6bff
-    );
+    background: linear-gradient(135deg, #6861ff, #8d6bff);
 
     color: white;
 
-    box-shadow:
-        0 12px 30px
-        rgba(99, 91, 255, 0.22);
+    box-shadow: 0 12px 30px rgba(99, 91, 255, 0.22);
 }
 
 .score-label {
     margin: 0;
 
     font-size: 12px;
-
     letter-spacing: 2px;
 
     opacity: 0.8;
@@ -2159,7 +1929,6 @@ button {
     margin: 8px 0 2px;
 
     font-size: 48px;
-
     line-height: 1;
 }
 
@@ -2179,12 +1948,7 @@ button {
 
     border-radius: 20px;
 
-    background: rgba(
-        255,
-        255,
-        255,
-        0.25
-    );
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .score-progress-fill {
@@ -2198,9 +1962,7 @@ button {
 
 .score-summary {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 10px;
 
@@ -2212,12 +1974,7 @@ button {
 
     border-radius: 14px;
 
-    background: rgba(
-        255,
-        255,
-        255,
-        0.12
-    );
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .score-summary strong {
@@ -2241,9 +1998,7 @@ button {
 
 .attendance-quick-stats {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 15px;
 
@@ -2262,9 +2017,7 @@ button {
 
     background: white;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
 
 .quick-stat-icon {
@@ -2318,7 +2071,6 @@ button {
     color: #777;
 
     font-size: 11px;
-
     letter-spacing: 1.5px;
 }
 
@@ -2332,15 +2084,12 @@ button {
     padding: 9px 13px;
 
     border: 1px solid #e5e5ee;
-
     border-radius: 10px;
 
     background: white;
-
     color: #555;
 
     font-family: inherit;
-
     font-size: 12px;
 
     cursor: pointer;
@@ -2366,9 +2115,7 @@ button {
     color: #999;
 
     font-size: 10px;
-
     font-weight: bold;
-
     letter-spacing: 1.5px;
 }
 
@@ -2386,9 +2133,7 @@ button {
 
     background: white;
 
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
 
     transition:
         transform 0.2s ease,
@@ -2398,9 +2143,7 @@ button {
 .activity-card:hover {
     transform: translateY(-2px);
 
-    box-shadow:
-        0 8px 22px
-        rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
 }
 
 .activity-status-icon {
@@ -2416,7 +2159,6 @@ button {
     border-radius: 13px;
 
     font-size: 19px;
-
     font-weight: bold;
 }
 
@@ -2473,16 +2215,13 @@ button {
 
 .monthly-calendar-card {
     margin-top: 30px;
-
     padding: 23px;
 
     border-radius: 22px;
 
     background: white;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
 
 .calendar-header {
@@ -2495,7 +2234,6 @@ button {
     color: #999;
 
     font-size: 10px;
-
     letter-spacing: 1.5px;
 }
 
@@ -2510,11 +2248,9 @@ button {
     height: 40px;
 
     border: none;
-
     border-radius: 12px;
 
     background: #eeeeff;
-
     color: #635bff;
 
     font-size: 23px;
@@ -2522,16 +2258,11 @@ button {
     cursor: pointer;
 }
 
-
-/* WEEK */
-
 .calendar-week {
     margin-top: 23px;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(7, 1fr);
+    grid-template-columns: repeat(7, 1fr);
 
     text-align: center;
 }
@@ -2540,20 +2271,14 @@ button {
     color: #999;
 
     font-size: 11px;
-
     font-weight: bold;
 }
-
-
-/* DAYS */
 
 .calendar-days {
     margin-top: 10px;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(7, 1fr);
+    grid-template-columns: repeat(7, 1fr);
 
     gap: 8px;
 }
@@ -2576,9 +2301,6 @@ button {
     visibility: hidden;
 }
 
-
-/* CALENDAR STATUS */
-
 .calendar-days .izin-day {
     background: #fff1d8;
     color: #d88a00;
@@ -2598,7 +2320,6 @@ button {
 
 .calendar-legend {
     margin-top: 20px;
-
     padding-top: 15px;
 
     display: flex;
@@ -2650,13 +2371,11 @@ button {
 
 .attendance-insight {
     margin-top: 20px;
-
     padding: 20px;
 
     border-radius: 20px;
 
     background: #eeeeff;
-
     color: #20243a;
 }
 
@@ -2681,7 +2400,6 @@ button {
     color: #777;
 
     font-size: 10px;
-
     letter-spacing: 1.5px;
 }
 
@@ -2716,9 +2434,7 @@ button {
 
 .history-filter-card {
     display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 15px;
 
@@ -2728,9 +2444,7 @@ button {
 
     border-radius: 20px;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.06);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
 
 .history-month,
@@ -2746,9 +2460,7 @@ button {
     color: #999;
 
     font-size: 10px;
-
     font-weight: bold;
-
     letter-spacing: 1.3px;
 }
 
@@ -2758,15 +2470,12 @@ button {
     padding: 12px 14px;
 
     border: 1px solid #e5e5ee;
-
     border-radius: 12px;
 
     background: #f8f8ff;
-
     color: #20243a;
 
     font-family: inherit;
-
     font-size: 13px;
 
     text-align: left;
@@ -2779,9 +2488,7 @@ button {
 
 .history-summary {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 12px;
 
@@ -2797,16 +2504,13 @@ button {
 
     border-radius: 17px;
 
-    box-shadow:
-        0 5px 18px
-        rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
 }
 
 .history-summary-item strong {
     display: block;
 
     font-size: 23px;
-
     color: #20243a;
 }
 
@@ -2842,9 +2546,7 @@ button {
     color: #999;
 
     font-size: 10px;
-
     font-weight: bold;
-
     letter-spacing: 1.5px;
 }
 
@@ -2865,9 +2567,7 @@ button {
 
     border-radius: 18px;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 
     cursor: pointer;
 
@@ -2879,9 +2579,7 @@ button {
 .history-card:hover {
     transform: translateY(-3px);
 
-    box-shadow:
-        0 9px 25px
-        rgba(0, 0, 0, 0.09);
+    box-shadow: 0 9px 25px rgba(0, 0, 0, 0.09);
 }
 
 
@@ -2900,7 +2598,6 @@ button {
     border-radius: 14px;
 
     font-size: 19px;
-
     font-weight: bold;
 }
 
@@ -2970,7 +2667,6 @@ button {
     color: #555;
 
     font-size: 13px;
-
     font-weight: bold;
 }
 
@@ -2980,7 +2676,6 @@ button {
     color: #aaa;
 
     font-size: 25px;
-
     line-height: 1;
 }
 
@@ -2989,7 +2684,6 @@ button {
 
 .history-empty {
     margin-top: 30px;
-
     padding: 45px 20px;
 
     text-align: center;
@@ -2998,9 +2692,7 @@ button {
 
     border-radius: 22px;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
 .history-empty-icon {
@@ -3029,8 +2721,7 @@ button {
 .animated-clock {
     font-size: 24px;
 
-    animation:
-        clockTick 1s steps(12) infinite;
+    animation: clockTick 1s steps(12) infinite;
 
     transform-origin: center;
 }
@@ -3043,8 +2734,7 @@ button {
 @media (max-width: 700px) {
 
     body {
-        padding: 15px;
-        padding-bottom: 100px;
+        padding: 15px 15px 100px;
     }
 
 
@@ -3068,9 +2758,16 @@ button {
     }
 
     .notification-button,
-    .profile-button {
+    .profile-button,
+    .home-topbar .top-action-button {
         width: 40px;
         height: 40px;
+    }
+
+    .home-topbar .top-notification-icon,
+    .home-topbar .top-user-icon {
+        width: 25px;
+        height: 25px;
     }
 
     .home-welcome h1 {
@@ -3085,9 +2782,7 @@ button {
     /* HOME MENU */
 
     .home-menu-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
@@ -3104,7 +2799,6 @@ button {
 
     .home-menu-card {
         min-height: 140px;
-
         padding: 16px;
     }
 
@@ -3120,7 +2814,6 @@ button {
 
     .home-info-banner {
         min-height: auto;
-
         flex-wrap: wrap;
     }
 
@@ -3177,7 +2870,6 @@ button {
 
     .attendance-main {
         margin-top: 20px;
-
         padding: 18px;
 
         border-radius: 22px;
@@ -3187,13 +2879,13 @@ button {
         grid-template-columns: 1fr;
     }
 
+    .date-time-item {
+        gap: 12px;
+    }
+
     .date-time-icon {
         width: 45px;
         height: 45px;
-    }
-
-    .date-time-item {
-        gap: 12px;
     }
 
     .date-time-item span {
@@ -3219,9 +2911,9 @@ button {
     }
 
     .camera-buttons button {
-        font-size: 13px;
-
         padding: 12px 6px;
+
+        font-size: 13px;
     }
 
     .attendance-card {
@@ -3268,8 +2960,7 @@ button {
     }
 
     .dashboard-status-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .dashboard-status-card {
@@ -3297,8 +2988,7 @@ button {
     }
 
     .recent-attendance-item {
-        grid-template-columns:
-            1fr auto;
+        grid-template-columns: 1fr auto;
     }
 
     .recent-name {
@@ -3307,7 +2997,6 @@ button {
 
     .recent-status {
         grid-column: 2 / 3;
-
         grid-row: 1 / 3;
     }
 
@@ -3341,9 +3030,7 @@ button {
     }
 
     .score-summary {
-        grid-template-columns:
-            repeat(2, 1fr);
-
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
 
@@ -3397,8 +3084,7 @@ button {
     }
 
     .history-summary {
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
 
         gap: 10px;
     }
@@ -3443,163 +3129,4 @@ button {
     .history-arrow {
         font-size: 22px;
     }
-
-.top-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-
-.top-action-button {
-    width: 56px;
-    height: 56px;
-
-    border: none;
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.06);
-
-    color: #4b5563;
-}
-
-
-.top-notification-icon,
-.top-user-icon {
-
-    width: 28px;
-    height: 28px;
-
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.top-notification-icon svg,
-.top-user-icon svg {
-
-    width: 28px;
-    height: 28px;
-
-    display: block;
-}
-
-
-.notification-dot {
-
-    position: absolute;
-
-    width: 7px;
-    height: 7px;
-
-    background: #ff4d6d;
-
-    border-radius: 50%;
-
-    top: 0;
-    right: 0;
-
-    border: 1.5px solid #ffffff;
-
-    display: none;
-}
-   /* =========================
-   TOP BAR ICONS
-========================= */
-
-.home-topbar .top-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.home-topbar .top-action-button {
-    width: 44px;
-    height: 44px;
-
-    padding: 0;
-    margin: 0;
-
-    border: none;
-    border-radius: 14px;
-
-    background: #ffffff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #374151;
-
-    cursor: pointer;
-
-    position: relative;
-
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.home-topbar .top-notification-icon,
-.home-topbar .top-user-icon {
-    width: 25px;
-    height: 25px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-}
-
-.home-topbar .top-notification-icon svg,
-.home-topbar .top-user-icon svg {
-    width: 25px;
-    height: 25px;
-
-    display: block;
-
-    color: currentColor;
-}
-
-.home-topbar .notification-dot {
-    position: absolute;
-
-    width: 7px;
-    height: 7px;
-
-    top: 0;
-    right: 0;
-
-    background: #ff3b5c;
-
-    border-radius: 50%;
-
-    border: 2px solid #ffffff;
-
-    display: none;
-}
-   .home-topbar .top-action-button svg {
-    width: 28px !important;
-    height: 28px !important;
-
-    display: block !important;
-
-    color: #111827 !important;
-}
-
-.home-topbar .top-action-button svg path,
-.home-topbar .top-action-button svg circle {
-    stroke: #111827 !important;
-    opacity: 1 !important;
 }

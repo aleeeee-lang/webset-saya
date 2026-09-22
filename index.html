@@ -42,35 +42,93 @@
         </div>
 
 
-        <div class="home-actions">
+       <div class="top-actions">
 
-            <!-- NOTIFICATION -->
+    <!-- NOTIFICATION -->
 
-            <button
-                type="button"
-                class="notification-button"
+    <button
+        type="button"
+        class="top-action-button"
+        id="notificationButton"
+    >
+
+        <span class="top-notification-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
             >
-                🔔
 
-                <span class="notification-dot"></span>
+                <path
+                    d="M18 10C18 6.7 15.8 4 12 4C8.2 4 6 6.7 6 10V14L4.5 17H19.5L18 14V10Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
 
-            </button>
+                <path
+                    d="M10 20H14"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+
+            </svg>
+
+            <!-- MERAH JIKA ADA NOTIFIKASI -->
+
+            <span
+                class="notification-dot"
+                id="notificationDot"
+            ></span>
+
+        </span>
+
+    </button>
 
 
-            <!-- PROFILE -->
 
-            <a
-                href="my-attendance.html"
-                class="profile-button"
+    <!-- USER -->
+
+    <button
+        type="button"
+        class="top-action-button"
+        id="profileButton"
+    >
+
+        <span class="top-user-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
             >
-                👤
-            </a>
 
-        </div>
+                <circle
+                    cx="12"
+                    cy="8"
+                    r="3.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                />
 
+                <path
+                    d="M5 20C5.8 16.2 8.1 14 12 14C15.9 14 18.2 16.2 19 20"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+
+            </svg>
+
+        </span>
+
+    </button>
+
+</div>
     </header>
-
-
 
     <!-- =========================
          MAIN

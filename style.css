@@ -223,7 +223,7 @@ textarea {
 }
 
 .notification-panel.active {
-    display: block;
+    display: none;
 }
 
 .notification-panel h3 {

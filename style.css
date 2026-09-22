@@ -3444,4 +3444,74 @@ button {
         font-size: 22px;
     }
 
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.top-action-button {
+    width: 56px;
+    height: 56px;
+
+    border: none;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.06);
+
+    color: #4b5563;
+}
+
+
+.top-notification-icon,
+.top-user-icon {
+
+    width: 28px;
+    height: 28px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.top-notification-icon svg,
+.top-user-icon svg {
+
+    width: 28px;
+    height: 28px;
+
+    display: block;
+}
+
+
+.notification-dot {
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    background: #ff4d6d;
+
+    border-radius: 50%;
+
+    top: 0;
+    right: 0;
+
+    border: 1.5px solid #ffffff;
+
+    display: none;
 }

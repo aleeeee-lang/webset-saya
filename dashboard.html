@@ -22,17 +22,14 @@
 
 <body>
 
-
-    <!-- =====================================================
-         DASHBOARD MAIN
-    ====================================================== -->
+    <!-- =========================
+         DASHBOARD
+    ========================== -->
 
     <main class="dashboard-main">
 
 
-        <!-- =================================================
-             HEADER
-        ================================================== -->
+        <!-- HEADER -->
 
         <section class="dashboard-header">
 
@@ -56,9 +53,7 @@
 
 
 
-        <!-- =================================================
-             ATTENDANCE OVERVIEW
-        ================================================== -->
+        <!-- ATTENDANCE OVERVIEW -->
 
         <section class="dashboard-overview">
 
@@ -95,14 +90,10 @@
 
 
 
-        <!-- =================================================
-             STATUS CARDS
-        ================================================== -->
+        <!-- STATUS CARDS -->
 
         <section class="dashboard-status-grid">
 
-
-            <!-- HADIR -->
 
             <div class="dashboard-status-card hadir">
 
@@ -126,8 +117,6 @@
 
 
 
-            <!-- IZIN -->
-
             <div class="dashboard-status-card izin">
 
                 <div class="dashboard-status-icon">
@@ -150,8 +139,6 @@
 
 
 
-            <!-- SAKIT -->
-
             <div class="dashboard-status-card sakit">
 
                 <div class="dashboard-status-icon">
@@ -173,8 +160,6 @@
             </div>
 
 
-
-            <!-- ALPA -->
 
             <div class="dashboard-status-card alpa">
 
@@ -201,9 +186,7 @@
 
 
 
-        <!-- =================================================
-             ATTENDANCE CALENDAR
-        ================================================== -->
+        <!-- ATTENDANCE CALENDAR -->
 
         <section class="dashboard-card dashboard-calendar-card">
 
@@ -231,19 +214,13 @@
             <div
                 id="attendanceCalendar"
                 class="attendance-calendar"
-            >
-
-                <!-- Calendar akan dibuat oleh JavaScript -->
-
-            </div>
+            ></div>
 
         </section>
 
 
 
-        <!-- =================================================
-             RECENT ATTENDANCE
-        ================================================== -->
+        <!-- RECENT ATTENDANCE -->
 
         <section class="dashboard-card">
 
@@ -291,9 +268,7 @@
 
 
 
-        <!-- =================================================
-             ATTENDANCE STATISTICS
-        ================================================== -->
+        <!-- ATTENDANCE STATISTICS -->
 
         <section class="dashboard-card">
 
@@ -316,8 +291,6 @@
 
             <div class="statistics-content">
 
-
-                <!-- PROGRESS -->
 
                 <div class="attendance-progress">
 
@@ -346,8 +319,6 @@
                 </div>
 
 
-
-                <!-- INFO -->
 
                 <div class="statistics-info">
 
@@ -397,9 +368,7 @@
 
 
 
-        <!-- =================================================
-             ATTENDANCE INSIGHT
-        ================================================== -->
+        <!-- ATTENDANCE INSIGHT -->
 
         <section class="dashboard-insight">
 
@@ -428,9 +397,7 @@
 
 
 
-        <!-- =================================================
-             QUICK ACTION
-        ================================================== -->
+        <!-- QUICK ACTION -->
 
         <section class="dashboard-quick-action">
 
@@ -465,50 +432,131 @@
 
 
 
-    <!-- =====================================================
+    <!-- =========================
          BOTTOM NAVIGATION
-    ====================================================== -->
+    ========================== -->
 
     <nav class="bottom-nav">
 
-    <!-- HOME -->
-    <a href="index.html">
-        <span>⌂</span>
-        <small>Home</small>
-    </a>
+
+        <!-- HOME -->
+
+        <a href="index.html">
+
+            <span class="nav-home-icon">
+
+                <!-- SVG HOME YANG SUDAH KITA BUAT -->
+
+            </span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
 
 
-    <!-- ATTENDANCE -->
-    <a href="attendance.html">
-        <span>📷</span>
-        <small>Attendance</small>
-    </a>
+
+        <!-- ATTENDANCE -->
+
+        <a href="attendance.html">
+
+            <span class="nav-camera-icon">
+
+                <!-- SVG CAMERA YANG SUDAH KITA BUAT -->
+
+            </span>
+
+            <small>
+                Attendance
+            </small>
+
+        </a>
 
 
-    <!-- DASHBOARD -->
-    <a href="dashboard.html" class="active">
-        <span>▥</span>
-        <small>Dashboard</small>
-    </a>
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="dashboard.html"
+            class="active"
+        >
+
+            <span class="nav-dashboard-icon">
+
+                <!-- SVG DASHBOARD YANG SUDAH KITA BUAT -->
+
+            </span>
+
+            <small>
+                Dashboard
+            </small>
+
+        </a>
 
 
-    <!-- HISTORY -->
-    <a href="history.html">
-        <span>🕘</span>
-        <small>History</small>
-    </a>
+
+        <!-- HISTORY -->
+
+        <a href="history.html">
+
+            <span>
+                🕘
+            </span>
+
+            <small>
+                History
+            </small>
+
+        </a>
 
 
-    <!-- MY -->
-    <a href="my-attendance.html">
-        <span>👤</span>
-        <small>My</small>
-    </a>
 
-</nav>
-    <!-- =====================================================
+        <!-- MY -->
+
+        <a href="my-attendance.html">
+
+            <span class="nav-person-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="7"
+                        r="3.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                My
+            </small>
+
+        </a>
+
+
+    </nav>
+
+
+
+    <!-- =========================
          SUPABASE
-    ====================================================== -->
+    ========================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -518,9 +566,9 @@
 
 
 
-    <!-- =====================================================
+    <!-- =========================
          DASHBOARD JAVASCRIPT
-    ====================================================== -->
+    ========================== -->
 
     <script>
 
@@ -551,10 +599,6 @@
 
             }
 
-
-            /* ================================================
-               TOTAL STATUS
-            ================================================= */
 
             const total =
                 data.length;
@@ -589,29 +633,23 @@
 
 
 
-            /* ================================================
-               STATUS CARDS
-            ================================================= */
+            /* STATUS */
 
             document.getElementById(
                 "totalAttendance"
             ).textContent = total;
 
-
             document.getElementById(
                 "totalHadir"
             ).textContent = hadir;
-
 
             document.getElementById(
                 "totalIzin"
             ).textContent = izin;
 
-
             document.getElementById(
                 "totalSakit"
             ).textContent = sakit;
-
 
             document.getElementById(
                 "totalAlpa"
@@ -619,9 +657,7 @@
 
 
 
-            /* ================================================
-               STATISTICS
-            ================================================= */
+            /* STATISTICS */
 
             const percentage =
                 total > 0
@@ -662,9 +698,7 @@
 
 
 
-            /* ================================================
-               RECENT ATTENDANCE
-            ================================================= */
+            /* RECENT ATTENDANCE */
 
             const recent =
                 data.slice(0, 5);
@@ -679,7 +713,7 @@
             if (recent.length === 0) {
 
                 recentContainer.innerHTML = `
-                    
+
                     <div class="empty-attendance">
 
                         <span>📋</span>
@@ -692,65 +726,64 @@
 
                 `;
 
-                return;
+            }
+
+            else {
+
+                recentContainer.innerHTML = "";
+
+
+                recent.forEach(
+                    function (item) {
+
+                        recentContainer.innerHTML += `
+
+                            <div class="recent-attendance-item">
+
+                                <div class="recent-date">
+
+                                    <strong>
+                                        ${item.date}
+                                    </strong>
+
+                                    <span>
+                                        ${item.time || "-"}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="recent-name">
+
+                                    <strong>
+                                        ${item.name || "Student"}
+                                    </strong>
+
+                                    <span>
+                                        ${item.day || ""}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="recent-status ${item.status.toLowerCase()}">
+
+                                    ${item.status}
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }
+                );
 
             }
 
 
-            recentContainer.innerHTML = "";
 
-
-            recent.forEach(
-                function (item) {
-
-                    recentContainer.innerHTML += `
-
-                        <div class="recent-attendance-item">
-
-                            <div class="recent-date">
-
-                                <strong>
-                                    ${item.date}
-                                </strong>
-
-                                <span>
-                                    ${item.time || "-"}
-                                </span>
-
-                            </div>
-
-
-                            <div class="recent-name">
-
-                                <strong>
-                                    ${item.name || "Student"}
-                                </strong>
-
-                                <span>
-                                    ${item.day || ""}
-                                </span>
-
-                            </div>
-
-
-                            <div class="recent-status ${item.status.toLowerCase()}">
-
-                                ${item.status}
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-            );
-
-
-
-            /* ================================================
-               INSIGHT
-            ================================================= */
+            /* INSIGHT */
 
             const insightTitle =
                 document.getElementById(
@@ -769,7 +802,6 @@
                 insightTitle.textContent =
                     "No attendance yet";
 
-
                 insightText.textContent =
                     "Start recording your attendance to see your statistics.";
 
@@ -779,7 +811,6 @@
 
                 insightTitle.textContent =
                     "Excellent attendance!";
-
 
                 insightText.textContent =
                     "Keep maintaining your attendance consistently.";
@@ -791,7 +822,6 @@
                 insightTitle.textContent =
                     "Good attendance";
 
-
                 insightText.textContent =
                     "Your attendance is going well. Keep improving it.";
 
@@ -802,7 +832,6 @@
                 insightTitle.textContent =
                     "Keep improving";
 
-
                 insightText.textContent =
                     "Try to maintain a more consistent attendance record.";
 
@@ -810,11 +839,6 @@
 
         }
 
-
-
-        /* =====================================================
-           RUN DASHBOARD
-        ====================================================== */
 
         loadDashboard();
 

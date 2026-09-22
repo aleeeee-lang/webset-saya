@@ -194,6 +194,51 @@ textarea {
     background: #ff3b5c;
 }
 
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.notification-panel {
+    position: absolute;
+
+    top: 58px;
+    right: 0;
+
+    width: 320px;
+
+    padding: 18px;
+
+    background: white;
+
+    border-radius: 16px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+    display: none;
+
+    z-index: 2000;
+}
+
+.notification-panel.active {
+    display: block;
+}
+
+.notification-panel h3 {
+    margin: 0 0 12px;
+
+    font-size: 17px;
+
+    color: #20243a;
+}
+
+.notification-empty {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
 
 /* =========================================================
    HOME MAIN

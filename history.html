@@ -437,121 +437,225 @@
          BOTTOM NAVIGATION
     ========================== -->
 
-    <nav class="bottom-nav">
+   <nav class="bottom-nav">
+
+    <!-- HOME -->
+
+    <a href="index.html">
+
+        <span class="nav-home-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+
+                <path
+                    d="M4 10.5L12 4L20 10.5V19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19V10.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                />
+
+                <path
+                    d="M9 21V15H15V21"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+        </span>
+
+        <small>
+            Home
+        </small>
+
+    </a>
 
 
-        <!-- HOME -->
+    <!-- ATTENDANCE -->
 
-        <a href="index.html">
+    <a href="attendance.html">
 
-            <span class="nav-home-icon">
+        <span class="nav-camera-icon">
 
-                <!-- SVG HOME -->
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
 
-            </span>
+                <path
+                    d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                />
 
-            <small>
-                Home
-            </small>
+                <circle
+                    cx="12"
+                    cy="13"
+                    r="3.2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                />
 
-        </a>
+            </svg>
 
+        </span>
 
+        <small>
+            Attendance
+        </small>
 
-        <!-- ATTENDANCE -->
-
-        <a href="attendance.html">
-
-            <span class="nav-camera-icon">
-
-                <!-- SVG CAMERA -->
-
-            </span>
-
-            <small>
-                Attendance
-            </small>
-
-        </a>
-
-
-
-        <!-- DASHBOARD -->
-
-        <a href="dashboard.html">
-
-            <span class="nav-dashboard-icon">
-
-                <!-- SVG DASHBOARD -->
-
-            </span>
-
-            <small>
-                Dashboard
-            </small>
-
-        </a>
+    </a>
 
 
+    <!-- DASHBOARD -->
 
-        <!-- HISTORY -->
+    <a href="dashboard.html">
 
-        <a
-            href="history.html"
-            class="active"
-        >
+        <span class="nav-dashboard-icon">
 
-            <span>
-                🕘
-            </span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
 
-            <small>
-                History
-            </small>
+                <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                />
 
-        </a>
+                <path
+                    d="M8 15V17"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
 
+                <path
+                    d="M12 12V17"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
 
+                <path
+                    d="M16 9V17"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
 
-        <!-- MY -->
+            </svg>
 
-        <a href="my-attendance.html">
+        </span>
 
-            <span class="nav-person-icon">
+        <small>
+            Dashboard
+        </small>
 
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <circle
-                        cx="12"
-                        cy="7"
-                        r="3.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                </svg>
-
-            </span>
-
-            <small>
-                My
-            </small>
-
-        </a>
+    </a>
 
 
-    </nav>
+    <!-- HISTORY -->
+
+    <a
+        href="history.html"
+        class="active"
+    >
+
+        <span class="nav-history-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                />
+
+                <path
+                    d="M12 7.5V12L15 14"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                <path
+                    d="M4 6V10H8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+        </span>
+
+        <small>
+            History
+        </small>
+
+    </a>
+
+
+    <!-- MY -->
+
+    <a href="my-attendance.html">
+
+        <span class="nav-person-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+
+                <circle
+                    cx="12"
+                    cy="7"
+                    r="3.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                />
+
+                <path
+                    d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+
+            </svg>
+
+        </span>
+
+        <small>
+            My
+        </small>
+
+    </a>
+
+</nav>
 
 
 

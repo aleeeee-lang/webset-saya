@@ -671,6 +671,12 @@ button {
     font-size: 19px;
 }
 
+.bottom-nav a span svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+}
+
 .bottom-nav a small {
     font-size: 10px;
 }

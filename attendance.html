@@ -19,6 +19,7 @@
 
 </head>
 
+
 <body>
 
 
@@ -103,10 +104,17 @@
 
             <div class="date-time-item">
 
-               <div class="date-time-icon calendar-icon">
-    <span class="calendar-top"></span>
-    <strong id="calendarDay">20</strong>
-</div>
+                <div class="date-time-icon calendar-icon">
+
+                    <span class="calendar-top"></span>
+
+                    <strong id="calendarDay">
+                        20
+                    </strong>
+
+                </div>
+
+
                 <div>
 
                     <span>
@@ -122,18 +130,27 @@
             </div>
 
 
+
             <!-- TIME -->
 
             <div class="date-time-item">
 
-               <div class="date-time-icon clock-icon">
-    <div class="analog-clock">
-        <div class="clock-hand hour-hand"></div>
-        <div class="clock-hand minute-hand"></div>
-        <div class="clock-hand second-hand"></div>
-        <div class="clock-center"></div>
-    </div>
-</div>
+                <div class="date-time-icon clock-icon">
+
+                    <div class="analog-clock">
+
+                        <div class="clock-hand hour-hand"></div>
+
+                        <div class="clock-hand minute-hand"></div>
+
+                        <div class="clock-hand second-hand"></div>
+
+                        <div class="clock-center"></div>
+
+                    </div>
+
+                </div>
+
 
                 <div>
 
@@ -359,7 +376,7 @@
 
             <canvas
                 id="canvas"
-                style="display:none;"
+                style="display: none;"
             ></canvas>
 
 
@@ -369,7 +386,7 @@
             <img
                 id="photoPreview"
                 alt="Captured photo"
-                style="display:none;"
+                style="display: none;"
             >
 
 
@@ -406,51 +423,235 @@
          BOTTOM NAVIGATION
     ========================== -->
 
-   <nav class="bottom-nav">
-
-    <!-- HOME -->
-    <a href="index.html">
-        <span>⌂</span>
-        <small>Home</small>
-    </a>
+    <nav class="bottom-nav">
 
 
-    <!-- ATTENDANCE -->
-    <a href="attendance.html" class="active">
-        <span>📷</span>
-        <small>Attendance</small>
-    </a>
+        <!-- HOME -->
+
+        <a href="index.html">
+
+            <span class="nav-home-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <path
+                        d="M4 10.5L12 4L20 10.5V19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19V10.5Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M9 21V15H15V21"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
 
 
-    <!-- DASHBOARD -->
-    <a href="dashboard.html">
-        <span>▥</span>
-        <small>Dashboard</small>
-    </a>
+
+        <!-- ATTENDANCE -->
+
+        <a
+            href="attendance.html"
+            class="active"
+        >
+
+            <span class="nav-camera-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <path
+                        d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                    />
+
+                    <circle
+                        cx="12"
+                        cy="13"
+                        r="3.2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                Attendance
+            </small>
+
+        </a>
 
 
-    <!-- HISTORY -->
-    <a href="history.html">
-        <span>🕘</span>
-        <small>History</small>
-    </a>
+
+        <!-- DASHBOARD -->
+
+        <a href="dashboard.html">
+
+            <span class="nav-dashboard-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <rect
+                        x="4"
+                        y="4"
+                        width="16"
+                        height="16"
+                        rx="2.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M8 15V17"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M12 12V17"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M16 9V17"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                Dashboard
+            </small>
+
+        </a>
 
 
-    <!-- MY -->
-    <a href="my-attendance.html">
-        <span>👤</span>
-        <small>My</small>
-    </a>
 
-</nav>
+        <!-- HISTORY -->
+
+        <a href="history.html">
+
+            <span class="nav-history-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M12 7V12L15 14"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M5 5L3.5 7"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                History
+            </small>
+
+        </a>
 
 
-        
+
+        <!-- MY -->
+
+        <a href="my-attendance.html">
+
+            <span class="nav-person-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="7"
+                        r="3.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </span>
+
+            <small>
+                My
+            </small>
+
+        </a>
+
+
+    </nav>
 
 
 
     <!-- =========================
-         JAVASCRIPT
+         JAVASCRIPT FILES
     ========================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -499,13 +700,12 @@
                 }
             );
 
+
+            /* CALENDAR DAY */
+
             document.getElementById(
-    "calendarDay"
-).textContent = now.getDate();
-
-            const day = now.getDate();
-
-document.getElementById("calendarDay").textContent = day;
+                "calendarDay"
+            ).textContent = now.getDate();
 
 
             /* UPDATE DATE */
@@ -534,50 +734,70 @@ document.getElementById("calendarDay").textContent = day;
 
     </script>
 
+
+
+    <!-- =========================
+         ANALOG CLOCK
+    ========================== -->
+
     <script>
-    function updateAnalogClock() {
 
-        const now = new Date();
+        function updateAnalogClock() {
 
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
+            const now = new Date();
 
-        // Hitung sudut masing-masing jarum
-        const hourDegree =
-            (hours % 12) * 30 +
-            minutes * 0.5;
+            const hours = now.getHours();
 
-        const minuteDegree =
-            minutes * 6 +
-            seconds * 0.1;
+            const minutes = now.getMinutes();
 
-        const secondDegree =
-            seconds * 6;
+            const seconds = now.getSeconds();
 
 
-        // Gerakkan jarum
-        document.querySelector(".hour-hand").style.transform =
-            `translateX(-50%) rotate(${hourDegree}deg)`;
+            /* CLOCK HAND ANGLES */
 
-        document.querySelector(".minute-hand").style.transform =
-            `translateX(-50%) rotate(${minuteDegree}deg)`;
+            const hourDegree =
+                (hours % 12) * 30 +
+                minutes * 0.5;
 
-        document.querySelector(".second-hand").style.transform =
-            `translateX(-50%) rotate(${secondDegree}deg)`;
-    }
+            const minuteDegree =
+                minutes * 6 +
+                seconds * 0.1;
 
-
-    // Jalankan langsung
-    updateAnalogClock();
+            const secondDegree =
+                seconds * 6;
 
 
-    // Update setiap 1 detik
-    setInterval(
-        updateAnalogClock,
-        1000
-    );
-</script>
+            /* MOVE CLOCK HANDS */
+
+            document.querySelector(
+                ".hour-hand"
+            ).style.transform =
+                `translateX(-50%) rotate(${hourDegree}deg)`;
+
+
+            document.querySelector(
+                ".minute-hand"
+            ).style.transform =
+                `translateX(-50%) rotate(${minuteDegree}deg)`;
+
+
+            document.querySelector(
+                ".second-hand"
+            ).style.transform =
+                `translateX(-50%) rotate(${secondDegree}deg)`;
+
+        }
+
+
+        updateAnalogClock();
+
+
+        setInterval(
+            updateAnalogClock,
+            1000
+        );
+
+    </script>
 
 
 

@@ -3589,3 +3589,17 @@ button {
 
     display: none;
 }
+   .home-topbar .top-action-button svg {
+    width: 28px !important;
+    height: 28px !important;
+
+    display: block !important;
+
+    color: #111827 !important;
+}
+
+.home-topbar .top-action-button svg path,
+.home-topbar .top-action-button svg circle {
+    stroke: #111827 !important;
+    opacity: 1 !important;
+}

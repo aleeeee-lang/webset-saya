@@ -10,6 +10,15 @@ async function startCamera() {
 
     try {
 
+        if (!navigator.mediaDevices) {
+
+            throw new Error(
+                "navigator.mediaDevices tidak tersedia. Website harus dibuka melalui HTTPS."
+            );
+
+        }
+
+
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
                 video: {
@@ -17,26 +26,34 @@ async function startCamera() {
                 }
             });
 
+
         const video =
             document.getElementById("video");
+
 
         video.srcObject =
             cameraStream;
 
+
         await video.play();
 
-   } catch (error) {
 
-    console.error("CAMERA ERROR:", error);
+    } catch (error) {
 
-    alert(
-        "CAMERA ERROR:\n\n" +
-        error.name +
-        "\n\n" +
-        error.message
-    );
+        console.error(
+            "CAMERA ERROR:",
+            error
+        );
 
-}
+
+        alert(
+            "CAMERA ERROR:\n\n" +
+            error.name +
+            "\n\n" +
+            error.message
+        );
+
+    }
 
 }
 

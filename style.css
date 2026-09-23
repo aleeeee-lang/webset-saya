@@ -653,8 +653,17 @@ textarea {
 
 /* =========================================================
    ATTENDANCE PAGE
-   CLEAN + MODERN
+   SAME WIDTH AS HOME
 ========================================================= */
+
+.attendance-topbar,
+.attendance-main {
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
 
 
 /* =========================================================
@@ -662,59 +671,38 @@ textarea {
 ========================================================= */
 
 .attendance-topbar {
-    width: 100%;
-    max-width: 1188px;
-
-    margin: 0 auto;
-    padding: 34px 0 20px;
+    padding: 30px 0 18px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    box-sizing: border-box;
-}
-
-
-/* TITLE */
-
-.attendance-title {
-    margin: 0;
 }
 
 .attendance-title h1 {
     margin: 0;
 
+    color: #20243a;
+
     font-size: 34px;
     font-weight: 700;
-
     line-height: 1.15;
-
-    color: #172554;
 }
 
 .attendance-title p {
     margin: 8px 0 0;
 
-    font-size: 15px;
+    color: #777;
 
-    color: #64748b;
+    font-size: 15px;
 }
 
 
 /* =========================================================
-   MAIN CONTAINER
+   ATTENDANCE MAIN
 ========================================================= */
 
 .attendance-main {
-    width: 100%;
-    max-width: 1188px;
-
-    margin: 0 auto;
-
-    padding: 10px 0 130px;
-
-    box-sizing: border-box;
+    padding: 8px 0 130px;
 }
 
 
@@ -726,21 +714,17 @@ textarea {
     width: 100%;
 
     display: grid;
-
     grid-template-columns: 1fr 1fr;
 
-    gap: 18px;
+    gap: 14px;
 
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
-
-/* DATE/TIME CARD */
-
 .date-time-item {
-    min-height: 92px;
+    min-height: 100px;
 
-    padding: 20px 24px;
+    padding: 20px;
 
     display: flex;
     align-items: center;
@@ -749,31 +733,555 @@ textarea {
 
     background: #ffffff;
 
-    border: 1px solid #e5e7eb;
+    border: 1px solid #eeeeee;
 
     border-radius: 20px;
 
-    box-sizing: border-box;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
 
-    box-shadow:
-        0 8px 25px rgba(15, 23, 42, 0.04);
+    box-sizing: border-box;
 }
 
 
+/* =========================================================
+   DATE / TIME ICON
+========================================================= */
 
+.date-time-icon {
+    width: 54px;
+    height: 54px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: #eeeeff;
+}
 
 
 /* =========================================================
-   DESKTOP
+   CALENDAR ICON
+   TETAP MENGGUNAKAN ICON LAMA
 ========================================================= */
 
-@media (min-width: 1221px) {
+.calendar-icon {
+    position: relative;
+}
 
-    .attendance-topbar,
-    .attendance-main {
-        max-width: 1188px;
-    }
+.calendar-icon::before {
+    content: "";
 
+    position: absolute;
+
+    width: 28px;
+    height: 24px;
+
+    border: 2px solid #64748b;
+
+    border-radius: 5px;
+
+    top: 15px;
+    left: 13px;
+}
+
+.calendar-top {
+    position: absolute;
+
+    width: 28px;
+    height: 2px;
+
+    background: #64748b;
+
+    top: 23px;
+    left: 13px;
+}
+
+.calendar-icon strong {
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: 10px;
+
+    font-size: 14px;
+
+    color: #172554;
+}
+
+
+/* =========================================================
+   ANALOG CLOCK
+   TETAP MENGGUNAKAN CLOCK LAMA
+========================================================= */
+
+.analog-clock {
+    width: 34px;
+    height: 34px;
+
+    position: relative;
+
+    border: 2px solid #64748b;
+
+    border-radius: 50%;
+}
+
+.clock-hand {
+    position: absolute;
+
+    width: 2px;
+
+    left: 50%;
+    bottom: 50%;
+
+    background: #172554;
+
+    border-radius: 2px;
+
+    transform-origin: bottom center;
+}
+
+.hour-hand {
+    height: 9px;
+}
+
+.minute-hand {
+    height: 13px;
+}
+
+.second-hand {
+    height: 15px;
+
+    background: #635bff;
+}
+
+.clock-center {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background: #172554;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   DATE / TIME TEXT
+========================================================= */
+
+.date-time-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.date-time-content span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+.date-time-content strong {
+    color: #20243a;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   GENERAL ATTENDANCE CARD
+========================================================= */
+
+.attendance-card {
+    width: 100%;
+
+    margin-bottom: 16px;
+
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 20px;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD LABEL
+========================================================= */
+
+.card-label {
+    margin-bottom: 10px;
+
+    color: #20243a;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   STATUS SELECT
+========================================================= */
+
+.status-select {
+    width: 100%;
+    min-height: 56px;
+
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    background: #fafafa;
+
+    color: #20243a;
+
+    font-size: 14px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.status-select:hover {
+    background: #f7f7ff;
+}
+
+.status-arrow {
+    margin-left: auto;
+
+    color: #888;
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   STATUS LIGHT
+========================================================= */
+
+.status-light {
+    width: 10px;
+    height: 10px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #d1d5db;
+}
+
+.status-light.hadir {
+    background: #22c55e;
+}
+
+.status-light.izin {
+    background: #f59e0b;
+}
+
+.status-light.sakit {
+    background: #3b82f6;
+}
+
+.status-light.alpa {
+    background: #ef4444;
+}
+
+
+/* =========================================================
+   STATUS DROPDOWN
+========================================================= */
+
+.status-dropdown {
+    width: 100%;
+
+    margin-top: 8px;
+
+    padding: 6px;
+
+    display: none;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 14px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+    box-sizing: border-box;
+}
+
+.status-dropdown.show {
+    display: block;
+}
+
+.status-option {
+    width: 100%;
+
+    padding: 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #20243a;
+
+    font-size: 14px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.status-option:hover {
+    background: #f5f5ff;
+}
+
+
+/* =========================================================
+   HIDDEN RADIO
+========================================================= */
+
+.hidden-status-inputs {
+    display: none;
+}
+
+
+/* =========================================================
+   REASON
+========================================================= */
+
+.reason-card textarea {
+    width: 100%;
+
+    min-height: 105px;
+
+    padding: 14px;
+
+    resize: vertical;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    background: #fafafa;
+
+    color: #20243a;
+
+    font-size: 14px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+.reason-card textarea:focus {
+    border-color: #b7b3ff;
+
+    background: #ffffff;
+}
+
+.reason-card textarea::placeholder {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+.camera-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #777;
+
+    font-size: 11px;
+
+    letter-spacing: 1.5px;
+}
+
+.camera-header h2 {
+    margin: 0;
+
+    color: #20243a;
+
+    font-size: 21px;
+}
+
+.camera-header p {
+    margin: 6px 0 18px;
+
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+/* CAMERA BOX */
+
+.camera-box {
+    width: 100%;
+
+    min-height: 420px;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f2f6;
+
+    border-radius: 17px;
+}
+
+.camera-box video {
+    width: 100%;
+    height: 100%;
+
+    min-height: 420px;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+/* CAMERA BUTTONS */
+
+.camera-buttons {
+    margin-top: 14px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+}
+
+.camera-button {
+    min-height: 48px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.camera-button.secondary {
+    background: #eeeeff;
+
+    color: #635bff;
+}
+
+.camera-button.primary {
+    background: linear-gradient(
+        135deg,
+        #6861ff,
+        #8d6bff
+    );
+
+    color: white;
+}
+
+
+/* FACE STATUS */
+
+#faceStatus {
+    margin: 12px 0 0;
+
+    color: #888;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* PHOTO PREVIEW */
+
+#photoPreview {
+    width: 100%;
+
+    margin-top: 14px;
+
+    border-radius: 16px;
+}
+
+
+/* =========================================================
+   SUBMIT
+========================================================= */
+
+.submit-button {
+    width: 100%;
+
+    min-height: 54px;
+
+    margin-top: 4px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #6861ff,
+        #8d6bff
+    );
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(99, 91, 255, 0.20);
+}
+
+.submit-button:hover {
+    transform: translateY(-1px);
 }
 
 
@@ -781,13 +1289,11 @@ textarea {
    LAPTOP / TABLET
 ========================================================= */
 
-@media (max-width: 1220px) {
+@media (max-width: 1120px) {
 
     .attendance-topbar,
     .attendance-main {
         width: calc(100% - 40px);
-
-        max-width: 1188px;
     }
 
 }
@@ -802,20 +1308,16 @@ textarea {
     .attendance-topbar {
         width: 100%;
 
-        padding:
-            24px 18px 16px;
+        padding: 24px 18px 14px;
     }
-
 
     .attendance-title h1 {
         font-size: 28px;
     }
 
-
     .attendance-title p {
         font-size: 14px;
     }
-
 
     .attendance-main {
         width: 100%;
@@ -830,16 +1332,13 @@ textarea {
     .attendance-date-time {
         grid-template-columns: 1fr;
 
-        gap: 12px;
-
-        margin-bottom: 14px;
+        gap: 10px;
     }
-
 
     .date-time-item {
         min-height: 82px;
 
-        padding: 16px 18px;
+        padding: 15px;
 
         border-radius: 17px;
     }
@@ -849,8 +1348,6 @@ textarea {
 
     .attendance-card {
         padding: 18px;
-
-        margin-bottom: 14px;
 
         border-radius: 17px;
     }
@@ -862,26 +1359,19 @@ textarea {
         min-height: 300px;
     }
 
-
     .camera-box video {
         min-height: 300px;
     }
 
 
-    /* BUTTONS */
+    /* CAMERA BUTTON */
 
     .camera-buttons {
-        flex-direction: column;
+        grid-template-columns: 1fr;
     }
 
-
-    .camera-buttons button {
+    .camera-button {
         width: 100%;
-    }
-
-
-    .submit-button {
-        min-height: 54px;
     }
 
 }
@@ -898,131 +1388,13 @@ textarea {
         padding-right: 15px;
     }
 
-
     .attendance-main {
         padding-left: 15px;
         padding-right: 15px;
     }
 
-
     .attendance-title h1 {
         font-size: 25px;
-    }
-
-
-    .date-time-item {
-        padding: 15px;
-    }
-
-
-    .attendance-card {
-        padding: 16px;
-    }
-
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .attendance-topbar {
-        padding: 26px 20px 10px;
-    }
-
-    .attendance-main {
-        padding: 18px 20px 125px;
-    }
-
-}
-
-
-/* =========================================================
-   PHONE
-========================================================= */
-
-@media (max-width: 480px) {
-
-    .attendance-topbar {
-        padding: 24px 16px 8px;
-    }
-
-    .attendance-main {
-        padding: 18px 16px 120px;
-    }
-
-    .attendance-title h1 {
-        font-size: 28px;
-    }
-
-    .attendance-date-time {
-        gap: 10px;
-    }
-
-    .date-time-item {
-        min-height: 78px;
-        padding: 12px;
-        gap: 9px;
-    }
-
-    .date-time-icon {
-        width: 43px;
-        height: 43px;
-    }
-
-    .date-time-item span {
-        font-size: 11px;
-    }
-
-    .date-time-item strong {
-        font-size: 12px;
-    }
-
-    .attendance-card {
-        padding: 18px;
-        border-radius: 18px;
-    }
-
-    .camera-box {
-        height: 260px;
-    }
-
-    .camera-buttons {
-        gap: 9px;
-    }
-
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .attendance-topbar {
-        padding: 24px 18px 8px;
-    }
-
-    .attendance-main {
-        padding: 24px 18px 120px;
-    }
-
-    .attendance-title h1 {
-        font-size: 28px;
-    }
-
-    .attendance-date-time {
-        gap: 12px;
-    }
-
-    .date-time-item {
-        padding: 13px;
-
-        min-height: 78px;
-
-        border-radius: 17px;
     }
 
     .date-time-icon {
@@ -1030,73 +1402,10 @@ textarea {
         height: 45px;
     }
 
-    .attendance-card {
-        padding: 18px;
-
-        border-radius: 18px;
-    }
-
-    .camera-box {
-        height: 260px;
-    }
-
-}
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 480px) {
-
-    .attendance-page {
-        padding: 25px 16px 115px;
-    }
-
-    .attendance-intro h1 {
-        font-size: 27px;
-    }
-
-    .attendance-date-time {
-        gap: 9px;
-    }
-
-    .date-time-item {
-        padding: 12px;
-        gap: 9px;
-    }
-
-    .date-time-icon {
-        width: 40px;
-        height: 40px;
-    }
-
     .date-time-content strong {
-        font-size: 12px;
+        font-size: 14px;
     }
 
-    .attendance-card {
-        padding: 17px;
-        border-radius: 17px;
-    }
-
-    .status-dropdown {
-        left: 17px;
-        right: 17px;
-        top: 87px;
-    }
-
-    .camera-box {
-        height: 230px;
-    }
-
-}
-
-
-/* =========================================================
-   BODY FOR ATTENDANCE
-========================================================= */
-
-body {
-    background: #f8f9fb;
 }
 
 

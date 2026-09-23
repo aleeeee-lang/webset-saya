@@ -45,6 +45,44 @@ async function startCamera() {
 
 
 // =========================
+// GET SCREEN ORIENTATION
+// =========================
+
+function getCameraRotation() {
+
+    /*
+     * Ambil orientasi layar
+     */
+
+    if (
+        screen.orientation &&
+        typeof screen.orientation.angle === "number"
+    ) {
+
+        return screen.orientation.angle;
+
+    }
+
+
+    /*
+     * Fallback untuk browser lama
+     */
+
+    if (
+        typeof window.orientation === "number"
+    ) {
+
+        return window.orientation;
+
+    }
+
+
+    return 0;
+
+}
+
+
+// =========================
 // TAKE PHOTO
 // =========================
 
@@ -75,10 +113,6 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    /*
-     * Ambil ukuran kamera
-     */
-
     const videoWidth =
         video.videoWidth;
 
@@ -87,26 +121,107 @@ function takePhoto() {
 
 
     /*
-     * Canvas mengikuti orientasi
-     * video kamera.
+     * Ambil orientasi device
      */
 
-    canvas.width =
-        videoWidth;
-
-    canvas.height =
-        videoHeight;
+    let rotation =
+        getCameraRotation();
 
 
     /*
-     * Mirror kamera depan
-     * supaya hasil foto tidak terbalik kiri-kanan.
+     * Normalisasi nilai rotasi
      */
+
+    rotation =
+        ((rotation % 360) + 360) % 360;
+
+
+    /*
+     * Ukuran canvas
+     */
+
+    if (
+        rotation === 90 ||
+        rotation === 270
+    ) {
+
+        canvas.width =
+            videoHeight;
+
+        canvas.height =
+            videoWidth;
+
+    } else {
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
+    }
+
 
     context.save();
 
+
+    /*
+     * =========================
+     * ROTASI
+     * =========================
+     */
+
+    if (rotation === 90) {
+
+        context.translate(
+            canvas.width,
+            0
+        );
+
+        context.rotate(
+            Math.PI / 2
+        );
+
+    }
+
+    else if (rotation === 180) {
+
+        context.translate(
+            canvas.width,
+            canvas.height
+        );
+
+        context.rotate(
+            Math.PI
+        );
+
+    }
+
+    else if (rotation === 270) {
+
+        context.translate(
+            0,
+            canvas.height
+        );
+
+        context.rotate(
+            -Math.PI / 2
+        );
+
+    }
+
+
+    /*
+     * =========================
+     * FRONT CAMERA
+     * =========================
+     *
+     * Mirror kiri-kanan supaya
+     * hasil selfie terasa natural.
+     */
+
     context.translate(
-        canvas.width,
+        videoWidth,
         0
     );
 
@@ -115,6 +230,12 @@ function takePhoto() {
         1
     );
 
+
+    /*
+     * =========================
+     * DRAW CAMERA
+     * =========================
+     */
 
     context.drawImage(
         video,
@@ -129,7 +250,9 @@ function takePhoto() {
 
 
     /*
-     * Tampilkan hasil foto
+     * =========================
+     * PHOTO PREVIEW
+     * =========================
      */
 
     const photoPreview =
@@ -140,7 +263,8 @@ function takePhoto() {
 
     photoPreview.src =
         canvas.toDataURL(
-            "image/jpeg"
+            "image/jpeg",
+            0.9
         );
 
 
@@ -149,7 +273,9 @@ function takePhoto() {
 
 
     /*
-     * Simpan foto
+     * =========================
+     * SAVE PHOTO
+     * =========================
      */
 
     canvas.toBlob(

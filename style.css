@@ -505,12 +505,11 @@ textarea {
 .attendance-page .attendance-topbar,
 .attendance-page .attendance-main {
     width: 100%;
-    max-width: 900px;
+    max-width: 650px;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
 }
-
 
 /* =========================================================
    ATTENDANCE TOPBAR
@@ -701,8 +700,8 @@ textarea {
 
 .attendance-page .attendance-card {
     width: 100%;
-    margin-bottom: 16px;
-    padding: 20px;
+    margin-bottom: 14px;
+    padding: 16px;
     background: #ffffff;
     border: 1px solid #e8eaf0;
     border-radius: 18px;
@@ -845,7 +844,7 @@ textarea {
 
 .attendance-page .camera-box {
     width: 100%;
-    height: 300px;
+    height: 220px;
     overflow: hidden;
     display: flex;
     align-items: center;

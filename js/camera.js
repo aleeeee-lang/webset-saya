@@ -2,91 +2,77 @@ let cameraStream = null;
 let capturedPhoto = null;
 
 
-// =========================
+// =====================================
 // START CAMERA
-// =========================
+// =====================================
 
 async function startCamera() {
 
+    const video = document.getElementById("video");
+
     try {
 
-        const video =
-            document.getElementById("video");
-
-
-        // Kalau kamera sebelumnya masih aktif
+        // Matikan kamera lama
         if (cameraStream) {
 
-            cameraStream
-                .getTracks()
-                .forEach(function(track) {
-                    track.stop();
-                });
+            cameraStream.getTracks().forEach(function(track) {
+                track.stop();
+            });
 
             cameraStream = null;
         }
 
 
-        // Buka kamera
-        cameraStream =
+        // Minta akses kamera
+        const stream =
             await navigator.mediaDevices.getUserMedia({
-
                 video: {
                     facingMode: "user"
                 },
-
                 audio: false
-
             });
 
 
-        // Masukkan kamera ke video
-        video.srcObject =
-            cameraStream;
+        cameraStream = stream;
 
 
-        // Tunggu kamera siap
-        await new Promise(function(resolve) {
+        // Pasang kamera
+        video.srcObject = stream;
 
-            if (video.readyState >= 2) {
 
-                resolve();
+        // Penting untuk mobile
+        video.muted = true;
+        video.autoplay = true;
+        video.playsInline = true;
 
-            } else {
 
-                video.onloadedmetadata =
-                    function() {
+        // Jangan pakai await video.play()
+        video.play().catch(function(error) {
 
-                        resolve();
-
-                    };
-
-            }
+            console.log(
+                "VIDEO PLAY ERROR:",
+                error
+            );
 
         });
 
 
-        // Jalankan video
-        await video.play();
-
-
-        console.log(
-            "CAMERA BERHASIL AKTIF"
-        );
+        console.log("CAMERA BERHASIL DIBUKA");
 
 
     } catch (error) {
 
         console.error(
             "CAMERA ERROR:",
-            error
+            error.name,
+            error.message
         );
 
 
         alert(
-            "Kamera tidak bisa dibuka.\n\n" +
+            "CAMERA ERROR:\n\n" +
             error.name +
-            "\n" +
+            "\n\n" +
             error.message
         );
 
@@ -96,9 +82,9 @@ async function startCamera() {
 
 
 
-// =========================
+// =====================================
 // TAKE PHOTO
-// =========================
+// =====================================
 
 function takePhoto() {
 
@@ -106,7 +92,6 @@ function takePhoto() {
         document.getElementById("video");
 
 
-    // Pastikan kamera aktif
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
@@ -114,7 +99,7 @@ function takePhoto() {
     ) {
 
         alert(
-            "Silakan buka kamera terlebih dahulu."
+            "Kamera belum aktif."
         );
 
         return;
@@ -130,13 +115,6 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    /*
-     * Gunakan ukuran asli kamera.
-     *
-     * JANGAN dipaksa 1080 x 1920 dulu.
-     * Kita stabilkan kamera terlebih dahulu.
-     */
-
     canvas.width =
         video.videoWidth;
 
@@ -144,19 +122,13 @@ function takePhoto() {
         video.videoHeight;
 
 
-    /*
-     * Kamera depan dibuat mirror
-     * seperti tampilan selfie.
-     */
-
+    // Mirror kamera depan
     context.save();
-
 
     context.translate(
         canvas.width,
         0
     );
-
 
     context.scale(
         -1,
@@ -176,14 +148,9 @@ function takePhoto() {
     context.restore();
 
 
-    // =========================
-    // PREVIEW
-    // =========================
-
+    // Preview
     const photoPreview =
-        document.getElementById(
-            "photoPreview"
-        );
+        document.getElementById("photoPreview");
 
 
     photoPreview.src =
@@ -197,16 +164,12 @@ function takePhoto() {
         "block";
 
 
-    // =========================
-    // SIMPAN FOTO
-    // =========================
-
+    // Simpan Blob
     canvas.toBlob(
 
         function(blob) {
 
-            capturedPhoto =
-                blob;
+            capturedPhoto = blob;
 
         },
 
@@ -225,34 +188,31 @@ function takePhoto() {
 
 
 
-// =========================
+// =====================================
 // STOP CAMERA
-// =========================
+// =====================================
 
 function stopCamera() {
 
-    if (cameraStream) {
-
-        cameraStream
-            .getTracks()
-            .forEach(function(track) {
-
-                track.stop();
-
-            });
-
-
-        cameraStream =
-            null;
-
-
-        const video =
-            document.getElementById("video");
-
-
-        video.srcObject =
-            null;
-
+    if (!cameraStream) {
+        return;
     }
+
+
+    cameraStream
+        .getTracks()
+        .forEach(function(track) {
+            track.stop();
+        });
+
+
+    cameraStream = null;
+
+
+    const video =
+        document.getElementById("video");
+
+
+    video.srcObject = null;
 
 }

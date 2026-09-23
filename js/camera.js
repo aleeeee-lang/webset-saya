@@ -86,6 +86,7 @@ function getCameraRotation() {
 // TAKE PHOTO
 // =========================
 
+
 function takePhoto() {
 
     const video =
@@ -113,115 +114,44 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    const videoWidth =
+    const width =
         video.videoWidth;
 
-    const videoHeight =
+    const height =
         video.videoHeight;
 
 
     /*
-     * Ambil orientasi device
+     * Canvas mengikuti ukuran kamera
      */
 
-    let rotation =
-        getCameraRotation();
+    canvas.width =
+        width;
+
+    canvas.height =
+        height;
 
 
     /*
-     * Normalisasi nilai rotasi
+     * Bersihkan canvas
      */
 
-    rotation =
-        ((rotation % 360) + 360) % 360;
+    context.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
 
     /*
-     * Ukuran canvas
+     * Mirror kamera depan
      */
-
-    if (
-        rotation === 90 ||
-        rotation === 270
-    ) {
-
-        canvas.width =
-            videoHeight;
-
-        canvas.height =
-            videoWidth;
-
-    } else {
-
-        canvas.width =
-            videoWidth;
-
-        canvas.height =
-            videoHeight;
-
-    }
-
 
     context.save();
 
-
-    /*
-     * =========================
-     * ROTASI
-     * =========================
-     */
-
-    if (rotation === 90) {
-
-        context.translate(
-            canvas.width,
-            0
-        );
-
-        context.rotate(
-            Math.PI / 2
-        );
-
-    }
-
-    else if (rotation === 180) {
-
-        context.translate(
-            canvas.width,
-            canvas.height
-        );
-
-        context.rotate(
-            Math.PI
-        );
-
-    }
-
-    else if (rotation === 270) {
-
-        context.translate(
-            0,
-            canvas.height
-        );
-
-        context.rotate(
-            -Math.PI / 2
-        );
-
-    }
-
-
-    /*
-     * =========================
-     * FRONT CAMERA
-     * =========================
-     *
-     * Mirror kiri-kanan supaya
-     * hasil selfie terasa natural.
-     */
-
     context.translate(
-        videoWidth,
+        canvas.width,
         0
     );
 
@@ -232,17 +162,16 @@ function takePhoto() {
 
 
     /*
-     * =========================
-     * DRAW CAMERA
-     * =========================
+     * Ambil foto TANPA
+     * rotasi 90 / 270
      */
 
     context.drawImage(
         video,
         0,
         0,
-        videoWidth,
-        videoHeight
+        width,
+        height
     );
 
 
@@ -250,9 +179,7 @@ function takePhoto() {
 
 
     /*
-     * =========================
-     * PHOTO PREVIEW
-     * =========================
+     * Tampilkan preview
      */
 
     const photoPreview =
@@ -273,9 +200,7 @@ function takePhoto() {
 
 
     /*
-     * =========================
-     * SAVE PHOTO
-     * =========================
+     * Simpan foto
      */
 
     canvas.toBlob(

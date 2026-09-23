@@ -505,7 +505,7 @@ textarea {
 .attendance-page .attendance-topbar,
 .attendance-page .attendance-main {
     width: 100%;
-    max-width: 760px;
+    max-width: 900px;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;

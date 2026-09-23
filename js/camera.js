@@ -53,7 +53,7 @@ function takePhoto() {
     const video =
         document.getElementById("video");
 
-    // Pastikan kamera sudah aktif
+
     if (
         !cameraStream ||
         video.videoWidth === 0
@@ -67,98 +67,46 @@ function takePhoto() {
 
     }
 
+
     const canvas =
         document.getElementById("canvas");
 
     const context =
         canvas.getContext("2d");
 
-    // Ambil orientasi layar
-    const orientation =
-        screen.orientation
-            ? screen.orientation.angle
-            : 0;
 
-    let width =
+    /*
+     * Ambil ukuran kamera
+     */
+
+    const videoWidth =
         video.videoWidth;
 
-    let height =
+    const videoHeight =
         video.videoHeight;
 
 
-    // =========================
-    // ROTASI FOTO
-    // =========================
+    /*
+     * Canvas mengikuti orientasi
+     * video kamera.
+     */
 
-    if (
-        orientation === 90 ||
-        orientation === 270
-    ) {
+    canvas.width =
+        videoWidth;
 
-        canvas.width = height;
-        canvas.height = width;
+    canvas.height =
+        videoHeight;
 
-    } else {
 
-        canvas.width = width;
-        canvas.height = height;
-
-    }
-
+    /*
+     * Mirror kamera depan
+     * supaya hasil foto tidak terbalik kiri-kanan.
+     */
 
     context.save();
 
-
-    // =========================
-    // ROTATE SESUAI HP
-    // =========================
-
-    if (orientation === 90) {
-
-        context.translate(
-            canvas.width,
-            0
-        );
-
-        context.rotate(
-            Math.PI / 2
-        );
-
-    }
-
-    else if (orientation === 270) {
-
-        context.translate(
-            0,
-            canvas.height
-        );
-
-        context.rotate(
-            -Math.PI / 2
-        );
-
-    }
-
-    else if (orientation === 180) {
-
-        context.translate(
-            canvas.width,
-            canvas.height
-        );
-
-        context.rotate(
-            Math.PI
-        );
-
-    }
-
-
-    // =========================
-    // MIRROR UNTUK FRONT CAMERA
-    // =========================
-
     context.translate(
-        width,
+        canvas.width,
         0
     );
 
@@ -172,36 +120,37 @@ function takePhoto() {
         video,
         0,
         0,
-        width,
-        height
+        videoWidth,
+        videoHeight
     );
 
 
     context.restore();
 
 
-    // =========================
-    // PREVIEW
-    // =========================
+    /*
+     * Tampilkan hasil foto
+     */
 
     const photoPreview =
         document.getElementById(
             "photoPreview"
         );
 
+
     photoPreview.src =
         canvas.toDataURL(
-            "image/jpeg",
-            0.9
+            "image/jpeg"
         );
+
 
     photoPreview.style.display =
         "block";
 
 
-    // =========================
-    // SAVE PHOTO
-    // =========================
+    /*
+     * Simpan foto
+     */
 
     canvas.toBlob(
 
@@ -224,6 +173,7 @@ function takePhoto() {
     );
 
 }
+
 
 // =========================
 // STOP CAMERA

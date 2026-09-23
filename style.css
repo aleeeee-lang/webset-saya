@@ -991,14 +991,6 @@ textarea {
     transform: translateY(-1px);
 }
 
-@media (max-width: 600px) {
-    .attendance-page {
-        width: 100%;
-        padding: 0 15px 100px;
-        box-sizing: border-box;
-    }
-}
-
 
 /* =========================================================
    DASHBOARD

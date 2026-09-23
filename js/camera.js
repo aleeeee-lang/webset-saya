@@ -13,9 +13,6 @@ async function startCamera() {
         const video =
             document.getElementById("video");
 
-
-        // Kalau kamera lama masih aktif,
-        // matikan dulu
         if (cameraStream) {
 
             cameraStream
@@ -28,22 +25,22 @@ async function startCamera() {
 
         }
 
-
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
+
                 video: {
                     facingMode: "user"
                 },
+
                 audio: false
+
             });
 
 
-        // Pasang stream ke video
         video.srcObject =
             cameraStream;
 
 
-        // Tunggu sampai video siap
         await new Promise(function(resolve) {
 
             if (video.readyState >= 2) {
@@ -53,7 +50,6 @@ async function startCamera() {
                 return;
 
             }
-
 
             video.onloadedmetadata =
                 function() {
@@ -65,7 +61,6 @@ async function startCamera() {
         });
 
 
-        // Baru jalankan video
         await video.play();
 
 
@@ -92,6 +87,8 @@ async function startCamera() {
     }
 
 }
+
+
 
 // =========================
 // TAKE PHOTO
@@ -124,10 +121,45 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    /*
-     * Kita selalu membuat foto
-     * dalam format portrait.
-     */
+    // =====================================
+    // DETEKSI ARAH DEVICE
+    // =====================================
+
+    let angle = 0;
+
+
+    if (
+        screen.orientation &&
+        typeof screen.orientation.angle === "number"
+    ) {
+
+        angle =
+            screen.orientation.angle;
+
+    } else if (
+        typeof window.orientation === "number"
+    ) {
+
+        angle =
+            window.orientation;
+
+    }
+
+
+    angle =
+        ((angle % 360) + 360) % 360;
+
+
+    console.log(
+        "DEVICE ANGLE:",
+        angle
+    );
+
+
+
+    // =====================================
+    // UKURAN FOTO
+    // =====================================
 
     const photoWidth = 1080;
     const photoHeight = 1920;
@@ -140,24 +172,10 @@ function takePhoto() {
         photoHeight;
 
 
-    /*
-     * Background
-     */
 
-    context.fillStyle =
-        "#000000";
-
-    context.fillRect(
-        0,
-        0,
-        photoWidth,
-        photoHeight
-    );
-
-
-    /*
-     * Ukuran video asli
-     */
+    // =====================================
+    // VIDEO ASLI
+    // =====================================
 
     const videoWidth =
         video.videoWidth;
@@ -166,23 +184,171 @@ function takePhoto() {
         video.videoHeight;
 
 
-    /*
-     * Hitung rasio supaya gambar
-     * memenuhi frame portrait.
-     */
+
+    // =====================================
+    // TEMPORARY CANVAS
+    // =====================================
+
+    const tempCanvas =
+        document.createElement("canvas");
+
+    const tempContext =
+        tempCanvas.getContext("2d");
+
+
+    tempCanvas.width =
+        videoWidth;
+
+    tempCanvas.height =
+        videoHeight;
+
+
+
+    // =====================================
+    // MIRROR CAMERA DEPAN
+    // =====================================
+
+    tempContext.save();
+
+    tempContext.translate(
+        videoWidth,
+        0
+    );
+
+    tempContext.scale(
+        -1,
+        1
+    );
+
+
+    tempContext.drawImage(
+        video,
+        0,
+        0,
+        videoWidth,
+        videoHeight
+    );
+
+
+    tempContext.restore();
+
+
+
+    // =====================================
+    // CANVAS ROTASI
+    // =====================================
+
+    const rotatedCanvas =
+        document.createElement("canvas");
+
+    const rotatedContext =
+        rotatedCanvas.getContext("2d");
+
+
+    if (
+        angle === 90 ||
+        angle === 270
+    ) {
+
+        rotatedCanvas.width =
+            videoHeight;
+
+        rotatedCanvas.height =
+            videoWidth;
+
+    } else {
+
+        rotatedCanvas.width =
+            videoWidth;
+
+        rotatedCanvas.height =
+            videoHeight;
+
+    }
+
+
+
+    // =====================================
+    // ROTASI
+    // =====================================
+
+    rotatedContext.save();
+
+
+    if (angle === 90) {
+
+        rotatedContext.translate(
+            rotatedCanvas.width,
+            0
+        );
+
+        rotatedContext.rotate(
+            Math.PI / 2
+        );
+
+    }
+
+    else if (angle === 180) {
+
+        rotatedContext.translate(
+            rotatedCanvas.width,
+            rotatedCanvas.height
+        );
+
+        rotatedContext.rotate(
+            Math.PI
+        );
+
+    }
+
+    else if (angle === 270) {
+
+        rotatedContext.translate(
+            0,
+            rotatedCanvas.height
+        );
+
+        rotatedContext.rotate(
+            -Math.PI / 2
+        );
+
+    }
+
+
+    rotatedContext.drawImage(
+        tempCanvas,
+        0,
+        0
+    );
+
+
+    rotatedContext.restore();
+
+
+
+    // =====================================
+    // MASUKKAN KE FRAME PORTRAIT
+    // =====================================
+
+    const sourceWidth =
+        rotatedCanvas.width;
+
+    const sourceHeight =
+        rotatedCanvas.height;
+
 
     const scale =
         Math.max(
-            photoWidth / videoWidth,
-            photoHeight / videoHeight
+            photoWidth / sourceWidth,
+            photoHeight / sourceHeight
         );
 
 
     const drawWidth =
-        videoWidth * scale;
+        sourceWidth * scale;
 
     const drawHeight =
-        videoHeight * scale;
+        sourceHeight * scale;
 
 
     const offsetX =
@@ -192,38 +358,36 @@ function takePhoto() {
         (photoHeight - drawHeight) / 2;
 
 
-    /*
-     * Mirror kamera depan.
-     */
 
-    context.save();
+    context.fillStyle =
+        "#000000";
 
-    context.translate(
+
+    context.fillRect(
+        0,
+        0,
         photoWidth,
-        0
-    );
-
-    context.scale(
-        -1,
-        1
+        photoHeight
     );
 
 
     context.drawImage(
-        video,
-        -offsetX,
+
+        rotatedCanvas,
+
+        offsetX,
         offsetY,
+
         drawWidth,
         drawHeight
+
     );
 
 
-    context.restore();
 
-
-    /*
-     * Preview
-     */
+    // =====================================
+    // PREVIEW
+    // =====================================
 
     const photoPreview =
         document.getElementById(
@@ -242,9 +406,10 @@ function takePhoto() {
         "block";
 
 
-    /*
-     * Simpan foto
-     */
+
+    // =====================================
+    // SIMPAN FOTO
+    // =====================================
 
     canvas.toBlob(
 
@@ -269,6 +434,7 @@ function takePhoto() {
 }
 
 
+
 // =========================
 // STOP CAMERA
 // =========================
@@ -290,9 +456,11 @@ function stopCamera() {
             null;
 
 
-        document.getElementById(
-            "video"
-        ).srcObject =
+        const video =
+            document.getElementById("video");
+
+
+        video.srcObject =
             null;
 
     }

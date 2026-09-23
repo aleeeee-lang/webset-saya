@@ -13,7 +13,13 @@ async function startCamera() {
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
                 video: {
-                    facingMode: "user"
+                    facingMode: "user",
+                    width: {
+                        ideal: 1080
+                    },
+                    height: {
+                        ideal: 1920
+                    }
                 }
             });
 
@@ -24,6 +30,7 @@ async function startCamera() {
 
         video.srcObject =
             cameraStream;
+
 
         await video.play();
 
@@ -45,47 +52,8 @@ async function startCamera() {
 
 
 // =========================
-// GET SCREEN ORIENTATION
-// =========================
-
-function getCameraRotation() {
-
-    /*
-     * Ambil orientasi layar
-     */
-
-    if (
-        screen.orientation &&
-        typeof screen.orientation.angle === "number"
-    ) {
-
-        return screen.orientation.angle;
-
-    }
-
-
-    /*
-     * Fallback untuk browser lama
-     */
-
-    if (
-        typeof window.orientation === "number"
-    ) {
-
-        return window.orientation;
-
-    }
-
-
-    return 0;
-
-}
-
-
-// =========================
 // TAKE PHOTO
 // =========================
-
 
 function takePhoto() {
 
@@ -114,44 +82,82 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    const width =
-        video.videoWidth;
-
-    const height =
-        video.videoHeight;
-
-
     /*
-     * Canvas mengikuti ukuran kamera
+     * Kita selalu membuat foto
+     * dalam format portrait.
      */
+
+    const photoWidth = 1080;
+    const photoHeight = 1920;
+
 
     canvas.width =
-        width;
+        photoWidth;
 
     canvas.height =
-        height;
+        photoHeight;
 
 
     /*
-     * Bersihkan canvas
+     * Background
      */
 
-    context.clearRect(
+    context.fillStyle =
+        "#000000";
+
+    context.fillRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        photoWidth,
+        photoHeight
     );
 
 
     /*
-     * Mirror kamera depan
+     * Ukuran video asli
+     */
+
+    const videoWidth =
+        video.videoWidth;
+
+    const videoHeight =
+        video.videoHeight;
+
+
+    /*
+     * Hitung rasio supaya gambar
+     * memenuhi frame portrait.
+     */
+
+    const scale =
+        Math.max(
+            photoWidth / videoWidth,
+            photoHeight / videoHeight
+        );
+
+
+    const drawWidth =
+        videoWidth * scale;
+
+    const drawHeight =
+        videoHeight * scale;
+
+
+    const offsetX =
+        (photoWidth - drawWidth) / 2;
+
+    const offsetY =
+        (photoHeight - drawHeight) / 2;
+
+
+    /*
+     * Mirror kamera depan.
      */
 
     context.save();
 
     context.translate(
-        canvas.width,
+        photoWidth,
         0
     );
 
@@ -161,17 +167,12 @@ function takePhoto() {
     );
 
 
-    /*
-     * Ambil foto TANPA
-     * rotasi 90 / 270
-     */
-
     context.drawImage(
         video,
-        0,
-        0,
-        width,
-        height
+        -offsetX,
+        offsetY,
+        drawWidth,
+        drawHeight
     );
 
 
@@ -179,7 +180,7 @@ function takePhoto() {
 
 
     /*
-     * Tampilkan preview
+     * Preview
      */
 
     const photoPreview =
@@ -243,12 +244,14 @@ function stopCamera() {
             });
 
 
-        cameraStream = null;
+        cameraStream =
+            null;
 
 
         document.getElementById(
             "video"
-        ).srcObject = null;
+        ).srcObject =
+            null;
 
     }
 

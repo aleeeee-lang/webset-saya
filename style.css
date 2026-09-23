@@ -497,15 +497,11 @@ textarea {
 
 .attendance-page {
     width: 100%;
-    max-width: 650px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 20px 130px;
+    padding-bottom: 30px;
     box-sizing: border-box;
-    background: #f7f8fc;
-    color: #172554;
-    font-family: Arial, sans-serif;
 }
-
 /* =========================================================
    ATTENDANCE TOPBAR
 ========================================================= */
@@ -993,6 +989,14 @@ textarea {
 
 .attendance-page .submit-button:hover {
     transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .attendance-page {
+        width: 100%;
+        padding: 0 15px 100px;
+        box-sizing: border-box;
+    }
 }
 
 

@@ -921,6 +921,27 @@
 
     </script>
 
+    <script>
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", e => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", e => {
+    touchEndX = e.changedTouches[0].screenX;
+
+    if (touchEndX - touchStartX < -80) {
+        window.location.href = "dashboard.html";
+    }
+
+    if (touchEndX - touchStartX > 80) {
+        window.location.href = "index.html";
+    }
+});
+</script>
+
 
 </body>
 

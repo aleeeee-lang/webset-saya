@@ -3,92 +3,366 @@ let capturedPhoto = null;
 
 
 // =========================
-// START CAMERA
+// TAKE PHOTO
 // =========================
 
-async function startCamera() {
+function takePhoto() {
 
-    try {
+    const video =
+        document.getElementById("video");
 
-        const video =
-            document.getElementById("video");
-
-        if (cameraStream) {
-
-            cameraStream
-                .getTracks()
-                .forEach(function(track) {
-                    track.stop();
-                });
-
-            cameraStream = null;
-
-        }
-
-        cameraStream =
-            await navigator.mediaDevices.getUserMedia({
-
-                video: {
-                    facingMode: "user"
-                },
-
-                audio: false
-
-            });
-
-
-        video.srcObject =
-            cameraStream;
-
-
-        await new Promise(function(resolve) {
-
-            if (video.readyState >= 2) {
-
-                resolve();
-
-                return;
-
-            }
-
-            video.onloadedmetadata =
-                function() {
-
-                    resolve();
-
-                };
-
-        });
-
-
-        await video.play();
-
-
-        console.log(
-            "CAMERA BERHASIL AKTIF"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "CAMERA ERROR:",
-            error
-        );
-
+    if (
+        !cameraStream ||
+        video.videoWidth === 0
+    ) {
 
         alert(
-            "CAMERA ERROR:\n\n" +
-            error.name +
-            "\n\n" +
-            error.message
+            "Silakan buka kamera terlebih dahulu."
+        );
+
+        return;
+    }
+
+
+    const canvas =
+        document.getElementById("canvas");
+
+    const context =
+        canvas.getContext("2d");
+
+
+    // =====================================
+    // DETEKSI ORIENTASI DEVICE
+    // =====================================
+
+    let angle = 0;
+
+    if (
+        screen.orientation &&
+        typeof screen.orientation.angle === "number"
+    ) {
+
+        angle =
+            screen.orientation.angle;
+
+    } else if (
+        typeof window.orientation === "number"
+    ) {
+
+        angle =
+            window.orientation;
+
+    }
+
+
+    // Normalisasi angle
+    angle =
+        ((angle % 360) + 360) % 360;
+
+
+    console.log(
+        "DEVICE ANGLE:",
+        angle
+    );
+
+
+    // =====================================
+    // UKURAN VIDEO ASLI
+    // =====================================
+
+    const videoWidth =
+        video.videoWidth;
+
+    const videoHeight =
+        video.videoHeight;
+
+
+    // =====================================
+    // FOTO SELALU PORTRAIT
+    // =====================================
+
+    const photoWidth = 1080;
+
+    const photoHeight = 1920;
+
+
+    canvas.width =
+        photoWidth;
+
+    canvas.height =
+        photoHeight;
+
+
+    // =====================================
+    // BACKGROUND
+    // =====================================
+
+    context.fillStyle =
+        "#000000";
+
+    context.fillRect(
+        0,
+        0,
+        photoWidth,
+        photoHeight
+    );
+
+
+    // =====================================
+    // ROTATE SESUAI ORIENTASI HP
+    // =====================================
+
+    context.save();
+
+
+    // -------------------------------------
+    // HP TEGAK
+    // -------------------------------------
+
+    if (angle === 0) {
+
+        drawPortrait();
+
+    }
+
+
+    // -------------------------------------
+    // HP LANDSCAPE KANAN
+    // -------------------------------------
+
+    else if (angle === 90) {
+
+        context.translate(
+            photoWidth,
+            0
+        );
+
+        context.rotate(
+            Math.PI / 2
+        );
+
+        drawLandscape();
+
+    }
+
+
+    // -------------------------------------
+    // HP TERBALIK
+    // -------------------------------------
+
+    else if (angle === 180) {
+
+        context.translate(
+            photoWidth,
+            photoHeight
+        );
+
+        context.rotate(
+            Math.PI
+        );
+
+        drawPortrait();
+
+    }
+
+
+    // -------------------------------------
+    // HP LANDSCAPE KIRI
+    // -------------------------------------
+
+    else if (angle === 270) {
+
+        context.translate(
+            0,
+            photoHeight
+        );
+
+        context.rotate(
+            -Math.PI / 2
+        );
+
+        drawLandscape();
+
+    }
+
+
+    context.restore();
+
+
+    // =====================================
+    // PREVIEW
+    // =====================================
+
+    const photoPreview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    photoPreview.src =
+        canvas.toDataURL(
+            "image/jpeg",
+            0.9
+        );
+
+
+    photoPreview.style.display =
+        "block";
+
+
+    // =====================================
+    // SIMPAN PHOTO
+    // =====================================
+
+    canvas.toBlob(
+
+        function(blob) {
+
+            capturedPhoto =
+                blob;
+
+        },
+
+        "image/jpeg",
+
+        0.8
+
+    );
+
+
+    alert(
+        "Foto berhasil diambil! ✅"
+    );
+
+
+    // =====================================
+    // FUNCTION PORTRAIT
+    // =====================================
+
+    function drawPortrait() {
+
+        const scale =
+            Math.max(
+                photoWidth / videoWidth,
+                photoHeight / videoHeight
+            );
+
+
+        const drawWidth =
+            videoWidth * scale;
+
+        const drawHeight =
+            videoHeight * scale;
+
+
+        const offsetX =
+            (photoWidth - drawWidth) / 2;
+
+        const offsetY =
+            (photoHeight - drawHeight) / 2;
+
+
+        /*
+         * Mirror kamera depan
+         */
+
+        context.translate(
+            photoWidth,
+            0
+        );
+
+        context.scale(
+            -1,
+            1
+        );
+
+
+        context.drawImage(
+
+            video,
+
+            -offsetX,
+            offsetY,
+
+            drawWidth,
+            drawHeight
+
+        );
+
+    }
+
+
+    // =====================================
+    // FUNCTION LANDSCAPE
+    // =====================================
+
+    function drawLandscape() {
+
+        /*
+         * Setelah rotate 90 derajat,
+         * ukuran area gambar menjadi:
+         *
+         * 1920 x 1080
+         */
+
+        const landscapeWidth =
+            photoHeight;
+
+        const landscapeHeight =
+            photoWidth;
+
+
+        const scale =
+            Math.max(
+                landscapeWidth / videoWidth,
+                landscapeHeight / videoHeight
+            );
+
+
+        const drawWidth =
+            videoWidth * scale;
+
+        const drawHeight =
+            videoHeight * scale;
+
+
+        const offsetX =
+            (landscapeWidth - drawWidth) / 2;
+
+        const offsetY =
+            (landscapeHeight - drawHeight) / 2;
+
+
+        /*
+         * Mirror kamera depan
+         */
+
+        context.translate(
+            landscapeWidth,
+            0
+        );
+
+        context.scale(
+            -1,
+            1
+        );
+
+
+        context.drawImage(
+
+            video,
+
+            -offsetX,
+            offsetY,
+
+            drawWidth,
+            drawHeight
+
         );
 
     }
 
 }
-
-
 
 // =========================
 // TAKE PHOTO

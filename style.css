@@ -2524,3 +2524,60 @@ textarea {
         font-size: 13px;
     }
 }
+
+/* =========================================================
+   ATTENDANCE - MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .attendance-page {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 15px 100px;
+        box-sizing: border-box;
+    }
+
+    .attendance-intro h1 {
+        font-size: 25px;
+    }
+
+    .attendance-intro p {
+        font-size: 13px;
+    }
+
+    .attendance-date-time {
+        gap: 10px;
+    }
+
+    .date-time-item {
+        min-height: 75px;
+        padding: 14px;
+        border-radius: 15px;
+        gap: 10px;
+    }
+
+    .date-time-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .attendance-page .attendance-card {
+        padding: 16px;
+        border-radius: 15px;
+    }
+
+    .camera-box {
+        height: 230px;
+    }
+
+    .camera-header h2 {
+        font-size: 18px;
+    }
+
+    .submit-button {
+        min-height: 48px;
+    }
+}

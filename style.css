@@ -584,34 +584,67 @@ textarea {
 ========================================================= */
 
 .attendance-page .calendar-icon {
+    width: 50px;
+    height: 50px;
     position: relative;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    background: #f1f2ff;
 }
 
 .attendance-page .calendar-icon::before {
     content: "";
+
     position: absolute;
+
     width: 27px;
     height: 23px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -42%);
+
     border: 2px solid #64748b;
     border-radius: 5px;
-    top: 13px;
-    left: 11px;
+
+    box-sizing: border-box;
 }
 
 .attendance-page .calendar-top {
     position: absolute;
+
     width: 27px;
     height: 2px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -1px);
+
     background: #64748b;
-    top: 20px;
-    left: 11px;
 }
 
 .attendance-page .calendar-icon strong {
-    position: relative;
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -20%);
+
     z-index: 2;
-    margin-top: 9px;
+
+    margin: 0;
+
     font-size: 13px;
+    line-height: 1;
+
     color: #172554;
 }
 

@@ -2543,4 +2543,24 @@ textarea {
     }
 }
 
+/* =========================================================
+   SMOOTH PAGE TRANSITION
+========================================================= */
+
+body {
+    animation: pageEnter 0.35s ease;
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 

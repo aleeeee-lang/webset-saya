@@ -496,19 +496,14 @@ textarea {
 ========================================================= */
 
 .attendance-page {
-    margin: 0;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 0 20px 130px;
+    box-sizing: border-box;
     background: #f7f8fc;
     color: #172554;
     font-family: Arial, sans-serif;
-}
-
-.attendance-page .attendance-topbar,
-.attendance-page .attendance-main {
-    width: 50%;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
 }
 
 /* =========================================================

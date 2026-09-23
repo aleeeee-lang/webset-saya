@@ -10,11 +10,21 @@ async function startCamera() {
 
     try {
 
-        if (!navigator.mediaDevices) {
+        const video =
+            document.getElementById("video");
 
-            throw new Error(
-                "navigator.mediaDevices tidak tersedia. Website harus dibuka melalui HTTPS."
-            );
+
+        // Kalau kamera lama masih aktif,
+        // matikan dulu
+        if (cameraStream) {
+
+            cameraStream
+                .getTracks()
+                .forEach(function(track) {
+                    track.stop();
+                });
+
+            cameraStream = null;
 
         }
 
@@ -23,19 +33,45 @@ async function startCamera() {
             await navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: "user"
-                }
+                },
+                audio: false
             });
 
 
-        const video =
-            document.getElementById("video");
-
-
+        // Pasang stream ke video
         video.srcObject =
             cameraStream;
 
 
+        // Tunggu sampai video siap
+        await new Promise(function(resolve) {
+
+            if (video.readyState >= 2) {
+
+                resolve();
+
+                return;
+
+            }
+
+
+            video.onloadedmetadata =
+                function() {
+
+                    resolve();
+
+                };
+
+        });
+
+
+        // Baru jalankan video
         await video.play();
+
+
+        console.log(
+            "CAMERA BERHASIL AKTIF"
+        );
 
 
     } catch (error) {

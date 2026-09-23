@@ -649,108 +649,47 @@ textarea {
     font-weight: bold;
 }
 
-
 /* =========================================================
-   ATTENDANCE TOPBAR
+   ATTENDANCE PAGE
 ========================================================= */
 
-.attendance-topbar {
+.attendance-page {
     width: 100%;
-    max-width: 900px;
-
+    max-width: 520px;
     margin: 0 auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 32px 20px 120px;
+    box-sizing: border-box;
 }
 
-.attendance-title h1 {
-    margin: 0;
 
+/* =========================================================
+   INTRO
+========================================================= */
+
+.attendance-intro {
+    margin-bottom: 28px;
+}
+
+.attendance-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    opacity: 0.55;
+}
+
+.attendance-intro h1 {
+    margin: 0;
     font-size: 30px;
-
-    color: #20243a;
+    font-weight: 700;
+    line-height: 1.15;
 }
 
-.attendance-title p {
-    margin: 6px 0 0;
-
-    color: #777;
-
+.attendance-intro p {
+    margin: 8px 0 0;
     font-size: 14px;
-}
-
-
-/* =========================================================
-   ATTENDANCE MAIN
-========================================================= */
-
-.attendance-main {
-    width: 100%;
-    max-width: 900px;
-
-    margin: 25px auto 0;
-    padding: 25px;
-
-    background: white;
-
-    border-radius: 25px;
-
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-}
-
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-.attendance-profile {
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    margin-bottom: 22px;
-}
-
-.profile-photo {
-    width: 64px;
-    height: 64px;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-
-    border-radius: 50%;
-    border: 3px solid white;
-
-    background: #eeeeff;
-
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
-}
-
-.profile-photo img {
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-}
-
-.profile-info h2 {
-    margin: 0;
-
-    font-size: 20px;
-}
-
-.profile-info p {
-    margin: 4px 0 0;
-
-    color: #777;
-
-    font-size: 14px;
+    opacity: 0.6;
 }
 
 
@@ -759,65 +698,89 @@ textarea {
 ========================================================= */
 
 .attendance-date-time {
-    width: 100%;
-
-    margin-bottom: 25px;
-    padding: 0;
-
     display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 15px;
-
-    background: transparent;
-
-    box-shadow: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 22px;
 }
 
 .date-time-item {
     display: flex;
     align-items: center;
-
     gap: 12px;
+
+    min-height: 82px;
+    padding: 15px;
+
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 18px;
+
+    box-sizing: border-box;
 }
 
-.date-time-icon,
-.calendar-icon {
-    width: 45px;
-    height: 45px;
-
-    flex-shrink: 0;
+.date-time-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
 }
+
+.date-time-content span {
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.date-time-content strong {
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   CALENDAR ICON
+========================================================= */
 
 .date-time-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
     border-radius: 13px;
-
-    background: #eeeeff;
-
-    font-size: 21px;
 }
 
-.date-time-item span {
-    display: block;
 
-    margin-bottom: 4px;
+/* CALENDAR */
 
-    color: #777;
-
-    font-size: 12px;
+.calendar-icon {
+    background: #eef7ff;
+    color: #2677c9;
+    border: 1px solid #dceeff;
 }
 
-.date-time-item strong {
-    display: block;
+.calendar-top {
+    position: absolute;
 
-    color: #20243a;
+    top: 7px;
+    left: 9px;
+    right: 9px;
 
-    font-size: 15px;
+    height: 3px;
+
+    border-radius: 3px;
+    background: currentColor;
+}
+
+.calendar-icon strong {
+    margin-top: 6px;
+    font-size: 17px;
+    line-height: 1;
 }
 
 
@@ -826,24 +789,19 @@ textarea {
 ========================================================= */
 
 .clock-icon {
-    position: relative;
-
-    width: 45px;
-    height: 45px;
-
-    padding: 0;
+    background: #f4f3ff;
+    color: #7064d8;
+    border: 1px solid #e7e4ff;
 }
 
 .analog-clock {
+    width: 32px;
+    height: 32px;
+
     position: relative;
 
-    width: 31px;
-    height: 31px;
-
-    border: 3px solid #635bff;
+    border: 2px solid currentColor;
     border-radius: 50%;
-
-    background: white;
 }
 
 .clock-hand {
@@ -852,139 +810,67 @@ textarea {
     left: 50%;
     bottom: 50%;
 
-    transform: translateX(-50%);
+    width: 1.5px;
 
     transform-origin: bottom center;
+    transform: translateX(-50%);
 
-    border-radius: 5px;
+    border-radius: 10px;
+    background: currentColor;
 }
 
 .hour-hand {
-    width: 3px;
     height: 8px;
-
-    background: #20243a;
 }
 
 .minute-hand {
-    width: 2px;
     height: 11px;
-
-    background: #20243a;
 }
 
 .second-hand {
     width: 1px;
-    height: 12px;
-
-    background: #ff4d67;
+    height: 13px;
 }
 
 .clock-center {
     position: absolute;
 
-    top: 50%;
-    left: 50%;
+    width: 4px;
+    height: 4px;
 
-    width: 5px;
-    height: 5px;
+    left: 50%;
+    top: 50%;
 
     transform: translate(-50%, -50%);
 
     border-radius: 50%;
-
-    background: #635bff;
+    background: currentColor;
 }
 
 
 /* =========================================================
-   CALENDAR ICON
-========================================================= */
-
-.calendar-icon {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding-top: 7px;
-
-    border-radius: 13px;
-
-    background: #eeeeff;
-    color: #635bff;
-}
-
-.calendar-icon strong {
-    font-size: 17px;
-    line-height: 1;
-}
-
-.calendar-top {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 11px;
-
-    border-radius: 13px 13px 0 0;
-
-    background: #635bff;
-}
-
-
-/* =========================================================
-   ATTENDANCE CARD & INPUT
+   GENERAL ATTENDANCE CARD
 ========================================================= */
 
 .attendance-card {
-    width: 100%;
+    position: relative;
 
-    margin: 0;
-    padding: 0;
+    margin-bottom: 16px;
+    padding: 20px;
 
-    background: transparent;
+    background: #ffffff;
 
-    border-radius: 0;
+    border: 1px solid #eeeeee;
+    border-radius: 20px;
 
-    box-shadow: none;
+    box-sizing: border-box;
 }
 
-.attendance-card h2 {
-    margin-top: 0;
-}
+.card-label {
+    margin-bottom: 12px;
 
-.attendance-card label {
-    display: block;
-
-    margin-top: 18px;
-    margin-bottom: 7px;
-
-    font-weight: bold;
-}
-
-.attendance-card input,
-.attendance-card select,
-.attendance-card textarea {
-    width: 100%;
-
-    padding: 13px;
-
-    border: 1px solid #ddd;
-    border-radius: 12px;
-
-    font-size: 15px;
-
-    outline: none;
-}
-
-.attendance-card input:focus,
-.attendance-card select:focus,
-.attendance-card textarea:focus {
-    border-color: #635bff;
+    font-size: 13px;
+    font-weight: 650;
 }
 
 
@@ -992,156 +878,184 @@ textarea {
    STATUS
 ========================================================= */
 
-.status-options {
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 12px;
-
-    margin-top: 15px;
+.status-card {
+    z-index: 10;
 }
 
-.status-option {
-    position: relative;
+.status-select {
+    width: 100%;
 
     display: flex;
     align-items: center;
-
     gap: 10px;
 
-    padding: 14px;
+    padding: 14px 15px;
 
+    border: 1px solid #e5e5e5;
     border-radius: 14px;
 
-    background: #f7f7ff;
+    background: #fafafa;
+
+    font-size: 14px;
+    text-align: left;
 
     cursor: pointer;
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        border-color 0.2s ease,
+        background 0.2s ease;
 }
 
-.status-option:hover {
-    transform: translateY(-2px);
+.status-select:hover {
+    background: #f7f7f7;
 }
 
-.status-option input {
-    display: none;
+.status-select:focus {
+    outline: none;
+    border-color: #bdbdbd;
 }
+
+.status-arrow {
+    margin-left: auto;
+
+    font-size: 18px;
+    opacity: 0.5;
+
+    transition: transform 0.2s ease;
+}
+
+
+/* =========================================================
+   STATUS LIGHT
+========================================================= */
 
 .status-light {
-    width: 11px;
-    height: 11px;
+    width: 9px;
+    height: 9px;
 
     flex-shrink: 0;
 
     border-radius: 50%;
 
-    animation: statusGlow 1.8s ease-in-out infinite;
+    background: #cfcfcf;
+}
+
+.status-light.hadir {
+    background: #36b37e;
+}
+
+.status-light.izin {
+    background: #f2b134;
+}
+
+.status-light.sakit {
+    background: #e85d75;
+}
+
+.status-light.alpa {
+    background: #777777;
 }
 
 
-/* STATUS COLORS */
+/* =========================================================
+   STATUS DROPDOWN
+========================================================= */
 
-.status-option.hadir .status-light,
-.status-display .status-light.hadir {
-    background: #22c55e;
+.status-dropdown {
+    position: absolute;
+
+    left: 20px;
+    right: 20px;
+    top: 92px;
+
+    display: none;
+
+    padding: 6px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+    border-radius: 16px;
 
     box-shadow:
-        0 0 5px #22c55e,
-        0 0 10px #22c55e,
-        0 0 18px rgba(34, 197, 94, 0.8);
+        0 12px 30px rgba(0, 0, 0, 0.08);
+
+    z-index: 100;
 }
 
-.status-option.izin .status-light,
-.status-display .status-light.izin {
-    background: #f59e0b;
-
-    box-shadow:
-        0 0 5px #f59e0b,
-        0 0 10px #f59e0b,
-        0 0 18px rgba(245, 158, 11, 0.8);
+.status-dropdown.show {
+    display: block;
 }
 
-.status-option.sakit .status-light,
-.status-display .status-light.sakit {
-    background: #3b82f6;
-
-    box-shadow:
-        0 0 5px #3b82f6,
-        0 0 10px #3b82f6,
-        0 0 18px rgba(59, 130, 246, 0.8);
-}
-
-.status-option.alpa .status-light,
-.status-display .status-light.alpa {
-    background: #ef4444;
-
-    box-shadow:
-        0 0 5px #ef4444,
-        0 0 10px #ef4444,
-        0 0 18px rgba(239, 68, 68, 0.8);
-}
-
-
-/* STATUS DISPLAY */
-
-.status-row {
-    display: flex;
-    align-items: center;
-
-    gap: 20px;
-}
-
-.status-row label {
-    margin: 0;
-
-    flex-shrink: 0;
-}
-
-.status-display {
-    width: 50%;
-    min-height: 48px;
-
-    margin: 0 0 12px 90px;
-    padding: 12px 15px;
+.status-option {
+    width: 100%;
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 11px;
 
-    gap: 12px;
+    padding: 13px 12px;
 
+    border: 0;
+    border-radius: 11px;
+
+    background: transparent;
+
+    font-size: 14px;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.status-option:hover {
+    background: #f7f7f7;
+}
+
+
+/* =========================================================
+   HIDDEN RADIO
+========================================================= */
+
+.hidden-status-inputs {
+    display: none;
+}
+
+
+/* =========================================================
+   REASON
+========================================================= */
+
+.reason-card textarea {
+    width: 100%;
+
+    display: block;
+
+    min-height: 100px;
+
+    padding: 13px 14px;
+
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    border: 1px solid #e5e5e5;
     border-radius: 14px;
 
-    background: #f7f7ff;
-    color: #635bff;
+    background: #fafafa;
 
-    font-size: 15px;
-    font-weight: bold;
+    font-family: inherit;
+    font-size: 14px;
 
-    text-align: center;
+    outline: none;
 }
 
+.reason-card textarea:focus {
+    border-color: #c7c7c7;
+    background: #ffffff;
+}
 
-/* STATUS ANIMATION */
-
-@keyframes statusGlow {
-
-    0%,
-    100% {
-        opacity: 0.7;
-
-        transform: scale(0.9);
-    }
-
-    50% {
-        opacity: 1;
-
-        transform: scale(1.15);
-    }
+.reason-card textarea::placeholder {
+    color: #999999;
 }
 
 
@@ -1150,35 +1064,57 @@ textarea {
 ========================================================= */
 
 .camera-card {
-    margin-top: 15px;
+    padding: 20px;
+}
+
+.camera-header {
+    margin-bottom: 16px;
+}
+
+.camera-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+
+    opacity: 0.5;
 }
 
 .camera-header h2 {
     margin: 0;
 
-    font-size: 20px;
+    font-size: 19px;
+    font-weight: 650;
 }
 
 .camera-header p {
-    margin: 6px 0 15px;
-
-    color: #777;
+    margin: 6px 0 0;
 
     font-size: 13px;
+    line-height: 1.5;
+
+    opacity: 0.55;
 }
+
+
+/* =========================================================
+   CAMERA BOX
+========================================================= */
 
 .camera-box {
     width: 100%;
-
-    margin-top: 20px;
+    height: 260px;
 
     overflow: hidden;
 
-    border-radius: 18px;
+    border-radius: 17px;
 
-    background: #111;
+    background: #f2f2f2;
 
-    aspect-ratio: 4 / 3;
+    border: 1px solid #e8e8e8;
 }
 
 .camera-box video {
@@ -1190,64 +1126,76 @@ textarea {
     object-fit: cover;
 }
 
+
+/* =========================================================
+   CAMERA BUTTONS
+========================================================= */
+
 .camera-buttons {
     display: grid;
 
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
 
-    gap: 12px;
+    gap: 10px;
 
-    margin-top: 15px;
+    margin-top: 12px;
 }
 
-.camera-buttons button {
-    width: 100%;
-    min-height: 48px;
+.camera-button {
+    min-height: 45px;
 
-    padding: 12px 10px;
+    border-radius: 13px;
 
-    border: none;
-    border-radius: 12px;
-
-    background: #eeeeff;
-    color: #635bff;
-
-    font-size: 14px;
-    font-weight: bold;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
 
     cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        background-color 0.2s ease;
 }
 
-.camera-buttons button:hover {
-    transform: translateY(-2px);
-
-    background: #e4e3ff;
+.camera-button.secondary {
+    border: 1px solid #e4e4e4;
+    background: #ffffff;
 }
+
+.camera-button.primary {
+    border: 0;
+    background: #111111;
+    color: #ffffff;
+}
+
+.camera-button:hover {
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   PHOTO PREVIEW
+========================================================= */
 
 #photoPreview {
     width: 100%;
 
-    margin-top: 15px;
+    margin-top: 14px;
 
-    border-radius: 18px;
+    border-radius: 16px;
+
+    border: 1px solid #eeeeee;
 }
 
+
+/* =========================================================
+   FACE STATUS
+========================================================= */
+
 #faceStatus {
-    margin-top: 15px;
-    padding: 10px;
+    margin: 12px 0 0;
 
-    border-radius: 10px;
-
-    background: #f6f7ff;
-    color: #555;
+    font-size: 12px;
 
     text-align: center;
 
-    font-size: 14px;
+    opacity: 0.5;
 }
 
 
@@ -1257,44 +1205,93 @@ textarea {
 
 .submit-button {
     width: 100%;
-    min-height: 48px;
 
-    margin: 25px 0 20px;
-    padding: 14px;
+    min-height: 52px;
 
-    display: block;
+    margin-top: 4px;
 
-    border: none;
-    border-radius: 13px;
+    border: 0;
+    border-radius: 16px;
 
-    background: linear-gradient(135deg, #6861ff, #8d6bff);
+    background: #111111;
+    color: #ffffff;
 
-    color: white;
-
-    font-size: 16px;
-    font-weight: bold;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
 
     cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.submit-button:hover {
+    opacity: 0.9;
+}
+
+.submit-button:active {
+    transform: scale(0.98);
 }
 
 
 /* =========================================================
-   LOGIN / LOGOUT
+   MOBILE
 ========================================================= */
 
-.logout-button {
-    padding: 9px 16px;
+@media (max-width: 480px) {
 
-    border: none;
-    border-radius: 10px;
+    .attendance-page {
+        padding: 25px 16px 115px;
+    }
 
-    font-size: 14px;
+    .attendance-intro h1 {
+        font-size: 27px;
+    }
 
-    cursor: pointer;
+    .attendance-date-time {
+        gap: 9px;
+    }
+
+    .date-time-item {
+        padding: 12px;
+        gap: 9px;
+    }
+
+    .date-time-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .date-time-content strong {
+        font-size: 12px;
+    }
+
+    .attendance-card {
+        padding: 17px;
+        border-radius: 17px;
+    }
+
+    .status-dropdown {
+        left: 17px;
+        right: 17px;
+        top: 87px;
+    }
+
+    .camera-box {
+        height: 230px;
+    }
+
 }
 
-.login-button {
-    margin-top: 20px;
+
+/* =========================================================
+   BODY FOR ATTENDANCE
+========================================================= */
+
+body {
+    background: #f8f9fb;
 }
 
 

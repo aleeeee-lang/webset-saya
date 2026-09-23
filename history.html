@@ -697,6 +697,34 @@
 
     <script src="js/auth.js"></script>
 
+    <script>
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", function (event) {
+    touchStartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", function (event) {
+    touchEndX = event.changedTouches[0].screenX;
+
+    const swipeDistance = touchEndX - touchStartX;
+
+    // Swipe kiri → My Attendance
+    if (swipeDistance < -80) {
+        window.location.href = "my-attendance.html";
+    }
+
+    // Swipe kanan → Dashboard
+    if (swipeDistance > 80) {
+        window.location.href = "dashboard.html";
+    }
+
+});
+
+</script>
+
 
 </body>
 

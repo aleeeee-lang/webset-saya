@@ -25,18 +25,18 @@ async function startCamera() {
 
         await video.play();
 
-    } catch (error) {
+   } catch (error) {
 
-        console.error(
-            "CAMERA ERROR:",
-            error
-        );
+    console.error("CAMERA ERROR:", error);
 
-        alert(
-            "Kamera tidak bisa dibuka. Pastikan browser memiliki izin kamera."
-        );
+    alert(
+        "CAMERA ERROR:\n\n" +
+        error.name +
+        "\n\n" +
+        error.message
+    );
 
-    }
+}
 
 }
 

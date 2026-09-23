@@ -23,79 +23,38 @@
 <body>
 
 
-    <!-- =========================
-         ATTENDANCE HEADER
-    ========================== -->
+    <!-- =====================================
+         ATTENDANCE PAGE
+    ====================================== -->
 
-    <header class="attendance-topbar">
+    <main class="attendance-page">
 
-        <div class="attendance-title">
+
+        <!-- =====================================
+             INTRO
+        ====================================== -->
+
+        <section class="attendance-intro">
+
+            <span class="attendance-label">
+                ATTENDANCE
+            </span>
 
             <h1>
-                Attendance
+                Take your attendance
             </h1>
 
             <p>
-                Take your attendance today
+                Record your attendance for today.
             </p>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="logout-button"
-            onclick="logoutUser()"
-        >
-            Logout
-        </button>
-
-    </header>
-
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main class="attendance-main">
-
-
-        <!-- =========================
-             PROFILE
-        ========================== -->
-
-        <section class="attendance-profile">
-
-            <div class="profile-photo">
-
-                <img
-                    src="image/profile.png"
-                    alt="Profile photo"
-                >
-
-            </div>
-
-
-            <div class="profile-info">
-
-                <h2>
-                    Aly
-                </h2>
-
-                <p>
-                    Student
-                </p>
-
-            </div>
 
         </section>
 
 
 
-        <!-- =========================
+        <!-- =====================================
              DATE & TIME
-        ========================== -->
+        ====================================== -->
 
         <section class="attendance-date-time">
 
@@ -115,7 +74,7 @@
                 </div>
 
 
-                <div>
+                <div class="date-time-content">
 
                     <span>
                         Date
@@ -152,7 +111,7 @@
                 </div>
 
 
-                <div>
+                <div class="date-time-content">
 
                     <span>
                         Time
@@ -171,51 +130,58 @@
 
 
 
-        <!-- =========================
+        <!-- =====================================
              STATUS
-        ========================== -->
+        ====================================== -->
 
-        <section class="attendance-card">
-
-
-            <div class="status-row">
-
-                <label>
-                    Status
-                </label>
+        <section class="attendance-card status-card">
 
 
-                <div class="status-display">
-
-                    <span
-                        id="selectedStatusLight"
-                        class="status-light"
-                    ></span>
-
-                    <span id="selectedStatus">
-                        Belum dipilih
-                    </span>
-
-                </div>
-
+            <div class="card-label">
+                Status
             </div>
 
 
+            <!-- STATUS SELECT -->
 
-            <!-- STATUS OPTIONS -->
+            <button
+                type="button"
+                class="status-select"
+                id="statusSelect"
+            >
 
-            <div class="status-options">
+                <span
+                    class="status-light"
+                    id="selectedStatusLight"
+                ></span>
 
 
-                <!-- HADIR -->
+                <span id="selectedStatus">
+                    Belum dipilih
+                </span>
 
-                <label class="status-option hadir">
 
-                    <input
-                        type="radio"
-                        name="status"
-                        value="Hadir"
-                    >
+                <span class="status-arrow">
+                    ⌄
+                </span>
+
+            </button>
+
+
+
+            <!-- STATUS DROPDOWN -->
+
+            <div
+                class="status-dropdown"
+                id="statusDropdown"
+            >
+
+
+                <button
+                    type="button"
+                    class="status-option hadir"
+                    data-status="Hadir"
+                >
 
                     <span class="status-light"></span>
 
@@ -223,19 +189,15 @@
                         Hadir
                     </span>
 
-                </label>
+                </button>
 
 
 
-                <!-- IZIN -->
-
-                <label class="status-option izin">
-
-                    <input
-                        type="radio"
-                        name="status"
-                        value="Izin"
-                    >
+                <button
+                    type="button"
+                    class="status-option izin"
+                    data-status="Izin"
+                >
 
                     <span class="status-light"></span>
 
@@ -243,19 +205,15 @@
                         Izin
                     </span>
 
-                </label>
+                </button>
 
 
 
-                <!-- SAKIT -->
-
-                <label class="status-option sakit">
-
-                    <input
-                        type="radio"
-                        name="status"
-                        value="Sakit"
-                    >
+                <button
+                    type="button"
+                    class="status-option sakit"
+                    data-status="Sakit"
+                >
 
                     <span class="status-light"></span>
 
@@ -263,19 +221,15 @@
                         Sakit
                     </span>
 
-                </label>
+                </button>
 
 
 
-                <!-- ALPA -->
-
-                <label class="status-option alpa">
-
-                    <input
-                        type="radio"
-                        name="status"
-                        value="Alpa"
-                    >
+                <button
+                    type="button"
+                    class="status-option alpa"
+                    data-status="Alpa"
+                >
 
                     <span class="status-light"></span>
 
@@ -283,8 +237,40 @@
                         Alpa
                     </span>
 
-                </label>
+                </button>
 
+
+            </div>
+
+
+
+            <!-- HIDDEN STATUS INPUT -->
+
+            <div class="hidden-status-inputs">
+
+                <input
+                    type="radio"
+                    name="status"
+                    value="Hadir"
+                >
+
+                <input
+                    type="radio"
+                    name="status"
+                    value="Izin"
+                >
+
+                <input
+                    type="radio"
+                    name="status"
+                    value="Sakit"
+                >
+
+                <input
+                    type="radio"
+                    name="status"
+                    value="Alpa"
+                >
 
             </div>
 
@@ -293,38 +279,44 @@
 
 
 
-        <!-- =========================
+        <!-- =====================================
              REASON
-        ========================== -->
+        ====================================== -->
 
-        <section class="attendance-card">
+        <section class="attendance-card reason-card">
 
-            <label for="reason">
+
+            <div class="card-label">
                 Reason
-            </label>
+            </div>
 
 
             <textarea
                 id="reason"
-                placeholder="Why are you absent?"
                 rows="4"
+                placeholder="Why are you absent?"
             ></textarea>
+
 
         </section>
 
 
 
-        <!-- =========================
-             CAMERA
-        ========================== -->
+        <!-- =====================================
+             PHOTO VERIFICATION
+        ====================================== -->
 
         <section class="attendance-card camera-card">
 
 
             <div class="camera-header">
 
+                <span class="camera-label">
+                    VERIFICATION
+                </span>
+
                 <h2>
-                    Take Your Photo
+                    Take your photo
                 </h2>
 
                 <p>
@@ -353,8 +345,10 @@
 
             <div class="camera-buttons">
 
+
                 <button
                     type="button"
+                    class="camera-button secondary"
                     onclick="startCamera()"
                 >
                     Open Camera
@@ -363,10 +357,12 @@
 
                 <button
                     type="button"
+                    class="camera-button primary"
                     onclick="takePhoto()"
                 >
                     Take Photo
                 </button>
+
 
             </div>
 
@@ -376,7 +372,7 @@
 
             <canvas
                 id="canvas"
-                style="display: none;"
+                style="display:none;"
             ></canvas>
 
 
@@ -386,7 +382,7 @@
             <img
                 id="photoPreview"
                 alt="Captured photo"
-                style="display: none;"
+                style="display:none;"
             >
 
 
@@ -402,9 +398,9 @@
 
 
 
-        <!-- =========================
+        <!-- =====================================
              SUBMIT
-        ========================== -->
+        ====================================== -->
 
         <button
             type="button"
@@ -419,9 +415,9 @@
 
 
 
-    <!-- =========================
+    <!-- =====================================
          BOTTOM NAVIGATION
-    ========================== -->
+    ====================================== -->
 
     <nav class="bottom-nav">
 
@@ -506,11 +502,9 @@
 
 
 
-         <!-- DASHBOARD -->
+        <!-- DASHBOARD -->
 
-        <a
-            href="dashboard.html"
-        >
+        <a href="dashboard.html">
 
             <span class="nav-dashboard-icon">
 
@@ -581,7 +575,6 @@
             </small>
 
         </a>
-
 
 
 
@@ -674,15 +667,13 @@
 
 
 
-    <!-- =========================
-         JAVASCRIPT FILES
-    ========================== -->
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="js/supabase.js"></script>
-
-    <script src="js/auth.js"></script>
 
     <script src="js/camera.js"></script>
 
@@ -690,9 +681,9 @@
 
 
 
-    <!-- =========================
-         AUTO DATE & TIME
-    ========================== -->
+    <!-- =====================================
+         DATE & TIME
+    ====================================== -->
 
     <script>
 
@@ -701,45 +692,37 @@
             const now = new Date();
 
 
-            /* DATE */
-
-            const date = now.toLocaleDateString(
-                "en-GB",
-                {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric"
-                }
-            );
-
-
-            /* TIME */
-
-            const time = now.toLocaleTimeString(
-                "en-GB",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit"
-                }
-            );
+            const date =
+                now.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
 
 
-            /* CALENDAR DAY */
+            const time =
+                now.toLocaleTimeString(
+                    "en-GB",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+
 
             document.getElementById(
                 "calendarDay"
             ).textContent = now.getDate();
 
 
-            /* UPDATE DATE */
-
             document.getElementById(
                 "attendanceDate"
             ).textContent = date;
 
-
-            /* UPDATE TIME */
 
             document.getElementById(
                 "currentTime"
@@ -750,7 +733,6 @@
 
         updateDateTime();
 
-
         setInterval(
             updateDateTime,
             1000
@@ -760,9 +742,9 @@
 
 
 
-    <!-- =========================
+    <!-- =====================================
          ANALOG CLOCK
-    ========================== -->
+    ====================================== -->
 
     <script>
 
@@ -777,21 +759,19 @@
             const seconds = now.getSeconds();
 
 
-            /* CLOCK HAND ANGLES */
-
             const hourDegree =
                 (hours % 12) * 30 +
                 minutes * 0.5;
+
 
             const minuteDegree =
                 minutes * 6 +
                 seconds * 0.1;
 
+
             const secondDegree =
                 seconds * 6;
 
-
-            /* MOVE CLOCK HANDS */
 
             document.querySelector(
                 ".hour-hand"
@@ -815,7 +795,6 @@
 
         updateAnalogClock();
 
-
         setInterval(
             updateAnalogClock,
             1000
@@ -825,15 +804,21 @@
 
 
 
-    <!-- =========================
-         STATUS
-    ========================== -->
+    <!-- =====================================
+         STATUS SELECTOR
+    ====================================== -->
 
     <script>
 
-        const statusOptions =
-            document.querySelectorAll(
-                'input[name="status"]'
+        const statusSelect =
+            document.getElementById(
+                "statusSelect"
+            );
+
+
+        const statusDropdown =
+            document.getElementById(
+                "statusDropdown"
             );
 
 
@@ -849,70 +834,115 @@
             );
 
 
-        statusOptions.forEach(
-            function (option) {
-
-                option.addEventListener(
-                    "change",
-                    function () {
+        const statusInputs =
+            document.querySelectorAll(
+                'input[name="status"]'
+            );
 
 
-                        /* UPDATE TEXT */
+        /*
+         * OPEN / CLOSE DROPDOWN
+         */
 
-                        selectedStatus.textContent =
-                            this.value;
+        statusSelect.addEventListener(
+            "click",
+            function () {
 
-
-                        /* RESET LIGHT */
-
-                        selectedStatusLight.className =
-                            "status-light";
-
-
-                        /* UPDATE LIGHT COLOR */
-
-                        if (
-                            this.value === "Hadir"
-                        ) {
-
-                            selectedStatusLight.classList.add(
-                                "hadir"
-                            );
-
-                        }
-
-                        else if (
-                            this.value === "Izin"
-                        ) {
-
-                            selectedStatusLight.classList.add(
-                                "izin"
-                            );
-
-                        }
-
-                        else if (
-                            this.value === "Sakit"
-                        ) {
-
-                            selectedStatusLight.classList.add(
-                                "sakit"
-                            );
-
-                        }
-
-                        else if (
-                            this.value === "Alpa"
-                        ) {
-
-                            selectedStatusLight.classList.add(
-                                "alpa"
-                            );
-
-                        }
-
-                    }
+                statusDropdown.classList.toggle(
+                    "show"
                 );
+
+            }
+        );
+
+
+
+        /*
+         * SELECT STATUS
+         */
+
+        document
+            .querySelectorAll(
+                ".status-option"
+            )
+            .forEach(
+                function (option) {
+
+                    option.addEventListener(
+                        "click",
+                        function () {
+
+                            const value =
+                                this.dataset.status;
+
+
+                            selectedStatus.textContent =
+                                value;
+
+
+                            selectedStatusLight.className =
+                                "status-light";
+
+
+                            selectedStatusLight.classList.add(
+                                this.classList.contains("hadir")
+                                    ? "hadir"
+                                    : this.classList.contains("izin")
+                                    ? "izin"
+                                    : this.classList.contains("sakit")
+                                    ? "sakit"
+                                    : "alpa"
+                            );
+
+
+                            /*
+                             * CHECK HIDDEN RADIO
+                             */
+
+                            statusInputs.forEach(
+                                function (input) {
+
+                                    input.checked =
+                                        input.value === value;
+
+                                }
+                            );
+
+
+                            /*
+                             * CLOSE DROPDOWN
+                             */
+
+                            statusDropdown.classList.remove(
+                                "show"
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+
+        /*
+         * CLICK OUTSIDE
+         */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !statusSelect.contains(event.target) &&
+                    !statusDropdown.contains(event.target)
+                ) {
+
+                    statusDropdown.classList.remove(
+                        "show"
+                    );
+
+                }
 
             }
         );

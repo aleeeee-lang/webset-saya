@@ -650,80 +650,69 @@ textarea {
 }
 
 /* =========================================================
-   ATTENDANCE PAGE
+   ATTENDANCE — RESPONSIVE
 ========================================================= */
 
+.attendance-topbar,
 .attendance-main {
     width: 100%;
-    max-width: 600px;
+    max-width: 720px;
     margin: 0 auto;
-
-    padding: 28px 20px 120px;
-
     box-sizing: border-box;
 }
 
 
 /* =========================================================
-   HEADER
+   TOPBAR
 ========================================================= */
 
 .attendance-topbar {
-    width: 100%;
-    max-width: 600px;
-
-    margin: 0 auto;
-
-    padding: 28px 20px 10px;
-
-    box-sizing: border-box;
+    padding: 32px 24px 12px;
 }
 
 .attendance-title h1 {
     margin: 0;
-
     font-size: 30px;
     font-weight: 700;
 }
 
 .attendance-title p {
     margin: 7px 0 0;
-
     font-size: 14px;
-
     color: #777;
 }
 
 
 /* =========================================================
-   DATE & TIME
+   MAIN
+========================================================= */
+
+.attendance-main {
+    padding: 20px 24px 130px;
+}
+
+
+/* =========================================================
+   DATE + TIME
 ========================================================= */
 
 .attendance-date-time {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
-    gap: 14px;
-
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .date-time-item {
     display: flex;
-
     align-items: center;
+    gap: 14px;
 
-    gap: 13px;
+    min-height: 86px;
+    padding: 16px;
 
-    min-height: 82px;
-
-    padding: 15px;
-
-    background: #ffffff;
-
+    background: #fff;
     border: 1px solid #eeeeee;
-
     border-radius: 18px;
 
     box-sizing: border-box;
@@ -732,24 +721,19 @@ textarea {
 .date-time-icon {
     width: 48px;
     height: 48px;
-
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     border-radius: 14px;
-
     background: #f5f7fa;
 }
 
 .date-time-item > div:last-child {
     display: flex;
-
     flex-direction: column;
-
     gap: 4px;
 
     min-width: 0;
@@ -757,16 +741,12 @@ textarea {
 
 .date-time-item span {
     font-size: 12px;
-
     color: #888;
 }
 
 .date-time-item strong {
     font-size: 14px;
-
     font-weight: 600;
-
-    white-space: nowrap;
 }
 
 
@@ -783,23 +763,21 @@ textarea {
 
     top: 9px;
 
-    width: 25px;
+    width: 26px;
     height: 4px;
 
     border-radius: 3px;
-
     background: #555;
 }
 
 .calendar-icon strong {
     margin-top: 8px;
-
     font-size: 17px;
 }
 
 
 /* =========================================================
-   ANALOG CLOCK
+   CLOCK
 ========================================================= */
 
 .analog-clock {
@@ -809,7 +787,6 @@ textarea {
     height: 36px;
 
     border: 2px solid #555;
-
     border-radius: 50%;
 }
 
@@ -824,7 +801,6 @@ textarea {
     transform-origin: bottom center;
 
     border-radius: 2px;
-
     background: #555;
 }
 
@@ -838,7 +814,6 @@ textarea {
 
 .second-hand {
     height: 14px;
-
     background: #999;
 }
 
@@ -854,26 +829,22 @@ textarea {
     transform: translate(-50%, -50%);
 
     border-radius: 50%;
-
     background: #555;
 }
 
 
 /* =========================================================
-   ATTENDANCE CARD
+   CARD
 ========================================================= */
 
 .attendance-card {
     width: 100%;
 
     margin-bottom: 18px;
+    padding: 22px;
 
-    padding: 20px;
-
-    background: #ffffff;
-
+    background: #fff;
     border: 1px solid #eeeeee;
-
     border-radius: 20px;
 
     box-sizing: border-box;
@@ -885,39 +856,31 @@ textarea {
     margin-bottom: 12px;
 
     font-size: 14px;
-
     font-weight: 600;
 }
 
 
 /* =========================================================
-   STATUS SELECT
+   STATUS
 ========================================================= */
 
 .status-select {
-    position: relative;
+    width: 100%;
+    min-height: 54px;
 
     display: flex;
-
     align-items: center;
 
-    justify-content: space-between;
-
-    width: 100%;
-
-    min-height: 55px;
-
-    padding: 0 17px;
+    padding: 0 16px;
 
     border: 1px solid #e5e5e5;
-
     border-radius: 15px;
 
     background: #fafafa;
 
-    cursor: pointer;
-
     box-sizing: border-box;
+
+    cursor: pointer;
 }
 
 .status-select span {
@@ -925,8 +888,7 @@ textarea {
 }
 
 .status-arrow {
-    font-size: 18px;
-
+    margin-left: auto;
     color: #888;
 }
 
@@ -939,14 +901,12 @@ textarea {
     display: none;
 
     margin-top: 8px;
-
-    overflow: hidden;
+    padding: 6px;
 
     border: 1px solid #eeeeee;
-
     border-radius: 15px;
 
-    background: #ffffff;
+    background: #fff;
 }
 
 .status-dropdown.active {
@@ -954,19 +914,25 @@ textarea {
 }
 
 .status-option {
+    width: 100%;
+    min-height: 50px;
+
     display: flex;
-
     align-items: center;
-
     gap: 12px;
 
-    min-height: 52px;
+    padding: 0 12px;
 
-    padding: 0 16px;
+    border: 0;
+    border-radius: 11px;
 
-    cursor: pointer;
+    background: transparent;
 
+    font-family: inherit;
     font-size: 14px;
+
+    text-align: left;
+    cursor: pointer;
 }
 
 .status-option:hover {
@@ -974,7 +940,9 @@ textarea {
 }
 
 
-/* STATUS DOT */
+/* =========================================================
+   STATUS DOT
+========================================================= */
 
 .status-light {
     width: 10px;
@@ -983,12 +951,11 @@ textarea {
     flex-shrink: 0;
 
     border-radius: 50%;
-
     background: #bbb;
 }
 
 .status-option.hadir .status-light {
-    background: #32c759;
+    background: #34c759;
 }
 
 .status-option.izin .status-light {
@@ -1010,27 +977,26 @@ textarea {
 
 #reason {
     width: 100%;
-
-    min-height: 110px;
+    min-height: 115px;
 
     padding: 15px;
 
-    resize: vertical;
-
     border: 1px solid #e5e5e5;
-
     border-radius: 15px;
 
+    background: #fafafa;
+
+    resize: vertical;
     outline: none;
 
     font-family: inherit;
-
     font-size: 14px;
 
     box-sizing: border-box;
 }
 
 #reason:focus {
+    background: #fff;
     border-color: #bbb;
 }
 
@@ -1045,27 +1011,23 @@ textarea {
 
 .camera-header h2 {
     margin: 0;
-
-    font-size: 18px;
+    font-size: 19px;
 }
 
 .camera-header p {
-    margin: 6px 0 16px;
+    margin: 6px 0 17px;
 
     font-size: 13px;
-
     color: #888;
 }
 
 .camera-box {
     width: 100%;
-
-    height: 280px;
+    height: 320px;
 
     overflow: hidden;
 
     border-radius: 18px;
-
     background: #f2f2f2;
 }
 
@@ -1080,15 +1042,14 @@ textarea {
 
 
 /* =========================================================
-   CAMERA BUTTONS
+   CAMERA BUTTON
 ========================================================= */
 
 .camera-buttons {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
 
-    gap: 10px;
+    gap: 12px;
 
     margin-top: 12px;
 }
@@ -1096,12 +1057,12 @@ textarea {
 .camera-buttons button {
     min-height: 48px;
 
-    border: none;
-
+    border: 0;
     border-radius: 13px;
 
     background: #f1f1f1;
 
+    font-family: inherit;
     font-size: 14px;
 
     cursor: pointer;
@@ -1109,7 +1070,7 @@ textarea {
 
 
 /* =========================================================
-   PHOTO PREVIEW
+   PHOTO
 ========================================================= */
 
 #photoPreview {
@@ -1131,37 +1092,106 @@ textarea {
     font-size: 13px;
 
     text-align: center;
-
     color: #888;
 }
 
 
 /* =========================================================
-   SUBMIT BUTTON
+   SUBMIT
 ========================================================= */
 
 .submit-button {
     width: 100%;
-
     min-height: 56px;
 
     margin-top: 4px;
 
-    border: none;
-
+    border: 0;
     border-radius: 17px;
 
-    font-size: 15px;
+    background: #111;
+    color: #fff;
 
+    font-family: inherit;
+    font-size: 15px;
     font-weight: 600;
 
     cursor: pointer;
-
-    background: #111;
-
-    color: white;
 }
 
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .attendance-topbar {
+        padding: 26px 20px 10px;
+    }
+
+    .attendance-main {
+        padding: 18px 20px 125px;
+    }
+
+}
+
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .attendance-topbar {
+        padding: 24px 16px 8px;
+    }
+
+    .attendance-main {
+        padding: 18px 16px 120px;
+    }
+
+    .attendance-title h1 {
+        font-size: 28px;
+    }
+
+    .attendance-date-time {
+        gap: 10px;
+    }
+
+    .date-time-item {
+        min-height: 78px;
+        padding: 12px;
+        gap: 9px;
+    }
+
+    .date-time-icon {
+        width: 43px;
+        height: 43px;
+    }
+
+    .date-time-item span {
+        font-size: 11px;
+    }
+
+    .date-time-item strong {
+        font-size: 12px;
+    }
+
+    .attendance-card {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .camera-box {
+        height: 260px;
+    }
+
+    .camera-buttons {
+        gap: 9px;
+    }
+
+}
 
 /* =========================================================
    MOBILE

@@ -80,8 +80,6 @@ async function startCamera() {
 
 }
 
-
-
 // =====================================
 // TAKE PHOTO
 // =====================================
@@ -91,18 +89,13 @@ function takePhoto() {
     const video =
         document.getElementById("video");
 
-
-    // Pastikan kamera aktif
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
 
-        alert(
-            "Kamera belum aktif."
-        );
-
+        alert("Kamera belum aktif.");
         return;
 
     }
@@ -115,46 +108,6 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    // =====================================
-    // DETEKSI ORIENTASI HP
-    // =====================================
-
-    let angle = 0;
-
-
-    if (
-        screen.orientation &&
-        typeof screen.orientation.angle === "number"
-    ) {
-
-        angle =
-            screen.orientation.angle;
-
-    } else if (
-        typeof window.orientation === "number"
-    ) {
-
-        angle =
-            window.orientation;
-
-    }
-
-
-    // Normalisasi
-    angle =
-        ((angle % 360) + 360) % 360;
-
-
-    console.log(
-        "DEVICE ORIENTATION:",
-        angle
-    );
-
-
-    // =====================================
-    // UKURAN VIDEO
-    // =====================================
-
     const videoWidth =
         video.videoWidth;
 
@@ -163,21 +116,18 @@ function takePhoto() {
 
 
     // =====================================
-    // UKURAN CANVAS
+    // CEK ORIENTASI LAYAR
     // =====================================
 
-    if (
-        angle === 90 ||
-        angle === 270
-    ) {
+    const isLandscape =
+        window.innerWidth > window.innerHeight;
 
-        canvas.width =
-            videoHeight;
 
-        canvas.height =
-            videoWidth;
+    // =====================================
+    // PORTRAIT
+    // =====================================
 
-    } else {
+    if (!isLandscape) {
 
         canvas.width =
             videoWidth;
@@ -185,99 +135,92 @@ function takePhoto() {
         canvas.height =
             videoHeight;
 
-    }
+
+        context.save();
 
 
-    // Bersihkan canvas
-
-    context.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    // =====================================
-    // ROTASI
-    // =====================================
-
-    context.save();
-
-
-    if (angle === 90) {
-
-        // Putar 90 derajat
-
+        // Mirror kamera depan
         context.translate(
             canvas.width,
             0
         );
 
-        context.rotate(
-            Math.PI / 2
+        context.scale(
+            -1,
+            1
         );
 
 
-    } else if (angle === 180) {
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
 
-        // Putar 180 derajat
+
+        context.restore();
+
+    }
+
+
+    // =====================================
+    // LANDSCAPE
+    // =====================================
+
+    else {
+
+        /*
+         * Saat HP landscape,
+         * kita balik 180 derajat terhadap
+         * frame kamera yang sekarang.
+         *
+         * Ini khusus untuk mengatasi kasus
+         * kamera kamu yang menghasilkan
+         * wajah terbalik saat HP dimiringkan.
+         */
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
+
+        context.save();
+
 
         context.translate(
             canvas.width,
             canvas.height
         );
+
 
         context.rotate(
             Math.PI
         );
 
 
-    } else if (angle === 270) {
+        // Mirror kamera depan
+        context.scale(
+            -1,
+            1
+        );
 
-        // Putar 270 derajat
 
-        context.translate(
+        context.drawImage(
+            video,
             0,
-            canvas.height
+            0,
+            videoWidth,
+            videoHeight
         );
 
-        context.rotate(
-            -Math.PI / 2
-        );
+
+        context.restore();
 
     }
-
-
-    // =====================================
-    // MIRROR KAMERA DEPAN
-    // =====================================
-
-    context.translate(
-        videoWidth,
-        0
-    );
-
-    context.scale(
-        -1,
-        1
-    );
-
-
-    // =====================================
-    // GAMBAR FOTO
-    // =====================================
-
-    context.drawImage(
-        video,
-        0,
-        0,
-        videoWidth,
-        videoHeight
-    );
-
-
-    context.restore();
 
 
     // =====================================
@@ -302,7 +245,7 @@ function takePhoto() {
 
 
     // =====================================
-    // SIMPAN FOTO
+    // SIMPAN PHOTO
     // =====================================
 
     canvas.toBlob(
@@ -321,19 +264,11 @@ function takePhoto() {
     );
 
 
-    console.log(
-        "PHOTO TAKEN - ORIENTATION:",
-        angle
-    );
-
-
     alert(
         "Foto berhasil diambil! ✅"
     );
 
 }
-
-
 
 
 

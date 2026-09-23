@@ -78,22 +78,80 @@ function takePhoto() {
         canvas.getContext("2d");
 
 
-    canvas.width =
+    const videoWidth =
         video.videoWidth;
 
 
-    canvas.height =
+    const videoHeight =
         video.videoHeight;
 
 
-    context.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    /*
+     * SELALU BUAT FOTO PORTRAIT
+     */
 
+    const isLandscape =
+        videoWidth > videoHeight;
+
+
+    if (isLandscape) {
+
+        canvas.width =
+            videoHeight;
+
+        canvas.height =
+            videoWidth;
+
+
+        context.save();
+
+
+        // Putar gambar 90 derajat
+        context.translate(
+            canvas.width / 2,
+            canvas.height / 2
+        );
+
+
+        context.rotate(
+            90 * Math.PI / 180
+        );
+
+
+        context.drawImage(
+            video,
+            -videoWidth / 2,
+            -videoHeight / 2,
+            videoWidth,
+            videoHeight
+        );
+
+
+        context.restore();
+
+    } else {
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+    }
+
+
+    /*
+     * PHOTO PREVIEW
+     */
 
     const photoPreview =
         document.getElementById(
@@ -110,6 +168,10 @@ function takePhoto() {
     photoPreview.style.display =
         "block";
 
+
+    /*
+     * SIMPAN FOTO
+     */
 
     canvas.toBlob(
 
@@ -132,7 +194,6 @@ function takePhoto() {
     );
 
 }
-
 
 // =========================
 // STOP CAMERA

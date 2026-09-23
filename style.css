@@ -649,26 +649,6 @@ textarea {
     font-weight: bold;
 }
 
-/* =========================================================
-   ATTENDANCE CONTAINER
-   SAMA SEPERTI HOME
-========================================================= */
-
-.attendance-topbar {
-    width: 100%;
-    max-width: 1188px;
-    margin: 0 auto;
-    padding: 28px 0 12px;
-    box-sizing: border-box;
-}
-
-.attendance-main {
-    width: 100%;
-    max-width: 1188px;
-    margin: 0 auto;
-    padding: 20px 0 130px;
-    box-sizing: border-box;
-}
 
 
 /* =========================================================
@@ -3236,26 +3216,27 @@ body {
     .history-arrow {
         font-size: 22px;
     }
+/* =========================================================
+   ATTENDANCE - MAIN CONTAINER
+========================================================= */
+
+.attendance-topbar {
+    width: 1188px !important;
+    max-width: calc(100% - 40px) !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    box-sizing: border-box;
 }
-@media (max-width: 1220px) {
 
-    .attendance-topbar,
-    .attendance-main {
-        max-width: calc(100% - 40px);
-    }
+.attendance-main {
+    width: 1188px !important;
+    max-width: calc(100% - 40px) !important;
 
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    box-sizing: border-box;
 }
-
-@media (max-width: 600px) {
-
-    .attendance-topbar {
-        max-width: 100%;
-        padding: 24px 18px 10px;
-    }
-
-    .attendance-main {
-        max-width: 100%;
-        padding: 18px 18px 120px;
-    }
-
 }

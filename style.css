@@ -3361,8 +3361,8 @@ textarea {
 
 .attendance-page .attendance-topbar,
 .attendance-page .attendance-main {
-    width: 1188px;
-    max-width: calc(100% - 40px);
+    width: 100%;
+    max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
@@ -3842,7 +3842,7 @@ textarea {
    TABLET
 ========================================================= */
 
-@media (max-width: 1220px) {
+@media (max-width: 1100px) {
 
     .attendance-page .attendance-topbar,
     .attendance-page .attendance-main {

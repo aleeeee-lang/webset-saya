@@ -13,46 +13,17 @@ async function startCamera() {
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
                 video: {
-                    facingMode: "user",
-                    width: {
-                        ideal: 1080
-                    },
-                    height: {
-                        ideal: 1920
-                    }
+                    facingMode: "user"
                 }
             });
-
 
         const video =
             document.getElementById("video");
 
-
         video.srcObject =
             cameraStream;
 
-
         await video.play();
-
-        console.log(
-    "VIDEO:",
-    video.videoWidth,
-    "x",
-    video.videoHeight
-);
-
-console.log(
-    "SCREEN ANGLE:",
-    screen.orientation
-        ? screen.orientation.angle
-        : "tidak tersedia"
-);
-
-console.log(
-    "WINDOW ORIENTATION:",
-    window.orientation
-);
-
 
     } catch (error) {
 
@@ -68,7 +39,6 @@ console.log(
     }
 
 }
-
 
 // =========================
 // TAKE PHOTO

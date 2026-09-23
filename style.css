@@ -653,43 +653,45 @@ textarea {
    ATTENDANCE PAGE
 ========================================================= */
 
-.attendance-page {
+.attendance-main {
     width: 100%;
-    max-width: 520px;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 32px 20px 120px;
+
+    padding: 28px 20px 120px;
+
     box-sizing: border-box;
 }
 
 
 /* =========================================================
-   INTRO
+   HEADER
 ========================================================= */
 
-.attendance-intro {
-    margin-bottom: 28px;
+.attendance-topbar {
+    width: 100%;
+    max-width: 600px;
+
+    margin: 0 auto;
+
+    padding: 28px 20px 10px;
+
+    box-sizing: border-box;
 }
 
-.attendance-label {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    opacity: 0.55;
-}
-
-.attendance-intro h1 {
+.attendance-title h1 {
     margin: 0;
+
     font-size: 30px;
     font-weight: 700;
-    line-height: 1.15;
 }
 
-.attendance-intro p {
-    margin: 8px 0 0;
+.attendance-title p {
+    margin: 7px 0 0;
+
     font-size: 14px;
-    opacity: 0.6;
+
+    color: #777;
 }
 
 
@@ -699,88 +701,100 @@ textarea {
 
 .attendance-date-time {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 22px;
+
+    gap: 14px;
+
+    margin-bottom: 20px;
 }
 
 .date-time-item {
     display: flex;
+
     align-items: center;
-    gap: 12px;
+
+    gap: 13px;
 
     min-height: 82px;
+
     padding: 15px;
 
     background: #ffffff;
+
     border: 1px solid #eeeeee;
+
     border-radius: 18px;
 
     box-sizing: border-box;
 }
 
-.date-time-content {
+.date-time-icon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
     display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #f5f7fa;
+}
+
+.date-time-item > div:last-child {
+    display: flex;
+
     flex-direction: column;
-    gap: 5px;
+
+    gap: 4px;
+
     min-width: 0;
 }
 
-.date-time-content span {
+.date-time-item span {
     font-size: 12px;
-    opacity: 0.5;
+
+    color: #888;
 }
 
-.date-time-content strong {
+.date-time-item strong {
     font-size: 14px;
-    font-weight: 650;
+
+    font-weight: 600;
+
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-   CALENDAR ICON
+   CALENDAR
 ========================================================= */
 
-.date-time-icon {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-}
-
-
-/* CALENDAR */
-
 .calendar-icon {
-    background: #eef7ff;
-    color: #2677c9;
-    border: 1px solid #dceeff;
+    position: relative;
 }
 
 .calendar-top {
     position: absolute;
 
-    top: 7px;
-    left: 9px;
-    right: 9px;
+    top: 9px;
 
-    height: 3px;
+    width: 25px;
+    height: 4px;
 
     border-radius: 3px;
-    background: currentColor;
+
+    background: #555;
 }
 
 .calendar-icon strong {
-    margin-top: 6px;
+    margin-top: 8px;
+
     font-size: 17px;
-    line-height: 1;
 }
 
 
@@ -788,19 +802,14 @@ textarea {
    ANALOG CLOCK
 ========================================================= */
 
-.clock-icon {
-    background: #f4f3ff;
-    color: #7064d8;
-    border: 1px solid #e7e4ff;
-}
-
 .analog-clock {
-    width: 32px;
-    height: 32px;
-
     position: relative;
 
-    border: 2px solid currentColor;
+    width: 36px;
+    height: 36px;
+
+    border: 2px solid #555;
+
     border-radius: 50%;
 }
 
@@ -810,150 +819,115 @@ textarea {
     left: 50%;
     bottom: 50%;
 
-    width: 1.5px;
+    width: 2px;
 
     transform-origin: bottom center;
-    transform: translateX(-50%);
 
-    border-radius: 10px;
-    background: currentColor;
+    border-radius: 2px;
+
+    background: #555;
 }
 
 .hour-hand {
-    height: 8px;
+    height: 9px;
 }
 
 .minute-hand {
-    height: 11px;
+    height: 12px;
 }
 
 .second-hand {
-    width: 1px;
-    height: 13px;
+    height: 14px;
+
+    background: #999;
 }
 
 .clock-center {
     position: absolute;
 
-    width: 4px;
-    height: 4px;
-
-    left: 50%;
     top: 50%;
+    left: 50%;
+
+    width: 5px;
+    height: 5px;
 
     transform: translate(-50%, -50%);
 
     border-radius: 50%;
-    background: currentColor;
+
+    background: #555;
 }
 
 
 /* =========================================================
-   GENERAL ATTENDANCE CARD
+   ATTENDANCE CARD
 ========================================================= */
 
 .attendance-card {
-    position: relative;
+    width: 100%;
 
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+
     padding: 20px;
 
     background: #ffffff;
 
     border: 1px solid #eeeeee;
+
     border-radius: 20px;
 
     box-sizing: border-box;
 }
 
-.card-label {
+.attendance-card > label {
+    display: block;
+
     margin-bottom: 12px;
 
-    font-size: 13px;
-    font-weight: 650;
+    font-size: 14px;
+
+    font-weight: 600;
 }
 
 
 /* =========================================================
-   STATUS
+   STATUS SELECT
 ========================================================= */
 
-.status-card {
-    z-index: 10;
-}
-
 .status-select {
-    width: 100%;
+    position: relative;
 
     display: flex;
-    align-items: center;
-    gap: 10px;
 
-    padding: 14px 15px;
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    min-height: 55px;
+
+    padding: 0 17px;
 
     border: 1px solid #e5e5e5;
-    border-radius: 14px;
+
+    border-radius: 15px;
 
     background: #fafafa;
 
-    font-size: 14px;
-    text-align: left;
-
     cursor: pointer;
 
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease;
+    box-sizing: border-box;
 }
 
-.status-select:hover {
-    background: #f7f7f7;
-}
-
-.status-select:focus {
-    outline: none;
-    border-color: #bdbdbd;
+.status-select span {
+    font-size: 15px;
 }
 
 .status-arrow {
-    margin-left: auto;
-
     font-size: 18px;
-    opacity: 0.5;
 
-    transition: transform 0.2s ease;
-}
-
-
-/* =========================================================
-   STATUS LIGHT
-========================================================= */
-
-.status-light {
-    width: 9px;
-    height: 9px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #cfcfcf;
-}
-
-.status-light.hadir {
-    background: #36b37e;
-}
-
-.status-light.izin {
-    background: #f2b134;
-}
-
-.status-light.sakit {
-    background: #e85d75;
-}
-
-.status-light.alpa {
-    background: #777777;
+    color: #888;
 }
 
 
@@ -962,49 +936,37 @@ textarea {
 ========================================================= */
 
 .status-dropdown {
-    position: absolute;
-
-    left: 20px;
-    right: 20px;
-    top: 92px;
-
     display: none;
 
-    padding: 6px;
+    margin-top: 8px;
 
-    background: #ffffff;
+    overflow: hidden;
 
     border: 1px solid #eeeeee;
-    border-radius: 16px;
 
-    box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 15px;
 
-    z-index: 100;
+    background: #ffffff;
 }
 
-.status-dropdown.show {
+.status-dropdown.active {
     display: block;
 }
 
 .status-option {
-    width: 100%;
-
     display: flex;
+
     align-items: center;
-    gap: 11px;
 
-    padding: 13px 12px;
+    gap: 12px;
 
-    border: 0;
-    border-radius: 11px;
+    min-height: 52px;
 
-    background: transparent;
-
-    font-size: 14px;
-    text-align: left;
+    padding: 0 16px;
 
     cursor: pointer;
+
+    font-size: 14px;
 }
 
 .status-option:hover {
@@ -1012,12 +974,33 @@ textarea {
 }
 
 
-/* =========================================================
-   HIDDEN RADIO
-========================================================= */
+/* STATUS DOT */
 
-.hidden-status-inputs {
-    display: none;
+.status-light {
+    width: 10px;
+    height: 10px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #bbb;
+}
+
+.status-option.hadir .status-light {
+    background: #32c759;
+}
+
+.status-option.izin .status-light {
+    background: #ffcc00;
+}
+
+.status-option.sakit .status-light {
+    background: #ff9500;
+}
+
+.status-option.alpa .status-light {
+    background: #ff3b30;
 }
 
 
@@ -1025,37 +1008,30 @@ textarea {
    REASON
 ========================================================= */
 
-.reason-card textarea {
+#reason {
     width: 100%;
 
-    display: block;
+    min-height: 110px;
 
-    min-height: 100px;
-
-    padding: 13px 14px;
-
-    box-sizing: border-box;
+    padding: 15px;
 
     resize: vertical;
 
     border: 1px solid #e5e5e5;
-    border-radius: 14px;
 
-    background: #fafafa;
-
-    font-family: inherit;
-    font-size: 14px;
+    border-radius: 15px;
 
     outline: none;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
 }
 
-.reason-card textarea:focus {
-    border-color: #c7c7c7;
-    background: #ffffff;
-}
-
-.reason-card textarea::placeholder {
-    color: #999999;
+#reason:focus {
+    border-color: #bbb;
 }
 
 
@@ -1064,57 +1040,33 @@ textarea {
 ========================================================= */
 
 .camera-card {
-    padding: 20px;
-}
-
-.camera-header {
-    margin-bottom: 16px;
-}
-
-.camera-label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.4px;
-
-    opacity: 0.5;
+    overflow: hidden;
 }
 
 .camera-header h2 {
     margin: 0;
 
-    font-size: 19px;
-    font-weight: 650;
+    font-size: 18px;
 }
 
 .camera-header p {
-    margin: 6px 0 0;
+    margin: 6px 0 16px;
 
     font-size: 13px;
-    line-height: 1.5;
 
-    opacity: 0.55;
+    color: #888;
 }
-
-
-/* =========================================================
-   CAMERA BOX
-========================================================= */
 
 .camera-box {
     width: 100%;
-    height: 260px;
+
+    height: 280px;
 
     overflow: hidden;
 
-    border-radius: 17px;
+    border-radius: 18px;
 
     background: #f2f2f2;
-
-    border: 1px solid #e8e8e8;
 }
 
 .camera-box video {
@@ -1141,31 +1093,18 @@ textarea {
     margin-top: 12px;
 }
 
-.camera-button {
-    min-height: 45px;
+.camera-buttons button {
+    min-height: 48px;
+
+    border: none;
 
     border-radius: 13px;
 
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
+    background: #f1f1f1;
+
+    font-size: 14px;
 
     cursor: pointer;
-}
-
-.camera-button.secondary {
-    border: 1px solid #e4e4e4;
-    background: #ffffff;
-}
-
-.camera-button.primary {
-    border: 0;
-    background: #111111;
-    color: #ffffff;
-}
-
-.camera-button:hover {
-    opacity: 0.9;
 }
 
 
@@ -1178,9 +1117,7 @@ textarea {
 
     margin-top: 14px;
 
-    border-radius: 16px;
-
-    border: 1px solid #eeeeee;
+    border-radius: 18px;
 }
 
 
@@ -1191,11 +1128,11 @@ textarea {
 #faceStatus {
     margin: 12px 0 0;
 
-    font-size: 12px;
+    font-size: 13px;
 
     text-align: center;
 
-    opacity: 0.5;
+    color: #888;
 }
 
 
@@ -1206,36 +1143,72 @@ textarea {
 .submit-button {
     width: 100%;
 
-    min-height: 52px;
+    min-height: 56px;
 
     margin-top: 4px;
 
-    border: 0;
-    border-radius: 16px;
+    border: none;
 
-    background: #111111;
-    color: #ffffff;
+    border-radius: 17px;
 
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 650;
+    font-size: 15px;
+
+    font-weight: 600;
 
     cursor: pointer;
 
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-}
+    background: #111;
 
-.submit-button:hover {
-    opacity: 0.9;
-}
-
-.submit-button:active {
-    transform: scale(0.98);
+    color: white;
 }
 
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .attendance-topbar {
+        padding: 24px 18px 8px;
+    }
+
+    .attendance-main {
+        padding: 24px 18px 120px;
+    }
+
+    .attendance-title h1 {
+        font-size: 28px;
+    }
+
+    .attendance-date-time {
+        gap: 12px;
+    }
+
+    .date-time-item {
+        padding: 13px;
+
+        min-height: 78px;
+
+        border-radius: 17px;
+    }
+
+    .date-time-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .attendance-card {
+        padding: 18px;
+
+        border-radius: 18px;
+    }
+
+    .camera-box {
+        height: 260px;
+    }
+
+}
 /* =========================================================
    MOBILE
 ========================================================= */

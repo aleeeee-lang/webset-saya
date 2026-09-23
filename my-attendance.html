@@ -707,6 +707,29 @@
 
     <script src="js/auth.js"></script>
 
+    <script>
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", function (event) {
+    touchStartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", function (event) {
+    touchEndX = event.changedTouches[0].screenX;
+
+    const swipeDistance = touchEndX - touchStartX;
+
+    // Swipe kanan → History
+    if (swipeDistance > 80) {
+        window.location.href = "history.html";
+    }
+
+});
+
+</script>
+
 
 </body>
 

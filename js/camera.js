@@ -34,6 +34,25 @@ async function startCamera() {
 
         await video.play();
 
+        console.log(
+    "VIDEO:",
+    video.videoWidth,
+    "x",
+    video.videoHeight
+);
+
+console.log(
+    "SCREEN ANGLE:",
+    screen.orientation
+        ? screen.orientation.angle
+        : "tidak tersedia"
+);
+
+console.log(
+    "WINDOW ORIENTATION:",
+    window.orientation
+);
+
 
     } catch (error) {
 

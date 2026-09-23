@@ -960,21 +960,32 @@
 
     </script>
 
-    <script>
+   <script>
+
 let touchStartX = 0;
 let touchEndX = 0;
 
-document.addEventListener("touchstart", e => {
-    touchStartX = e.changedTouches[0].screenX;
+document.addEventListener("touchstart", function (event) {
+    touchStartX = event.changedTouches[0].screenX;
 });
 
-document.addEventListener("touchend", e => {
-    touchEndX = e.changedTouches[0].screenX;
+document.addEventListener("touchend", function (event) {
+    touchEndX = event.changedTouches[0].screenX;
 
-    if (touchEndX - touchStartX > 80) {
+    const swipeDistance = touchEndX - touchStartX;
+
+    // Swipe kiri → History
+    if (swipeDistance < -80) {
+        window.location.href = "history.html";
+    }
+
+    // Swipe kanan → Attendance
+    if (swipeDistance > 80) {
         window.location.href = "attendance.html";
     }
+
 });
+
 </script>
 
 

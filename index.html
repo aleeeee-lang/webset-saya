@@ -592,6 +592,23 @@
     </nav>
 
 <script src="js/notification.js"></script>
+
+    <script>
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", e => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", e => {
+    touchEndX = e.changedTouches[0].screenX;
+
+    if (touchEndX - touchStartX < -80) {
+        window.location.href = "attendance.html";
+    }
+});
+</script>
 </body>
 
 </html>

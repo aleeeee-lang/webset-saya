@@ -971,6 +971,7 @@ textarea {
     height: 100%;
     display: block;
     object-fit: cover;
+    transform: none;
 }
 
 .attendance-page .camera-buttons {

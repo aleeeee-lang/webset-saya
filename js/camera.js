@@ -136,12 +136,14 @@ function takePhoto() {
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
 
-    // =====================================
-    // CEK ORIENTASI LAYAR
-    // =====================================
-
     const isLandscape =
-        window.innerWidth > window.innerHeight;
+        screen.orientation &&
+        screen.orientation.type.includes("landscape");
+
+    console.log("SCREEN:", screen.orientation?.type);
+    console.log("LANDSCAPE:", isLandscape);
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
     // =====================================
     // PORTRAIT
@@ -152,9 +154,6 @@ function takePhoto() {
         canvas.width = videoWidth;
         canvas.height = videoHeight;
 
-        context.setTransform(1, 0, 0, 1, 0, 0);
-
-        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -162,7 +161,6 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
-
     }
 
     // =====================================
@@ -185,7 +183,6 @@ function takePhoto() {
             Math.PI / 2
         );
 
-        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -213,24 +210,19 @@ function takePhoto() {
     photoPreview.style.display = "block";
 
     // =====================================
-    // SIMPAN FOTO
+    // SIMPAN
     // =====================================
 
     canvas.toBlob(
         function(blob) {
-
             capturedPhoto = blob;
-
         },
         "image/jpeg",
         0.8
     );
 
-    console.log(
-        "PHOTO BERHASIL DIAMBIL"
-    );
+    console.log("PHOTO BERHASIL DIAMBIL");
 }
-
 
     // =====================================
     // SIMPAN FOTO

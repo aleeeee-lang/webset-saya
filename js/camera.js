@@ -1,3 +1,4 @@
+const FLIP_CAMERA = true;   // true = flip the picture back, false = no flip
 let cameraStream = null;
 let capturedPhoto = null;
 
@@ -55,6 +56,7 @@ video.style.display = "block";
 
         // Pasang kamera ke video
         video.srcObject = cameraStream;
+        video.style.transform = FLIP_CAMERA ? "scaleX(-1)" : "none";
 
         video.autoplay = true;
         video.muted = true;
@@ -155,13 +157,16 @@ function takePhoto() {
     // AMBIL 1 FRAME SAJA
     // =====================================
 
-    context.drawImage(
-        video,
-        0,
-        0,
-        width,
-        height
-    );
+   context.save();
+
+if (FLIP_CAMERA) {
+    context.translate(width, 0);
+    context.scale(-1, 1);
+}
+
+context.drawImage(video, 0, 0, width, height);
+
+context.restore();
 
 
     // =====================================

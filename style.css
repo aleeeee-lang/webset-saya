@@ -2596,4 +2596,40 @@ body {
     }
 }
 
+/* =========================================================
+   PHONE: BOTTOM NAV STUCK TO THE BOTTOM (YouTube style)
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .bottom-nav {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transform: none;
+        width: 100%;
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+        border-radius: 0;
+        border-top: 1px solid #e5e7eb;
+        box-shadow: none;
+        background: #ffffff;
+    }
+
+    .bottom-nav a {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 2px;
+        border-radius: 0;
+    }
+
+    .bottom-nav a.active {
+        background: transparent;
+        color: #635bff;
+    }
+
+    body {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
 

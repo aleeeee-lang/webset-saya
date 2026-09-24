@@ -80,10 +80,6 @@ async function startCamera() {
 
 }
 
-// =====================================
-// TAKE PHOTO
-// =====================================
-
 function takePhoto() {
 
     const video =
@@ -94,10 +90,8 @@ function takePhoto() {
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
-
         alert("Kamera belum aktif.");
         return;
-
     }
 
 
@@ -116,18 +110,67 @@ function takePhoto() {
 
 
     // =====================================
-    // CEK ORIENTASI LAYAR
+    // AMBIL ORIENTASI HP
     // =====================================
 
-    const isLandscape =
-        window.innerWidth > window.innerHeight;
+    let gamma = 0;
+
+    if (
+        typeof window.lastGamma === "number"
+    ) {
+
+        gamma =
+            window.lastGamma;
+
+    }
+
+
+    console.log(
+        "GAMMA:",
+        gamma
+    );
+
+
+    // =====================================
+    // TENTUKAN ARAH HP
+    // =====================================
+
+    let orientation;
+
+
+    if (gamma > 45) {
+
+        // HP miring kiri
+        orientation = "LEFT";
+
+    }
+
+    else if (gamma < -45) {
+
+        // HP miring kanan
+        orientation = "RIGHT";
+
+    }
+
+    else {
+
+        // HP tegak
+        orientation = "PORTRAIT";
+
+    }
+
+
+    console.log(
+        "ORIENTATION:",
+        orientation
+    );
 
 
     // =====================================
     // PORTRAIT
     // =====================================
 
-    if (!isLandscape) {
+    if (orientation === "PORTRAIT") {
 
         canvas.width =
             videoWidth;
@@ -166,26 +209,16 @@ function takePhoto() {
 
 
     // =====================================
-    // LANDSCAPE
+    // LANDSCAPE KANAN
     // =====================================
 
-    else {
-
-        /*
-         * Saat HP landscape,
-         * kita balik 180 derajat terhadap
-         * frame kamera yang sekarang.
-         *
-         * Ini khusus untuk mengatasi kasus
-         * kamera kamu yang menghasilkan
-         * wajah terbalik saat HP dimiringkan.
-         */
+    else if (orientation === "RIGHT") {
 
         canvas.width =
-            videoWidth;
+            videoHeight;
 
         canvas.height =
-            videoHeight;
+            videoWidth;
 
 
         context.save();
@@ -193,16 +226,74 @@ function takePhoto() {
 
         context.translate(
             canvas.width,
+            0
+        );
+
+
+        context.rotate(
+            Math.PI / 2
+        );
+
+
+        // Mirror kamera depan
+        context.translate(
+            videoWidth,
+            0
+        );
+
+        context.scale(
+            -1,
+            1
+        );
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+
+        context.restore();
+
+    }
+
+
+    // =====================================
+    // LANDSCAPE KIRI
+    // =====================================
+
+    else if (orientation === "LEFT") {
+
+        canvas.width =
+            videoHeight;
+
+        canvas.height =
+            videoWidth;
+
+
+        context.save();
+
+
+        context.translate(
+            0,
             canvas.height
         );
 
 
         context.rotate(
-            Math.PI
+            -Math.PI / 2
         );
 
 
         // Mirror kamera depan
+        context.translate(
+            videoWidth,
+            0
+        );
+
         context.scale(
             -1,
             1
@@ -245,7 +336,7 @@ function takePhoto() {
 
 
     // =====================================
-    // SIMPAN PHOTO
+    // SIMPAN FOTO
     // =====================================
 
     canvas.toBlob(
@@ -264,8 +355,9 @@ function takePhoto() {
     );
 
 
-    alert(
-        "Foto berhasil diambil! ✅"
+    console.log(
+        "PHOTO TAKEN:",
+        orientation
     );
 
 }

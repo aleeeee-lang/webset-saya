@@ -973,6 +973,10 @@ textarea {
     display: none;
     object-fit: cover;
     border-radius: 15px;
+
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+
 }
 
 .attendance-page .camera-box video {

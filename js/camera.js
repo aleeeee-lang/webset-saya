@@ -10,6 +10,15 @@ async function startCamera() {
 
     const video = document.getElementById("video");
 
+    const photoPreview =
+    document.getElementById("photoPreview");
+
+if (photoPreview) {
+    photoPreview.style.display = "none";
+}
+
+video.style.display = "block";
+
     if (!video) {
         console.error("Element #video tidak ditemukan.");
         return;

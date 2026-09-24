@@ -136,33 +136,25 @@ function takePhoto() {
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
 
-    /*
-    =====================================================
-    DETEKSI ORIENTASI LAYAR
-    =====================================================
-    */
+    // =====================================
+    // CEK ORIENTASI LAYAR
+    // =====================================
 
-    const screenAngle =
-        window.screen.orientation
-            ? window.screen.orientation.angle
-            : 0;
+    const isLandscape =
+        window.innerWidth > window.innerHeight;
 
-    console.log("SCREEN ANGLE:", screenAngle);
+    // =====================================
+    // PORTRAIT
+    // =====================================
 
-
-    /*
-    =====================================================
-    PORTRAIT
-    =====================================================
-    */
-
-    if (screenAngle === 0 || screenAngle === 180) {
+    if (!isLandscape) {
 
         canvas.width = videoWidth;
         canvas.height = videoHeight;
 
-        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
+        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -171,17 +163,13 @@ function takePhoto() {
             videoHeight
         );
 
-        context.restore();
     }
 
+    // =====================================
+    // LANDSCAPE
+    // =====================================
 
-    /*
-    =====================================================
-    LANDSCAPE 90°
-    =====================================================
-    */
-
-    else if (screenAngle === 90) {
+    else {
 
         canvas.width = videoHeight;
         canvas.height = videoWidth;
@@ -197,6 +185,7 @@ function takePhoto() {
             Math.PI / 2
         );
 
+        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -208,46 +197,9 @@ function takePhoto() {
         context.restore();
     }
 
-
-    /*
-    =====================================================
-    LANDSCAPE 270°
-    =====================================================
-    */
-
-    else if (screenAngle === 270) {
-
-        canvas.width = videoHeight;
-        canvas.height = videoWidth;
-
-        context.save();
-
-        context.translate(
-            0,
-            canvas.height
-        );
-
-        context.rotate(
-            -Math.PI / 2
-        );
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            videoWidth,
-            videoHeight
-        );
-
-        context.restore();
-    }
-
-
-    /*
-    =====================================================
-    PREVIEW
-    =====================================================
-    */
+    // =====================================
+    // PREVIEW
+    // =====================================
 
     const photoPreview =
         document.getElementById("photoPreview");
@@ -258,15 +210,11 @@ function takePhoto() {
             0.9
         );
 
-    photoPreview.style.display =
-        "block";
+    photoPreview.style.display = "block";
 
-
-    /*
-    =====================================================
-    SIMPAN FOTO
-    =====================================================
-    */
+    // =====================================
+    // SIMPAN FOTO
+    // =====================================
 
     canvas.toBlob(
         function(blob) {
@@ -277,7 +225,6 @@ function takePhoto() {
         "image/jpeg",
         0.8
     );
-
 
     console.log(
         "PHOTO BERHASIL DIAMBIL"

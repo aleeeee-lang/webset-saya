@@ -136,10 +136,6 @@ async function startCamera() {
 
 
 
-// =====================================
-// TAKE PHOTO
-// =====================================
-
 function takePhoto() {
 
     const video = document.getElementById("video");
@@ -160,48 +156,39 @@ function takePhoto() {
     const videoHeight = video.videoHeight;
 
     // =====================================
-    // AMBIL GAMMA
+    // CEK ORIENTASI LAYAR
     // =====================================
 
-    const gamma = window.lastGamma || 0;
+    let angle = 0;
 
-    console.log("GAMMA:", gamma);
-
-
-    // =====================================
-    // TENTUKAN ORIENTASI
-    // =====================================
-
-    let orientation;
-
-    if (gamma > 45) {
-
-        orientation = "LEFT";
-
-    } else if (gamma < -45) {
-
-        orientation = "RIGHT";
-
-    } else {
-
-        orientation = "PORTRAIT";
-
+    if (
+        screen.orientation &&
+        typeof screen.orientation.angle === "number"
+    ) {
+        angle = screen.orientation.angle;
+    } else if (
+        typeof window.orientation === "number"
+    ) {
+        angle = window.orientation;
     }
 
-    console.log("ORIENTATION:", orientation);
+    console.log("SCREEN ANGLE:", angle);
 
 
     // =====================================
     // PORTRAIT
     // =====================================
 
-    if (orientation === "PORTRAIT") {
+    if (angle === 0 || angle === 180) {
 
         canvas.width = videoWidth;
         canvas.height = videoHeight;
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
+        /*
+         * TANPA MIRROR
+         */
         context.drawImage(
             video,
             0,
@@ -213,19 +200,16 @@ function takePhoto() {
 
 
     // =====================================
-    // LANDSCAPE RIGHT
+    // LANDSCAPE
     // =====================================
 
-    else if (orientation === "RIGHT") {
+    else if (angle === 90) {
 
         canvas.width = videoHeight;
         canvas.height = videoWidth;
 
         context.save();
 
-        /*
-         * Putar 90 derajat clockwise.
-         */
         context.translate(
             canvas.width,
             0
@@ -235,6 +219,9 @@ function takePhoto() {
             Math.PI / 2
         );
 
+        /*
+         * TANPA MIRROR
+         */
         context.drawImage(
             video,
             0,
@@ -247,20 +234,13 @@ function takePhoto() {
     }
 
 
-    // =====================================
-    // LANDSCAPE LEFT
-    // =====================================
-
-    else if (orientation === "LEFT") {
+    else if (angle === 270) {
 
         canvas.width = videoHeight;
         canvas.height = videoWidth;
 
         context.save();
 
-        /*
-         * Putar 90 derajat counter-clockwise.
-         */
         context.translate(
             0,
             canvas.height
@@ -270,6 +250,9 @@ function takePhoto() {
             -Math.PI / 2
         );
 
+        /*
+         * TANPA MIRROR
+         */
         context.drawImage(
             video,
             0,
@@ -304,23 +287,18 @@ function takePhoto() {
     // =====================================
 
     canvas.toBlob(
-
         function(blob) {
 
             capturedPhoto = blob;
 
         },
-
         "image/jpeg",
-
         0.8
-
     );
 
 
     console.log(
-        "PHOTO BERHASIL DIAMBIL:",
-        orientation
+        "PHOTO BERHASIL DIAMBIL"
     );
 }
 

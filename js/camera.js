@@ -300,3 +300,16 @@ function stopCamera() {
     video.srcObject = null;
 
 }
+
+window.addEventListener("deviceorientation", function(event) {
+
+    console.log(
+        "BETA:",
+        event.beta,
+        "GAMMA:",
+        event.gamma,
+        "ALPHA:",
+        event.alpha
+    );
+
+});

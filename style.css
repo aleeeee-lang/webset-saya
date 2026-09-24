@@ -2577,22 +2577,43 @@ textarea {
 }
 
 /* =========================================================
-   SMOOTH PAGE TRANSITION
+   PAGE TRANSITIONS (Instagram style)
 ========================================================= */
 
-body {
-    animation: pageEnter 0.35s ease;
+@view-transition {
+    navigation: auto;
 }
 
-@keyframes pageEnter {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
+/* The nav bar stays in place while the page changes */
+.bottom-nav {
+    view-transition-name: bottom-nav;
+}
 
-    to {
-        opacity: 1;
-        transform: translateX(0);
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 280ms;
+    animation-timing-function: cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+
+@keyframes vt-out-left  { to   { transform: translateX(-25%); opacity: 0; } }
+@keyframes vt-in-right  { from { transform: translateX(25%);  opacity: 0; } }
+@keyframes vt-out-right { to   { transform: translateX(25%);  opacity: 0; } }
+@keyframes vt-in-left   { from { transform: translateX(-25%); opacity: 0; } }
+
+/* Going to a tab on the right */
+html.vt-forward::view-transition-old(root) { animation-name: vt-out-left; }
+html.vt-forward::view-transition-new(root) { animation-name: vt-in-right; }
+
+/* Going to a tab on the left */
+html.vt-back::view-transition-old(root) { animation-name: vt-out-right; }
+html.vt-back::view-transition-new(root) { animation-name: vt-in-left; }
+
+/* No animation for people who turned animations off on their phone */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
     }
 }
 

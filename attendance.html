@@ -937,6 +937,29 @@ document.addEventListener("touchend", e => {
 });
 </script>
 
+    <div id="orientationDebug">
+    Beta: -
+    <br>
+    Gamma: -
+    <br>
+    Alpha: -
+</div>
+
+    <script>
+
+window.addEventListener("deviceorientation", function(event) {
+
+    document.getElementById("orientationDebug").innerHTML =
+        "Beta: " + Math.round(event.beta) + "°" +
+        "<br>" +
+        "Gamma: " + Math.round(event.gamma) + "°" +
+        "<br>" +
+        "Alpha: " + Math.round(event.alpha) + "°";
+
+});
+
+</script>
+
 
 </body>
 

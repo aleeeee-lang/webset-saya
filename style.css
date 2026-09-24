@@ -167,3 +167,29 @@ button,input,select,textarea{font-family:inherit}
 @keyframes vt-out-left{to{transform:translateX(-25%);opacity:0}}@keyframes vt-in-right{from{transform:translateX(25%);opacity:0}}@keyframes vt-out-right{to{transform:translateX(25%);opacity:0}}@keyframes vt-in-left{from{transform:translateX(-25%);opacity:0}}
 html.vt-forward::view-transition-old(root){animation-name:vt-out-left}html.vt-forward::view-transition-new(root){animation-name:vt-in-right}html.vt-back::view-transition-old(root){animation-name:vt-out-right}html.vt-back::view-transition-new(root){animation-name:vt-in-left}
 @media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
+
+/* =========================================================
+   ATTENDANCE: BACK TO ONE COLUMN
+========================================================= */
+
+main.attendance-page {
+    display: block !important;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+
+main.attendance-page .attendance-card {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+main.attendance-page .submit-button {
+    display: block;
+    width: 100%;
+    height: auto !important;
+    min-height: 52px;
+    margin-top: 2px;
+}

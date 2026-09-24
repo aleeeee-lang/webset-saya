@@ -117,25 +117,41 @@ async function startCamera() {
 }
 
 
+```js
+// =====================================
+// TAKE PHOTO
+// =====================================
 
 function takePhoto() {
 
-    const video = document.getElementById("video");
+    const video =
+        document.getElementById("video");
 
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
+
         alert("Kamera belum aktif.");
         return;
+
     }
 
-    const canvas = document.getElementById("canvas");
-    const context = canvas.getContext("2d");
 
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
+    const canvas =
+        document.getElementById("canvas");
+
+    const context =
+        canvas.getContext("2d");
+
+
+    const videoWidth =
+        video.videoWidth;
+
+    const videoHeight =
+        video.videoHeight;
+
 
     // =====================================
     // CEK ORIENTASI LAYAR
@@ -147,51 +163,46 @@ function takePhoto() {
         screen.orientation &&
         typeof screen.orientation.angle === "number"
     ) {
-        angle = screen.orientation.angle;
-    }
 
-    console.log("SCREEN ANGLE:", angle);
+        angle =
+            screen.orientation.angle;
 
-
-    // =====================================
-    // PORTRAIT NORMAL
-    // =====================================
-
-    if (angle === 0) {
-
-        canvas.width = videoWidth;
-        canvas.height = videoHeight;
-
-        context.setTransform(1, 0, 0, 1, 0, 0);
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            videoWidth,
-            videoHeight
-        );
     }
 
 
+    console.log(
+        "SCREEN ANGLE:",
+        angle
+    );
+
+
     // =====================================
-    // LANDSCAPE 90°
+    // PORTRAIT
     // =====================================
 
-    else if (angle === 90) {
+    if (
+        angle === 0 ||
+        angle === 180
+    ) {
 
-        canvas.width = videoHeight;
-        canvas.height = videoWidth;
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
 
         context.setTransform(
+            1,
+            0,
             0,
             1,
-            -1,
             0,
-            videoHeight,
             0
         );
 
+
+        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -199,27 +210,56 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
+
     }
 
 
     // =====================================
-    // TERBALIK 180°
+    // LANDSCAPE
     // =====================================
 
-    else if (angle === 180) {
+    else {
 
-        canvas.width = videoWidth;
-        canvas.height = videoHeight;
+        canvas.width =
+            videoHeight;
 
-        context.setTransform(
-            -1,
-            0,
-            0,
-            -1,
-            videoWidth,
-            videoHeight
-        );
+        canvas.height =
+            videoWidth;
 
+
+        context.save();
+
+
+        if (angle === 90) {
+
+            // ROTASI 90 DERAJAT
+            context.translate(
+                canvas.width,
+                0
+            );
+
+            context.rotate(
+                Math.PI / 2
+            );
+
+        }
+
+        else if (angle === 270) {
+
+            // ROTASI 270 DERAJAT
+            context.translate(
+                0,
+                canvas.height
+            );
+
+            context.rotate(
+                -Math.PI / 2
+            );
+
+        }
+
+
+        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -227,50 +267,22 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
+
+
+        context.restore();
+
     }
 
 
     // =====================================
-    // LANDSCAPE -90°
-    // =====================================
-
-    else if (angle === 270) {
-
-        canvas.width = videoHeight;
-        canvas.height = videoWidth;
-
-        context.setTransform(
-            0,
-            -1,
-            1,
-            0,
-            0,
-            videoWidth
-        );
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            videoWidth,
-            videoHeight
-        );
-    }
-
-
-    // =====================================
-    // RESET TRANSFORM
-    // =====================================
-
-    context.setTransform(1, 0, 0, 1, 0, 0);
-
-
-    // =====================================
-    // PREVIEW FOTO
+    // PHOTO PREVIEW
     // =====================================
 
     const photoPreview =
-        document.getElementById("photoPreview");
+        document.getElementById(
+            "photoPreview"
+        );
+
 
     photoPreview.src =
         canvas.toDataURL(
@@ -278,7 +290,9 @@ function takePhoto() {
             0.9
         );
 
-    photoPreview.style.display = "block";
+
+    photoPreview.style.display =
+        "block";
 
 
     // =====================================
@@ -286,20 +300,30 @@ function takePhoto() {
     // =====================================
 
     canvas.toBlob(
+
         function(blob) {
 
-            capturedPhoto = blob;
+            capturedPhoto =
+                blob;
 
         },
+
         "image/jpeg",
+
         0.8
+
     );
 
 
     console.log(
-        "PHOTO BERHASIL DIAMBIL"
+        "PHOTO BERHASIL DIAMBIL",
+        "ANGLE:",
+        angle
     );
+
 }
+```
+
 
 // =====================================
 // STOP CAMERA

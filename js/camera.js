@@ -142,47 +142,30 @@ async function startCamera() {
 
 function takePhoto() {
 
-    const video =
-        document.getElementById("video");
+    const video = document.getElementById("video");
 
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
-
         alert("Kamera belum aktif.");
         return;
-
     }
 
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
 
-    const canvas =
-        document.getElementById("canvas");
-
-    const context =
-        canvas.getContext("2d");
-
-
-    const videoWidth =
-        video.videoWidth;
-
-    const videoHeight =
-        video.videoHeight;
-
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
 
     // =====================================
-    // AMBIL GAMMA HP
+    // AMBIL GAMMA
     // =====================================
 
-    const gamma =
-        window.lastGamma || 0;
+    const gamma = window.lastGamma || 0;
 
-
-    console.log(
-        "GAMMA:",
-        gamma
-    );
+    console.log("GAMMA:", gamma);
 
 
     // =====================================
@@ -191,30 +174,21 @@ function takePhoto() {
 
     let orientation;
 
-
     if (gamma > 45) {
 
         orientation = "LEFT";
 
-    }
-
-    else if (gamma < -45) {
+    } else if (gamma < -45) {
 
         orientation = "RIGHT";
 
-    }
-
-    else {
+    } else {
 
         orientation = "PORTRAIT";
 
     }
 
-
-    console.log(
-        "ORIENTATION:",
-        orientation
-    );
+    console.log("ORIENTATION:", orientation);
 
 
     // =====================================
@@ -223,12 +197,10 @@ function takePhoto() {
 
     if (orientation === "PORTRAIT") {
 
-        canvas.width =
-            videoWidth;
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
 
-        canvas.height =
-            videoHeight;
-
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         context.drawImage(
             video,
@@ -237,7 +209,6 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
-
     }
 
 
@@ -247,26 +218,22 @@ function takePhoto() {
 
     else if (orientation === "RIGHT") {
 
-        canvas.width =
-            videoHeight;
-
-        canvas.height =
-            videoWidth;
-
+        canvas.width = videoHeight;
+        canvas.height = videoWidth;
 
         context.save();
 
-
+        /*
+         * Putar 90 derajat clockwise.
+         */
         context.translate(
             canvas.width,
             0
         );
 
-
         context.rotate(
             Math.PI / 2
         );
-
 
         context.drawImage(
             video,
@@ -276,9 +243,7 @@ function takePhoto() {
             videoHeight
         );
 
-
         context.restore();
-
     }
 
 
@@ -288,26 +253,22 @@ function takePhoto() {
 
     else if (orientation === "LEFT") {
 
-        canvas.width =
-            videoHeight;
-
-        canvas.height =
-            videoWidth;
-
+        canvas.width = videoHeight;
+        canvas.height = videoWidth;
 
         context.save();
 
-
+        /*
+         * Putar 90 derajat counter-clockwise.
+         */
         context.translate(
             0,
             canvas.height
         );
 
-
         context.rotate(
             -Math.PI / 2
         );
-
 
         context.drawImage(
             video,
@@ -317,28 +278,22 @@ function takePhoto() {
             videoHeight
         );
 
-
         context.restore();
-
     }
 
 
     // =====================================
-    // PHOTO PREVIEW
+    // PREVIEW
     // =====================================
 
     const photoPreview =
-        document.getElementById(
-            "photoPreview"
-        );
-
+        document.getElementById("photoPreview");
 
     photoPreview.src =
         canvas.toDataURL(
             "image/jpeg",
             0.9
         );
-
 
     photoPreview.style.display =
         "block";
@@ -352,8 +307,7 @@ function takePhoto() {
 
         function(blob) {
 
-            capturedPhoto =
-                blob;
+            capturedPhoto = blob;
 
         },
 
@@ -365,11 +319,10 @@ function takePhoto() {
 
 
     console.log(
-        "PHOTO BERHASIL DIAMBIL"
+        "PHOTO BERHASIL DIAMBIL:",
+        orientation
     );
-
 }
-
 
 // =====================================
 // STOP CAMERA

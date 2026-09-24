@@ -2,6 +2,24 @@ let cameraStream = null;
 let capturedPhoto = null;
 let imageCapture = null;
 
+window.lastGamma = 0;
+
+window.addEventListener(
+    "deviceorientation",
+    function(event) {
+
+        if (
+            typeof event.gamma === "number"
+        ) {
+
+            window.lastGamma =
+                event.gamma;
+
+        }
+
+    }
+);
+
 
 // =====================================
 // START CAMERA

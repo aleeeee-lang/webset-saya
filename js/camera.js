@@ -118,7 +118,239 @@ async function startCamera() {
 
 
 
+// =====================================
+// TAKE PHOTO
+// =====================================
 
+function takePhoto() {
+
+    const video =
+        document.getElementById("video");
+
+    if (
+        !cameraStream ||
+        video.videoWidth === 0 ||
+        video.videoHeight === 0
+    ) {
+
+        alert("Kamera belum aktif.");
+        return;
+
+    }
+
+
+    const canvas =
+        document.getElementById("canvas");
+
+    const context =
+        canvas.getContext("2d");
+
+
+    const videoWidth =
+        video.videoWidth;
+
+    const videoHeight =
+        video.videoHeight;
+
+
+    // =====================================
+    // AMBIL GAMMA HP
+    // =====================================
+
+    const gamma =
+        window.lastGamma || 0;
+
+
+    console.log(
+        "GAMMA:",
+        gamma
+    );
+
+
+    // =====================================
+    // TENTUKAN ORIENTASI
+    // =====================================
+
+    let orientation;
+
+
+    if (gamma > 45) {
+
+        orientation = "LEFT";
+
+    }
+
+    else if (gamma < -45) {
+
+        orientation = "RIGHT";
+
+    }
+
+    else {
+
+        orientation = "PORTRAIT";
+
+    }
+
+
+    console.log(
+        "ORIENTATION:",
+        orientation
+    );
+
+
+    // =====================================
+    // PORTRAIT
+    // =====================================
+
+    if (orientation === "PORTRAIT") {
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+    }
+
+
+    // =====================================
+    // LANDSCAPE RIGHT
+    // =====================================
+
+    else if (orientation === "RIGHT") {
+
+        canvas.width =
+            videoHeight;
+
+        canvas.height =
+            videoWidth;
+
+
+        context.save();
+
+
+        context.translate(
+            canvas.width,
+            0
+        );
+
+
+        context.rotate(
+            Math.PI / 2
+        );
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+
+        context.restore();
+
+    }
+
+
+    // =====================================
+    // LANDSCAPE LEFT
+    // =====================================
+
+    else if (orientation === "LEFT") {
+
+        canvas.width =
+            videoHeight;
+
+        canvas.height =
+            videoWidth;
+
+
+        context.save();
+
+
+        context.translate(
+            0,
+            canvas.height
+        );
+
+
+        context.rotate(
+            -Math.PI / 2
+        );
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+
+        context.restore();
+
+    }
+
+
+    // =====================================
+    // PHOTO PREVIEW
+    // =====================================
+
+    const photoPreview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    photoPreview.src =
+        canvas.toDataURL(
+            "image/jpeg",
+            0.9
+        );
+
+
+    photoPreview.style.display =
+        "block";
+
+
+    // =====================================
+    // SIMPAN FOTO
+    // =====================================
+
+    canvas.toBlob(
+
+        function(blob) {
+
+            capturedPhoto =
+                blob;
+
+        },
+
+        "image/jpeg",
+
+        0.8
+
+    );
+
+
+    console.log(
+        "PHOTO BERHASIL DIAMBIL"
+    );
+
+}
 
 
 // =====================================

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Attendly</title>
+<link rel="stylesheet" href="style.css">
+<style>
+html, body { height: 100%; margin: 0; padding: 0 !important; overflow: hidden; background: #f6f7ff; animation: none !important; }
+#stage { position: fixed; inset: 0; overflow: hidden; }
+.panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; background: #f6f7ff; box-shadow: 0 0 30px rgba(0,0,0,.08); will-change: transform; visibility: hidden; }
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<!-- The nav bar lives here ONCE, so it never reloads or disappears -->
+<nav class="bottom-nav">
+  <a href="index.html"><span class="nav-home-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 10.5L12 4L20 10.5V19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Home</small></a>
+  <a href="attendance.html"><span class="nav-camera-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/></svg></span><small>Attendance</small></a>
+  <a href="dashboard.html"><span class="nav-dashboard-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 9H10M14 9H16.5M7.5 13H11.5M14 13H16.5M7.5 17H10M14 17H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Dashboard</small></a>
+  <a href="history.html"><span class="nav-history-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 7V12L15 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 5L3.5 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>History</small></a>
+  <a href="my-attendance.html"><span class="nav-person-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="7" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>My</small></a>
+</nav>
+
+<script>
+(function () {
+  // [name, file] – same order as the nav bar
+  var TABS = [["index","index.html"],["attendance","attendance.html"],["dashboard","dashboard.html"],["history","history.html"],["my-attendance","my-attendance.html"]];
+  var DUR = 300, EASE = "cubic-bezier(.22,.8,.3,1)";
+  var stage = document.getElementById("stage");
+  var links = Array.prototype.slice.call(document.querySelectorAll(".bottom-nav a"));
+  var loadedAt = [], current = 0, timer = null;
+
+  function tabFromName(n) { return TABS.findIndex(function (t) { return t[0] === n; }); }
+  function nameOf(path) { return path.split("/").pop().replace(/\.html$/, "") || "index"; }
+  function setPos(el, x, anim) {
+    el.style.transition = anim ? "transform " + DUR + "ms " + EASE : "none";
+    el.style.transform = "translate3d(" + x + ",0,0)";
+  }
+
+  // One iframe per tab: each page keeps its own state and scroll position
+  var panels = TABS.map(function (t, k) {
+    var f = document.createElement("iframe");
+    f.className = "panel";
+    f.title = t[0];
+    f.setAttribute("allow", "camera");
+    f.addEventListener("load", function () { onFrameLoad(f, k); });
+    stage.appendChild(f);
+    return f;
+  });
+
+  function ensure(k) { if (panels[k] && !panels[k].getAttribute("src")) panels[k].src = TABS[k][1]; }
+  function updateNav() { links.forEach(function (a, k) { a.classList.toggle("active", k === current); }); }
+  function idle() {
+    panels.forEach(function (p, k) {
+      setPos(p, k === current ? "0px" : k < current ? "-100%" : "100%", false);
+      p.style.visibility = k === current ? "visible" : "hidden";
+    });
+  }
+  function refresh(k) {
+    try { if (Date.now() - (loadedAt[k] || 0) > 1500) panels[k].contentWindow.dispatchEvent(new Event("tabshow")); } catch (e) {}
+  }
+
+  function slideTo(dest, opts) {
+    opts = opts || {};
+    clearTimeout(timer);
+    ensure(dest);
+    if (dest === current) {
+      panels.forEach(function (p, k) {
+        if (p.style.visibility === "visible") setPos(p, k === current ? "0px" : k < current ? "-100%" : "100%", true);
+      });
+    } else {
+      var dir = dest > current ? 1 : -1, from = panels[current], to = panels[dest];
+      if (!opts.dragged) {
+        setPos(to, dir * 100 + "%", false);
+        to.style.visibility = "visible";
+        to.getBoundingClientRect();
+      }
+      setPos(from, -dir * 100 + "%", true);
+      setPos(to, "0px", true);
+      current = dest;
+      updateNav();
+      refresh(dest);
+      if (opts.push !== false) history.pushState({}, "", "#" + TABS[dest][0]);
+    }
+    timer = setTimeout(idle, DUR + 40);
+  }
+
+  function drag(d) {
+    var w = window.innerWidth;
+    setPos(panels[current], d + "px", false);
+    if (panels[current + 1]) setPos(panels[current + 1], (w + d) + "px", false);
+    if (panels[current - 1]) setPos(panels[current - 1], (-w + d) + "px", false);
+  }
+
+  // Finger-follow swipe, like Instagram
+  function gestures(win) {
+    var sx = 0, sy = 0, dx = 0, lock = null, t0 = 0, skip = false;
+    win.addEventListener("touchstart", function (e) {
+      e.stopPropagation(); // the shell now handles swipes (old page swipe code is ignored)
+      if (e.touches.length !== 1) { lock = "v"; return; }
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; lock = null; t0 = Date.now();
+      skip = !!(e.target.closest && e.target.closest("textarea,input,select"));
+    }, { capture: true, passive: true });
+    win.addEventListener("touchmove", function (e) {
+      if (skip || lock === "v" || e.touches.length !== 1) return;
+      var x = e.touches[0].clientX - sx, y = e.touches[0].clientY - sy;
+      if (lock === null) {
+        if (Math.abs(x) < 10 && Math.abs(y) < 10) return;
+        lock = Math.abs(x) > Math.abs(y) * 1.4 ? "h" : "v";
+        if (lock !== "h") return;
+        clearTimeout(timer); ensure(current - 1); ensure(current + 1); idle();
+        [current - 1, current + 1].forEach(function (k) { if (panels[k]) panels[k].style.visibility = "visible"; });
+      }
+      e.preventDefault();
+      var edge = (x < 0 && !panels[current + 1]) || (x > 0 && !panels[current - 1]);
+      dx = edge ? x * 0.3 : x;
+      drag(dx);
+    }, { capture: true, passive: false });
+    function end(e) {
+      e.stopPropagation();
+      if (lock !== "h") return;
+      lock = null;
+      var v = dx / Math.max(1, Date.now() - t0), w = window.innerWidth, dest = current;
+      if ((dx < -w * 0.25 || (v < -0.5 && dx < -40)) && panels[current + 1]) dest = current + 1;
+      else if ((dx > w * 0.25 || (v > 0.5 && dx > 40)) && panels[current - 1]) dest = current - 1;
+      slideTo(dest, { dragged: true });
+    }
+    win.addEventListener("touchend", end, { capture: true });
+    win.addEventListener("touchcancel", end, { capture: true });
+  }
+
+  function onFrameLoad(f, k) {
+    var win, doc;
+    try { win = f.contentWindow; doc = f.contentDocument; if (win.location.href === "about:blank") return; }
+    catch (e) { return; }
+    var idx = tabFromName(nameOf(win.location.pathname));
+    if (idx !== k) {
+      if (idx >= 0) { f.src = TABS[k][1]; slideTo(idx); }      // page tried to open another tab
+      else { window.location.href = win.location.href; }       // e.g. login page
+      return;
+    }
+    loadedAt[k] = Date.now();
+    var s = doc.createElement("style");
+    s.textContent = ".bottom-nav{display:none !important} body{animation:none !important}";
+    doc.head.appendChild(s);
+    // Links to other tabs slide instead of reloading
+    doc.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.target === "_blank") return;
+      var u; try { u = new URL(a.href, win.location.href); } catch (err) { return; }
+      if (u.origin !== location.origin) return;
+      var i = tabFromName(nameOf(u.pathname));
+      if (i >= 0) { e.preventDefault(); slideTo(i); }
+    }, true);
+    gestures(win);
+  }
+
+  links.forEach(function (a, k) {
+    a.addEventListener("click", function (e) { e.preventDefault(); slideTo(k); });
+  });
+  window.addEventListener("popstate", function () {
+    var k = tabFromName(location.hash.slice(1));
+    if (k >= 0) slideTo(k, { push: false });
+  });
+
+  current = Math.max(0, tabFromName(location.hash.slice(1)));
+  ensure(current); idle(); updateNav();
+  history.replaceState({}, "", "#" + TABS[current][0]);
+  window.addEventListener("load", function () {
+    TABS.forEach(function (t, k) { setTimeout(function () { ensure(k); }, 600 + k * 350); });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -144,7 +144,7 @@ html, body { height: 100%; margin: 0; padding: 0 !important; overflow: hidden; b
     }
     loadedAt[k] = Date.now();
     var s = doc.createElement("style");
-    s.textContent = ".bottom-nav{display:none !important} body{animation:none !important}";
+   s.textContent = ".bottom-nav{display:none !important} body{animation:none !important} html,body{touch-action:pan-y;overscroll-behavior-x:none}";
     doc.head.appendChild(s);
     // Links to other tabs slide instead of reloading
     doc.addEventListener("click", function (e) {

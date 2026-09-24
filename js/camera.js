@@ -267,17 +267,6 @@ async function captureFromVideo(video) {
     // Mirror kamera depan
     context.save();
 
-    context.translate(
-        width,
-        0
-    );
-
-    context.scale(
-        -1,
-        1
-    );
-
-
     /*
      * PENTING:
      *

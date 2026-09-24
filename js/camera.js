@@ -2,24 +2,6 @@ let cameraStream = null;
 let capturedPhoto = null;
 let imageCapture = null;
 
-window.lastGamma = 0;
-
-window.addEventListener(
-    "deviceorientation",
-    function(event) {
-
-        if (
-            typeof event.gamma === "number"
-        ) {
-
-            window.lastGamma =
-                event.gamma;
-
-        }
-
-    }
-);
-
 
 // =====================================
 // START CAMERA
@@ -166,29 +148,22 @@ function takePhoto() {
         typeof screen.orientation.angle === "number"
     ) {
         angle = screen.orientation.angle;
-    } else if (
-        typeof window.orientation === "number"
-    ) {
-        angle = window.orientation;
     }
 
     console.log("SCREEN ANGLE:", angle);
 
 
     // =====================================
-    // PORTRAIT
+    // PORTRAIT NORMAL
     // =====================================
 
-    if (angle === 0 || angle === 180) {
+    if (angle === 0) {
 
         canvas.width = videoWidth;
         canvas.height = videoHeight;
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
-        /*
-         * TANPA MIRROR
-         */
         context.drawImage(
             video,
             0,
@@ -200,7 +175,7 @@ function takePhoto() {
 
 
     // =====================================
-    // LANDSCAPE
+    // LANDSCAPE 90°
     // =====================================
 
     else if (angle === 90) {
@@ -208,20 +183,15 @@ function takePhoto() {
         canvas.width = videoHeight;
         canvas.height = videoWidth;
 
-        context.save();
-
-        context.translate(
-            canvas.width,
+        context.setTransform(
+            0,
+            1,
+            -1,
+            0,
+            videoHeight,
             0
         );
 
-        context.rotate(
-            Math.PI / 2
-        );
-
-        /*
-         * TANPA MIRROR
-         */
         context.drawImage(
             video,
             0,
@@ -229,30 +199,55 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
-
-        context.restore();
     }
 
+
+    // =====================================
+    // TERBALIK 180°
+    // =====================================
+
+    else if (angle === 180) {
+
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
+
+        context.setTransform(
+            -1,
+            0,
+            0,
+            -1,
+            videoWidth,
+            videoHeight
+        );
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+    }
+
+
+    // =====================================
+    // LANDSCAPE -90°
+    // =====================================
 
     else if (angle === 270) {
 
         canvas.width = videoHeight;
         canvas.height = videoWidth;
 
-        context.save();
-
-        context.translate(
+        context.setTransform(
             0,
-            canvas.height
+            -1,
+            1,
+            0,
+            0,
+            videoWidth
         );
 
-        context.rotate(
-            -Math.PI / 2
-        );
-
-        /*
-         * TANPA MIRROR
-         */
         context.drawImage(
             video,
             0,
@@ -260,13 +255,18 @@ function takePhoto() {
             videoWidth,
             videoHeight
         );
-
-        context.restore();
     }
 
 
     // =====================================
-    // PREVIEW
+    // RESET TRANSFORM
+    // =====================================
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
+
+
+    // =====================================
+    // PREVIEW FOTO
     // =====================================
 
     const photoPreview =
@@ -278,8 +278,7 @@ function takePhoto() {
             0.9
         );
 
-    photoPreview.style.display =
-        "block";
+    photoPreview.style.display = "block";
 
 
     // =====================================

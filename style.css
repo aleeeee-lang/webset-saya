@@ -2725,4 +2725,140 @@ html.vt-back::view-transition-new(root) { animation-name: vt-in-left; }
     }
 }
 
+/* =====================================
+   DATE & TIME FIX
+===================================== */
+
+.attendance-date-time {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.date-time-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.date-time-icon {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* =====================================
+   ANALOG CLOCK
+===================================== */
+
+.clock-icon {
+    width: 58px;
+    height: 58px;
+}
+
+.analog-clock {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #71809b;
+    border-radius: 50%;
+    position: relative;
+    background: white;
+    box-sizing: border-box;
+}
+
+/* garis-garis angka/jam */
+.analog-clock::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background:
+        repeating-conic-gradient(
+            from 0deg,
+            #71809b 0deg 1deg,
+            transparent 1deg 30deg
+        );
+    -webkit-mask:
+        radial-gradient(
+            circle,
+            transparent 0 15px,
+            #000 15.5px
+        );
+    mask:
+        radial-gradient(
+            circle,
+            transparent 0 15px,
+            #000 15.5px
+        );
+}
+
+/* jarum */
+.clock-hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 3px;
+    z-index: 3;
+}
+
+.hour-hand {
+    width: 3px;
+    height: 11px;
+    background: #17294f;
+}
+
+.minute-hand {
+    width: 2px;
+    height: 15px;
+    background: #17294f;
+}
+
+.second-hand {
+    width: 1.5px;
+    height: 17px;
+    background: #ff4b4b;
+}
+
+.clock-center {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #ff4b4b;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+/* =====================================
+   DATE / TIME TEXT
+===================================== */
+
+.date-time-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.date-time-content span {
+    font-size: 14px;
+    line-height: 1.2;
+    color: #71809b;
+}
+
+.date-time-content strong {
+    font-size: 17px;
+    line-height: 1.3;
+    color: #10244d;
+    white-space: nowrap;
+}
 

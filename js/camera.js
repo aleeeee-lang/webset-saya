@@ -3,18 +3,17 @@ let capturedPhoto = null;
 let imageCapture = null;
 
 
-// =====================================
+// =========================================================
 // START CAMERA
-// =====================================
+// =========================================================
 
 async function startCamera() {
 
-    const video =
-        document.getElementById("video");
+    const video = document.getElementById("video");
 
     try {
 
-        // Matikan kamera lama
+        // Hentikan kamera lama
         if (cameraStream) {
 
             cameraStream
@@ -27,7 +26,7 @@ async function startCamera() {
         }
 
 
-        // Minta akses kamera depan
+        // Kamera depan
         cameraStream =
             await navigator.mediaDevices.getUserMedia({
 
@@ -45,10 +44,8 @@ async function startCamera() {
             cameraStream.getVideoTracks()[0];
 
 
-        // ImageCapture
-        if (
-            "ImageCapture" in window
-        ) {
+        // ImageCapture jika tersedia
+        if ("ImageCapture" in window) {
 
             try {
 
@@ -69,26 +66,19 @@ async function startCamera() {
         }
 
 
-        // Pasang stream ke video
+        // Pasang kamera ke video
         video.srcObject =
             cameraStream;
 
 
-        // Setting video mobile
+        // Setting video
         video.muted = true;
         video.autoplay = true;
         video.playsInline = true;
 
 
         // Jalankan video
-        video.play().catch(function(error) {
-
-            console.log(
-                "VIDEO PLAY ERROR:",
-                error
-            );
-
-        });
+        await video.play();
 
 
         console.log(
@@ -117,71 +107,109 @@ async function startCamera() {
 }
 
 
+// =========================================================
+// TAKE PHOTO
+// =========================================================
+
 function takePhoto() {
 
-    const video = document.getElementById("video");
+    const video =
+        document.getElementById("video");
 
+
+    // Pastikan kamera aktif
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
+
         alert("Kamera belum aktif.");
+
         return;
+
     }
 
-    const canvas = document.getElementById("canvas");
-    const context = canvas.getContext("2d");
 
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
+    const canvas =
+        document.getElementById("canvas");
 
-    const isLandscape =
+    const context =
+        canvas.getContext("2d");
+
+
+    const videoWidth =
+        video.videoWidth;
+
+    const videoHeight =
+        video.videoHeight;
+
+
+    console.log(
+        "VIDEO SIZE:",
+        videoWidth,
+        "x",
+        videoHeight
+    );
+
+
+    // =====================================================
+    // CEK ORIENTASI LAYAR
+    // =====================================================
+
+    let isLandscape = false;
+
+
+    if (
         screen.orientation &&
-        screen.orientation.type.includes("landscape");
+        typeof screen.orientation.type === "string"
+    ) {
 
-    console.log("SCREEN:", screen.orientation?.type);
-    console.log("LANDSCAPE:", isLandscape);
+        isLandscape =
+            screen.orientation.type.includes("landscape");
 
-    context.setTransform(1, 0, 0, 1, 0, 0);
-
-    // =====================================
-    // PORTRAIT
-    // =====================================
-
-    if (!isLandscape) {
-
-        canvas.width = videoWidth;
-        canvas.height = videoHeight;
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            videoWidth,
-            videoHeight
-        );
     }
-
-    // =====================================
-    // LANDSCAPE
-    // =====================================
 
     else {
 
-        canvas.width = videoHeight;
-        canvas.height = videoWidth;
+        isLandscape =
+            window.innerWidth > window.innerHeight;
+
+    }
+
+
+    console.log(
+        "LANDSCAPE:",
+        isLandscape
+    );
+
+
+    // =====================================================
+    // PORTRAIT
+    // =====================================================
+
+    if (!isLandscape) {
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
 
         context.save();
 
-        context.translate(
-            canvas.width,
+
+        // TIDAK MIRROR
+        context.setTransform(
+            1,
+            0,
+            0,
+            1,
+            0,
             0
         );
 
-        context.rotate(
-            Math.PI / 2
-        );
 
         context.drawImage(
             video,
@@ -191,42 +219,85 @@ function takePhoto() {
             videoHeight
         );
 
+
         context.restore();
+
     }
 
-    // =====================================
-    // PREVIEW
-    // =====================================
 
-    const photoPreview =
-        document.getElementById("photoPreview");
+    // =====================================================
+    // LANDSCAPE
+    // =====================================================
 
-    photoPreview.src =
-        canvas.toDataURL(
-            "image/jpeg",
-            0.9
+    else {
+
+        canvas.width =
+            videoWidth;
+
+        canvas.height =
+            videoHeight;
+
+
+        context.save();
+
+
+        // TIDAK MIRROR
+        // TIDAK ROTATE
+        // TIDAK GAMMA
+        // TIDAK DEVICEORIENTATION
+
+        context.setTransform(
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
         );
 
-    photoPreview.style.display = "block";
 
-    // =====================================
-    // SIMPAN
-    // =====================================
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
 
-    canvas.toBlob(
-        function(blob) {
-            capturedPhoto = blob;
-        },
-        "image/jpeg",
-        0.8
-    );
 
-    console.log("PHOTO BERHASIL DIAMBIL");
-}
+        context.restore();
 
-    // =====================================
+    }
+
+
+    // =====================================================
+    // PREVIEW
+    // =====================================================
+
+    const photoPreview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    if (photoPreview) {
+
+        photoPreview.src =
+            canvas.toDataURL(
+                "image/jpeg",
+                0.9
+            );
+
+
+        photoPreview.style.display =
+            "block";
+
+    }
+
+
+    // =====================================================
     // SIMPAN FOTO
-    // =====================================
+    // =====================================================
 
     canvas.toBlob(
 
@@ -235,6 +306,10 @@ function takePhoto() {
             capturedPhoto =
                 blob;
 
+            console.log(
+                "PHOTO BERHASIL DIAMBIL"
+            );
+
         },
 
         "image/jpeg",
@@ -243,25 +318,19 @@ function takePhoto() {
 
     );
 
-
-    console.log(
-        "PHOTO BERHASIL DIAMBIL",
-        "ANGLE:",
-        angle
-    );
-
 }
-```
 
 
-// =====================================
+// =========================================================
 // STOP CAMERA
-// =====================================
+// =========================================================
 
 function stopCamera() {
 
     if (!cameraStream) {
+
         return;
+
     }
 
 
@@ -288,8 +357,12 @@ function stopCamera() {
         );
 
 
-    video.srcObject =
-        null;
+    if (video) {
+
+        video.srcObject =
+            null;
+
+    }
 
 
     console.log(

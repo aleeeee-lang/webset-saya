@@ -668,113 +668,74 @@ textarea {
    ATTENDANCE CLOCK
 ========================================================= */
 
-.attendance-page .analog-clock {
-    width: 32px;
-    height: 32px;
+.clock-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.analog-clock {
     position: relative;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+
     border: 2px solid #64748b;
     border-radius: 50%;
+
+    background: white;
+    box-sizing: border-box;
 }
 
-.attendance-page .clock-hand {
+/* Titik tengah jam */
+.clock-center {
     position: absolute;
-    width: 2px;
+    width: 6px;
+    height: 6px;
+    background: #64748b;
+    border-radius: 50%;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    z-index: 5;
+}
+
+/* Semua jarum */
+.clock-hand {
+    position: absolute;
     left: 50%;
     bottom: 50%;
-    background: #ef4444;
-    border-radius: 2px;
-    transform-origin: bottom center;
+
+    transform-origin: 50% 100%;
+    border-radius: 10px;
 }
 
-.attendance-page .hour-hand {
-    height: 8px;
-    background: #ef4444;
+/* Jarum jam */
+.hour-hand {
+    width: 3px;
+    height: 13px;
+    background: #1e3a8a;
 }
 
-.attendance-page .minute-hand {
-    height: 12px;
-    background: #ef4444;
-}
-
-.attendance-page .second-hand {
-    height: 14px;
-    background:  #3b82f6;
-}
-
-.attendance-page .clock-center {
-    background: #ef4444;
-}
-
-/* =========================================================
-   CLOCK MARKS
-========================================================= */
-
-.attendance-page .clock-mark {
-    position: absolute;
-
+/* Jarum menit */
+.minute-hand {
     width: 2px;
-    height: 5px;
-
-    top: 2px;
-    left: 50%;
-
-    transform-origin: 50% 14px;
-
-    background: #64748b;
-    border-radius: 2px;
-
-    z-index: 1;
+    height: 17px;
+    background: #1e3a8a;
 }
 
-
-/* POSISI 12 GARIS */
-
-.attendance-page .mark-12 {
-    transform: translateX(-50%) rotate(0deg);
-}
-
-.attendance-page .mark-1 {
-    transform: translateX(-50%) rotate(30deg);
-}
-
-.attendance-page .mark-2 {
-    transform: translateX(-50%) rotate(60deg);
-}
-
-.attendance-page .mark-3 {
-    transform: translateX(-50%) rotate(90deg);
-}
-
-.attendance-page .mark-4 {
-    transform: translateX(-50%) rotate(120deg);
-}
-
-.attendance-page .mark-5 {
-    transform: translateX(-50%) rotate(150deg);
-}
-
-.attendance-page .mark-6 {
-    transform: translateX(-50%) rotate(180deg);
-}
-
-.attendance-page .mark-7 {
-    transform: translateX(-50%) rotate(210deg);
-}
-
-.attendance-page .mark-8 {
-    transform: translateX(-50%) rotate(240deg);
-}
-
-.attendance-page .mark-9 {
-    transform: translateX(-50%) rotate(270deg);
-}
-
-.attendance-page .mark-10 {
-    transform: translateX(-50%) rotate(300deg);
-}
-
-.attendance-page .mark-11 {
-    transform: translateX(-50%) rotate(330deg);
+/* Jarum detik */
+.second-hand {
+    width: 1.5px;
+    height: 20px;
+    background: #ef4444;
 }
 /* =========================================================
    DATE / TIME TEXT

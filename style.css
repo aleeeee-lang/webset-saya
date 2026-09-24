@@ -704,6 +704,78 @@ textarea {
 .attendance-page .clock-center {
     background: #ef4444;
 }
+
+/* =========================================================
+   CLOCK MARKS
+========================================================= */
+
+.attendance-page .clock-mark {
+    position: absolute;
+
+    width: 2px;
+    height: 5px;
+
+    top: 2px;
+    left: 50%;
+
+    transform-origin: 50% 14px;
+
+    background: #64748b;
+    border-radius: 2px;
+
+    z-index: 1;
+}
+
+
+/* POSISI 12 GARIS */
+
+.attendance-page .mark-12 {
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.attendance-page .mark-1 {
+    transform: translateX(-50%) rotate(30deg);
+}
+
+.attendance-page .mark-2 {
+    transform: translateX(-50%) rotate(60deg);
+}
+
+.attendance-page .mark-3 {
+    transform: translateX(-50%) rotate(90deg);
+}
+
+.attendance-page .mark-4 {
+    transform: translateX(-50%) rotate(120deg);
+}
+
+.attendance-page .mark-5 {
+    transform: translateX(-50%) rotate(150deg);
+}
+
+.attendance-page .mark-6 {
+    transform: translateX(-50%) rotate(180deg);
+}
+
+.attendance-page .mark-7 {
+    transform: translateX(-50%) rotate(210deg);
+}
+
+.attendance-page .mark-8 {
+    transform: translateX(-50%) rotate(240deg);
+}
+
+.attendance-page .mark-9 {
+    transform: translateX(-50%) rotate(270deg);
+}
+
+.attendance-page .mark-10 {
+    transform: translateX(-50%) rotate(300deg);
+}
+
+.attendance-page .mark-11 {
+    transform: translateX(-50%) rotate(330deg);
+}
 /* =========================================================
    DATE / TIME TEXT
 ========================================================= */

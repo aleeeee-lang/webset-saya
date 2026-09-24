@@ -117,149 +117,52 @@ async function startCamera() {
 }
 
 
-```js
-// =====================================
-// TAKE PHOTO
-// =====================================
-
 function takePhoto() {
 
-    const video =
-        document.getElementById("video");
+    const video = document.getElementById("video");
 
     if (
         !cameraStream ||
         video.videoWidth === 0 ||
         video.videoHeight === 0
     ) {
-
         alert("Kamera belum aktif.");
         return;
-
     }
 
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
 
-    const canvas =
-        document.getElementById("canvas");
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
 
-    const context =
-        canvas.getContext("2d");
+    /*
+    =====================================================
+    DETEKSI ORIENTASI LAYAR
+    =====================================================
+    */
 
+    const screenAngle =
+        window.screen.orientation
+            ? window.screen.orientation.angle
+            : 0;
 
-    const videoWidth =
-        video.videoWidth;
-
-    const videoHeight =
-        video.videoHeight;
-
-
-    // =====================================
-    // CEK ORIENTASI LAYAR
-    // =====================================
-
-    let angle = 0;
-
-    if (
-        screen.orientation &&
-        typeof screen.orientation.angle === "number"
-    ) {
-
-        angle =
-            screen.orientation.angle;
-
-    }
+    console.log("SCREEN ANGLE:", screenAngle);
 
 
-    console.log(
-        "SCREEN ANGLE:",
-        angle
-    );
+    /*
+    =====================================================
+    PORTRAIT
+    =====================================================
+    */
 
+    if (screenAngle === 0 || screenAngle === 180) {
 
-    // =====================================
-    // PORTRAIT
-    // =====================================
-
-    if (
-        angle === 0 ||
-        angle === 180
-    ) {
-
-        canvas.width =
-            videoWidth;
-
-        canvas.height =
-            videoHeight;
-
-
-        context.setTransform(
-            1,
-            0,
-            0,
-            1,
-            0,
-            0
-        );
-
-
-        // TANPA MIRROR
-        context.drawImage(
-            video,
-            0,
-            0,
-            videoWidth,
-            videoHeight
-        );
-
-    }
-
-
-    // =====================================
-    // LANDSCAPE
-    // =====================================
-
-    else {
-
-        canvas.width =
-            videoHeight;
-
-        canvas.height =
-            videoWidth;
-
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
 
         context.save();
 
-
-        if (angle === 90) {
-
-            // ROTASI 90 DERAJAT
-            context.translate(
-                canvas.width,
-                0
-            );
-
-            context.rotate(
-                Math.PI / 2
-            );
-
-        }
-
-        else if (angle === 270) {
-
-            // ROTASI 270 DERAJAT
-            context.translate(
-                0,
-                canvas.height
-            );
-
-            context.rotate(
-                -Math.PI / 2
-            );
-
-        }
-
-
-        // TANPA MIRROR
         context.drawImage(
             video,
             0,
@@ -268,21 +171,86 @@ function takePhoto() {
             videoHeight
         );
 
-
         context.restore();
-
     }
 
 
-    // =====================================
-    // PHOTO PREVIEW
-    // =====================================
+    /*
+    =====================================================
+    LANDSCAPE 90°
+    =====================================================
+    */
 
-    const photoPreview =
-        document.getElementById(
-            "photoPreview"
+    else if (screenAngle === 90) {
+
+        canvas.width = videoHeight;
+        canvas.height = videoWidth;
+
+        context.save();
+
+        context.translate(
+            canvas.width,
+            0
         );
 
+        context.rotate(
+            Math.PI / 2
+        );
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+        context.restore();
+    }
+
+
+    /*
+    =====================================================
+    LANDSCAPE 270°
+    =====================================================
+    */
+
+    else if (screenAngle === 270) {
+
+        canvas.width = videoHeight;
+        canvas.height = videoWidth;
+
+        context.save();
+
+        context.translate(
+            0,
+            canvas.height
+        );
+
+        context.rotate(
+            -Math.PI / 2
+        );
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            videoWidth,
+            videoHeight
+        );
+
+        context.restore();
+    }
+
+
+    /*
+    =====================================================
+    PREVIEW
+    =====================================================
+    */
+
+    const photoPreview =
+        document.getElementById("photoPreview");
 
     photoPreview.src =
         canvas.toDataURL(
@@ -290,9 +258,31 @@ function takePhoto() {
             0.9
         );
 
-
     photoPreview.style.display =
         "block";
+
+
+    /*
+    =====================================================
+    SIMPAN FOTO
+    =====================================================
+    */
+
+    canvas.toBlob(
+        function(blob) {
+
+            capturedPhoto = blob;
+
+        },
+        "image/jpeg",
+        0.8
+    );
+
+
+    console.log(
+        "PHOTO BERHASIL DIAMBIL"
+    );
+}
 
 
     // =====================================

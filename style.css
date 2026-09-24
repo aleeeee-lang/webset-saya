@@ -2818,3 +2818,86 @@ html.vt-back::view-transition-new(root) { animation-name: vt-in-left; }
     white-space: nowrap;
 }
 
+/* =====================================
+   ANALOG CLOCK
+===================================== */
+
+.attendance-page .clock-icon {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attendance-page .analog-clock {
+    width: 32px;
+    height: 32px;
+
+    position: relative;
+
+    border: 2px solid #64748b;
+    border-radius: 50%;
+
+    background: white;
+    box-sizing: border-box;
+}
+
+
+/* JARUM JAM */
+
+.attendance-page .clock-hand {
+    position: absolute;
+
+    width: 2px;
+
+    left: 50%;
+    bottom: 50%;
+
+    border-radius: 2px;
+
+    transform-origin: bottom center;
+
+    z-index: 3;
+}
+
+
+.attendance-page .hour-hand {
+    height: 8px;
+    background: #ef4444;
+}
+
+
+.attendance-page .minute-hand {
+    height: 12px;
+    background: #ef4444;
+}
+
+
+.attendance-page .second-hand {
+    height: 14px;
+    background: #3b82f6;
+}
+
+
+/* TITIK TENGAH */
+
+.attendance-page .clock-center {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background: #ef4444;
+    border-radius: 50%;
+
+    z-index: 5;
+}
+

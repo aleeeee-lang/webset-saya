@@ -166,16 +166,16 @@ function takePhoto() {
         );
 
 
-    if (photoPreview) {
+   if (photoPreview) {
 
-        photoPreview.src =
-            imageData;
+    photoPreview.src = imageData;
 
-        photoPreview.style.display =
-            "block";
+    photoPreview.style.display = "block";
 
-    }
+    // Sembunyikan kamera live
+    video.style.display = "none";
 
+}
 
     // =====================================
     // SIMPAN FOTO

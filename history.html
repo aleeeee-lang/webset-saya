@@ -366,7 +366,15 @@
     <!-- =========================
          SUPABASE
     ========================== -->
-    <script>
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+     <script>
 const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
 const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
 let allHistoryData = [];
@@ -474,12 +482,6 @@ document.getElementById("filterStatus").addEventListener("change", renderHistory
 loadHistory();
 window.addEventListener("tabshow", loadHistory);
 </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="js/supabase.js"></script>
-
-    <script src="js/auth.js"></script>
 
     <script>
 

@@ -250,11 +250,16 @@ main.attendance-page .submit-button {
 }
 
 .filter-arrow {
-    margin-left: auto;
+    margin-left: auto !important;
     color: #64748b;
     font-size: 16px;
     line-height: 1;
     flex: none;
+}
+
+.filter-select {
+    display: flex !important;
+    align-items: center !important;
 }
 
 .filter-icon-cal {

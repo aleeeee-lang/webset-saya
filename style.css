@@ -209,3 +209,11 @@ main.attendance-page .submit-button {
     font-family: inherit;
 }
 
+/* =========================================================
+   HISTORY TITLE: SAMAKAN JARAK ATAS DENGAN ATTENDANCE
+========================================================= */
+
+.history-main {
+    margin-top: 0;
+}
+

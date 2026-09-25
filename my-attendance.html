@@ -510,6 +510,175 @@
     <script src="js/auth.js"></script>
 
     <script>
+const myStatusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
+const myStatusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+
+function renderScore(data) {
+    const total = data.length;
+    const hadir = data.filter(i => i.status === "Hadir").length;
+    const izin = data.filter(i => i.status === "Izin").length;
+    const sakit = data.filter(i => i.status === "Sakit").length;
+    const alpa = data.filter(i => i.status === "Alpa").length;
+    const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+    document.getElementById("scorePercent").textContent = percent + "%";
+    document.getElementById("scoreProgressFill").style.width = percent + "%";
+    document.getElementById("myHadir").textContent = hadir;
+    document.getElementById("myIzin").textContent = izin;
+    document.getElementById("mySakit").textContent = sakit;
+    document.getElementById("myAlpa").textContent = alpa;
+
+    const descEl = document.getElementById("scoreDesc");
+    if (total === 0) descEl.textContent = "No data yet";
+    else if (percent >= 90) descEl.textContent = "Excellent consistency";
+    else if (percent >= 75) descEl.textContent = "Good consistency";
+    else descEl.textContent = "Needs improvement";
+}
+
+function renderQuickStats(data) {
+    const sorted = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    let streak = 0;
+    for (let i = 0; i < sorted.length; i++) {
+        if (sorted[i].status === "Hadir") streak++;
+        else break;
+    }
+
+    const now = new Date();
+    const activeDays = data.filter(function (item) {
+        const d = new Date(item.date);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length;
+
+    document.getElementById("myStreak").textContent = streak + " Days";
+    document.getElementById("myActiveDays").textContent = activeDays + " Days";
+}
+
+function renderActivity(data) {
+    const sorted = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+    const container = document.getElementById("myActivityList");
+
+    if (sorted.length === 0) {
+        container.innerHTML = '<div class="empty-attendance"><span>📋</span><p>No activity yet.</p></div>';
+        return;
+    }
+
+    const todayStr = new Date().toDateString();
+    const yestStr = new Date(Date.now() - 86400000).toDateString();
+
+    container.innerHTML = sorted.map(function (item) {
+        const d = new Date(item.date);
+        let label;
+        if (d.toDateString() === todayStr) label = "TODAY";
+        else if (d.toDateString() === yestStr) label = "YESTERDAY";
+        else label = d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }).toUpperCase();
+
+        const cls = item.status.toLowerCase();
+        const sub = item.status === "Hadir"
+            ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }) + " · " + (item.time || "-")
+            : (item.time || "-") + " · " + (item.reason || myStatusLabel[item.status] || item.status);
+
+        return `
+            <div class="activity-group">
+                <p class="activity-date">${label}</p>
+                <div class="activity-card">
+                    <div class="activity-status-icon ${cls}">${myStatusIcon[item.status] || "?"}</div>
+                    <div class="activity-content">
+                        <strong>${myStatusLabel[item.status] || item.status}</strong>
+                        <span>${sub}</span>
+                    </div>
+                    <span class="activity-arrow">›</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderCalendar(data) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    document.getElementById("calendarMonthLabel").textContent =
+        now.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+
+    const statusByDay = {};
+    data.forEach(function (item) {
+        const d = new Date(item.date);
+        if (d.getFullYear() === year && d.getMonth() === month) {
+            statusByDay[d.getDate()] = item.status;
+        }
+    });
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let firstWeekday = new Date(year, month, 1).getDay();
+    firstWeekday = firstWeekday === 0 ? 6 : firstWeekday - 1;
+
+    let html = "";
+    for (let i = 0; i < firstWeekday; i++) html += '<span class="empty"></span>';
+
+    const todayNum = now.getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const status = statusByDay[day];
+        let cls = "";
+        if (status === "Izin") cls = "izin-day";
+        else if (status === "Sakit") cls = "sakit-day";
+        else if (status === "Alpa") cls = "alpa-day";
+        else if (status === "Hadir") cls = "hadir-day";
+        if (day === todayNum) cls += " today-day";
+        html += `<span class="${cls.trim()}">${day}</span>`;
+    }
+
+    document.getElementById("myCalendarDays").innerHTML = html;
+}
+
+function renderInsight(data) {
+    const total = data.length;
+    const hadir = data.filter(i => i.status === "Hadir").length;
+    const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+    const titleEl = document.getElementById("myInsightTitle");
+    const textEl = document.getElementById("myInsightText");
+
+    if (total === 0) {
+        titleEl.textContent = "No attendance yet";
+        textEl.textContent = "Start recording your attendance to see insights.";
+    } else if (percent >= 90) {
+        titleEl.textContent = "You're doing great!";
+        textEl.textContent = "Your attendance has been consistent.";
+    } else if (percent >= 75) {
+        titleEl.textContent = "Good attendance";
+        textEl.textContent = "Keep it up, you're doing well.";
+    } else {
+        titleEl.textContent = "Keep improving";
+        textEl.textContent = "Try to attend more consistently.";
+    }
+}
+
+async function loadMyAttendance() {
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .order("date", { ascending: false });
+
+    if (error) {
+        console.error("My Attendance error:", error);
+        return;
+    }
+
+    renderScore(data);
+    renderQuickStats(data);
+    renderActivity(data);
+    renderCalendar(data);
+    renderInsight(data);
+}
+
+loadMyAttendance();
+window.addEventListener("tabshow", loadMyAttendance);
+</script>
+
+    <script>
 
 let touchStartX = 0;
 let touchEndX = 0;

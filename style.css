@@ -249,17 +249,36 @@ main.attendance-page .submit-button {
     text-overflow: ellipsis;
 }
 
+button.filter-select {
+    display: flex !important;
+    align-items: center !important;
+    text-align: left !important;
+    width: 100%;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e5e5ee;
+    border-radius: 12px;
+    background: #f8f8ff;
+    color: #20243a;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.filter-select span:not(.filter-dot) {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .filter-arrow {
     margin-left: auto !important;
+    flex: none !important;
     color: #64748b;
     font-size: 16px;
     line-height: 1;
-    flex: none;
-}
-
-.filter-select {
-    display: flex !important;
-    align-items: center !important;
 }
 
 .filter-icon-cal {

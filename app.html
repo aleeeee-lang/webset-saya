@@ -70,7 +70,12 @@ var panels = TABS.map(function (t, k) {
     return f;
 });
 
-  function ensure(k) { if (panels[k] && !panels[k].getAttribute("src")) panels[k].src = TABS[k][1]; }
+  function ensure(k) {
+    if (panels[k] && !panels[k].getAttribute("src")) {
+        if (spinners[k]) spinners[k].style.display = "flex";
+        panels[k].src = TABS[k][1];
+    }
+}
   function updateNav() { links.forEach(function (a, k) { a.classList.toggle("active", k === current); }); }
 
   // Neighbour screens are always ready, waiting just outside the screen

@@ -481,8 +481,34 @@ async function loadHistory() {
     renderHistory();
 }
 
-document.getElementById("filterMonth").addEventListener("change", renderHistory);
-document.getElementById("filterStatus").addEventListener("change", renderHistory);
+document.getElementById("monthSelectBtn").addEventListener("click", function (e) {
+    e.stopPropagation();
+    document.getElementById("statusDropdown").classList.remove("show");
+    document.getElementById("monthDropdown").classList.toggle("show");
+});
+
+document.getElementById("statusSelectBtn").addEventListener("click", function (e) {
+    e.stopPropagation();
+    document.getElementById("monthDropdown").classList.remove("show");
+    document.getElementById("statusDropdown").classList.toggle("show");
+});
+
+document.querySelectorAll("#statusDropdown .filter-option").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        selectedStatus = this.dataset.value;
+        document.getElementById("statusSelectLabel").textContent =
+            this.querySelector("span:last-child") ? this.textContent.trim() : this.textContent;
+        document.getElementById("statusSelectDot").className =
+            "filter-dot " + this.querySelector(".filter-dot").className.replace("filter-dot", "").trim();
+        document.getElementById("statusDropdown").classList.remove("show");
+        renderHistory();
+    });
+});
+
+document.addEventListener("click", function () {
+    document.getElementById("monthDropdown").classList.remove("show");
+    document.getElementById("statusDropdown").classList.remove("show");
+});
 
 loadHistory();
 window.addEventListener("tabshow", loadHistory);

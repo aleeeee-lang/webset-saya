@@ -786,10 +786,15 @@
 
 
 
-            /* RECENT ATTENDANCE */
+           /* RECENT ATTENDANCE */
 
-            const recent =
-                data.slice(0, 5);
+window.allAttendanceData = data;
+
+const showAll =
+    document.getElementById("viewAllBtn").textContent.trim() === "Show Less";
+
+const recent =
+    showAll ? data : data.slice(0, 5);
 
 
             const recentContainer =
@@ -804,7 +809,7 @@
 
                     <div class="empty-attendance">
 
-                        <span>📋</span>
+                        <span></span>
 
                         <p>
                             No attendance data yet.
@@ -926,6 +931,17 @@
             }
 
         }
+
+        function toggleViewAll() {
+
+    const btn = document.getElementById("viewAllBtn");
+
+    btn.textContent =
+        btn.textContent.trim() === "View All" ? "Show Less" : "View All";
+
+    loadDashboard();
+
+}
 
 
         loadDashboard();

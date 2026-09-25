@@ -73,249 +73,13 @@
 
         <!-- HISTORY LIST -->
 
-        <section class="history-list">
-
-
-            <!-- TODAY -->
-
-            <div class="history-date-group">
-
-                <p class="history-date">
-                    TODAY
-                </p>
-
-
-                <div class="history-card">
-
-                    <div class="history-status-icon hadir">
-                        ✓
-                    </div>
-
-
-                    <div class="history-content">
-
-                        <strong>
-                            Present
-                        </strong>
-
-                        <span>
-                            20 September 2026
-                        </span>
-
-                        <small>
-                            Check-in at 07:42
-                        </small>
-
-                    </div>
-
-
-                    <div class="history-time">
-                        07:42
-                    </div>
-
-
-                    <span class="history-arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- 19 SEPTEMBER -->
-
-            <div class="history-date-group">
-
-                <p class="history-date">
-                    19 SEPTEMBER
-                </p>
-
-
-                <div class="history-card">
-
-                    <div class="history-status-icon hadir">
-                        ✓
-                    </div>
-
-
-                    <div class="history-content">
-
-                        <strong>
-                            Present
-                        </strong>
-
-                        <span>
-                            19 September 2026
-                        </span>
-
-                        <small>
-                            Check-in at 07:38
-                        </small>
-
-                    </div>
-
-
-                    <div class="history-time">
-                        07:38
-                    </div>
-
-
-                    <span class="history-arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- 18 SEPTEMBER -->
-
-            <div class="history-date-group">
-
-                <p class="history-date">
-                    18 SEPTEMBER
-                </p>
-
-
-                <div class="history-card">
-
-                    <div class="history-status-icon izin">
-                        !
-                    </div>
-
-
-                    <div class="history-content">
-
-                        <strong>
-                            Permission
-                        </strong>
-
-                        <span>
-                            18 September 2026
-                        </span>
-
-                        <small>
-                            Personal reason
-                        </small>
-
-                    </div>
-
-
-                    <div class="history-time">
-                        08:10
-                    </div>
-
-
-                    <span class="history-arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- 17 SEPTEMBER -->
-
-            <div class="history-date-group">
-
-                <p class="history-date">
-                    17 SEPTEMBER
-                </p>
-
-
-                <div class="history-card">
-
-                    <div class="history-status-icon sakit">
-                        +
-                    </div>
-
-
-                    <div class="history-content">
-
-                        <strong>
-                            Sick
-                        </strong>
-
-                        <span>
-                            17 September 2026
-                        </span>
-
-                        <small>
-                            Health reason
-                        </small>
-
-                    </div>
-
-
-                    <div class="history-time">
-                        07:55
-                    </div>
-
-
-                    <span class="history-arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- 16 SEPTEMBER -->
-
-            <div class="history-date-group">
-
-                <p class="history-date">
-                    16 SEPTEMBER
-                </p>
-
-
-                <div class="history-card">
-
-                    <div class="history-status-icon alpa">
-                        !
-                    </div>
-
-
-                    <div class="history-content">
-
-                        <strong>
-                            Absent
-                        </strong>
-
-                        <span>
-                            16 September 2026
-                        </span>
-
-                        <small>
-                            No attendance
-                        </small>
-
-                    </div>
-
-
-                    <div class="history-time">
-                        --
-                    </div>
-
-
-                    <span class="history-arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </div>
-
-
-        </section>
+       <section class="history-list" id="historyList"></section>
+
+<section class="history-empty" id="historyEmpty" style="display:none">
+    <div class="history-empty-icon">📋</div>
+    <h2>No attendance history</h2>
+    <p>Your attendance records will appear here.</p>
+</section>
 
 
 
@@ -602,7 +366,115 @@
     <!-- =========================
          SUPABASE
     ========================== -->
+    <script>
+const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
+const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+let allHistoryData = [];
 
+function fillMonthOptions(data) {
+    const monthSelect = document.getElementById("filterMonth");
+    const seen = new Set();
+    const options = [];
+
+    data.forEach(function (item) {
+        const d = new Date(item.date);
+        const key = d.getFullYear() + "-" + d.getMonth();
+        if (!seen.has(key)) {
+            seen.add(key);
+            options.push({
+                key: key,
+                label: d.toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+            });
+        }
+    });
+
+    monthSelect.innerHTML = '<option value="all">All Months</option>' +
+        options.map(o => `<option value="${o.key}">${o.label}</option>`).join("");
+}
+
+function renderHistory() {
+    const monthValue = document.getElementById("filterMonth").value;
+    const statusValue = document.getElementById("filterStatus").value;
+
+    let filtered = allHistoryData.filter(function (item) {
+        const d = new Date(item.date);
+        const key = d.getFullYear() + "-" + d.getMonth();
+        const monthOk = monthValue === "all" || monthValue === key;
+        const statusOk = statusValue === "all" || item.status === statusValue;
+        return monthOk && statusOk;
+    });
+
+    document.getElementById("sumHadir").textContent = filtered.filter(i => i.status === "Hadir").length;
+    document.getElementById("sumIzin").textContent = filtered.filter(i => i.status === "Izin").length;
+    document.getElementById("sumSakit").textContent = filtered.filter(i => i.status === "Sakit").length;
+    document.getElementById("sumAlpa").textContent = filtered.filter(i => i.status === "Alpa").length;
+
+    const listEl = document.getElementById("historyList");
+    const emptyEl = document.getElementById("historyEmpty");
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = "";
+        emptyEl.style.display = "block";
+        return;
+    }
+
+    emptyEl.style.display = "none";
+
+    const todayStr = new Date().toDateString();
+
+    listEl.innerHTML = filtered.map(function (item) {
+        const d = new Date(item.date);
+        const isToday = d.toDateString() === todayStr;
+        const label = isToday
+            ? "TODAY"
+            : d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }).toUpperCase();
+
+        const cls = item.status.toLowerCase();
+        const sub = item.status === "Hadir"
+            ? "Check-in at " + (item.time || "-")
+            : (item.reason || statusLabel[item.status] || item.status);
+
+        return `
+            <div class="history-date-group">
+                <p class="history-date">${label}</p>
+                <div class="history-card">
+                    <div class="history-status-icon ${cls}">${statusIcon[item.status] || "?"}</div>
+                    <div class="history-content">
+                        <strong>${statusLabel[item.status] || item.status}</strong>
+                        <span>${d.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}</span>
+                        <small>${sub}</small>
+                    </div>
+                    <div class="history-time">${item.time || "--"}</div>
+                    <span class="history-arrow">›</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function loadHistory() {
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .order("date", { ascending: false });
+
+    if (error) {
+        console.error("History error:", error);
+        return;
+    }
+
+    allHistoryData = data;
+    fillMonthOptions(data);
+    renderHistory();
+}
+
+document.getElementById("filterMonth").addEventListener("change", renderHistory);
+document.getElementById("filterStatus").addEventListener("change", renderHistory);
+
+loadHistory();
+window.addEventListener("tabshow", loadHistory);
+</script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="js/supabase.js"></script>

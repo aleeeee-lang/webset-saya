@@ -43,22 +43,36 @@
 
         <!-- FILTER -->
 
-       <section class="history-filter-card">
+     <section class="history-filter-card">
 
     <div class="history-month">
         <span>MONTH</span>
-        <select id="filterMonth" class="history-select"></select>
+
+        <button type="button" class="filter-select" id="monthSelectBtn">
+            <i class="filter-icon-cal"></i>
+            <span id="monthSelectLabel">All Months</span>
+            <span class="filter-arrow">⌄</span>
+        </button>
+
+        <div class="filter-dropdown" id="monthDropdown"></div>
     </div>
 
     <div class="history-status">
         <span>STATUS</span>
-        <select id="filterStatus" class="history-select">
-            <option value="all">All Status</option>
-            <option value="Hadir">Present</option>
-            <option value="Izin">Permission</option>
-            <option value="Sakit">Sick</option>
-            <option value="Alpa">Absent</option>
-        </select>
+
+        <button type="button" class="filter-select" id="statusSelectBtn">
+            <span class="filter-dot all" id="statusSelectDot"></span>
+            <span id="statusSelectLabel">All Status</span>
+            <span class="filter-arrow">⌄</span>
+        </button>
+
+        <div class="filter-dropdown" id="statusDropdown">
+            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span>All Status</button>
+            <button type="button" class="filter-option" data-value="Hadir"><span class="filter-dot hadir"></span>Present</button>
+            <button type="button" class="filter-option" data-value="Izin"><span class="filter-dot izin"></span>Permission</button>
+            <button type="button" class="filter-option" data-value="Sakit"><span class="filter-dot sakit"></span>Sick</button>
+            <button type="button" class="filter-option" data-value="Alpa"><span class="filter-dot alpa"></span>Absent</button>
+        </div>
     </div>
 
 </section>

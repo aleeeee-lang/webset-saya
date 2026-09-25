@@ -43,43 +43,25 @@
 
         <!-- FILTER -->
 
-        <section class="history-filter-card">
+       <section class="history-filter-card">
 
-            <div class="history-month">
+    <div class="history-month">
+        <span>MONTH</span>
+        <select id="filterMonth" class="history-select"></select>
+    </div>
 
-                <span>
-                    MONTH
-                </span>
+    <div class="history-status">
+        <span>STATUS</span>
+        <select id="filterStatus" class="history-select">
+            <option value="all">All Status</option>
+            <option value="Hadir">Present</option>
+            <option value="Izin">Permission</option>
+            <option value="Sakit">Sick</option>
+            <option value="Alpa">Absent</option>
+        </select>
+    </div>
 
-                <button
-                    type="button"
-                    class="history-select"
-                >
-                    September 2026 ▾
-                </button>
-
-            </div>
-
-
-            <div class="history-status">
-
-                <span>
-                    STATUS
-                </span>
-
-                <button
-                    type="button"
-                    class="history-select"
-                >
-                    All Status ▾
-                </button>
-
-            </div>
-
-        </section>
-
-
-
+</section>
         <!-- SUMMARY -->
 
         <section class="history-summary">

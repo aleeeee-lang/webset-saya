@@ -217,3 +217,121 @@ main.attendance-page .submit-button {
     margin-top: 0;
 }
 
+/* =========================================================
+   HISTORY FILTER: MODERN DROPDOWN
+========================================================= */
+
+.history-month, .history-status {
+    position: relative;
+}
+
+.filter-select {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e5e5ee;
+    border-radius: 12px;
+    background: #f8f8ff;
+    color: #20243a;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.filter-select span:not(.filter-dot) {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filter-arrow {
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1;
+    flex: none;
+}
+
+.filter-icon-cal {
+    width: 14px;
+    height: 12px;
+    flex: none;
+    border: 1.6px solid #64748b;
+    border-radius: 2px;
+    position: relative;
+}
+
+.filter-icon-cal::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -1.6px;
+    right: -1.6px;
+    height: 1.6px;
+    background: #64748b;
+}
+
+.filter-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: none;
+    background: #cbd5e1;
+}
+
+.filter-dot.hadir { background: #22c55e; }
+.filter-dot.izin  { background: #f59e0b; }
+.filter-dot.sakit { background: #3b82f6; }
+.filter-dot.alpa  { background: #ef4444; }
+
+.filter-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+    display: none;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.filter-dropdown.show {
+    display: block;
+}
+
+.filter-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 40px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #20243a;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.filter-option:hover {
+    background: #f5f7fb;
+}
+
+.filter-option.selected {
+    background: #eeeeff;
+    color: #635bff;
+    font-weight: 600;
+}
+

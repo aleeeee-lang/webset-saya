@@ -360,3 +360,24 @@ button.filter-select {
     font-weight: 600;
 }
 
+/* =========================================================
+   MY ATTENDANCE: CALENDAR DAY COLORS
+========================================================= */
+
+.calendar-days .hadir-day {
+    background: #e5faf0;
+    color: #159447;
+    font-weight: bold;
+}
+
+.calendar-days .alpa-day {
+    background: #ffe8eb;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.calendar-days .today-day {
+    outline: 2px solid #635bff;
+    outline-offset: 1px;
+}
+

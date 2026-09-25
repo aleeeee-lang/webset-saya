@@ -194,3 +194,18 @@ main.attendance-page .submit-button {
     margin-top: 2px;
 }
 
+/* =========================================================
+   VIEW ALL BUTTON (looks like the old link)
+========================================================= */
+
+.dashboard-section-title .link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #635bff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+}
+

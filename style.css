@@ -110,7 +110,7 @@ button,input,select,textarea{font-family:inherit}
 
 /* CAMERA */
 .attendance-page .camera-card{padding:20px}.attendance-page .camera-label{display:block;margin-bottom:5px;color:#777;font-size:10px;letter-spacing:1.5px}.attendance-page .camera-header h2{margin:0;font-size:20px;color:#172554}.attendance-page .camera-header p{margin:6px 0 15px;color:#64748b;font-size:13px}
-.attendance-page .camera-box{width:100%;height:220px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#eef0f6;border-radius:15px}.attendance-page .camera-box video{width:100%;height:100%;display:block;object-fit:cover;transform:scaleX(1);-webkit-transform:scaleX(1)}
+.attendance-page .camera-box{width:100%;height:300px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#eef0f6;border-radius:15px}.attendance-page .camera-box video{width:100%;height:100%;display:block;object-fit:cover;transform:scaleX(1);-webkit-transform:scaleX(1)}
 .attendance-page #photoPreview{width:100%;height:100%;margin:0;display:none;object-fit:cover;border-radius:15px;transform:scaleX(1);-webkit-transform:scaleX(1)}
 .attendance-page .camera-buttons{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.attendance-page .camera-buttons button{min-height:46px;padding:11px 16px;border:none;border-radius:12px;background:#6366f1;color:#fff;font-size:13px;font-weight:600;cursor:pointer}.attendance-page .camera-buttons button:hover{background:#4f46e5}.attendance-page #faceStatus{margin:10px 0 0;color:#64748b;font-size:12px;text-align:center}
 

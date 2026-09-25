@@ -370,10 +370,12 @@ const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
 const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
 let allHistoryData = [];
 
+let selectedMonth = "all";
+let selectedStatus = "all";
+
 function fillMonthOptions(data) {
-    const monthSelect = document.getElementById("filterMonth");
     const seen = new Set();
-    const options = [];
+    const options = [{ key: "all", label: "All Months" }];
 
     data.forEach(function (item) {
         const d = new Date(item.date);
@@ -387,8 +389,20 @@ function fillMonthOptions(data) {
         }
     });
 
-    monthSelect.innerHTML = '<option value="all">All Months</option>' +
-        options.map(o => `<option value="${o.key}">${o.label}</option>`).join("");
+    const dropdown = document.getElementById("monthDropdown");
+
+    dropdown.innerHTML = options.map(function (o) {
+        return `<button type="button" class="filter-option" data-value="${o.key}">${o.label}</button>`;
+    }).join("");
+
+    dropdown.querySelectorAll(".filter-option").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            selectedMonth = this.dataset.value;
+            document.getElementById("monthSelectLabel").textContent = this.textContent;
+            dropdown.classList.remove("show");
+            renderHistory();
+        });
+    });
 }
 
 function renderHistory() {

@@ -406,8 +406,8 @@ function fillMonthOptions(data) {
 }
 
 function renderHistory() {
-    const monthValue = document.getElementById("filterMonth").value;
-    const statusValue = document.getElementById("filterStatus").value;
+    const monthValue = selectedMonth;
+    const statusValue = selectedStatus;
 
     let filtered = allHistoryData.filter(function (item) {
         const d = new Date(item.date);

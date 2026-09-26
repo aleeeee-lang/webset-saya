@@ -112,6 +112,10 @@ async function loadAccountInfo() {
         document.getElementById("settingsName").textContent = profile.name || "-";
         document.getElementById("settingsClass").textContent =
             profile.role === "admin" ? "Admin" : (profile.class || "-");
+
+        if (profile.role === "admin") {
+            document.getElementById("adminSettingsSection").style.display = "block";
+        }
     }
 
 }

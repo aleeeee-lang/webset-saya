@@ -500,3 +500,12 @@ html[data-theme="dark"] .attendance-page * {
 html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
     color: #ff6b7a !important;
 }
+
+/* =========================================================
+   DARK MODE: NOTIFICATION BELL ICON
+========================================================= */
+
+html[data-theme="dark"] .top-notification-icon svg {
+    color: #e5e7f5 !important;
+    stroke: #e5e7f5 !important;
+}

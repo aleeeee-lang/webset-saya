@@ -96,6 +96,25 @@ async function loadAccountInfo() {
 
 }
 
+    const darkToggle = document.getElementById("darkModeToggle");
+const darkSlider = document.getElementById("darkModeSlider");
+const darkKnob = document.getElementById("darkModeKnob");
+
+function syncDarkUI(isDark) {
+    darkToggle.checked = isDark;
+    darkSlider.style.background = isDark ? "#635bff" : "#e2e8f0";
+    darkKnob.style.transform = isDark ? "translateX(18px)" : "translateX(0)";
+}
+
+syncDarkUI(document.documentElement.getAttribute("data-theme") === "dark");
+
+document.querySelector("label").addEventListener("click", function (e) {
+    e.preventDefault();
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    setTheme(isDark ? "light" : "dark");
+    syncDarkUI(!isDark);
+});
+
 loadAccountInfo();
 
 </script>

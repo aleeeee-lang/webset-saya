@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Students - Attendly</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro">
+        <h2>Manage Students</h2>
+    </section>
+
+    <!-- ADD STUDENT FORM -->
+    <section class="attendance-card">
+
+        <div class="card-label">Add New Student</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <input type="text" id="newName" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newClass" placeholder="Class / Major (e.g. XII IPA 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newNis" placeholder="NIS / NIM" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="email" id="newEmail" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newPassword" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <button type="button" class="submit-button" id="addBtn" onclick="addStudent()" style="margin-top:4px">
+                Add Student
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- STUDENT LIST -->
+    <section class="attendance-card">
+
+        <div class="card-label">Student List</div>
+
+        <div id="studentList" style="display:flex;flex-direction:column;gap:8px"></div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+// Second, isolated client just for creating student accounts,
+// so creating a student never overwrites the admin's own login session.
+const supabaseSignupClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        storageKey: "sb-temp-signup-auth"
+    }
+});
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert("This page is for admins only.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    loadStudents();
+}
+
+async function addStudent() {
+
+    const name = document.getElementById("newName").value.trim();
+    const studentClass = document.getElementById("newClass").value.trim();
+    const nis = document.getElementById("newNis").value.trim();
+    const email = document.getElementById("newEmail").value.trim();
+    const password = document.getElementById("newPassword").value;
+
+    if (!name || !email || !password) {
+        alert("Name, email, and password are required.");
+        return;
+    }
+
+    const btn = document.getElementById("addBtn");
+    btn.disabled = true;
+    btn.textContent = "Adding...";
+
+    const { data: signUpData, error: signUpError } = await supabaseSignupClient.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (signUpError) {
+        alert("Failed to create account: " + signUpError.message);
+        btn.disabled = false;
+        btn.textContent = "Add Student";
+        return;
+    }
+
+    const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .insert({
+            id: signUpData.user.id,
+            role: "murid",
+            name: name,
+            class: studentClass,
+            nis: nis
+        });
+
+    if (profileError) {
+        alert("Account created, but saving profile failed: " + profileError.message);
+        btn.disabled = false;
+        btn.textContent = "Add Student";
+        return;
+    }
+
+    document.getElementById("newName").value = "";
+    document.getElementById("newClass").value = "";
+    document.getElementById("newNis").value = "";
+    document.getElementById("newEmail").value = "";
+    document.getElementById("newPassword").value = "";
+
+    btn.disabled = false;
+    btn.textContent = "Add Student";
+
+    loadStudents();
+}
+
+async function loadStudents() {
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("role", "murid")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const list = document.getElementById("studentList");
+
+    if (data.length === 0) {
+        list.innerHTML = "<p style='color:#888;font-size:13px'>No students added yet.</p>";
+        return;
+    }
+
+    list.innerHTML = data.map(function (s) {
+        return `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#f8f8ff;border-radius:12px">
+                <div>
+                    <strong style="display:block;font-size:14px;color:#20243a">${s.name || "-"}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>

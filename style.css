@@ -398,3 +398,91 @@ button.filter-select {
         grid-column: span 2;
     }
 }
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html[data-theme="dark"] body {
+    background: #0f1220;
+    color: #e5e7f5;
+}
+
+html[data-theme="dark"] .top-action-button,
+html[data-theme="dark"] .notification-panel,
+html[data-theme="dark"] .attendance-hero,
+html[data-theme="dark"] .home-menu-card,
+html[data-theme="dark"] .bottom-nav,
+html[data-theme="dark"] .dashboard-status-card,
+html[data-theme="dark"] .dashboard-card,
+html[data-theme="dark"] .quick-stat-card,
+html[data-theme="dark"] .activity-card,
+html[data-theme="dark"] .monthly-calendar-card,
+html[data-theme="dark"] .history-filter-card,
+html[data-theme="dark"] .history-summary-item,
+html[data-theme="dark"] .history-card,
+html[data-theme="dark"] .history-empty,
+html[data-theme="dark"] .attendance-page .date-time-item,
+html[data-theme="dark"] .attendance-page .attendance-card,
+html[data-theme="dark"] .attendance-page .status-dropdown,
+html[data-theme="dark"] .filter-dropdown {
+    background: #1a1d2e;
+    border-color: #2a2e45;
+}
+
+html[data-theme="dark"] .calendar-day,
+html[data-theme="dark"] .recent-attendance-item,
+html[data-theme="dark"] .statistics-info div,
+html[data-theme="dark"] .home-menu-icon,
+html[data-theme="dark"] .progress-bar,
+html[data-theme="dark"] .calendar-arrow,
+html[data-theme="dark"] .attendance-insight,
+html[data-theme="dark"] .attendance-page .date-time-icon,
+html[data-theme="dark"] .attendance-page .calendar-icon,
+html[data-theme="dark"] .attendance-page .status-select,
+html[data-theme="dark"] .attendance-page #reason,
+html[data-theme="dark"] .filter-select,
+html[data-theme="dark"] .camera-box {
+    background: #242842;
+    border-color: #2a2e45;
+}
+
+html[data-theme="dark"] :is(h1, h2, h3, strong),
+html[data-theme="dark"] .brand h2,
+html[data-theme="dark"] .attendance-page .card-label,
+html[data-theme="dark"] .attendance-page .status-select,
+html[data-theme="dark"] .attendance-page .status-option,
+html[data-theme="dark"] .attendance-page #reason,
+html[data-theme="dark"] .filter-select span {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .welcome-small,
+html[data-theme="dark"] .welcome-description,
+html[data-theme="dark"] .home-section-header p,
+html[data-theme="dark"] .home-menu-card p,
+html[data-theme="dark"] .dashboard-welcome,
+html[data-theme="dark"] .notification-empty,
+html[data-theme="dark"] .bottom-nav a,
+html[data-theme="dark"] .history-content span,
+html[data-theme="dark"] .activity-content span,
+html[data-theme="dark"] .attendance-page .attendance-title p,
+html[data-theme="dark"] .attendance-page .date-time-item span,
+html[data-theme="dark"] .attendance-page .camera-label,
+html[data-theme="dark"] .attendance-page .camera-header p,
+html[data-theme="dark"] .attendance-page #faceStatus {
+    color: #9aa0b8;
+}
+
+html[data-theme="dark"] .bottom-nav a.active {
+    color: #8d86ff;
+    background: transparent;
+}
+
+html[data-theme="dark"] .filter-option:hover {
+    background: #2a2e45;
+}
+
+html[data-theme="dark"] .filter-option.selected {
+    background: #2f3358;
+}

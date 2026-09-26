@@ -610,7 +610,32 @@
 
     </nav>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
 <script src="js/notification.js"></script>
+
+<script>
+
+async function checkAdminMenu() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile && profile.role === "admin") {
+        document.getElementById("adminMenuCard").style.display = "";
+    }
+}
+
+checkAdminMenu();
+
+</script>
 
     <script>
 let touchStartX = 0;

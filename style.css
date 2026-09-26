@@ -381,3 +381,20 @@ button.filter-select {
     outline-offset: 1px;
 }
 
+/* =========================================================
+   ADMIN MENU CARD
+========================================================= */
+
+.admin-card-home {
+    grid-column: span 3;
+}
+
+.admin-card-home .home-menu-icon {
+    background: #ffe1e1;
+}
+
+@media (max-width: 700px) {
+    .admin-card-home {
+        grid-column: span 2;
+    }
+}

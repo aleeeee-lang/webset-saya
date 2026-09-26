@@ -486,3 +486,17 @@ html[data-theme="dark"] .filter-option:hover {
 html[data-theme="dark"] .filter-option.selected {
     background: #2f3358;
 }
+
+/* =========================================================
+   DARK MODE: FORCE TEXT ON PAGES WITH INLINE COLORS
+   (Attendance, Settings, Change Password, Admin Students)
+========================================================= */
+
+html[data-theme="dark"] .attendance-page,
+html[data-theme="dark"] .attendance-page * {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
+    color: #ff6b7a !important;
+}

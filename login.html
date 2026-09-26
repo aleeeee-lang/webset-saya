@@ -2,163 +2,116 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Login - Attendly</title>
-
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Attendly</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6861ff, #8d6bff); padding: 20px; box-sizing: border-box; }
+.login-card { width: 100%; max-width: 360px; background: #fff; border-radius: 24px; padding: 32px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.15); box-sizing: border-box; }
+.login-logo { width: 56px; height: 56px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: linear-gradient(135deg, #6861ff, #8d6bff); color: #fff; font-size: 24px; font-weight: bold; }
+.login-brand { text-align: center; font-size: 20px; font-weight: 700; color: #20243a; margin-bottom: 4px; }
+.login-tagline { text-align: center; font-size: 13px; color: #888; margin-bottom: 28px; }
+.login-field { margin-bottom: 14px; }
+.login-field label { display: block; font-size: 12px; color: #64748b; margin-bottom: 6px; font-weight: 600; }
+.login-field input { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #fafafa; }
+.pwd-wrap { position: relative; }
+.pwd-wrap input { padding-right: 42px; }
+.pwd-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; font-size: 14px; background: none; border: none; padding: 0; }
+.login-btn { width: 100%; padding: 13px; margin-top: 6px; border: none; border-radius: 12px; background: linear-gradient(135deg, #6861ff, #8d6bff); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(99,91,255,.25); }
+.login-btn:disabled { opacity: 0.6; cursor: default; }
+</style>
 </head>
-
 
 <body>
 
-    <main>
+<div class="login-wrap">
+    <div class="login-card">
 
-        <section class="attendance-card">
+        <div class="login-logo">A</div>
+        <div class="login-brand">Attendly</div>
+        <div class="login-tagline">Masuk untuk mencatat kehadiranmu</div>
 
-            <h1>
-                Attendly
-            </h1>
+        <div class="login-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="nama@sekolah.id">
+        </div>
 
-            <h2>
-                Login
-            </h2>
+        <div class="login-field">
+            <label for="password">Password</label>
+            <div class="pwd-wrap">
+                <input type="password" id="password" placeholder="••••••••">
+                <button type="button" class="pwd-eye" id="togglePwd">👁</button>
+            </div>
+        </div>
 
-            <p class="small-text">
-                Login to access your attendance.
-            </p>
+        <button type="button" class="login-btn" id="loginBtn" onclick="loginUser()">
+            Login
+        </button>
 
+    </div>
+</div>
 
-            <!-- EMAIL -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
 
-            <label for="email">
-                Email
-            </label>
+<script>
 
-            <input
-                type="email"
-                id="email"
-                placeholder="Enter your email"
-            >
+document.getElementById("togglePwd").addEventListener("click", function () {
+    const pwd = document.getElementById("password");
+    pwd.type = pwd.type === "password" ? "text" : "password";
+});
 
+async function loginUser() {
 
-            <!-- PASSWORD -->
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const btn = document.getElementById("loginBtn");
 
-            <label for="password">
-                Password
-            </label>
+    if (!email || !password) {
+        alert("Please enter your email and password.");
+        return;
+    }
 
-            <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-            >
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
 
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
 
-            <!-- LOGIN BUTTON -->
+    if (error) {
+        console.error(error);
+        alert("Login failed: " + error.message);
+        btn.disabled = false;
+        btn.textContent = "Login";
+        return;
+    }
 
-           <button
-    type="button"
-    class="login-button"
-    onclick="loginUser()"
->
-    Login
-</button>
+    const { data: profile, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
 
-        </section>
+    if (profileError || !profile) {
+        console.error("Profile not found:", profileError);
+        alert("Login succeeded, but no profile was found for this account. Contact your admin.");
+        btn.disabled = false;
+        btn.textContent = "Login";
+        return;
+    }
 
-    </main>
+    if (profile.role === "admin") {
+        window.location.href = "index.html";
+    } else {
+        window.location.href = "index.html";
+    }
 
+}
 
-    <!-- SUPABASE -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="js/supabase.js"></script>
-
-
-    <!-- LOGIN SCRIPT -->
-
-    <script>
-
-        async function loginUser() {
-
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
-
-
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
-
-
-            if (!email || !password) {
-
-                alert(
-                    "Please enter your email and password."
-                );
-
-                return;
-            }
-
-
-            const {
-                data,
-                error
-            } = await supabaseClient.auth.signInWithPassword({
-
-                email: email,
-
-                password: password
-
-            });
-
-
-            if (error) {
-
-                console.error(error);
-
-                alert(
-                    "Login failed: " +
-                    error.message
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "LOGIN SUCCESS:",
-                data
-            );
-
-
-            alert(
-                "Login successful! ✅"
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }
-
-    </script>
+</script>
 
 </body>
-
 </html>

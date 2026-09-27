@@ -519,3 +519,15 @@ html[data-theme="dark"] #settingsGearBtn {
     border-color: #2a2e45 !important;
     color: #e5e7f5 !important;
 }
+
+/* =========================================================
+   DARK MODE: FILTER OPTIONS TEXT (History)
+========================================================= */
+
+html[data-theme="dark"] .filter-option {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .filter-select span:not(.filter-dot) {
+    color: #e5e7f5 !important;
+}

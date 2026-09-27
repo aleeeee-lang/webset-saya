@@ -539,3 +539,11 @@ html[data-theme="dark"] .filter-select span:not(.filter-dot) {
 html[data-theme="dark"] .quick-stat-icon {
     color: #64748b !important;
 }
+
+/* =========================================================
+   DARK MODE: SETTINGS MENU DIVIDER LINES
+========================================================= */
+
+html[data-theme="dark"] .attendance-page [style*="border-bottom:1px solid #f0f0f5"] {
+    border-bottom-color: #2a2e45 !important;
+}

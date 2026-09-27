@@ -509,3 +509,13 @@ html[data-theme="dark"] .top-notification-icon svg {
     color: #e5e7f5 !important;
     stroke: #e5e7f5 !important;
 }
+
+/* =========================================================
+   DARK MODE: SETTINGS GEAR BUTTON
+========================================================= */
+
+html[data-theme="dark"] #settingsGearBtn {
+    background: #242842 !important;
+    border-color: #2a2e45 !important;
+    color: #e5e7f5 !important;
+}

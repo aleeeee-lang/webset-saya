@@ -531,3 +531,11 @@ html[data-theme="dark"] .filter-option {
 html[data-theme="dark"] .filter-select span:not(.filter-dot) {
     color: #e5e7f5 !important;
 }
+
+/* =========================================================
+   DARK MODE: ICON COLOR INSIDE LIGHT ICON BOXES
+========================================================= */
+
+html[data-theme="dark"] .quick-stat-icon {
+    color: #64748b !important;
+}

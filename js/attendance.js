@@ -6,6 +6,38 @@
 async function saveAttendance() {
 
     // =========================
+    // GET LOGIN USER
+    // =========================
+
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        alert("Please login first.");
+
+        return;
+    }
+
+
+    // =========================
+    // GET STUDENT NAME (from profiles)
+    // =========================
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+    const studentName =
+        (profile && profile.name) ? profile.name : user.email;
+
+
+    // =========================
     // GET STATUS
     // =========================
 
@@ -17,6 +49,7 @@ async function saveAttendance() {
         ? selectedStatus.value
         : "";
 
+
     // =========================
     // GET REASON
     // =========================
@@ -24,14 +57,17 @@ async function saveAttendance() {
     const reason =
         document.getElementById("reason").value.trim();
 
+
     // =========================
-    // GET DATE & TIME
+    // GET DATE & TIME (local time)
     // =========================
 
     const now = new Date();
 
     const date =
-        now.toISOString().split("T")[0];
+        now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0");
 
     const time =
         now.toTimeString().slice(0, 5);
@@ -40,6 +76,7 @@ async function saveAttendance() {
         now.toLocaleDateString("en-US", {
             weekday: "long"
         });
+
 
     // =========================
     // VALIDATION
@@ -70,11 +107,8 @@ async function saveAttendance() {
 
     if (typeof capturedPhoto !== "undefined" && capturedPhoto) {
 
-        const fileName =
-            Date.now() + ".jpg";
-
         const filePath =
-            fileName;
+            Date.now() + ".jpg";
 
 
         const {
@@ -112,24 +146,6 @@ async function saveAttendance() {
 
 
     // =========================
-    // GET LOGIN USER
-    // =========================
-
-    const {
-        data: { user },
-        error: userError
-    } = await supabaseClient.auth.getUser();
-
-
-    if (userError || !user) {
-
-        alert("Please login first.");
-
-        return;
-    }
-
-
-    // =========================
     // INSERT TO SUPABASE
     // =========================
 
@@ -143,7 +159,7 @@ async function saveAttendance() {
 
                 day: day,
 
-                name: "Aly",
+                name: studentName,
 
                 date: date,
 
@@ -207,7 +223,7 @@ async function saveAttendance() {
 
     document.getElementById(
         "selectedStatus"
-    ).textContent = "Belum dipilih";
+    ).textContent = "Not selected";
 
 
     document.getElementById(

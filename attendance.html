@@ -797,69 +797,43 @@
          * SELECT STATUS
          */
 
-        document
-            .querySelectorAll(
-                ".status-option"
-            )
-            .forEach(
-                function (option) {
+        /*
+         * SELECT STATUS
+         */
 
-                    option.addEventListener(
-                        "click",
-                        function () {
+        const statusMap = {
+            Present: "Hadir",
+            Permission: "Izin",
+            Sick: "Sakit",
+            Absent: "Alpa"
+        };
 
-                            const value =
-                                this.dataset.status;
+        document.querySelectorAll(".status-option").forEach(function (option) {
 
+            option.addEventListener("click", function () {
 
-                            selectedStatus.textContent =
-                                value;
+                const label = this.dataset.status;
+                const dbValue = statusMap[label];
 
+                selectedStatus.textContent = label;
 
-                            selectedStatusLight.className =
-                                "status-light";
+                selectedStatusLight.className = "status-light";
+                selectedStatusLight.classList.add(
+                    this.classList.contains("hadir") ? "hadir"
+                    : this.classList.contains("izin") ? "izin"
+                    : this.classList.contains("sakit") ? "sakit"
+                    : "alpa"
+                );
 
+                statusInputs.forEach(function (input) {
+                    input.checked = input.value === dbValue;
+                });
 
-                            selectedStatusLight.classList.add(
-                                this.classList.contains("hadir")
-                                    ? "hadir"
-                                    : this.classList.contains("izin")
-                                    ? "izin"
-                                    : this.classList.contains("sakit")
-                                    ? "sakit"
-                                    : "alpa"
-                            );
+                statusDropdown.classList.remove("show");
 
+            });
 
-                            /*
-                             * CHECK HIDDEN RADIO
-                             */
-
-                            statusInputs.forEach(
-                                function (input) {
-
-                                    input.checked =
-                                        input.value === value;
-
-                                }
-                            );
-
-
-                            /*
-                             * CLOSE DROPDOWN
-                             */
-
-                            statusDropdown.classList.remove(
-                                "show"
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-
+        });
 
         /*
          * CLICK OUTSIDE

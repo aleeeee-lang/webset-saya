@@ -162,6 +162,8 @@ async function saveAttendance() {
 
                 name: studentName,
 
+                class: studentClass,
+
                 date: date,
 
                 time: time,

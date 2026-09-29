@@ -465,10 +465,7 @@ function renderHistory() {
 }
 
 async function loadHistory() {
-    const { data, error } = await supabaseClient
-        .from("attendance")
-        .select("*")
-        .order("date", { ascending: false });
+      const { data, error } = await getMyAttendance();
 
     if (error) {
         console.error("History error:", error);

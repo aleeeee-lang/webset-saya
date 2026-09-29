@@ -23,20 +23,21 @@ async function saveAttendance() {
     }
 
 
-    // =========================
-    // GET STUDENT NAME (from profiles)
+      // =========================
+    // GET STUDENT NAME & CLASS (from profiles)
     // =========================
 
     const { data: profile } = await supabaseClient
         .from("profiles")
-        .select("name")
+        .select("name, class")
         .eq("id", user.id)
         .single();
 
     const studentName =
         (profile && profile.name) ? profile.name : user.email;
 
-
+    const studentClass =
+        (profile && profile.class) ? profile.class : null;
     // =========================
     // GET STATUS
     // =========================

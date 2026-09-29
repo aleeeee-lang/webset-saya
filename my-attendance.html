@@ -322,11 +322,7 @@ function renderInsight(data) {
 }
 
 async function loadMyAttendance() {
-    const { data, error } = await supabaseClient
-        .from("attendance")
-        .select("*")
-        .order("date", { ascending: false });
-
+      const { data, error } = await getMyAttendance();
     if (error) {
         console.error("My Attendance error:", error);
         return;

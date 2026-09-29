@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Attendance - Attendly</title>
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro">
+        <h2>Manage Attendance</h2>
+    </section>
+
+    <!-- TODAY'S ATTENDANCE -->
+    <section class="attendance-card">
+        <div class="card-label">Today's Attendance</div>
+        <div id="todayList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+    <!-- FILTER + HISTORY -->
+    <section class="attendance-card">
+
+        <div class="card-label">Filter Records</div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+            <select id="filterClass" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
+                <option value="all">All Classes</option>
+            </select>
+
+            <input type="date" id="filterDate" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
+        </div>
+
+        <div id="filteredList" style="display:flex;flex-direction:column;gap:8px"></div>
+
+    </section>
+
+    <!-- ADD / CORRECT ATTENDANCE -->
+    <section class="attendance-card">
+
+        <div class="card-label">Add or Correct Attendance</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <select id="studentSelect" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="">Select student...</option>
+            </select>
+
+            <input type="date" id="recordDate" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <select id="recordStatus" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="Hadir">Present</option>
+                <option value="Izin">Permission</option>
+                <option value="Sakit">Sick</option>
+                <option value="Alpa">Absent</option>
+            </select>
+
+            <textarea id="recordReason" rows="2" placeholder="Reason (optional for Present)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
+
+            <button type="button" class="submit-button" id="saveRecordBtn" onclick="saveRecord()" style="margin-top:2px">
+                Save Attendance
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let allStudents = [];
+
+function todayStr() {
+    const now = new Date();
+    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+}
+
+function weekdayOf(dateStr) {
+    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { weekday: "long" });
+}
+
+const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "×" };
+const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert("This page is for admins only.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadStudents();
+    document.getElementById("filterDate").value = todayStr();
+    document.getElementById("recordDate").value = todayStr();
+    await loadToday();
+    await loadFiltered();
+}
+
+async function loadStudents() {
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, name, class")
+        .eq("role", "murid")
+        .order("name", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    allStudents = data;
+
+    const classSet = new Set(data.map(s => s.class).filter(Boolean));
+    const classSelect = document.getElementById("filterClass");
+    classSet.forEach(function (c) {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        classSelect.appendChild(opt);
+    });
+
+    const studentSelect = document.getElementById("studentSelect");
+    data.forEach(function (s) {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name + (s.class ? " (" + s.class + ")" : "");
+        studentSelect.appendChild(opt);
+    });
+
+    classSelect.addEventListener("change", loadFiltered);
+    document.getElementById("filterDate").addEventListener("change", loadFiltered);
+}
+
+function renderRow(item, showDate) {
+    const cls = (item.status || "").toLowerCase();
+    const sub = (showDate ? item.date + " · " : "") + (item.time ? item.time + " · " : "") + (item.reason || statusLabel[item.status] || "-");
+
+    return `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
+            <div class="history-status-icon ${cls}" style="width:38px;height:38px;font-size:16px">${statusIcon[item.status] || "?"}</div>
+            <div style="flex:1;min-width:0">
+                <strong style="display:block;font-size:14px;color:#20243a">${item.name || "-"}</strong>
+                <span style="display:block;margin-top:2px;font-size:12px;color:#888">${item.class || "-"} · ${sub}</span>
+            </div>
+        </div>
+    `;
+}
+
+async function loadToday() {
+
+    const today = todayStr();
+
+    const { data: records } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("date", today);
+
+    const byUser = {};
+    (records || []).forEach(function (r) { byUser[r.user_id] = r; });
+
+    const container = document.getElementById("todayList");
+
+    container.innerHTML = allStudents.map(function (s) {
+        const r = byUser[s.id];
+        if (r) return renderRow(r, false);
+        return `
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px;opacity:.6">
+                <div style="width:38px;height:38px;border-radius:13px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:16px">?</div>
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${s.name}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · Not checked in yet</span>
+                </div>
+            </div>
+        `;
+    }).join("") || "<p style='color:#888;font-size:13px'>No students yet.</p>";
+}
+
+async function loadFiltered() {
+
+    const cls = document.getElementById("filterClass").value;
+    const date = document.getElementById("filterDate").value;
+
+    let query = supabaseClient.from("attendance").select("*").eq("date", date);
+    if (cls !== "all") query = query.eq("class", cls);
+
+    const { data, error } = await query.order("time", { ascending: true });
+
+    const container = document.getElementById("filteredList");
+
+    if (error) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>Failed to load.</p>";
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>No records for this filter.</p>";
+        return;
+    }
+
+    container.innerHTML = data.map(r => renderRow(r, false)).join("");
+}
+
+async function saveRecord() {
+
+    const userId = document.getElementById("studentSelect").value;
+    const date = document.getElementById("recordDate").value;
+    const status = document.getElementById("recordStatus").value;
+    const reason = document.getElementById("recordReason").value.trim();
+    const btn = document.getElementById("saveRecordBtn");
+
+    if (!userId || !date) {
+        alert("Please select a student and a date.");
+        return;
+    }
+
+    const student = allStudents.find(s => s.id === userId);
+
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    const { data: existing } = await supabaseClient
+        .from("attendance")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("date", date)
+        .maybeSingle();
+
+    const payload = {
+        user_id: userId,
+        name: student ? student.name : "-",
+        class: student ? student.class : null,
+        date: date,
+        day: weekdayOf(date),
+        status: status,
+        reason: reason
+    };
+
+    let error;
+
+    if (existing) {
+        const res = await supabaseClient.from("attendance").update(payload).eq("id", existing.id);
+        error = res.error;
+    } else {
+        const res = await supabaseClient.from("attendance").insert([payload]);
+        error = res.error;
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Save Attendance";
+
+    if (error) {
+        alert("Failed to save: " + error.message);
+        return;
+    }
+
+    alert(existing ? "Attendance corrected." : "Attendance added.");
+    document.getElementById("recordReason").value = "";
+
+    await loadToday();
+    await loadFiltered();
+}
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>

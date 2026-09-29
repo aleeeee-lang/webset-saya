@@ -90,9 +90,17 @@ function weekdayOf(dateStr) {
     return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { weekday: "long" });
 }
 
-const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "×" };
-const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+const statusIconSvg = {
+    Hadir: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M5 13L9.5 17.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    Izin: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8V13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>',
+    Sakit: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    Alpa: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+};
 
+const unknownIconSvg =
+    '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.3C9.7 8 10.8 7 12 7C13.4 7 14.5 8.1 14.5 9.4C14.5 10.9 12 11 12 13.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.2" r="1" fill="currentColor"/></svg>';
+
+const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
 async function checkAdmin() {
     const user = await requireLogin();
     if (!user) return;

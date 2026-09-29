@@ -63,3 +63,19 @@ async function getCurrentUser() {
     return data.user;
 
 }
+
+async function getMyAttendance() {
+
+    const user = await requireLogin();
+
+    if (!user) {
+        return { data: null, error: { message: "Not logged in" } };
+    }
+
+    return await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false });
+
+}

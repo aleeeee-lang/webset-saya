@@ -655,3 +655,25 @@ html[data-theme="dark"] #settingsGearBtn {
     border: none !important;
     color: #ececec !important;
 }
+
+/* =========================================================
+   DARK MODE: ADMIN ATTENDANCE PAGE
+========================================================= */
+
+html[data-theme="dark"] .am-row,
+html[data-theme="dark"] .am-field {
+    background: #1f1f1f !important;
+    border-color: #262626 !important;
+}
+
+html[data-theme="dark"] .am-icon {
+    background: #2a2a2a !important;
+}
+
+html[data-theme="dark"] .am-row strong {
+    color: #ececec !important;
+}
+
+html[data-theme="dark"] .am-row span {
+    color: #a0a0a0 !important;
+}

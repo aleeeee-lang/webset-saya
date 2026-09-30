@@ -159,18 +159,21 @@ async function loadStudents() {
     document.getElementById("filterDate").addEventListener("change", loadFiltered);
 }
 
-function renderRow(item, showDate) {
+async function renderRow(item, showDate) {
     const cls = (item.status || "").toLowerCase();
     const sub = (showDate ? item.date + " · " : "") + (item.time ? item.time + " · " : "") + (item.reason || statusLabel[item.status] || "-");
 
     let photoHtml = "";
 
     if (item.photo_url) {
-        const { data: urlData } = supabaseClient.storage
+        const { data: signedData } = await supabaseClient.storage
             .from("attendance-photos")
-            .getPublicUrl(item.photo_url);
+            .createSignedUrl(item.photo_url, 3600);
 
-        photoHtml = `<img src="${urlData.publicUrl}" onclick="window.open('${urlData.publicUrl}', '_blank')" style="width:38px;height:38px;border-radius:10px;object-fit:cover;cursor:pointer;flex:none">`;
+        if (signedData && signedData.signedUrl) {
+            const url = signedData.signedUrl;
+            photoHtml = `<img src="${url}" onclick="window.open('${url}', '_blank')" style="width:38px;height:38px;border-radius:10px;object-fit:cover;cursor:pointer;flex:none">`;
+        }
     }
 
     return `
@@ -184,7 +187,6 @@ function renderRow(item, showDate) {
         </div>
     `;
 }
-
 async function loadToday() {
 
     const today = todayStr();

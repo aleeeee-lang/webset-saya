@@ -685,3 +685,12 @@ html[data-theme="dark"] .am-row span {
 html[data-theme="dark"] input[type="date"].am-field {
     color-scheme: dark;
 }
+
+/* =========================================================
+   DARK MODE: SETTINGS ICON BOXES
+========================================================= */
+
+html[data-theme="dark"] .settings-icon-box {
+    background: #242842 !important;
+    color: #e5e7f5 !important;
+}

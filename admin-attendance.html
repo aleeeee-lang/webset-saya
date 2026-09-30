@@ -201,10 +201,17 @@ async function loadToday() {
 
     const container = document.getElementById("todayList");
 
-    container.innerHTML = allStudents.map(function (s) {
+    const rows = [];
+
+    for (const s of allStudents) {
         const r = byUser[s.id];
-        if (r) return renderRow(r, false);
-               return `
+
+        if (r) {
+            rows.push(await renderRow(r, false));
+            continue;
+        }
+
+        rows.push(`
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px;opacity:.6">
                 <div class="am-icon" style="width:38px;height:38px;border-radius:13px;background:#eee;display:flex;align-items:center;justify-content:center;color:#94a3b8">${unknownIconSvg}</div>
                 <div style="flex:1;min-width:0">
@@ -212,8 +219,10 @@ async function loadToday() {
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · Not checked in yet</span>
                 </div>
             </div>
-        `;
-    }).join("") || "<p style='color:#888;font-size:13px'>No students yet.</p>";
+        `);
+    }
+
+    container.innerHTML = rows.join("") || "<p style='color:#888;font-size:13px'>No students yet.</p>";
 }
 
 async function loadFiltered() {

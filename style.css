@@ -687,10 +687,10 @@ html[data-theme="dark"] input[type="date"].am-field {
 }
 
 /* =========================================================
-   DARK MODE: SETTINGS ICON BOXES
+   DARK MODE: SETTINGS ICON COLOR (NO BOX)
 ========================================================= */
 
-html[data-theme="dark"] .settings-icon-box {
-    background: #242842 !important;
-    color: #e5e7f5 !important;
+html[data-theme="dark"] .attendance-card a svg,
+html[data-theme="dark"] .attendance-card > div svg {
+    color: #a0a0a0 !important;
 }

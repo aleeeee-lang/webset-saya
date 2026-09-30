@@ -677,3 +677,11 @@ html[data-theme="dark"] .am-row strong {
 html[data-theme="dark"] .am-row span {
     color: #a0a0a0 !important;
 }
+
+/* =========================================================
+   DARK MODE: DATE INPUT NATIVE PICKER ICON
+========================================================= */
+
+html[data-theme="dark"] input[type="date"].am-field {
+    color-scheme: dark;
+}

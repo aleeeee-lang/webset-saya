@@ -247,8 +247,14 @@ async function loadFiltered() {
         return;
     }
 
-    container.innerHTML = data.map(r => renderRow(r, false)).join("");
+      const rows = [];
+    for (const r of data) {
+        rows.push(await renderRow(r, false));
+    }
+
+    container.innerHTML = rows.join("");
 }
+
 
 async function saveRecord() {
 

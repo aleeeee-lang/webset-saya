@@ -694,3 +694,36 @@ html[data-theme="dark"] .attendance-card a svg,
 html[data-theme="dark"] .attendance-card > div svg {
     color: #a0a0a0 !important;
 }
+
+/* =========================================================
+   LANGUAGE SWITCHER
+========================================================= */
+
+.lang-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fafafa;
+    font-size: 12px;
+    cursor: pointer;
+    color: #20243a;
+    font-family: inherit;
+}
+
+.lang-btn.active {
+    background: #635bff;
+    color: #fff;
+    border-color: #635bff;
+}
+
+html[data-theme="dark"] .lang-btn {
+    background: #1f1f1f;
+    border-color: #262626;
+    color: #ececec;
+}
+
+html[data-theme="dark"] .lang-btn.active {
+    background: #635bff;
+    color: #fff;
+    border-color: #635bff;
+}

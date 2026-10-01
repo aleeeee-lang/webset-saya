@@ -18,7 +18,25 @@ const translations = {
     nav_dashboard: { en: "Dashboard", id: "Dasbor" },
     nav_history: { en: "History", id: "Riwayat" },
     nav_my: { en: "My", id: "Saya" }
+
+        page_attendance: { en: "Attendance", id: "Absensi" },
+    label_date: { en: "Date", id: "Tanggal" },
+    label_time: { en: "Time", id: "Waktu" },
+    label_status: { en: "Status", id: "Status" },
+    status_not_selected: { en: "Not selected", id: "Belum dipilih" },
+    status_present: { en: "Present", id: "Hadir" },
+    status_permission: { en: "Permission", id: "Izin" },
+    status_sick: { en: "Sick", id: "Sakit" },
+    status_absent: { en: "Absent", id: "Alpa" },
+    label_reason: { en: "Reason", id: "Alasan" },
+    reason_placeholder: { en: "Why are you absent?", id: "Kenapa kamu tidak hadir?" },
+    label_verification: { en: "VERIFICATION", id: "VERIFIKASI" },
+    btn_open_camera: { en: "Open Camera", id: "Buka Kamera" },
+    btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
+    btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" },
 };
+
+
 
 function getLang() {
     return localStorage.getItem("attendly-lang") || "en";
@@ -31,10 +49,18 @@ function setLang(lang) {
 
 function applyLang() {
     const lang = getLang();
+
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
         const entry = translations[el.getAttribute("data-i18n")];
         if (entry && entry[lang]) {
             el.textContent = entry[lang];
+        }
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+        const entry = translations[el.getAttribute("data-i18n-placeholder")];
+        if (entry && entry[lang]) {
+            el.placeholder = entry[lang];
         }
     });
 }

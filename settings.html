@@ -137,6 +137,23 @@ async function loadAccountInfo() {
     }
 
 }
+    function syncLangUI() {
+    const lang = getLang();
+    document.getElementById("langIdBtn").classList.toggle("active", lang === "id");
+    document.getElementById("langEnBtn").classList.toggle("active", lang === "en");
+}
+
+syncLangUI();
+
+document.getElementById("langIdBtn").addEventListener("click", function () {
+    setLang("id");
+    syncLangUI();
+});
+
+document.getElementById("langEnBtn").addEventListener("click", function () {
+    setLang("en");
+    syncLangUI();
+});
 
 loadAccountInfo();
 

@@ -33,7 +33,35 @@ const translations = {
     label_verification: { en: "VERIFICATION", id: "VERIFIKASI" },
     btn_open_camera: { en: "Open Camera", id: "Buka Kamera" },
     btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
-    btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" }
+    btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" },
+
+    page_dashboard: { en: "Dashboard", id: "Dasbor" },
+    overview_label: { en: "Attendance Overview", id: "Ringkasan Absensi" },
+    overview_title: { en: "Your attendance summary", id: "Ringkasan absensimu" },
+    overview_text: { en: "Keep your attendance consistent and stay on track.", id: "Jaga konsistensi absensimu dan tetap pada jalurnya." },
+    total_attendance: { en: "Total Attendance", id: "Total Absensi" },
+    status_hadir_label: { en: "Hadir", id: "Hadir" },
+    status_izin_label: { en: "Izin", id: "Izin" },
+    status_sakit_label: { en: "Sakit", id: "Sakit" },
+    status_alpa_label: { en: "Alpa", id: "Alpa" },
+    attendance_label: { en: "ATTENDANCE", id: "ABSENSI" },
+    attendance_calendar: { en: "Attendance Calendar", id: "Kalender Absensi" },
+    activity_label: { en: "ACTIVITY", id: "AKTIVITAS" },
+    recent_attendance: { en: "Recent Attendance", id: "Absensi Terbaru" },
+    view_all: { en: "View All", id: "Lihat Semua" },
+    show_less: { en: "Show Less", id: "Tampilkan Lebih Sedikit" },
+    no_attendance_yet: { en: "No attendance data yet.", id: "Belum ada data absensi." },
+    statistics_label: { en: "STATISTICS", id: "STATISTIK" },
+    attendance_statistics: { en: "Attendance Statistics", id: "Statistik Absensi" },
+    attendance_rate: { en: "Attendance Rate", id: "Tingkat Kehadiran" },
+    stat_total: { en: "Total", id: "Total" },
+    stat_present: { en: "Present", id: "Hadir" },
+    stat_absent: { en: "Absent", id: "Tidak Hadir" },
+    insight_label: { en: "ATTENDANCE INSIGHT", id: "WAWASAN ABSENSI" },
+    ready_label: { en: "READY?", id: "SIAP?" },
+    quick_action_title: { en: "Take your attendance today", id: "Catat absensimu hari ini" },
+    quick_action_text: { en: "Don't forget to record your attendance.", id: "Jangan lupa catat absensimu." },
+    quick_action_btn: { en: "Attendance →", id: "Absensi →" }
 };
 
 function getLang() {

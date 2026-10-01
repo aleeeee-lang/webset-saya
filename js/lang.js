@@ -17,9 +17,9 @@ const translations = {
     nav_attendance: { en: "Attendance", id: "Absensi" },
     nav_dashboard: { en: "Dashboard", id: "Dasbor" },
     nav_history: { en: "History", id: "Riwayat" },
-    nav_my: { en: "My", id: "Saya" }
+    nav_my: { en: "My", id: "Saya" },
 
-        page_attendance: { en: "Attendance", id: "Absensi" },
+    page_attendance: { en: "Attendance", id: "Absensi" },
     label_date: { en: "Date", id: "Tanggal" },
     label_time: { en: "Time", id: "Waktu" },
     label_status: { en: "Status", id: "Status" },
@@ -33,10 +33,8 @@ const translations = {
     label_verification: { en: "VERIFICATION", id: "VERIFIKASI" },
     btn_open_camera: { en: "Open Camera", id: "Buka Kamera" },
     btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
-    btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" },
+    btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" }
 };
-
-
 
 function getLang() {
     return localStorage.getItem("attendly-lang") || "en";

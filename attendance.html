@@ -72,10 +72,9 @@
 
                 <div class="date-time-content">
 
-                    <span>
-                        Date
-                    </span>
-
+                   <span data-i18n="label_date">
+    Date
+</span>
                     <strong id="attendanceDate">
                         -
                     </strong>
@@ -107,9 +106,9 @@
 
     <div class="date-time-content">
 
-        <span>
-            Time
-        </span>
+       <span data-i18n="label_time">
+    Time
+</span>
 
         <strong id="currentTime">
             00:00:00
@@ -130,9 +129,9 @@
         <section class="attendance-card status-card">
 
 
-            <div class="card-label">
-                Status
-            </div>
+           <div class="card-label" data-i18n="label_status">
+    Status
+</div>
 
 
             <!-- STATUS SELECT -->
@@ -149,10 +148,9 @@
                 ></span>
 
 
-                <span id="selectedStatus">
-                    Not selected
-                </span>
-
+              <span id="selectedStatus" data-i18n="status_not_selected">
+    Not selected
+</span>
 
                 <span class="status-arrow">
                     ⌄
@@ -176,7 +174,7 @@
     data-status="Present"
 >
     <span class="status-light"></span>
-    <span>Present</span>
+   <span data-i18n="status_Present">Present</span>
 </button>
 
 <button
@@ -185,7 +183,7 @@
     data-status="Permission"
 >
     <span class="status-light"></span>
-    <span>Permission</span>
+   <span data-i18n="status_Permission">Permission</span>
 </button>
 
 <button
@@ -194,7 +192,7 @@
     data-status="Sick"
 >
     <span class="status-light"></span>
-    <span>Sick</span>
+   <span data-i18n="status_Sick">Sick</span>
 </button>
 
 <button
@@ -203,7 +201,7 @@
     data-status="Absent"
 >
     <span class="status-light"></span>
-    <span>Absent</span>
+    <span data-i18n="status_Absent">Absent</span>
 </button>
             </div>
 
@@ -251,17 +249,17 @@
         <section class="attendance-card reason-card">
 
 
-            <div class="card-label">
-                Reason
-            </div>
+           <div class="card-label" data-i18n="label_reason">
+    Reason
+</div>
 
 
-            <textarea
-                id="reason"
-                rows="4"
-                placeholder="Why are you absent?"
-            ></textarea>
-
+          <textarea
+    id="reason"
+    rows="4"
+    placeholder="Why are you absent?"
+    data-i18n-placeholder="reason_placeholder"
+></textarea>
 
         </section>
 
@@ -276,9 +274,9 @@
 
             <div class="camera-header">
 
-                <span class="camera-label">
-                    VERIFICATION
-                </span>
+               <span class="camera-label" data-i18n="label_verification">
+    VERIFICATION
+</span>
 
             </div>
 
@@ -303,22 +301,24 @@
             <div class="camera-buttons">
 
 
-                <button
-                    type="button"
-                    class="camera-button secondary"
-                    onclick="startCamera()"
-                >
-                    Open Camera
-                </button>
+              <button
+    type="button"
+    class="camera-button secondary"
+    onclick="startCamera()"
+    data-i18n="btn_open_camera"
+>
+    Open Camera
+</button>
 
 
-                <button
-                    type="button"
-                    class="camera-button primary"
-                    onclick="takePhoto()"
-                >
-                    Take Photo
-                </button>
+              <button
+    type="button"
+    class="camera-button secondary"
+    onclick="startCamera()"
+    data-i18n="btn_take_photo"
+>
+   Take Photo
+</button>
 
 
             </div>
@@ -339,14 +339,14 @@
              SUBMIT
         ====================================== -->
 
-        <button
-            type="button"
-            class="submit-button"
-            onclick="saveAttendance()"
-        >
-            Submit Attendance
-        </button>
-
+       <button
+    type="button"
+    class="submit-button"
+    onclick="saveAttendance()"
+    data-i18n="btn_submit_attendance"
+>
+    Submit Attendance
+</button>
 
     </main>
 
@@ -389,10 +389,7 @@
 
             </span>
 
-            <small>
-                Home
-            </small>
-
+            <small data-i18n="nav_home">Home</small>
         </a>
 
 
@@ -431,9 +428,7 @@
 
             </span>
 
-            <small>
-                Attendance
-            </small>
+           <small data-i18n="nav_attendance">Attendance</small>
 
         </a>
 
@@ -507,9 +502,7 @@
 
             </span>
 
-            <small>
-                Dashboard
-            </small>
+           <small data-i18n="nav_dashboard">Dashboard</small>
 
         </a>
 
@@ -554,10 +547,7 @@
 
             </span>
 
-            <small>
-                History
-            </small>
-
+           <small data-i18n="nav_history">History</small>
         </a>
 
 
@@ -593,9 +583,7 @@
 
             </span>
 
-            <small>
-                My
-            </small>
+           <small data-i18n="nav_my">My</small>
 
         </a>
 

@@ -61,7 +61,39 @@ const translations = {
     ready_label: { en: "READY?", id: "SIAP?" },
     quick_action_title: { en: "Take your attendance today", id: "Catat absensimu hari ini" },
     quick_action_text: { en: "Don't forget to record your attendance.", id: "Jangan lupa catat absensimu." },
-    quick_action_btn: { en: "Attendance →", id: "Absensi →" }
+    quick_action_btn: { en: "Attendance →", id: "Absensi →" },
+
+    page_history: { en: "History", id: "Riwayat" },
+    label_month: { en: "MONTH", id: "BULAN" },
+    label_status_filter: { en: "STATUS", id: "STATUS" },
+    all_months: { en: "All Months", id: "Semua Bulan" },
+    all_status: { en: "All Status", id: "Semua Status" },
+    no_history_title: { en: "No attendance history", id: "Belum ada riwayat absensi" },
+    no_history_text: { en: "Your attendance records will appear here.", id: "Catatan absensimu akan muncul di sini." },
+    checkin_at: { en: "Check-in at", id: "Absen masuk pukul" },
+
+    page_my_attendance: { en: "My Attendance", id: "Absensi Saya" },
+    score_label: { en: "ATTENDANCE SCORE", id: "SKOR ABSENSI" },
+    score_no_data: { en: "No data yet", id: "Belum ada data" },
+    score_excellent: { en: "Excellent consistency", id: "Konsistensi sangat baik" },
+    score_good: { en: "Good consistency", id: "Konsistensi baik" },
+    score_needs_improvement: { en: "Needs improvement", id: "Perlu ditingkatkan" },
+    current_streak: { en: "Current Streak", id: "Rentetan Saat Ini" },
+    active_days: { en: "Active Days", id: "Hari Aktif" },
+    attendance_activity_label: { en: "ATTENDANCE ACTIVITY", id: "AKTIVITAS ABSENSI" },
+    recent_activity: { en: "Recent Activity", id: "Aktivitas Terbaru" },
+    no_activity_yet: { en: "No activity yet.", id: "Belum ada aktivitas." },
+    monthly_overview_label: { en: "MONTHLY OVERVIEW", id: "RINGKASAN BULANAN" },
+    label_today: { en: "TODAY", id: "HARI INI" },
+    label_yesterday: { en: "YESTERDAY", id: "KEMARIN" },
+    no_attendance_insight_title: { en: "No attendance yet", id: "Belum ada absensi" },
+    no_attendance_insight_text: { en: "Start recording your attendance to see insights.", id: "Mulai catat absensimu untuk melihat wawasan." },
+    great_insight_title: { en: "You're doing great!", id: "Kerja bagus!" },
+    great_insight_text: { en: "Your attendance has been consistent.", id: "Absensimu sudah konsisten." },
+    good_insight_title: { en: "Good attendance", id: "Absensi baik" },
+    good_insight_text: { en: "Keep it up, you're doing well.", id: "Pertahankan, kamu sudah baik." },
+    improve_insight_title: { en: "Keep improving", id: "Terus tingkatkan" },
+    improve_insight_text: { en: "Try to attend more consistently.", id: "Coba hadir lebih konsisten." }
 };
 
 function getLang() {

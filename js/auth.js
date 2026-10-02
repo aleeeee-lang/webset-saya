@@ -31,9 +31,10 @@ async function logoutUser() {
 
         console.error(error);
 
-        alert(
+        showToast(
             "Logout failed: " +
-            error.message
+            error.message,
+            "error"
         );
 
         return;

@@ -7,6 +7,7 @@
 <title>Manage Attendance - Attendly</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
+<script src="js/toast.js"></script>
 </head>
 
 <body>
@@ -265,7 +266,7 @@ async function saveRecord() {
     const btn = document.getElementById("saveRecordBtn");
 
     if (!userId || !date) {
-        alert("Please select a student and a date.");
+        showToast("Please select a student and a date.", "error");
         return;
     }
 
@@ -305,11 +306,11 @@ async function saveRecord() {
     btn.textContent = "Save Attendance";
 
     if (error) {
-        alert("Failed to save: " + error.message);
+        showToast("Failed to save: " + error.message, "error");
         return;
     }
 
-    alert(existing ? "Attendance corrected." : "Attendance added.");
+    showToast(existing ? "Attendance corrected." : "Attendance added.", "success");
     document.getElementById("recordReason").value = "";
 
     await loadToday();

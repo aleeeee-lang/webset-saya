@@ -7,6 +7,8 @@
 <title>My Attendance - Attendly</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
 <script src="js/transition.js"></script>
 </head>
 
@@ -16,7 +18,7 @@
 
     <!-- TITLE + SETTINGS -->
     <section class="attendance-intro" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <h1 style="margin:0">My Attendance</h1>
+        <h1 style="margin:0" data-i18n="page_my_attendance">My Attendance</h1>
        <a href="settings.html" id="settingsGearBtn" style="width:38px;height:38px;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;flex-shrink:0;color:#20243a">
     <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
         <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -26,7 +28,7 @@
 
     <!-- ATTENDANCE SCORE -->
     <section class="attendance-score-card">
-        <p class="score-label">ATTENDANCE SCORE</p>
+        <p class="score-label" data-i18n="score_label">ATTENDANCE SCORE</p>
         <h2 id="scorePercent">0%</h2>
         <p class="score-description" id="scoreDesc">-</p>
 
@@ -35,10 +37,10 @@
         </div>
 
         <div class="score-summary">
-            <div><strong id="myHadir">0</strong><span>Present</span></div>
-            <div><strong id="myIzin">0</strong><span>Permission</span></div>
-            <div><strong id="mySakit">0</strong><span>Sick</span></div>
-            <div><strong id="myAlpa">0</strong><span>Absent</span></div>
+            <div><strong id="myHadir">0</strong><span data-i18n="status_present">Present</span></div>
+            <div><strong id="myIzin">0</strong><span data-i18n="status_permission">Permission</span></div>
+            <div><strong id="mySakit">0</strong><span data-i18n="status_sick">Sick</span></div>
+            <div><strong id="myAlpa">0</strong><span data-i18n="status_absent">Absent</span></div>
         </div>
     </section>
 
@@ -47,7 +49,7 @@
 
         <div class="quick-stat-card">
             <div class="quick-stat-icon">🔥</div>
-            <div><strong id="myStreak">0 Days</strong><span>Current Streak</span></div>
+            <div><strong id="myStreak">0 Days</strong><span data-i18n="current_streak">Current Streak</span></div>
         </div>
 
         <div class="quick-stat-card">
@@ -58,7 +60,7 @@
                     <path d="M8 3V6M16 3V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 </svg>
             </div>
-            <div><strong id="myActiveDays">0 Days</strong><span>Active Days</span></div>
+            <div><strong id="myActiveDays">0 Days</strong><span data-i18n="active_days">Active Days</span></div>
         </div>
 
     </section>
@@ -66,8 +68,8 @@
     <!-- ACTIVITY HEADER -->
     <div class="my-attendance-section-header">
         <div>
-            <span>ATTENDANCE ACTIVITY</span>
-            <h2>Recent Activity</h2>
+            <span data-i18n="attendance_activity_label">ATTENDANCE ACTIVITY</span>
+            <h2 data-i18n="recent_activity">Recent Activity</h2>
         </div>
     </div>
 
@@ -79,7 +81,7 @@
 
         <div class="calendar-header">
             <div>
-                <span>MONTHLY OVERVIEW</span>
+                <span data-i18n="monthly_overview_label">MONTHLY OVERVIEW</span>
                 <h2 id="calendarMonthLabel">-</h2>
             </div>
         </div>
@@ -91,10 +93,10 @@
         <div class="calendar-days" id="myCalendarDays"></div>
 
         <div class="calendar-legend">
-            <span><i class="legend hadir"></i>Present</span>
-            <span><i class="legend izin"></i>Permission</span>
-            <span><i class="legend sakit"></i>Sick</span>
-            <span><i class="legend alpa"></i>Absent</span>
+            <span><i class="legend hadir"></i><span data-i18n="status_present">Present</span></span>
+            <span><i class="legend izin"></i><span data-i18n="status_permission">Permission</span></span>
+            <span><i class="legend sakit"></i><span data-i18n="status_sick">Sick</span></span>
+            <span><i class="legend alpa"></i><span data-i18n="status_absent">Absent</span></span>
         </div>
 
     </section>
@@ -103,7 +105,7 @@
     <section class="attendance-insight">
         <div class="insight-icon">💡</div>
         <div>
-            <span>ATTENDANCE INSIGHT</span>
+            <span data-i18n="insight_label">ATTENDANCE INSIGHT</span>
             <h3 id="myInsightTitle">-</h3>
             <p id="myInsightText">-</p>
         </div>
@@ -122,7 +124,7 @@
                 <path d="M9 21V14H15V21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
             </svg>
         </span>
-        <small>Home</small>
+        <small data-i18n="nav_home">Home</small>
     </a>
 
     <a href="attendance.html">
@@ -132,7 +134,7 @@
                 <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/>
             </svg>
         </span>
-        <small>Attendance</small>
+        <small data-i18n="nav_attendance">Attendance</small>
     </a>
 
     <a href="dashboard.html">
@@ -142,7 +144,7 @@
                 <path d="M7.5 9H10M14 9H16.5M7.5 13H11.5M14 13H16.5M7.5 17H10M14 17H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
         </span>
-        <small>Dashboard</small>
+        <small data-i18n="nav_dashboard">Dashboard</small>
     </a>
 
     <a href="history.html">
@@ -153,7 +155,7 @@
                 <path d="M4 6V10H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </span>
-        <small>History</small>
+        <small data-i18n="nav_history">History</small>
     </a>
 
     <a href="my-attendance.html" class="active">
@@ -163,7 +165,7 @@
                 <path d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
         </span>
-        <small>My</small>
+        <small data-i18n="nav_my">My</small>
     </a>
 
 </nav>
@@ -176,7 +178,14 @@
 
 <script>
 const myStatusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
-const myStatusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+const myStatusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+function myStatusLabelOf(status) {
+    return tr(myStatusKeyMap[status]) || status;
+}
 
 function renderScore(data) {
     const total = data.length;
@@ -194,10 +203,10 @@ function renderScore(data) {
     document.getElementById("myAlpa").textContent = alpa;
 
     const descEl = document.getElementById("scoreDesc");
-    if (total === 0) descEl.textContent = "No data yet";
-    else if (percent >= 90) descEl.textContent = "Excellent consistency";
-    else if (percent >= 75) descEl.textContent = "Good consistency";
-    else descEl.textContent = "Needs improvement";
+    if (total === 0) descEl.textContent = tr("score_no_data");
+    else if (percent >= 90) descEl.textContent = tr("score_excellent");
+    else if (percent >= 75) descEl.textContent = tr("score_good");
+    else descEl.textContent = tr("score_needs_improvement");
 }
 
 function renderQuickStats(data) {
@@ -224,7 +233,7 @@ function renderActivity(data) {
     const container = document.getElementById("myActivityList");
 
     if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-attendance"><span>📋</span><p>No activity yet.</p></div>';
+        container.innerHTML = '<div class="empty-attendance"><span>📋</span><p>' + tr("no_activity_yet") + '</p></div>';
         return;
     }
 
@@ -234,14 +243,14 @@ function renderActivity(data) {
     container.innerHTML = sorted.map(function (item) {
         const d = new Date(item.date);
         let label;
-        if (d.toDateString() === todayStr) label = "TODAY";
-        else if (d.toDateString() === yestStr) label = "YESTERDAY";
+        if (d.toDateString() === todayStr) label = tr("label_today");
+        else if (d.toDateString() === yestStr) label = tr("label_yesterday");
         else label = d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }).toUpperCase();
 
         const cls = item.status.toLowerCase();
         const sub = item.status === "Hadir"
             ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }) + " · " + (item.time || "-")
-            : (item.time || "-") + " · " + (item.reason || myStatusLabel[item.status] || item.status);
+            : (item.time || "-") + " · " + (item.reason || myStatusLabelOf(item.status));
 
         return `
             <div class="activity-group">
@@ -249,7 +258,7 @@ function renderActivity(data) {
                 <div class="activity-card">
                     <div class="activity-status-icon ${cls}">${myStatusIcon[item.status] || "?"}</div>
                     <div class="activity-content">
-                        <strong>${myStatusLabel[item.status] || item.status}</strong>
+                        <strong>${myStatusLabelOf(item.status)}</strong>
                         <span>${sub}</span>
                     </div>
                     <span class="activity-arrow">›</span>
@@ -307,17 +316,17 @@ function renderInsight(data) {
     const textEl = document.getElementById("myInsightText");
 
     if (total === 0) {
-        titleEl.textContent = "No attendance yet";
-        textEl.textContent = "Start recording your attendance to see insights.";
+        titleEl.textContent = tr("no_attendance_insight_title");
+        textEl.textContent = tr("no_attendance_insight_text");
     } else if (percent >= 90) {
-        titleEl.textContent = "You're doing great!";
-        textEl.textContent = "Your attendance has been consistent.";
+        titleEl.textContent = tr("great_insight_title");
+        textEl.textContent = tr("great_insight_text");
     } else if (percent >= 75) {
-        titleEl.textContent = "Good attendance";
-        textEl.textContent = "Keep it up, you're doing well.";
+        titleEl.textContent = tr("good_insight_title");
+        textEl.textContent = tr("good_insight_text");
     } else {
-        titleEl.textContent = "Keep improving";
-        textEl.textContent = "Try to attend more consistently.";
+        titleEl.textContent = tr("improve_insight_title");
+        textEl.textContent = tr("improve_insight_text");
     }
 }
 

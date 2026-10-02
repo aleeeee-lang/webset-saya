@@ -78,11 +78,10 @@ video.style.display = "block";
             error.message
         );
 
-        alert(
-            "Kamera tidak dapat dibuka.\n\n" +
-            error.name +
-            "\n" +
-            error.message
+        showToast(
+            "Kamera tidak dapat dibuka: " +
+            error.name,
+            "error"
         );
 
     }
@@ -114,7 +113,7 @@ function takePhoto() {
         video.videoHeight === 0
     ) {
 
-        alert("Kamera belum aktif.");
+        showToast("Kamera belum aktif.", "error");
 
         return;
 

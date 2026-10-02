@@ -16,6 +16,10 @@
 
     <script src="js/theme.js"></script>
 
+    <script src="js/lang.js"></script>
+
+    <script src="js/toast.js"></script>
+
     <script src="js/transition.js"></script>
 
 </head>
@@ -32,7 +36,7 @@
 
           <section class="attendance-intro">
 
-    <h1>
+    <h1 data-i18n="page_history">
         History
     </h1>
 
@@ -45,11 +49,11 @@
      <section class="history-filter-card">
 
     <div class="history-month">
-        <span>MONTH</span>
+        <span data-i18n="label_month">MONTH</span>
 
         <button type="button" class="filter-select" id="monthSelectBtn">
             <i class="filter-icon-cal"></i>
-            <span id="monthSelectLabel">All Months</span>
+            <span id="monthSelectLabel" data-i18n="all_months">All Months</span>
             <span class="filter-arrow">⌄</span>
         </button>
 
@@ -57,20 +61,20 @@
     </div>
 
     <div class="history-status">
-        <span>STATUS</span>
+        <span data-i18n="label_status_filter">STATUS</span>
 
         <button type="button" class="filter-select" id="statusSelectBtn">
             <span class="filter-dot all" id="statusSelectDot"></span>
-            <span id="statusSelectLabel">All Status</span>
+            <span id="statusSelectLabel" data-i18n="all_status">All Status</span>
             <span class="filter-arrow">⌄</span>
         </button>
 
         <div class="filter-dropdown" id="statusDropdown">
-            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span>All Status</button>
-            <button type="button" class="filter-option" data-value="Hadir"><span class="filter-dot hadir"></span>Present</button>
-            <button type="button" class="filter-option" data-value="Izin"><span class="filter-dot izin"></span>Permission</button>
-            <button type="button" class="filter-option" data-value="Sakit"><span class="filter-dot sakit"></span>Sick</button>
-            <button type="button" class="filter-option" data-value="Alpa"><span class="filter-dot alpa"></span>Absent</button>
+            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_status">All Status</span></button>
+            <button type="button" class="filter-option" data-value="Hadir"><span class="filter-dot hadir"></span><span data-i18n="status_present">Present</span></button>
+            <button type="button" class="filter-option" data-value="Izin"><span class="filter-dot izin"></span><span data-i18n="status_permission">Permission</span></button>
+            <button type="button" class="filter-option" data-value="Sakit"><span class="filter-dot sakit"></span><span data-i18n="status_sick">Sick</span></button>
+            <button type="button" class="filter-option" data-value="Alpa"><span class="filter-dot alpa"></span><span data-i18n="status_absent">Absent</span></button>
         </div>
     </div>
 
@@ -78,10 +82,10 @@
         <!-- SUMMARY -->
 
       <section class="history-summary">
-    <div class="history-summary-item"><strong id="sumHadir">0</strong><span>Present</span></div>
-    <div class="history-summary-item"><strong id="sumIzin">0</strong><span>Permission</span></div>
-    <div class="history-summary-item"><strong id="sumSakit">0</strong><span>Sick</span></div>
-    <div class="history-summary-item"><strong id="sumAlpa">0</strong><span>Absent</span></div>
+    <div class="history-summary-item"><strong id="sumHadir">0</strong><span data-i18n="status_present">Present</span></div>
+    <div class="history-summary-item"><strong id="sumIzin">0</strong><span data-i18n="status_permission">Permission</span></div>
+    <div class="history-summary-item"><strong id="sumSakit">0</strong><span data-i18n="status_sick">Sick</span></div>
+    <div class="history-summary-item"><strong id="sumAlpa">0</strong><span data-i18n="status_absent">Absent</span></div>
 </section>
 
         <!-- HISTORY LIST -->
@@ -90,8 +94,8 @@
 
 <section class="history-empty" id="historyEmpty" style="display:none">
     <div class="history-empty-icon">📋</div>
-    <h2>No attendance history</h2>
-    <p>Your attendance records will appear here.</p>
+    <h2 data-i18n="no_history_title">No attendance history</h2>
+    <p data-i18n="no_history_text">Your attendance records will appear here.</p>
 </section>
 
 
@@ -135,7 +139,7 @@
 
         </span>
 
-        <small>
+        <small data-i18n="nav_home">
             Home
         </small>
 
@@ -173,7 +177,7 @@
 
         </span>
 
-        <small>
+        <small data-i18n="nav_attendance">
             Attendance
         </small>
 
@@ -249,7 +253,7 @@
 
             </span>
 
-            <small>
+            <small data-i18n="nav_dashboard">
                 Dashboard
             </small>
 
@@ -302,7 +306,7 @@
 
             </span>
 
-            <small>
+            <small data-i18n="nav_history">
                 History
             </small>
 
@@ -343,7 +347,7 @@
 
         </span>
 
-        <small>
+        <small data-i18n="nav_my">
             My
         </small>
 
@@ -366,7 +370,14 @@
 
      <script>
 const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
-const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+const statusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+function statusLabelOf(status) {
+    return tr(statusKeyMap[status]) || status;
+}
 let allHistoryData = [];
 
 let selectedMonth = "all";
@@ -374,7 +385,7 @@ let selectedStatus = "all";
 
 function fillMonthOptions(data) {
     const seen = new Set();
-    const options = [{ key: "all", label: "All Months" }];
+    const options = [{ key: "all", label: tr("all_months") }];
 
     data.forEach(function (item) {
         const d = new Date(item.date);
@@ -443,8 +454,8 @@ function renderHistory() {
 
         const cls = item.status.toLowerCase();
         const sub = item.status === "Hadir"
-            ? "Check-in at " + (item.time || "-")
-            : (item.reason || statusLabel[item.status] || item.status);
+            ? tr("checkin_at") + " " + (item.time || "-")
+            : (item.reason || statusLabelOf(item.status));
 
         return `
             <div class="history-date-group">
@@ -452,7 +463,7 @@ function renderHistory() {
                 <div class="history-card">
                     <div class="history-status-icon ${cls}">${statusIcon[item.status] || "?"}</div>
                     <div class="history-content">
-                        <strong>${statusLabel[item.status] || item.status}</strong>
+                        <strong>${statusLabelOf(item.status)}</strong>
                         <span>${d.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}</span>
                         <small>${sub}</small>
                     </div>

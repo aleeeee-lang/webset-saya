@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Students - Attendly</title>
 <link rel="stylesheet" href="style.css">
+<script src="js/toast.js"></script>
 </head>
 
 <body>
@@ -64,6 +65,8 @@ const supabaseSignupClient = window.supabase.createClient(supabaseUrl, supabaseK
     }
 });
 
+let allStudentsData = [];
+
 async function checkAdmin() {
     const user = await requireLogin();
     if (!user) return;
@@ -92,7 +95,7 @@ async function addStudent() {
     const password = document.getElementById("newPassword").value;
 
     if (!name || !email || !password) {
-        alert("Name, email, and password are required.");
+        showToast("Name, email, and password are required.", "error");
         return;
     }
 
@@ -106,7 +109,7 @@ async function addStudent() {
     });
 
     if (signUpError) {
-        alert("Failed to create account: " + signUpError.message);
+        showToast("Failed to create account: " + signUpError.message, "error");
         btn.disabled = false;
         btn.textContent = "Add Student";
         return;
@@ -123,7 +126,7 @@ async function addStudent() {
         });
 
     if (profileError) {
-        alert("Account created, but saving profile failed: " + profileError.message);
+        showToast("Account created, but saving profile failed: " + profileError.message, "error");
         btn.disabled = false;
         btn.textContent = "Add Student";
         return;
@@ -137,6 +140,8 @@ async function addStudent() {
 
     btn.disabled = false;
     btn.textContent = "Add Student";
+
+    showToast("Student added.", "success");
 
     loadStudents();
 }
@@ -156,6 +161,8 @@ async function loadStudents() {
 
     const list = document.getElementById("studentList");
 
+    allStudentsData = data;
+
     if (data.length === 0) {
         list.innerHTML = "<p style='color:#888;font-size:13px'>No students added yet.</p>";
         return;
@@ -163,14 +170,81 @@ async function loadStudents() {
 
     list.innerHTML = data.map(function (s) {
         return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#f8f8ff;border-radius:12px">
-                <div>
+            <div class="student-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
+                <div class="student-view" id="view-${s.id}" style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${s.name || "-"}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
+                </div>
+                <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0">
+                    <button type="button" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">Edit</button>
+                    <button type="button" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">Delete</button>
                 </div>
             </div>
         `;
     }).join("");
+}
+
+function startEditStudent(id) {
+    const student = allStudentsData.find(s => s.id === id);
+    if (!student) return;
+
+    const view = document.getElementById("view-" + id);
+    const actions = document.getElementById("actions-" + id);
+
+    view.innerHTML = `
+        <input type="text" id="editName-${id}" value="${(student.name || "").replace(/"/g, "&quot;")}" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
+        <div style="display:flex;gap:6px">
+            <input type="text" id="editClass-${id}" value="${(student.class || "").replace(/"/g, "&quot;")}" placeholder="Class" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
+            <input type="text" id="editNis-${id}" value="${(student.nis || "").replace(/"/g, "&quot;")}" placeholder="NIS" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
+        </div>
+    `;
+
+    actions.innerHTML = `
+        <button type="button" onclick="saveEditStudent('${id}')" style="border:none;background:#4f46e5;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">Save</button>
+        <button type="button" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">Cancel</button>
+    `;
+}
+
+async function saveEditStudent(id) {
+    const name = document.getElementById("editName-" + id).value.trim();
+    const studentClass = document.getElementById("editClass-" + id).value.trim();
+    const nis = document.getElementById("editNis-" + id).value.trim();
+
+    if (!name) {
+        showToast("Name is required.", "error");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ name: name, class: studentClass, nis: nis })
+        .eq("id", id);
+
+    if (error) {
+        showToast("Failed to save: " + error.message, "error");
+        return;
+    }
+
+    showToast("Student updated.", "success");
+    loadStudents();
+}
+
+async function deleteStudent(id, name) {
+    const ok = confirm("Delete " + (name || "this student") + "? This removes their profile and class/attendance link. Their login account will still exist in Supabase Auth and should be removed there too if needed.");
+    if (!ok) return;
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        showToast("Failed to delete: " + error.message, "error");
+        return;
+    }
+
+    showToast("Student deleted.", "success");
+    loadStudents();
 }
 
 checkAdmin();

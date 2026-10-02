@@ -17,7 +17,7 @@ async function saveAttendance() {
 
     if (userError || !user) {
 
-        alert("Please login first.");
+        showToast("Please login first.", "error");
 
         return;
     }
@@ -85,7 +85,7 @@ async function saveAttendance() {
 
     if (!status) {
 
-        alert("Please select your attendance status.");
+        showToast("Please select your attendance status.", "error");
 
         return;
     }
@@ -93,7 +93,7 @@ async function saveAttendance() {
 
     if (status !== "Hadir" && !reason) {
 
-        alert("Please provide a reason for your absence.");
+        showToast("Please provide a reason for your absence.", "error");
 
         return;
     }
@@ -133,9 +133,10 @@ async function saveAttendance() {
                 uploadError
             );
 
-            alert(
+            showToast(
                 "Photo upload failed: " +
-                uploadError.message
+                uploadError.message,
+                "error"
             );
 
             return;
@@ -188,9 +189,10 @@ async function saveAttendance() {
             error
         );
 
-        alert(
+        showToast(
             "Attendance failed to save: " +
-            error.message
+            error.message,
+            "error"
         );
 
         return;
@@ -201,8 +203,9 @@ async function saveAttendance() {
     // SUCCESS
     // =========================
 
-    alert(
-        "Attendance successfully saved! ✅"
+    showToast(
+        "Attendance successfully saved!",
+        "success"
     );
 
 

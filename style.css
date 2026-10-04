@@ -143,6 +143,11 @@ button,input,select,textarea{font-family:inherit}
 /* ANIMATED CLOCK */
 .animated-clock{font-size:24px;animation:clockTick 1s steps(12) infinite;transform-origin:center}
 
+/* ICON WIGGLE ON SCROLL */
+@keyframes iconWiggleAnim{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(4deg)}}
+.insight-icon{transition:transform .2s ease}
+.insight-icon.icon-pop{animation:iconWiggleAnim .55s ease-in-out}
+
 /* TABLET / LAPTOP */
 @media (max-width:1120px){.home-topbar,.home-main{width:calc(100% - 40px)}.attendance-page .attendance-topbar,.attendance-page .attendance-main{max-width:calc(100% - 40px)}}
 

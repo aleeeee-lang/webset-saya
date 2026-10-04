@@ -60,7 +60,7 @@ button,input,select,textarea{font-family:inherit}
 /* HOME INFORMATION BANNER */
 .home-info-banner{width:100%;min-height:155px;margin-top:25px;display:flex;align-items:center;overflow:hidden;border-radius:22px;background:linear-gradient(135deg,#6861ff,#8d6bff);color:#fff;box-shadow:0 10px 30px rgba(99,91,255,.2)}
 .info-banner-content{flex:1;padding:25px 30px}.info-banner-content p{margin:0 0 7px;font-size:12px;letter-spacing:2px;opacity:.8}.info-banner-content h2{margin:0 0 8px;font-size:23px}.info-banner-content span{display:block;color:#eeeeff;font-size:14px}
-.info-arrow{width:56px;height:56px;margin-right:25px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:#635bff;text-decoration:none;font-size:28px;line-height:1}.info-arrow span{display:block;position:relative;top:-5px}
+.info-arrow{width:56px;height:56px;margin-right:25px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:#635bff;text-decoration:none}
 
 /* BOTTOM NAVIGATION */
 .bottom-nav{position:fixed;z-index:1000;left:50%;bottom:15px;transform:translateX(-50%);width:min(550px,calc(100% - 30px));padding:9px;display:flex;justify-content:space-around;background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.12)}

@@ -31,11 +31,11 @@
 
         <div style="display:flex;flex-direction:column;gap:10px">
 
-            <input type="text" id="newName" data-i18n-placeholder="placeholder_full_name" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newClass" data-i18n-placeholder="placeholder_class_major" placeholder="Class / Major (e.g. XII IPA 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newNis" data-i18n-placeholder="placeholder_nis" placeholder="NIS / NIM" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="email" id="newEmail" data-i18n-placeholder="placeholder_email_login" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newPassword" data-i18n-placeholder="placeholder_password_login" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newName" class="am-field" data-i18n-placeholder="placeholder_full_name" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newClass" class="am-field" data-i18n-placeholder="placeholder_class_major" placeholder="Class / Major (e.g. XII IPA 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newNis" class="am-field" data-i18n-placeholder="placeholder_nis" placeholder="NIS / NIM" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="email" id="newEmail" class="am-field" data-i18n-placeholder="placeholder_email_login" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newPassword" class="am-field" data-i18n-placeholder="placeholder_password_login" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
 
             <button type="button" class="submit-button" id="addBtn" onclick="addStudent()" style="margin-top:4px" data-i18n="btn_add_student">
                 Add Student
@@ -187,14 +187,14 @@ async function loadStudents() {
 
     list.innerHTML = data.map(function (s) {
         return `
-            <div class="student-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
+            <div class="student-row am-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
                 <div class="student-view" id="view-${s.id}" style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${s.name || "-"}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
                 </div>
                 <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0">
-                    <button type="button" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
-                    <button type="button" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
+                    <button type="button" class="am-btn" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
+                    <button type="button" class="am-btn" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
                 </div>
             </div>
         `;
@@ -211,16 +211,16 @@ function startEditStudent(id) {
     const lang = getLang();
 
     view.innerHTML = `
-        <input type="text" id="editName-${id}" value="${(student.name || "").replace(/"/g, "&quot;")}" placeholder="${translations.placeholder_full_name[lang]}" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
+        <input type="text" id="editName-${id}" class="am-field" value="${(student.name || "").replace(/"/g, "&quot;")}" placeholder="${translations.placeholder_full_name[lang]}" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
         <div style="display:flex;gap:6px">
-            <input type="text" id="editClass-${id}" value="${(student.class || "").replace(/"/g, "&quot;")}" placeholder="Class" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
-            <input type="text" id="editNis-${id}" value="${(student.nis || "").replace(/"/g, "&quot;")}" placeholder="NIS" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
+            <input type="text" id="editClass-${id}" class="am-field" value="${(student.class || "").replace(/"/g, "&quot;")}" placeholder="Class" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
+            <input type="text" id="editNis-${id}" class="am-field" value="${(student.nis || "").replace(/"/g, "&quot;")}" placeholder="NIS" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
         </div>
     `;
 
     actions.innerHTML = `
         <button type="button" onclick="saveEditStudent('${id}')" style="border:none;background:#4f46e5;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
-        <button type="button" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_cancel[lang]}</button>
+        <button type="button" class="am-btn" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_cancel[lang]}</button>
     `;
 }
 

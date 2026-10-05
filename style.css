@@ -687,7 +687,8 @@ html[data-theme="dark"] #settingsGearBtn {
 ========================================================= */
 
 html[data-theme="dark"] .am-row,
-html[data-theme="dark"] .am-field {
+html[data-theme="dark"] .am-field,
+html[data-theme="dark"] .am-btn {
     background: #1f1f1f !important;
     border-color: #262626 !important;
 }

@@ -35,6 +35,8 @@ button,input,select,textarea{font-family:inherit}
 .notification-item .notification-item-body{flex:1;min-width:0}
 .notification-item .notification-item-text{margin:0;font-size:13px;color:#20243a;line-height:1.4}
 .notification-item .notification-item-time{margin:2px 0 0;font-size:11px;color:#9a9ab0}
+.notification-item-delete{flex-shrink:0;width:24px;height:24px;margin-top:2px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:#bbb;cursor:pointer;padding:0;border-radius:6px;transition:color .15s,background .15s}
+.notification-item-delete:hover{color:#ff3b5c;background:rgba(255,59,92,.1)}
 
 /* HOME MAIN */
 .home-main{width:100%;max-width:1100px;margin:35px auto 0}
@@ -544,6 +546,15 @@ html[data-theme="dark"] .notification-item {
 
 html[data-theme="dark"] .notification-item.unread {
     background: #262a40;
+}
+
+html[data-theme="dark"] .notification-item-delete {
+    color: #6b7094 !important;
+}
+
+html[data-theme="dark"] .notification-item-delete:hover {
+    color: #ff6b85 !important;
+    background: rgba(255, 107, 133, 0.12);
 }
 
 html[data-theme="dark"] .schedule-day-pill {

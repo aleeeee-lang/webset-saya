@@ -246,7 +246,11 @@ const translations = {
     toast_schedule_not_open_yet: { en: "Attendance hasn't opened yet. It opens at", id: "Absen belum dibuka. Dibuka jam" },
     toast_schedule_closed: { en: "Attendance is closed for today. It closed at", id: "Absen sudah ditutup untuk hari ini. Tutup jam" },
     toast_schedule_day_inactive: { en: "Attendance is not scheduled for today.", id: "Hari ini bukan jadwal absen." },
-    toast_schedule_late_notice: { en: "You checked in outside the schedule, marked as late.", id: "Kamu absen di luar jadwal, dicatat sebagai telat." }
+    toast_schedule_late_notice: { en: "You checked in outside the schedule, marked as late.", id: "Kamu absen di luar jadwal, dicatat sebagai telat." },
+    label_late_until: { en: "Late Until (optional)", id: "Telat Sampai (opsional)" },
+    hint_late_until: { en: "After this time, attendance is fully closed. Leave empty to close right after Closes At.", id: "Setelah jam ini, absen ditutup total. Kosongkan untuk langsung menutup absen setelah Jam Tutup." },
+    toast_schedule_late_closed: { en: "Attendance is fully closed now. The late window has ended.", id: "Absen sudah ditutup total. Batas waktu telat sudah lewat." },
+    label_late_window_short: { en: "late until", id: "telat sampai" }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

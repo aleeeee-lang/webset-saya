@@ -59,6 +59,12 @@
                 </select>
             </div>
 
+            <div id="lateUntilGroup" style="display:none">
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_late_until">Late Until (optional)</div>
+                <input type="time" id="scheduleLateUntil" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <div style="font-size:11px;color:#999;margin-top:6px" data-i18n="hint_late_until">After this time, attendance is fully closed. Leave empty to close right after Closes At.</div>
+            </div>
+
             <button type="button" class="submit-button" id="saveScheduleBtn" onclick="saveSchedule()" style="margin-top:2px" data-i18n="btn_save_schedule">
                 Save Schedule
             </button>
@@ -94,6 +100,11 @@ const dayOptions = [
 let allClasses = [];
 let allSchedules = [];
 
+function syncLateUntilVisibility() {
+    const mode = document.getElementById("scheduleLateMode").value;
+    document.getElementById("lateUntilGroup").style.display = mode === "late" ? "block" : "none";
+}
+
 async function checkAdmin() {
     const user = await requireLogin();
     if (!user) return;
@@ -113,6 +124,9 @@ async function checkAdmin() {
     renderDayCheckboxes();
     await loadClasses();
     await loadSchedules();
+
+    document.getElementById("scheduleLateMode").addEventListener("change", syncLateUntilVisibility);
+    syncLateUntilVisibility();
 }
 
 function renderDayCheckboxes() {
@@ -177,7 +191,10 @@ async function loadSchedules() {
     allSchedules = data;
 
     container.innerHTML = data.map(function (s) {
-        const modeLabel = s.late_mode === "late" ? translations.label_mode_late_short[lang] : translations.label_mode_block_short[lang];
+        let modeLabel = s.late_mode === "late" ? translations.label_mode_late_short[lang] : translations.label_mode_block_short[lang];
+        if (s.late_mode === "late" && s.late_end_time) {
+            modeLabel += " (" + translations.label_late_window_short[lang] + " " + s.late_end_time.slice(0, 5) + ")";
+        }
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
@@ -199,6 +216,8 @@ function editSchedule(cls) {
     document.getElementById("scheduleStartTime").value = schedule.start_time ? schedule.start_time.slice(0, 5) : "";
     document.getElementById("scheduleEndTime").value = schedule.end_time ? schedule.end_time.slice(0, 5) : "";
     document.getElementById("scheduleLateMode").value = schedule.late_mode || "block";
+    document.getElementById("scheduleLateUntil").value = schedule.late_end_time ? schedule.late_end_time.slice(0, 5) : "";
+    syncLateUntilVisibility();
 
     document.querySelectorAll(".schedule-day-checkbox").forEach(function (cb) {
         cb.checked = (schedule.active_days || []).indexOf(Number(cb.value)) !== -1;
@@ -230,6 +249,7 @@ async function saveSchedule() {
     const startTime = document.getElementById("scheduleStartTime").value;
     const endTime = document.getElementById("scheduleEndTime").value;
     const lateMode = document.getElementById("scheduleLateMode").value;
+    const lateUntil = document.getElementById("scheduleLateUntil").value;
     const btn = document.getElementById("saveScheduleBtn");
 
     if (!cls) {
@@ -265,6 +285,7 @@ async function saveSchedule() {
                 start_time: startTime,
                 end_time: endTime,
                 late_mode: lateMode,
+                late_end_time: (lateMode === "late" && lateUntil) ? lateUntil : null,
                 updated_by: user.id
             },
             { onConflict: "class" }

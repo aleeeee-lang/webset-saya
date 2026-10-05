@@ -75,6 +75,11 @@ async function saveAttendance() {
 
             if (endTime && nowTime > endTime) {
                 if (schedule.late_mode === "late") {
+                    const lateEndTime = (schedule.late_end_time || "").slice(0, 5);
+                    if (lateEndTime && nowTime > lateEndTime) {
+                        showToast(translations.toast_schedule_late_closed[lang], "error");
+                        return;
+                    }
                     isLateCheckIn = true;
                     showToast(translations.toast_schedule_late_notice[lang], "error");
                 } else {

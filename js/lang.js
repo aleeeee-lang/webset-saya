@@ -132,6 +132,7 @@ const translations = {
     menu_about: { en: "About Attendreem", id: "Tentang Attendreem" },
     menu_manage_students: { en: "Manage Students", id: "Kelola Siswa" },
     menu_manage_attendance: { en: "Manage Attendance", id: "Kelola Absensi" },
+    menu_send_notification: { en: "Send Notification", id: "Kirim Notifikasi" },
     btn_logout: { en: "Logout", id: "Keluar" },
     label_admin: { en: "Admin", id: "Admin" },
 
@@ -139,6 +140,7 @@ const translations = {
     no_new_notifications: { en: "No new notifications.", id: "Belum ada notifikasi." },
     notif_attendance_recorded: { en: "Your attendance was recorded as", id: "Absensimu tercatat sebagai" },
     notif_attendance_updated: { en: "Your attendance was updated to", id: "Absensimu diperbarui menjadi" },
+    notif_broadcast_prefix: { en: "Announcement:", id: "Pengumuman:" },
 
     page_change_password: { en: "Change Password", id: "Ubah Kata Sandi" },
     label_new_password: { en: "New Password", id: "Kata Sandi Baru" },
@@ -199,7 +201,25 @@ const translations = {
     toast_select_student_date: { en: "Please select a student and a date.", id: "Silakan pilih siswa dan tanggal." },
     toast_save_record_failed: { en: "Failed to save: ", id: "Gagal menyimpan: " },
     toast_attendance_corrected: { en: "Attendance corrected.", id: "Absensi dikoreksi." },
-    toast_attendance_added: { en: "Attendance added.", id: "Absensi ditambahkan." }
+    toast_attendance_added: { en: "Attendance added.", id: "Absensi ditambahkan." },
+
+    page_send_notification: { en: "Send Notification", id: "Kirim Notifikasi" },
+    label_compose_notification: { en: "Compose Notification", id: "Tulis Notifikasi" },
+    placeholder_notification_message: { en: "Write your announcement...", id: "Tulis pengumumanmu..." },
+    label_notification_target: { en: "Send To", id: "Kirim Ke" },
+    option_target_all: { en: "All Members", id: "Semua Anggota" },
+    option_target_class: { en: "Specific Class", id: "Kelas Tertentu" },
+    option_target_student: { en: "Specific Student", id: "Siswa Tertentu" },
+    option_select_class: { en: "Select class...", id: "Pilih kelas..." },
+    btn_send_notification: { en: "Send Notification", id: "Kirim Notifikasi" },
+    btn_sending: { en: "Sending...", id: "Mengirim..." },
+    toast_notification_message_required: { en: "Please write a message.", id: "Silakan tulis pesan." },
+    toast_notification_target_required: { en: "Please select a target.", id: "Silakan pilih target." },
+    toast_notification_sent: { en: "Notification sent.", id: "Notifikasi terkirim." },
+    toast_notification_failed: { en: "Failed to send: ", id: "Gagal mengirim: " },
+    label_recent_broadcasts: { en: "Recently Sent", id: "Baru Dikirim" },
+    text_no_broadcasts_yet: { en: "No notifications sent yet.", id: "Belum ada notifikasi yang dikirim." },
+    target_label_all: { en: "All Members", id: "Semua Anggota" }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

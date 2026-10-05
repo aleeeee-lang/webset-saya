@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send Notification - Attendreem</title>
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_send_notification">Send Notification</h2>
+    </section>
+
+    <!-- COMPOSE -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_compose_notification">Compose Notification</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <textarea id="broadcastMessage" class="am-field" rows="4" data-i18n-placeholder="placeholder_notification_message" placeholder="Write your announcement..." style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
+
+            <select id="targetType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="all" data-i18n="option_target_all">All Members</option>
+                <option value="class" data-i18n="option_target_class">Specific Class</option>
+                <option value="student" data-i18n="option_target_student">Specific Student</option>
+            </select>
+
+            <select id="targetClassSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;display:none">
+                <option value="" data-i18n="option_select_class">Select class...</option>
+            </select>
+
+            <select id="targetStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;display:none">
+                <option value="" data-i18n="option_select_student">Select student...</option>
+            </select>
+
+            <button type="button" class="submit-button" id="sendBroadcastBtn" onclick="sendBroadcast()" style="margin-top:2px" data-i18n="btn_send_notification">
+                Send Notification
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- RECENTLY SENT -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_recent_broadcasts">Recently Sent</div>
+        <div id="recentBroadcastsList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let allClasses = [];
+let allStudents = [];
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadTargets();
+    await loadRecentBroadcasts();
+}
+
+async function loadTargets() {
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, name, class")
+        .eq("role", "murid")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allStudents = data;
+
+    const classSet = new Set(data.map(s => s.class).filter(Boolean));
+    allClasses = Array.from(classSet);
+
+    const classSelect = document.getElementById("targetClassSelect");
+    allClasses.forEach(function (c) {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        classSelect.appendChild(opt);
+    });
+
+    const studentSelect = document.getElementById("targetStudentSelect");
+    data.forEach(function (s) {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name + (s.class ? " (" + s.class + ")" : "");
+        studentSelect.appendChild(opt);
+    });
+}
+
+document.getElementById("targetType").addEventListener("change", function () {
+    const type = this.value;
+    document.getElementById("targetClassSelect").style.display = type === "class" ? "block" : "none";
+    document.getElementById("targetStudentSelect").style.display = type === "student" ? "block" : "none";
+});
+
+function targetLabelOf(broadcast) {
+    const lang = getLang();
+    if (broadcast.target_type === "all") return translations.target_label_all[lang];
+    if (broadcast.target_type === "class") return broadcast.target_value || "-";
+    const student = allStudents.find(s => s.id === broadcast.target_value);
+    return student ? student.name : (broadcast.target_value || "-");
+}
+
+async function loadRecentBroadcasts() {
+
+    const { data, error } = await supabaseClient
+        .from("broadcasts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+    const container = document.getElementById("recentBroadcastsList");
+
+    if (error || !data || data.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_broadcasts_yet[getLang()] + "</p>";
+        return;
+    }
+
+    container.innerHTML = data.map(function (b) {
+        const date = new Date(b.created_at);
+        const timeStr = isNaN(date.getTime()) ? "" : dayMonthLabel(date) + ", " + String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
+
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <span style="font-size:14px;color:#20243a">${b.message}</span>
+                <span style="font-size:12px;color:#888">${targetLabelOf(b)} · ${timeStr}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+async function sendBroadcast() {
+
+    const message = document.getElementById("broadcastMessage").value.trim();
+    const targetType = document.getElementById("targetType").value;
+    const btn = document.getElementById("sendBroadcastBtn");
+    const lang = getLang();
+
+    if (!message) {
+        showToast(translations.toast_notification_message_required[lang], "error");
+        return;
+    }
+
+    let targetValue = null;
+
+    if (targetType === "class") {
+        targetValue = document.getElementById("targetClassSelect").value;
+        if (!targetValue) {
+            showToast(translations.toast_notification_target_required[lang], "error");
+            return;
+        }
+    } else if (targetType === "student") {
+        targetValue = document.getElementById("targetStudentSelect").value;
+        if (!targetValue) {
+            showToast(translations.toast_notification_target_required[lang], "error");
+            return;
+        }
+    }
+
+    const user = await requireLogin();
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_sending[lang];
+
+    const { error } = await supabaseClient.from("broadcasts").insert([{
+        message: message,
+        target_type: targetType,
+        target_value: targetValue,
+        created_by: user.id
+    }]);
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_send_notification[lang];
+
+    if (error) {
+        showToast(translations.toast_notification_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_notification_sent[lang], "success");
+    document.getElementById("broadcastMessage").value = "";
+    await loadRecentBroadcasts();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

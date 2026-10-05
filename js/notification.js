@@ -172,6 +172,91 @@ function hasUnreadNotifications(userId) {
     return notifications.some(function (item) { return !item.read; });
 }
 
+const BROADCAST_SEEN_PREFIX = "attendreem-broadcast-seen-";
+const BROADCAST_SEEN_MAX_STORED = 50;
+
+function loadSeenBroadcastIds(userId) {
+    try {
+        const raw = localStorage.getItem(BROADCAST_SEEN_PREFIX + userId);
+        return raw ? JSON.parse(raw) : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function markBroadcastSeen(userId, broadcastId) {
+    const seen = loadSeenBroadcastIds(userId);
+    if (seen.indexOf(broadcastId) !== -1) return;
+    seen.unshift(broadcastId);
+    try {
+        localStorage.setItem(BROADCAST_SEEN_PREFIX + userId, JSON.stringify(seen.slice(0, BROADCAST_SEEN_MAX_STORED)));
+    } catch (error) {
+        // ignore storage errors
+    }
+}
+
+function broadcastMatchesUser(broadcast, userId, userClass) {
+    if (!broadcast) return false;
+    if (broadcast.target_type === "all") return true;
+    if (broadcast.target_type === "class") return !!userClass && broadcast.target_value === userClass;
+    if (broadcast.target_type === "student") return broadcast.target_value === userId;
+    return false;
+}
+
+function broadcastNotificationText(broadcast) {
+    const lang = getLang();
+    const prefix = translations.notif_broadcast_prefix ? translations.notif_broadcast_prefix[lang] : "";
+    return (prefix ? prefix + " " : "") + (broadcast.message || "");
+}
+
+async function fetchRecentBroadcasts(userId, userClass) {
+    if (typeof supabaseClient === "undefined") return;
+
+    const { data, error } = await supabaseClient
+        .from("broadcasts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+    if (error || !data) return;
+
+    const seen = loadSeenBroadcastIds(userId);
+
+    data
+        .filter(function (b) { return seen.indexOf(b.id) === -1 && broadcastMatchesUser(b, userId, userClass); })
+        .reverse()
+        .forEach(function (b) {
+            addNotification(userId, broadcastNotificationText(b));
+            markBroadcastSeen(userId, b.id);
+        });
+}
+
+async function subscribeBroadcastNotifications(userId, userClass) {
+    if (typeof supabaseClient === "undefined") return;
+
+    supabaseClient
+        .channel("broadcast-notifications-" + userId)
+        .on(
+            "postgres_changes",
+            {
+                event: "INSERT",
+                schema: "public",
+                table: "broadcasts"
+            },
+            function (payload) {
+                const broadcast = payload.new;
+                if (!broadcastMatchesUser(broadcast, userId, userClass)) return;
+
+                const seen = loadSeenBroadcastIds(userId);
+                if (seen.indexOf(broadcast.id) !== -1) return;
+
+                addNotification(userId, broadcastNotificationText(broadcast));
+                markBroadcastSeen(userId, broadcast.id);
+            }
+        )
+        .subscribe();
+}
+
 async function subscribeAttendanceNotifications(userId) {
     if (typeof supabaseClient === "undefined") return;
 
@@ -218,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { once: true }
     );
 
-    getCurrentUser().then(function (user) {
+    getCurrentUser().then(async function (user) {
         if (!user) return;
 
         renderNotificationList(user.id);
@@ -228,6 +313,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         subscribeAttendanceNotifications(user.id);
+
+        let userClass = null;
+        if (typeof supabaseClient !== "undefined") {
+            const { data: profile } = await supabaseClient
+                .from("profiles")
+                .select("class")
+                .eq("id", user.id)
+                .single();
+            userClass = profile ? profile.class : null;
+        }
+
+        await fetchRecentBroadcasts(user.id, userClass);
+        subscribeBroadcastNotifications(user.id, userClass);
+
+        if (hasUnreadNotifications(user.id)) {
+            showNotificationDot();
+        }
 
         notificationButton.addEventListener("click", function () {
             notificationPanel.classList.toggle("active");

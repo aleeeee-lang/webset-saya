@@ -48,6 +48,8 @@ let eyesClosedSeen = false;          // becomes true once we've seen the eyes cl
 let earBaseline = null;              // running "eyes open" EAR baseline, recalculated per face
 let earCalibrationSamples = [];      // EAR samples collected while calibrating the baseline
 let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
+const FACE_ABSENT_GRACE_MS = 2500;   // how long the face can be briefly out of frame before a verified blink is thrown away
+let faceAbsentTimer = null;          // pending "reset liveness" timer while the face is briefly undetected
 
 function resetLiveness() {
     livenessPassed = false;
@@ -57,6 +59,10 @@ function resetLiveness() {
     if (livenessStatusTimer) {
         clearTimeout(livenessStatusTimer);
         livenessStatusTimer = null;
+    }
+    if (faceAbsentTimer) {
+        clearTimeout(faceAbsentTimer);
+        faceAbsentTimer = null;
     }
 }
 
@@ -304,10 +310,21 @@ async function runFaceDetectionLoop() {
 
         if (faceDetected) {
 
+            // The face is back in view, so cancel any pending "face has
+            // been gone too long" reset from a moment ago.
+            if (faceAbsentTimer) {
+                clearTimeout(faceAbsentTimer);
+                faceAbsentTimer = null;
+            }
+
             if (!faceWasDetected) {
-                // A new face just appeared: it must blink again before a
-                // photo can be taken, even if a previous face already did.
-                resetLiveness();
+                // Only treat this as a brand new face (requiring a fresh
+                // blink) if we don't already have a verified blink pending.
+                // A quick in-and-out (motion blur, a fast head turn) should
+                // not force the user to blink again.
+                if (!livenessPassed) {
+                    resetLiveness();
+                }
 
                 // Show the box, then auto-hide it after a few seconds so
                 // the camera view stays clean.
@@ -342,9 +359,24 @@ async function runFaceDetectionLoop() {
             }
         } else {
             setFaceStatus("face_not_detected", "#d97706");
-            setTakePhotoEnabled(false);
             resetFaceBoxTimer();
-            resetLiveness();
+
+            if (livenessPassed) {
+                // Don't throw away an already-verified blink the instant
+                // detection blips out for a frame or two (the person moving
+                // around, momentary motion blur). Only reset if the face
+                // actually stays out of frame for a while.
+                setTakePhotoEnabled(true);
+                if (!faceAbsentTimer) {
+                    faceAbsentTimer = setTimeout(function () {
+                        resetLiveness();
+                        faceAbsentTimer = null;
+                    }, FACE_ABSENT_GRACE_MS);
+                }
+            } else {
+                setTakePhotoEnabled(false);
+                resetLiveness();
+            }
         }
 
         faceWasDetected = faceDetected;

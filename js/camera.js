@@ -42,15 +42,18 @@ function resetFaceBoxTimer() {
 const EAR_CLOSE_RATIO = 0.85;   // eyes considered closed below 85% of the open baseline
 const EAR_OPEN_RATIO = 0.85;    // eyes considered open again above 85% of the open baseline (same as close: any dip-then-rise counts)
 const EAR_BASELINE_SMOOTHING = 0.15;
+const EAR_CALIBRATION_FRAMES = 12;   // how many frames to sample before locking the "eyes open" baseline
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
 let earBaseline = null;              // running "eyes open" EAR baseline, recalculated per face
+let earCalibrationSamples = [];      // EAR samples collected while calibrating the baseline
 let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
 
 function resetLiveness() {
     livenessPassed = false;
     eyesClosedSeen = false;
     earBaseline = null;
+    earCalibrationSamples = [];
     if (livenessStatusTimer) {
         clearTimeout(livenessStatusTimer);
         livenessStatusTimer = null;
@@ -85,7 +88,19 @@ function updateLiveness(landmarks) {
     const ear = (earLeft + earRight) / 2;
 
     if (earBaseline === null) {
-        earBaseline = ear;
+        // Calibrate the "eyes open" baseline from several frames instead of
+        // just the first one, so a single odd-angle/low-res frame right when
+        // the face appears (e.g. looking straight at the camera vs. tilted
+        // down) can't lock in a bad baseline and make blinks hard to detect.
+        earCalibrationSamples.push(ear);
+        if (earCalibrationSamples.length < EAR_CALIBRATION_FRAMES) {
+            return;
+        }
+        // Use the highest sample (most likely a fully-open-eyes frame) as
+        // the baseline, since a blink mid-calibration would only pull a
+        // plain average down.
+        earBaseline = Math.max.apply(null, earCalibrationSamples);
+        earCalibrationSamples = [];
     }
 
     const closedThreshold = earBaseline * EAR_CLOSE_RATIO;

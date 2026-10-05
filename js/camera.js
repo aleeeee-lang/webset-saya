@@ -27,6 +27,59 @@ function resetFaceBoxTimer() {
     faceBoxVisible = false;
 }
 
+// =====================================
+// LIVENESS CHECK (blink detection)
+// =====================================
+// A printed photo or a photo shown on another screen can't blink in real
+// time, so require one real blink before the photo button is enabled. This
+// is a basic anti-spoofing measure, not foolproof against a live video of
+// someone else, but it blocks the simple "use a photo" trick.
+
+const EAR_CLOSED_THRESHOLD = 0.21;   // eye aspect ratio below this = eyes closed
+const EAR_OPEN_THRESHOLD = 0.26;     // eye aspect ratio above this = eyes open
+let livenessPassed = false;
+let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
+
+function resetLiveness() {
+    livenessPassed = false;
+    eyesClosedSeen = false;
+}
+
+function pointDistance(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function eyeAspectRatio(points, idx) {
+    const p1 = points[idx[0]];
+    const p2 = points[idx[1]];
+    const p3 = points[idx[2]];
+    const p4 = points[idx[3]];
+    const p5 = points[idx[4]];
+    const p6 = points[idx[5]];
+    const vertical = pointDistance(p2, p6) + pointDistance(p3, p5);
+    const horizontal = pointDistance(p1, p4);
+    if (horizontal === 0) return 1;
+    return vertical / (2 * horizontal);
+}
+
+function updateLiveness(landmarks) {
+    if (livenessPassed || !landmarks || !landmarks.positions) return;
+
+    const pts = landmarks.positions;
+    const earLeft = eyeAspectRatio(pts, [36, 37, 38, 39, 40, 41]);
+    const earRight = eyeAspectRatio(pts, [42, 43, 44, 45, 46, 47]);
+    const ear = (earLeft + earRight) / 2;
+
+    if (ear < EAR_CLOSED_THRESHOLD) {
+        eyesClosedSeen = true;
+    } else if (ear > EAR_OPEN_THRESHOLD && eyesClosedSeen) {
+        // Eyes went closed, then open again: that's a blink.
+        livenessPassed = true;
+    }
+}
+
 function setFaceStatus(key, color) {
     const el = document.getElementById("faceStatus");
     if (!el) return;
@@ -210,12 +263,14 @@ async function runFaceDetectionLoop() {
         faceDetected = !!result;
 
         if (faceDetected) {
-            setFaceStatus("face_detected", "#16a34a");
-            setTakePhotoEnabled(true);
 
             if (!faceWasDetected) {
-                // Face just appeared: show the box, then auto-hide it
-                // after a few seconds so the camera view stays clean.
+                // A new face just appeared: it must blink again before a
+                // photo can be taken, even if a previous face already did.
+                resetLiveness();
+
+                // Show the box, then auto-hide it after a few seconds so
+                // the camera view stays clean.
                 resetFaceBoxTimer();
                 faceBoxVisible = true;
                 faceBoxTimer = setTimeout(function () {
@@ -223,10 +278,21 @@ async function runFaceDetectionLoop() {
                     clearFaceBox();
                 }, FACE_BOX_DISPLAY_MS);
             }
+
+            updateLiveness(result.landmarks);
+
+            if (livenessPassed) {
+                setFaceStatus("face_detected", "#16a34a");
+                setTakePhotoEnabled(true);
+            } else {
+                setFaceStatus("face_liveness_wait", "#2563eb");
+                setTakePhotoEnabled(false);
+            }
         } else {
             setFaceStatus("face_not_detected", "#d97706");
             setTakePhotoEnabled(false);
             resetFaceBoxTimer();
+            resetLiveness();
         }
 
         faceWasDetected = faceDetected;
@@ -250,6 +316,7 @@ function startFaceDetection() {
     faceDetected = false;
     faceWasDetected = false;
     resetFaceBoxTimer();
+    resetLiveness();
     setTakePhotoEnabled(false);
 
     loadFaceModels();
@@ -389,6 +456,21 @@ function takePhoto() {
 
     }
 
+    // Anti-spoofing: block the capture until a real blink has been seen,
+    // so a printed photo or a photo on another screen can't be used.
+    if (faceDetectionAvailable && !livenessPassed) {
+
+        const lang = typeof getLang === "function" ? getLang() : "en";
+        const msg = typeof translations !== "undefined" && translations.toast_liveness_required
+            ? translations.toast_liveness_required[lang]
+            : "Please blink first to verify it's really you.";
+
+        showToast(msg, "error");
+
+        return;
+
+    }
+
 
     // =====================================
     // UKURAN ASLI VIDEO
@@ -455,11 +537,12 @@ context.restore();
 
     photoPreview.style.display = "block";
 
-    // Sembunyikan kamera live
+    // Sembunyikan kamera live dan matikan kamera + deteksi wajah
+    // sepenuhnya, supaya tidak terus berjalan di belakang layar
+    // (itu yang membuat status/tombol kelihatan "bergerak" terus).
+    // Kamera baru aktif lagi kalau user menekan "Buka Kamera".
     video.style.display = "none";
-
-    resetFaceBoxTimer();
-    clearFaceBox();
+    stopCamera();
 
 }
 
@@ -530,6 +613,7 @@ function stopCamera() {
     faceWasDetected = false;
     faceDetectionRunning = false;
     resetFaceBoxTimer();
+    resetLiveness();
     setTakePhotoEnabled(false);
     clearFaceBox();
 

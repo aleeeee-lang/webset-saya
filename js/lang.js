@@ -38,6 +38,7 @@ const translations = {
     face_not_detected: { en: "Align your face in the frame.", id: "Posisikan wajahmu di dalam bingkai." },
     face_unavailable: { en: "Face detection unavailable, you can still take a photo.", id: "Pendeteksi wajah tidak tersedia, kamu tetap bisa ambil foto." },
     face_liveness_wait: { en: "Face detected. You must blink to verify it's really you.", id: "Wajah terdeteksi. Wajib kedipkan mata dulu untuk verifikasi." },
+    face_liveness_passed: { en: "Blink verified! You can take the photo.", id: "Berhasil berkedip! Kamu bisa ambil foto." },
     toast_liveness_required: { en: "You must blink first so we know it's really you, not a photo.", id: "Wajib kedipkan mata dulu supaya sistem tahu ini bukan dari foto." },
     btn_submit_attendance: { en: "Submit Attendance", id: "Kirim Absensi" },
 

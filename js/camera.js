@@ -39,10 +39,15 @@ const EAR_CLOSED_THRESHOLD = 0.21;   // eye aspect ratio below this = eyes close
 const EAR_OPEN_THRESHOLD = 0.26;     // eye aspect ratio above this = eyes open
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
+let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
 
 function resetLiveness() {
     livenessPassed = false;
     eyesClosedSeen = false;
+    if (livenessStatusTimer) {
+        clearTimeout(livenessStatusTimer);
+        livenessStatusTimer = null;
+    }
 }
 
 function pointDistance(a, b) {
@@ -279,11 +284,23 @@ async function runFaceDetectionLoop() {
                 }, FACE_BOX_DISPLAY_MS);
             }
 
+            const wasLivenessPassed = livenessPassed;
             updateLiveness(result.landmarks);
 
             if (livenessPassed) {
-                setFaceStatus("face_detected", "#16a34a");
                 setTakePhotoEnabled(true);
+
+                if (!wasLivenessPassed) {
+                    // Blink just verified: show a short success message,
+                    // then hide the status text instead of leaving it on.
+                    setFaceStatus("face_liveness_passed", "#16a34a");
+                    if (livenessStatusTimer) clearTimeout(livenessStatusTimer);
+                    livenessStatusTimer = setTimeout(function () {
+                        const statusEl = document.getElementById("faceStatus");
+                        if (statusEl) statusEl.textContent = "";
+                        livenessStatusTimer = null;
+                    }, 2000);
+                }
             } else {
                 setFaceStatus("face_liveness_wait", "#2563eb");
                 setTakePhotoEnabled(false);

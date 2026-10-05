@@ -54,7 +54,10 @@ async function loadFaceModels() {
 
     try {
 
-        const loadPromise = faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL);
+        const loadPromise = Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL),
+            faceapi.nets.faceLandmark68TinyNet.loadFromUri(FACE_MODEL_URL)
+        ]);
 
         const timeoutPromise = new Promise(function (_, reject) {
             setTimeout(function () { reject(new Error("Face model load timeout")); }, 8000);
@@ -80,7 +83,7 @@ function clearFaceBox() {
     ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
 }
 
-function drawFaceBox(detection) {
+function drawFaceBox(result) {
 
     const video = document.getElementById("video");
     const boxCanvas = document.getElementById("faceBoxCanvas");
@@ -101,7 +104,7 @@ function drawFaceBox(detection) {
     const ctx = boxCanvas.getContext("2d");
     ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
 
-    if (!detection || !video.videoWidth || !video.videoHeight) return;
+    if (!result || !video.videoWidth || !video.videoHeight) return;
 
     // The video uses object-fit:cover, so native detection coordinates
     // need to be mapped through the same cover-crop scale/offset.
@@ -109,28 +112,47 @@ function drawFaceBox(detection) {
     const offsetX = (video.videoWidth * scale - displayWidth) / 2;
     const offsetY = (video.videoHeight * scale - displayHeight) / 2;
 
-    const box = detection.box;
+    const landmarks = result.landmarks;
+    let minX, minY, maxX, maxY;
 
-    // TinyFaceDetector's raw box is close to square, which is noticeably
-    // wider than a real face. Derive the box width from its height using a
-    // typical face width/height ratio instead, centered on the detected
-    // box, and nudge it up a little since the raw box sits low. This is
-    // recomputed every frame, so it keeps tracking the face's real
-    // position/size as the user moves closer/farther or turns.
-    const rawX = box.x * scale - offsetX;
-    const rawY = box.y * scale - offsetY;
-    const rawW = box.width * scale;
-    const rawH = box.height * scale;
-    const centerX = rawX + rawW / 2;
+    if (landmarks && landmarks.positions && landmarks.positions.length) {
+        // The 68 landmark points trace the real jawline/eyebrows/chin, so
+        // their bounding box already hugs the actual face (not the padded
+        // square the raw detector box gives). Only the forehead/hair above
+        // the eyebrows is missing, so pad upward a bit for that.
+        const pts = landmarks.positions;
+        minX = pts[0].x; maxX = pts[0].x;
+        minY = pts[0].y; maxY = pts[0].y;
+        for (let i = 1; i < pts.length; i++) {
+            const p = pts[i];
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+        }
+    } else {
+        const box = result.detection ? result.detection.box : result.box;
+        if (!box) return;
+        minX = box.x;
+        maxX = box.x + box.width;
+        minY = box.y;
+        maxY = box.y + box.height;
+    }
 
-    const insetH = rawH * 0.06;
-    const shiftUp = rawH * 0.08;
-    const FACE_WIDTH_RATIO = 0.62;   // typical face width as a fraction of its height
+    const faceW = maxX - minX;
+    const faceH = maxY - minY;
+    const foreheadPad = faceH * 0.35;   // landmarks stop at the eyebrows, so add room for the forehead
+    const sidePad = faceW * 0.06;
 
-    const h = rawH - insetH;
-    const w = h * FACE_WIDTH_RATIO;
-    const x = centerX - w / 2;
-    const y = rawY + insetH - shiftUp;
+    const faceMinX = (minX - sidePad) * scale - offsetX;
+    const faceMaxX = (maxX + sidePad) * scale - offsetX;
+    const faceMinY = (minY - foreheadPad) * scale - offsetY;
+    const faceMaxY = maxY * scale - offsetY;
+
+    const x = faceMinX;
+    const y = faceMinY;
+    const w = faceMaxX - faceMinX;
+    const h = faceMaxY - faceMinY;
     const r = Math.max(4, Math.min(16, w / 4, h / 4));
 
     ctx.strokeStyle = "#22c55e";
@@ -177,10 +199,12 @@ async function runFaceDetectionLoop() {
 
     try {
 
-        const result = await faceapi.detectSingleFace(
-            video,
-            new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
-        );
+        const result = await faceapi
+            .detectSingleFace(
+                video,
+                new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
+            )
+            .withFaceLandmarks(true);
 
         faceDetected = !!result;
 

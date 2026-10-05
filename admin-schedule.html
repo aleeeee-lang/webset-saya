@@ -202,7 +202,7 @@ async function loadSchedules() {
                     <strong style="display:block;font-size:14px;color:#20243a">${s.class}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayLabelsOf(s.active_days || [], lang)} · ${s.start_time ? s.start_time.slice(0,5) : "-"}-${s.end_time ? s.end_time.slice(0,5) : "-"} · ${modeLabel}</span>
                 </div>
-                <button type="button" onclick="editSchedule('${s.class}')" style="border:none;background:none;color:#4f46e5;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
+                <button type="button" onclick="editSchedule('${s.class}')" style="border:none;background:none;color:#1530c2;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
                 <button type="button" onclick="deleteSchedule('${s.class}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
             </div>
         `;

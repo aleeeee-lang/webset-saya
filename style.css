@@ -451,6 +451,7 @@ html[data-theme="dark"] .home-menu-icon,
 html[data-theme="dark"] .progress-bar,
 html[data-theme="dark"] .calendar-arrow,
 html[data-theme="dark"] .attendance-insight,
+html[data-theme="dark"] .dashboard-insight,
 html[data-theme="dark"] .attendance-page .date-time-icon,
 html[data-theme="dark"] .attendance-page .calendar-icon,
 html[data-theme="dark"] .attendance-page .status-select,
@@ -513,6 +514,11 @@ html[data-theme="dark"] .attendance-page * {
 
 html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
     color: #ff6b7a !important;
+}
+
+html[data-theme="dark"] .attendance-page button[aria-label="Back"] {
+    background: #242842 !important;
+    color: #e5e7f5 !important;
 }
 
 /* =========================================================
@@ -600,6 +606,7 @@ html[data-theme="dark"] .home-menu-icon,
 html[data-theme="dark"] .progress-bar,
 html[data-theme="dark"] .calendar-arrow,
 html[data-theme="dark"] .attendance-insight,
+html[data-theme="dark"] .dashboard-insight,
 html[data-theme="dark"] .attendance-page .date-time-icon,
 html[data-theme="dark"] .attendance-page .calendar-icon,
 html[data-theme="dark"] .attendance-page .status-select,
@@ -650,6 +657,11 @@ html[data-theme="dark"] .attendance-page * {
 
 html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
     color: #ff6b7a !important;
+}
+
+html[data-theme="dark"] .attendance-page button[aria-label="Back"] {
+    background: #242842 !important;
+    color: #ececec !important;
 }
 
 html[data-theme="dark"] .filter-option:hover {

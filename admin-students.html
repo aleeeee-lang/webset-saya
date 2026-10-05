@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Students - Attendreem</title>
 <link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
 <script src="js/toast.js"></script>
 </head>
 
@@ -13,29 +15,29 @@
 
 <main class="attendance-page">
 
-    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px">
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
         <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </button>
-        <h2 style="margin:0">Manage Students</h2>
+        <h2 style="margin:0" data-i18n="page_manage_students">Manage Students</h2>
     </section>
 
     <!-- ADD STUDENT FORM -->
     <section class="attendance-card">
 
-        <div class="card-label">Add New Student</div>
+        <div class="card-label" data-i18n="label_add_new_student">Add New Student</div>
 
         <div style="display:flex;flex-direction:column;gap:10px">
 
-            <input type="text" id="newName" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newClass" placeholder="Class / Major (e.g. XII IPA 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newNis" placeholder="NIS / NIM" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="email" id="newEmail" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="newPassword" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newName" data-i18n-placeholder="placeholder_full_name" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newClass" data-i18n-placeholder="placeholder_class_major" placeholder="Class / Major (e.g. XII IPA 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newNis" data-i18n-placeholder="placeholder_nis" placeholder="NIS / NIM" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="email" id="newEmail" data-i18n-placeholder="placeholder_email_login" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newPassword" data-i18n-placeholder="placeholder_password_login" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
 
-            <button type="button" class="submit-button" id="addBtn" onclick="addStudent()" style="margin-top:4px">
+            <button type="button" class="submit-button" id="addBtn" onclick="addStudent()" style="margin-top:4px" data-i18n="btn_add_student">
                 Add Student
             </button>
 
@@ -46,7 +48,7 @@
     <!-- STUDENT LIST -->
     <section class="attendance-card">
 
-        <div class="card-label">Student List</div>
+        <div class="card-label" data-i18n="label_student_list">Student List</div>
 
         <div id="studentList" style="display:flex;flex-direction:column;gap:8px"></div>
 
@@ -83,7 +85,7 @@ async function checkAdmin() {
         .single();
 
     if (error || !profile || profile.role !== "admin") {
-        alert("This page is for admins only.");
+        alert(translations.alert_admin_only[getLang()]);
         window.location.href = "index.html";
         return;
     }
@@ -99,19 +101,21 @@ async function addStudent() {
     const email = document.getElementById("newEmail").value.trim();
     const password = document.getElementById("newPassword").value;
 
+    const lang = getLang();
+
     if (!name || !email || !password) {
-        showToast("Name, email, and password are required.", "error");
+        showToast(translations.toast_name_email_password_required[lang], "error");
         return;
     }
 
     if (nis && allStudentsData.some(s => (s.nis || "").trim().toLowerCase() === nis.toLowerCase())) {
-        showToast("That NIS/NIM is already used by another student.", "error");
+        showToast(translations.toast_nis_used[lang], "error");
         return;
     }
 
     const btn = document.getElementById("addBtn");
     btn.disabled = true;
-    btn.textContent = "Adding...";
+    btn.textContent = translations.btn_adding[lang];
 
     const { data: signUpData, error: signUpError } = await supabaseSignupClient.auth.signUp({
         email: email,
@@ -119,9 +123,9 @@ async function addStudent() {
     });
 
     if (signUpError) {
-        showToast("Failed to create account: " + signUpError.message, "error");
+        showToast(translations.toast_create_account_failed[lang] + signUpError.message, "error");
         btn.disabled = false;
-        btn.textContent = "Add Student";
+        btn.textContent = translations.btn_add_student[lang];
         return;
     }
 
@@ -136,9 +140,9 @@ async function addStudent() {
         });
 
     if (profileError) {
-        showToast("Account created, but saving profile failed: " + profileError.message, "error");
+        showToast(translations.toast_save_profile_failed[lang] + profileError.message, "error");
         btn.disabled = false;
-        btn.textContent = "Add Student";
+        btn.textContent = translations.btn_add_student[lang];
         return;
     }
 
@@ -149,9 +153,9 @@ async function addStudent() {
     document.getElementById("newPassword").value = "";
 
     btn.disabled = false;
-    btn.textContent = "Add Student";
+    btn.textContent = translations.btn_add_student[lang];
 
-    showToast("Student added.", "success");
+    showToast(translations.toast_student_added[lang], "success");
 
     loadStudents();
 }
@@ -174,9 +178,12 @@ async function loadStudents() {
     allStudentsData = data;
 
     if (data.length === 0) {
-        list.innerHTML = "<p style='color:#888;font-size:13px'>No students added yet.</p>";
+        list.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_students_yet[getLang()] + "</p>";
         return;
     }
+
+    const btnEditLabel = translations.btn_edit[getLang()];
+    const btnDeleteLabel = translations.btn_delete[getLang()];
 
     list.innerHTML = data.map(function (s) {
         return `
@@ -186,8 +193,8 @@ async function loadStudents() {
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
                 </div>
                 <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0">
-                    <button type="button" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">Edit</button>
-                    <button type="button" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">Delete</button>
+                    <button type="button" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
+                    <button type="button" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
                 </div>
             </div>
         `;
@@ -201,8 +208,10 @@ function startEditStudent(id) {
     const view = document.getElementById("view-" + id);
     const actions = document.getElementById("actions-" + id);
 
+    const lang = getLang();
+
     view.innerHTML = `
-        <input type="text" id="editName-${id}" value="${(student.name || "").replace(/"/g, "&quot;")}" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
+        <input type="text" id="editName-${id}" value="${(student.name || "").replace(/"/g, "&quot;")}" placeholder="${translations.placeholder_full_name[lang]}" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
         <div style="display:flex;gap:6px">
             <input type="text" id="editClass-${id}" value="${(student.class || "").replace(/"/g, "&quot;")}" placeholder="Class" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
             <input type="text" id="editNis-${id}" value="${(student.nis || "").replace(/"/g, "&quot;")}" placeholder="NIS" style="flex:1;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px">
@@ -210,8 +219,8 @@ function startEditStudent(id) {
     `;
 
     actions.innerHTML = `
-        <button type="button" onclick="saveEditStudent('${id}')" style="border:none;background:#4f46e5;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">Save</button>
-        <button type="button" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">Cancel</button>
+        <button type="button" onclick="saveEditStudent('${id}')" style="border:none;background:#4f46e5;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
+        <button type="button" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_cancel[lang]}</button>
     `;
 }
 
@@ -220,13 +229,15 @@ async function saveEditStudent(id) {
     const studentClass = document.getElementById("editClass-" + id).value.trim();
     const nis = document.getElementById("editNis-" + id).value.trim();
 
+    const lang = getLang();
+
     if (!name) {
-        showToast("Name is required.", "error");
+        showToast(translations.toast_name_required[lang], "error");
         return;
     }
 
     if (nis && allStudentsData.some(s => s.id !== id && (s.nis || "").trim().toLowerCase() === nis.toLowerCase())) {
-        showToast("That NIS/NIM is already used by another student.", "error");
+        showToast(translations.toast_nis_used[lang], "error");
         return;
     }
 
@@ -236,16 +247,18 @@ async function saveEditStudent(id) {
         .eq("id", id);
 
     if (error) {
-        showToast("Failed to save: " + error.message, "error");
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
         return;
     }
 
-    showToast("Student updated.", "success");
+    showToast(translations.toast_student_updated[lang], "success");
     loadStudents();
 }
 
 async function deleteStudent(id, name) {
-    const ok = confirm("Delete " + (name || "this student") + "? This removes their profile and class/attendance link. Their login account will still exist in Supabase Auth and should be removed there too if needed.");
+    const lang = getLang();
+    const confirmMsg = translations.confirm_delete_student[lang].replace("{name}", name || translations.fallback_this_student[lang]);
+    const ok = confirm(confirmMsg);
     if (!ok) return;
 
     const { error } = await supabaseClient
@@ -254,11 +267,11 @@ async function deleteStudent(id, name) {
         .eq("id", id);
 
     if (error) {
-        showToast("Failed to delete: " + error.message, "error");
+        showToast(translations.toast_delete_failed[lang] + error.message, "error");
         return;
     }
 
-    showToast("Student deleted.", "success");
+    showToast(translations.toast_student_deleted[lang], "success");
     loadStudents();
 }
 

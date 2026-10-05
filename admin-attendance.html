@@ -7,6 +7,7 @@
 <title>Manage Attendance - Attendreem</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
 <script src="js/toast.js"></script>
 </head>
 
@@ -14,29 +15,29 @@
 
 <main class="attendance-page">
 
-    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px">
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
         <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </button>
-        <h2 style="margin:0">Manage Attendance</h2>
+        <h2 style="margin:0" data-i18n="page_manage_attendance">Manage Attendance</h2>
     </section>
 
     <!-- TODAY'S ATTENDANCE -->
     <section class="attendance-card">
-        <div class="card-label">Today's Attendance</div>
+        <div class="card-label" data-i18n="label_today_attendance">Today's Attendance</div>
         <div id="todayList" style="display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
     <!-- FILTER + HISTORY -->
     <section class="attendance-card">
 
-        <div class="card-label">Filter Records</div>
+        <div class="card-label" data-i18n="label_filter_records">Filter Records</div>
 
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
             <select id="filterClass" class="am-field" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
-                <option value="all">All Classes</option>
+                <option value="all" data-i18n="option_all_classes">All Classes</option>
             </select>
 
             <input type="date" id="filterDate" class="am-field" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
@@ -44,7 +45,7 @@
 
         <button type="button" id="exportCsvBtn" onclick="exportFilteredCsv()" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#4f46e5;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 4V15M12 15L8 11M12 15L16 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17V18.5C5 19.33 5.67 20 6.5 20H17.5C18.33 20 19 19.33 19 18.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            Export to CSV
+            <span data-i18n="btn_export_csv">Export to CSV</span>
         </button>
 
         <div id="filteredList" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -54,26 +55,26 @@
     <!-- ADD / CORRECT ATTENDANCE -->
     <section class="attendance-card">
 
-        <div class="card-label">Add or Correct Attendance</div>
+        <div class="card-label" data-i18n="label_add_correct_attendance">Add or Correct Attendance</div>
 
         <div style="display:flex;flex-direction:column;gap:10px">
 
            <select id="studentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="">Select student...</option>
+                <option value="" data-i18n="option_select_student">Select student...</option>
             </select>
 
                        <input type="date" id="recordDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
 
            <select id="recordStatus" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="Hadir">Present</option>
-                <option value="Izin">Permission</option>
-                <option value="Sakit">Sick</option>
-                <option value="Alpa">Absent</option>
+                <option value="Hadir" data-i18n="status_present">Present</option>
+                <option value="Izin" data-i18n="status_permission">Permission</option>
+                <option value="Sakit" data-i18n="status_sick">Sick</option>
+                <option value="Alpa" data-i18n="status_absent">Absent</option>
             </select>
 
-           <textarea id="recordReason" class="am-field" rows="2" placeholder="Reason (optional for Present)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
+           <textarea id="recordReason" class="am-field" rows="2" data-i18n-placeholder="placeholder_reason_optional" placeholder="Reason (optional for Present)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
 
-            <button type="button" class="submit-button" id="saveRecordBtn" onclick="saveRecord()" style="margin-top:2px">
+            <button type="button" class="submit-button" id="saveRecordBtn" onclick="saveRecord()" style="margin-top:2px" data-i18n="btn_save_attendance">
                 Save Attendance
             </button>
 
@@ -110,7 +111,11 @@ const statusIconSvg = {
 const unknownIconSvg =
     '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.3C9.7 8 10.8 7 12 7C13.4 7 14.5 8.1 14.5 9.4C14.5 10.9 12 11 12 13.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.2" r="1" fill="currentColor"/></svg>';
 
-const statusLabel = { Hadir: "Present", Izin: "Permission", Sakit: "Sick", Alpa: "Absent" };
+const statusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
+function statusLabelOf(status) {
+    const entry = translations[statusKeyMap[status]];
+    return (entry ? entry[getLang()] : "") || status || "";
+}
 async function checkAdmin() {
     const user = await requireLogin();
     if (!user) return;
@@ -122,7 +127,7 @@ async function checkAdmin() {
         .single();
 
     if (error || !profile || profile.role !== "admin") {
-        alert("This page is for admins only.");
+        alert(translations.alert_admin_only[getLang()]);
         window.location.href = "index.html";
         return;
     }
@@ -172,7 +177,7 @@ async function loadStudents() {
 
 async function renderRow(item, showDate) {
     const cls = (item.status || "").toLowerCase();
-    const sub = (showDate ? item.date + " · " : "") + (item.time ? item.time + " · " : "") + (item.reason || statusLabel[item.status] || "-");
+    const sub = (showDate ? item.date + " · " : "") + (item.time ? item.time + " · " : "") + (item.reason || statusLabelOf(item.status) || "-");
 
     let photoHtml = "";
 
@@ -227,13 +232,13 @@ async function loadToday() {
                 <div class="am-icon" style="width:38px;height:38px;border-radius:13px;background:#eee;display:flex;align-items:center;justify-content:center;color:#94a3b8">${unknownIconSvg}</div>
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${s.name}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · Not checked in yet</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · ${translations.text_not_checked_in[getLang()]}</span>
                 </div>
             </div>
         `);
     }
 
-    container.innerHTML = rows.join("") || "<p style='color:#888;font-size:13px'>No students yet.</p>";
+    container.innerHTML = rows.join("") || "<p style='color:#888;font-size:13px'>" + translations.text_no_students[getLang()] + "</p>";
 }
 
 let currentFilteredData = [];
@@ -251,7 +256,7 @@ async function loadFiltered() {
     const container = document.getElementById("filteredList");
 
     if (error) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>Failed to load.</p>";
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_failed_to_load[getLang()] + "</p>";
         currentFilteredData = [];
         return;
     }
@@ -259,7 +264,7 @@ async function loadFiltered() {
     currentFilteredData = data || [];
 
     if (!data || data.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>No records for this filter.</p>";
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_records_filter[getLang()] + "</p>";
         return;
     }
 
@@ -282,7 +287,7 @@ function csvEscape(value) {
 function exportFilteredCsv() {
 
     if (!currentFilteredData || currentFilteredData.length === 0) {
-        showToast("No records to export for this filter.", "error");
+        showToast(translations.toast_no_records_export[getLang()], "error");
         return;
     }
 
@@ -297,7 +302,7 @@ function exportFilteredCsv() {
             csvEscape(r.date),
             csvEscape(r.day),
             csvEscape(r.time),
-            csvEscape(statusLabel[r.status] || r.status),
+            csvEscape(statusLabelOf(r.status)),
             csvEscape(r.reason)
         ].join(","));
     });
@@ -318,7 +323,7 @@ function exportFilteredCsv() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showToast("CSV exported.", "success");
+    showToast(translations.toast_csv_exported[getLang()], "success");
 }
 
 
@@ -330,15 +335,17 @@ async function saveRecord() {
     const reason = document.getElementById("recordReason").value.trim();
     const btn = document.getElementById("saveRecordBtn");
 
+    const lang = getLang();
+
     if (!userId || !date) {
-        showToast("Please select a student and a date.", "error");
+        showToast(translations.toast_select_student_date[lang], "error");
         return;
     }
 
     const student = allStudents.find(s => s.id === userId);
 
     btn.disabled = true;
-    btn.textContent = "Saving...";
+    btn.textContent = translations.btn_saving[lang];
 
     const { data: existing } = await supabaseClient
         .from("attendance")
@@ -368,14 +375,14 @@ async function saveRecord() {
     }
 
     btn.disabled = false;
-    btn.textContent = "Save Attendance";
+    btn.textContent = translations.btn_save_attendance[lang];
 
     if (error) {
-        showToast("Failed to save: " + error.message, "error");
+        showToast(translations.toast_save_record_failed[lang] + error.message, "error");
         return;
     }
 
-    showToast(existing ? "Attendance corrected." : "Attendance added.", "success");
+    showToast(existing ? translations.toast_attendance_corrected[lang] : translations.toast_attendance_added[lang], "success");
     document.getElementById("recordReason").value = "";
 
     await loadToday();

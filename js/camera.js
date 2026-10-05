@@ -35,15 +35,22 @@ function resetFaceBoxTimer() {
 // is a basic anti-spoofing measure, not foolproof against a live video of
 // someone else, but it blocks the simple "use a photo" trick.
 
-const EAR_CLOSED_THRESHOLD = 0.21;   // eye aspect ratio below this = eyes closed
-const EAR_OPEN_THRESHOLD = 0.26;     // eye aspect ratio above this = eyes open
+// Fixed EAR thresholds don't work well across different phones/cameras
+// (lighting, distance, lens quality all shift the numbers), so instead we
+// track a per-person baseline "eyes open" EAR and look for a relative dip,
+// which adapts automatically to whoever is in frame.
+const EAR_CLOSE_RATIO = 0.80;   // eyes considered closed below 80% of the open baseline
+const EAR_OPEN_RATIO = 0.88;    // eyes considered open again above 88% of the open baseline
+const EAR_BASELINE_SMOOTHING = 0.15;
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
+let earBaseline = null;              // running "eyes open" EAR baseline, recalculated per face
 let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
 
 function resetLiveness() {
     livenessPassed = false;
     eyesClosedSeen = false;
+    earBaseline = null;
     if (livenessStatusTimer) {
         clearTimeout(livenessStatusTimer);
         livenessStatusTimer = null;
@@ -77,11 +84,24 @@ function updateLiveness(landmarks) {
     const earRight = eyeAspectRatio(pts, [42, 43, 44, 45, 46, 47]);
     const ear = (earLeft + earRight) / 2;
 
-    if (ear < EAR_CLOSED_THRESHOLD) {
+    if (earBaseline === null) {
+        earBaseline = ear;
+    }
+
+    const closedThreshold = earBaseline * EAR_CLOSE_RATIO;
+    const openThreshold = earBaseline * EAR_OPEN_RATIO;
+
+    if (ear < closedThreshold) {
         eyesClosedSeen = true;
-    } else if (ear > EAR_OPEN_THRESHOLD && eyesClosedSeen) {
-        // Eyes went closed, then open again: that's a blink.
-        livenessPassed = true;
+    } else if (ear > openThreshold) {
+        // Keep the baseline tracking this person's actual "eyes open" EAR,
+        // so it slowly adapts if they move closer/further from the camera.
+        earBaseline = earBaseline + (ear - earBaseline) * EAR_BASELINE_SMOOTHING;
+
+        if (eyesClosedSeen) {
+            // Eyes went closed, then open again: that's a blink.
+            livenessPassed = true;
+        }
     }
 }
 
@@ -261,7 +281,7 @@ async function runFaceDetectionLoop() {
         const result = await faceapi
             .detectSingleFace(
                 video,
-                new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
+                new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.5 })
             )
             .withFaceLandmarks(true);
 

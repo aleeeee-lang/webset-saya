@@ -143,11 +143,12 @@ function drawFaceBox(result) {
     const faceH = maxY - minY;
     const foreheadPad = faceH * 0.22;   // landmarks stop at the eyebrows, so add a little room for the forehead
     const sidePad = faceW * 0.02;       // landmarks already span cheek-to-cheek, keep this snug
+    const chinTrim = faceH * 0.05;      // the jawline landmark sits a touch below the visual chin, so pull it up
 
     const faceMinX = (minX - sidePad) * scale - offsetX;
     const faceMaxX = (maxX + sidePad) * scale - offsetX;
     const faceMinY = (minY - foreheadPad) * scale - offsetY;
-    const faceMaxY = maxY * scale - offsetY;
+    const faceMaxY = (maxY - chinTrim) * scale - offsetY;
 
     const x = faceMinX;
     const y = faceMinY;

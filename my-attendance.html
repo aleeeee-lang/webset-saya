@@ -231,8 +231,9 @@ function renderQuickStats(data) {
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     }).length;
 
-    document.getElementById("myStreak").textContent = streak + " Days";
-    document.getElementById("myActiveDays").textContent = activeDays + " Days";
+    const daysUnitLabel = translations.unit_days[getLang()];
+    document.getElementById("myStreak").textContent = streak + " " + daysUnitLabel;
+    document.getElementById("myActiveDays").textContent = activeDays + " " + daysUnitLabel;
 }
 
 function renderActivity(data) {

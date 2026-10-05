@@ -171,22 +171,6 @@ function goBack() {
     }
 }
 
-let settingsTouchStartX = 0;
-
-document.addEventListener("touchstart", function (event) {
-    settingsTouchStartX = event.changedTouches[0].screenX;
-});
-
-document.addEventListener("touchend", function (event) {
-    const touchEndX = event.changedTouches[0].screenX;
-    const swipeDistance = touchEndX - settingsTouchStartX;
-
-    // Swipe kanan → kembali ke halaman sebelumnya
-    if (swipeDistance > 80) {
-        goBack();
-    }
-});
-
 </script>
 
 </body>

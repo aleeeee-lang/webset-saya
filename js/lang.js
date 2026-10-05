@@ -84,6 +84,7 @@ const translations = {
     score_needs_improvement: { en: "Needs improvement", id: "Perlu ditingkatkan" },
     current_streak: { en: "Current Streak", id: "Rentetan Saat Ini" },
     active_days: { en: "Active Days", id: "Hari Aktif" },
+    unit_days: { en: "Days", id: "Hari" },
     attendance_activity_label: { en: "ATTENDANCE ACTIVITY", id: "AKTIVITAS ABSENSI" },
     recent_activity: { en: "Recent Activity", id: "Aktivitas Terbaru" },
     no_activity_yet: { en: "No activity yet.", id: "Belum ada aktivitas." },

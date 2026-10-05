@@ -517,7 +517,7 @@ html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
 }
 
 html[data-theme="dark"] .attendance-page button[aria-label="Back"] {
-    background: #242842 !important;
+    background: transparent !important;
     color: #e5e7f5 !important;
 }
 
@@ -660,7 +660,7 @@ html[data-theme="dark"] .attendance-page [style*="color:#dc3545"] {
 }
 
 html[data-theme="dark"] .attendance-page button[aria-label="Back"] {
-    background: #242842 !important;
+    background: transparent !important;
     color: #ececec !important;
 }
 

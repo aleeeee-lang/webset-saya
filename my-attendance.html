@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Attendance - Attendly</title>
+<title>My Attendance - Attendreem</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
 <script src="js/lang.js"></script>
@@ -252,11 +252,11 @@ function renderActivity(data) {
         let label;
         if (d.toDateString() === todayStr) label = tr("label_today");
         else if (d.toDateString() === yestStr) label = tr("label_yesterday");
-        else label = d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }).toUpperCase();
+        else label = dayMonthLabel(d).toUpperCase();
 
         const cls = item.status.toLowerCase();
         const sub = item.status === "Hadir"
-            ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }) + " · " + (item.time || "-")
+            ? dayMonthLabel(d) + " · " + (item.time || "-")
             : (item.time || "-") + " · " + (item.reason || myStatusLabelOf(item.status));
 
         return `
@@ -281,7 +281,7 @@ function renderCalendar(data) {
     const month = now.getMonth();
 
     document.getElementById("calendarMonthLabel").textContent =
-        now.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+        monthYearLabel(now);
 
     const statusByDay = {};
     data.forEach(function (item) {

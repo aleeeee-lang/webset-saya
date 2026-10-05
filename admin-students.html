@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Students - Attendly</title>
+<title>Manage Students - Attendreem</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/toast.js"></script>
 </head>
@@ -13,8 +13,13 @@
 
 <main class="attendance-page">
 
-    <section class="attendance-intro">
-        <h2>Manage Students</h2>
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:#f1f1f6;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0">Manage Students</h2>
     </section>
 
     <!-- ADD STUDENT FORM -->
@@ -96,6 +101,11 @@ async function addStudent() {
 
     if (!name || !email || !password) {
         showToast("Name, email, and password are required.", "error");
+        return;
+    }
+
+    if (nis && allStudentsData.some(s => (s.nis || "").trim().toLowerCase() === nis.toLowerCase())) {
+        showToast("That NIS/NIM is already used by another student.", "error");
         return;
     }
 
@@ -215,6 +225,11 @@ async function saveEditStudent(id) {
         return;
     }
 
+    if (nis && allStudentsData.some(s => s.id !== id && (s.nis || "").trim().toLowerCase() === nis.toLowerCase())) {
+        showToast("That NIS/NIM is already used by another student.", "error");
+        return;
+    }
+
     const { error } = await supabaseClient
         .from("profiles")
         .update({ name: name, class: studentClass, nis: nis })
@@ -248,6 +263,27 @@ async function deleteStudent(id, name) {
 }
 
 checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+let pageTouchStartX = 0;
+
+document.addEventListener("touchstart", function (event) {
+    pageTouchStartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", function (event) {
+    const touchEndX = event.changedTouches[0].screenX;
+    if (touchEndX - pageTouchStartX > 80) {
+        goBack();
+    }
+});
 
 </script>
 

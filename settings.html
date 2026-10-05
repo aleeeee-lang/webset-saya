@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settings - Attendly</title>
+<title>Settings - Attendreem</title>
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
 <script src="js/lang.js"></script>
@@ -15,12 +15,17 @@
 
 <main class="attendance-page">
 
-    <section class="attendance-intro">
-        <h2>Settings</h2>
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:#f1f1f6;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_settings">Settings</h2>
     </section>
 
     <section class="attendance-card" id="accountInfoCard">
-        <div class="card-label">Account Info</div>
+        <div class="card-label" data-i18n="label_account_info">Account Info</div>
         <div style="display:flex;flex-direction:column;gap:4px">
             <span style="font-size:14px;color:#20243a" id="settingsName">-</span>
             <span style="font-size:12px;color:#888" id="settingsEmail">-</span>
@@ -32,13 +37,13 @@
 
         <a href="change-password.html" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V10" stroke="currentColor" stroke-width="1.8"/></svg>
-            <span style="flex:1;font-size:13px">Change Password</span>
+            <span style="flex:1;font-size:13px" data-i18n="menu_change_password">Change Password</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
 
        <div style="display:flex;align-items:center;gap:12px;padding:12px 0">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M20 14.5C18.9 14.8 17.7 15 16.5 15C10.7 15 6 10.3 6 4.5C6 3.3 6.2 2.1 6.5 1C3.4 2.7 1.5 6 1.5 9.7C1.5 15.1 5.9 19.5 11.3 19.5C15.5 19.5 19 16.9 20 14.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="currentColor" fill-opacity="0.08"/></svg>
-            <span style="flex:1;font-size:13px;color:#20243a">Dark Mode</span>
+            <span style="flex:1;font-size:13px;color:#20243a" data-i18n="label_dark_mode">Dark Mode</span>
             <label style="position:relative;width:44px;height:26px;flex-shrink:0">
                 <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0">
                 <span id="darkModeSlider" style="position:absolute;inset:0;background:#e2e8f0;border-radius:20px;transition:0.2s;cursor:pointer"></span>
@@ -48,7 +53,7 @@
 
         <div style="display:flex;align-items:center;gap:12px;padding:12px 0">
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3 12H21M12 3C14.5 5.5 15.8 8.5 15.8 12C15.8 15.5 14.5 18.5 12 21C9.5 18.5 8.2 15.5 8.2 12C8.2 8.5 9.5 5.5 12 3Z" stroke="currentColor" stroke-width="1.8"/></svg>
-    <span style="flex:1;font-size:13px;color:#20243a">Language</span>
+    <span style="flex:1;font-size:13px;color:#20243a" data-i18n="label_language">Language</span>
     <div style="display:flex;gap:6px">
         <button type="button" class="lang-btn" id="langIdBtn">ID</button>
         <button type="button" class="lang-btn" id="langEnBtn">EN</button>
@@ -57,7 +62,7 @@
 
         <a href="#" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 11V16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="8" r="0.9" fill="currentColor"/></svg>
-            <span style="flex:1;font-size:13px">About Attendly</span>
+            <span style="flex:1;font-size:13px" data-i18n="menu_about">About Attendreem</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
 
@@ -67,13 +72,13 @@
 
         <a href="admin-students.html" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M14.7 6.3L17.7 9.3M4 20L11 13C10.6 12 10.7 10.8 11.5 10C12.6 8.9 14.3 8.9 15.4 10C16.5 11.1 16.5 12.8 15.4 13.9C14.6 14.7 13.4 14.8 12.4 14.4L5.4 21.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span style="flex:1;font-size:13px">Manage Students</span>
+            <span style="flex:1;font-size:13px" data-i18n="menu_manage_students">Manage Students</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
 
                <a href="admin-attendance.html" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><rect x="5" y="5" width="14" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4H15V6.2H9V4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 11H16M8 14.5H16M8 18H12.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-            <span style="flex:1;font-size:13px">Manage Attendance</span>
+            <span style="flex:1;font-size:13px" data-i18n="menu_manage_attendance">Manage Attendance</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
     </section>
@@ -82,7 +87,7 @@
 
         <button type="button" onclick="logoutUser()" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 4H8C6.9 4 6 4.9 6 6V18C6 19.1 6.9 20 8 20H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11 12H21M21 12L18 9M21 12L18 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span style="flex:1;font-size:13px;color:#dc3545">Logout</span>
+            <span style="flex:1;font-size:13px;color:#dc3545" data-i18n="btn_logout">Logout</span>
         </button>
 
     </section>
@@ -130,7 +135,7 @@ async function loadAccountInfo() {
     if (profile) {
         document.getElementById("settingsName").textContent = profile.name || "-";
         document.getElementById("settingsClass").textContent =
-            profile.role === "admin" ? "Admin" : (profile.class || "-");
+            profile.role === "admin" ? translations.label_admin[getLang()] : (profile.class || "-");
 
         if (profile.role === "admin") {
             document.getElementById("adminSettingsSection").style.display = "block";
@@ -157,6 +162,30 @@ document.getElementById("langEnBtn").addEventListener("click", function () {
 });
 
 loadAccountInfo();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "my-attendance.html";
+    }
+}
+
+let settingsTouchStartX = 0;
+
+document.addEventListener("touchstart", function (event) {
+    settingsTouchStartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", function (event) {
+    const touchEndX = event.changedTouches[0].screenX;
+    const swipeDistance = touchEndX - settingsTouchStartX;
+
+    // Swipe kanan → kembali ke halaman sebelumnya
+    if (swipeDistance > 80) {
+        goBack();
+    }
+});
 
 </script>
 

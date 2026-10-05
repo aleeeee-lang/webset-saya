@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Dashboard - Attendly</title>
+    <title>Dashboard - Attendreem</title>
 
     <link
         rel="stylesheet"
@@ -624,6 +624,15 @@
 
     <script>
 
+        let dashboardShowAll = false;
+
+        const dashboardStatusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
+
+        function dashboardStatusLabelOf(status) {
+            const entry = translations[dashboardStatusKeyMap[status]];
+            return (entry ? entry[getLang()] : "") || status;
+        }
+
         async function loadDashboard() {
 
             const { data, error } = await getMyAttendance();
@@ -743,8 +752,7 @@
 
 window.allAttendanceData = data;
 
-const showAll =
-    document.getElementById("viewAllBtn").textContent.trim() === "Show Less";
+const showAll = dashboardShowAll;
 
 const recent =
     showAll ? data : data.slice(0, 3);
@@ -807,7 +815,7 @@ const recent =
                                     </strong>
 
                                     <span>
-                                        ${item.day || ""}
+                                        ${dayNameOf(item.date)}
                                     </span>
 
                                 </div>
@@ -815,7 +823,7 @@ const recent =
 
                                 <div class="recent-status ${item.status.toLowerCase()}">
 
-                                    ${item.status}
+                                    ${dashboardStatusLabelOf(item.status)}
 
                                 </div>
 
@@ -888,10 +896,13 @@ const recent =
 
         function toggleViewAll() {
 
-    const btn = document.getElementById("viewAllBtn");
+    dashboardShowAll = !dashboardShowAll;
 
-    btn.textContent =
-        btn.textContent.trim() === "View All" ? "Show Less" : "View All";
+    const btn = document.getElementById("viewAllBtn");
+    const key = dashboardShowAll ? "show_less" : "view_all";
+    const lang = getLang();
+
+    btn.textContent = translations[key][lang];
 
     loadDashboard();
 

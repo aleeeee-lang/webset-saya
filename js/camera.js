@@ -4,6 +4,134 @@ let capturedPhoto = null;
 
 
 // =====================================
+// FACE DETECTION
+// =====================================
+
+const FACE_MODEL_URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights";
+
+let faceModelsLoaded = false;
+let faceDetectionAvailable = true;   // becomes false if models fail to load
+let faceDetected = false;
+let faceDetectionRunning = false;
+
+function setFaceStatus(key, color) {
+    const el = document.getElementById("faceStatus");
+    if (!el) return;
+
+    const lang = typeof getLang === "function" ? getLang() : "en";
+    const entry = typeof translations !== "undefined" ? translations[key] : null;
+
+    el.textContent = entry ? entry[lang] : "";
+    el.style.color = color;
+}
+
+function setTakePhotoEnabled(enabled) {
+    const btn = document.getElementById("takePhotoBtn");
+    if (btn) btn.disabled = !enabled;
+}
+
+async function loadFaceModels() {
+
+    if (faceModelsLoaded || !faceDetectionAvailable) return;
+
+    if (typeof faceapi === "undefined") {
+        faceDetectionAvailable = false;
+        return;
+    }
+
+    try {
+
+        const loadPromise = faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL);
+
+        const timeoutPromise = new Promise(function (_, reject) {
+            setTimeout(function () { reject(new Error("Face model load timeout")); }, 8000);
+        });
+
+        await Promise.race([loadPromise, timeoutPromise]);
+
+        faceModelsLoaded = true;
+
+    } catch (error) {
+
+        console.error("Failed to load face detection models:", error);
+        faceDetectionAvailable = false;
+
+    }
+
+}
+
+async function runFaceDetectionLoop() {
+
+    if (!cameraStream) {
+        faceDetectionRunning = false;
+        return;
+    }
+
+    if (!faceDetectionAvailable) {
+        setFaceStatus("face_unavailable", "#64748b");
+        setTakePhotoEnabled(true);
+        faceDetectionRunning = false;
+        return;
+    }
+
+    const video = document.getElementById("video");
+
+    if (!faceModelsLoaded) {
+        setFaceStatus("face_loading", "#64748b");
+        requestAnimationFrame(runFaceDetectionLoop);
+        return;
+    }
+
+    if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
+        requestAnimationFrame(runFaceDetectionLoop);
+        return;
+    }
+
+    try {
+
+        const result = await faceapi.detectSingleFace(
+            video,
+            new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
+        );
+
+        faceDetected = !!result;
+
+        if (faceDetected) {
+            setFaceStatus("face_detected", "#16a34a");
+            setTakePhotoEnabled(true);
+        } else {
+            setFaceStatus("face_not_detected", "#d97706");
+            setTakePhotoEnabled(false);
+        }
+
+    } catch (error) {
+        console.error("Face detection error:", error);
+    }
+
+    if (cameraStream) {
+        requestAnimationFrame(runFaceDetectionLoop);
+    } else {
+        faceDetectionRunning = false;
+    }
+
+}
+
+function startFaceDetection() {
+
+    faceDetected = false;
+    setTakePhotoEnabled(false);
+
+    loadFaceModels();
+
+    if (!faceDetectionRunning) {
+        faceDetectionRunning = true;
+        runFaceDetectionLoop();
+    }
+
+}
+
+
+// =====================================
 // START CAMERA
 // =====================================
 
@@ -65,6 +193,7 @@ video.style.display = "block";
 
         await video.play();
 
+        startFaceDetection();
 
         console.log("KAMERA BERHASIL DIBUKA");
 
@@ -114,6 +243,16 @@ function takePhoto() {
     ) {
 
         showToast("Kamera belum aktif.", "error");
+
+        return;
+
+    }
+
+
+    // Cek wajah terdeteksi (kalau pendeteksi wajah tersedia)
+    if (faceDetectionAvailable && !faceDetected) {
+
+        showToast("Posisikan wajahmu di dalam bingkai dulu.", "error");
 
         return;
 
@@ -251,6 +390,15 @@ function stopCamera() {
 
         video.srcObject = null;
 
+    }
+
+    faceDetected = false;
+    faceDetectionRunning = false;
+    setTakePhotoEnabled(false);
+
+    const faceStatusEl = document.getElementById("faceStatus");
+    if (faceStatusEl) {
+        faceStatusEl.textContent = "";
     }
 
 

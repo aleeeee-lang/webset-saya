@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>History - Attendly</title>
+    <title>History - Attendreem</title>
 
    <link rel="stylesheet" href="style.css?v=4">
 
@@ -394,7 +394,7 @@ function fillMonthOptions(data) {
             seen.add(key);
             options.push({
                 key: key,
-                label: d.toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+                label: monthYearLabel(d)
             });
         }
     });
@@ -449,8 +449,8 @@ function renderHistory() {
         const d = new Date(item.date);
         const isToday = d.toDateString() === todayStr;
         const label = isToday
-            ? "TODAY"
-            : d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }).toUpperCase();
+            ? tr("label_today")
+            : dayMonthLabel(d).toUpperCase();
 
         const cls = item.status.toLowerCase();
         const sub = item.status === "Hadir"
@@ -464,7 +464,7 @@ function renderHistory() {
                     <div class="history-status-icon ${cls}">${statusIcon[item.status] || "?"}</div>
                     <div class="history-content">
                         <strong>${statusLabelOf(item.status)}</strong>
-                        <span>${d.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}</span>
+                        <span>${dayMonthYearLabel(d)}</span>
                         <small>${sub}</small>
                     </div>
                     <div class="history-time">${item.time || "--"}</div>

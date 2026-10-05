@@ -14,6 +14,19 @@ let faceDetectionAvailable = true;   // becomes false if models fail to load
 let faceDetected = false;
 let faceDetectionRunning = false;
 
+const FACE_BOX_DISPLAY_MS = 5000;   // how long the box stays visible after a face is first detected
+let faceWasDetected = false;
+let faceBoxVisible = false;
+let faceBoxTimer = null;
+
+function resetFaceBoxTimer() {
+    if (faceBoxTimer) {
+        clearTimeout(faceBoxTimer);
+        faceBoxTimer = null;
+    }
+    faceBoxVisible = false;
+}
+
 function setFaceStatus(key, color) {
     const el = document.getElementById("faceStatus");
     if (!el) return;
@@ -60,6 +73,62 @@ async function loadFaceModels() {
 
 }
 
+function clearFaceBox() {
+    const boxCanvas = document.getElementById("faceBoxCanvas");
+    if (!boxCanvas) return;
+    const ctx = boxCanvas.getContext("2d");
+    ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
+}
+
+function drawFaceBox(detection) {
+
+    const video = document.getElementById("video");
+    const boxCanvas = document.getElementById("faceBoxCanvas");
+    if (!boxCanvas || !video) return;
+
+    const displayWidth = video.clientWidth;
+    const displayHeight = video.clientHeight;
+    if (!displayWidth || !displayHeight) return;
+
+    if (boxCanvas.width !== displayWidth || boxCanvas.height !== displayHeight) {
+        boxCanvas.width = displayWidth;
+        boxCanvas.height = displayHeight;
+    }
+
+    // Keep the box mirrored in sync with the mirrored video preview.
+    boxCanvas.style.transform = video.style.transform || "none";
+
+    const ctx = boxCanvas.getContext("2d");
+    ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
+
+    if (!detection || !video.videoWidth || !video.videoHeight) return;
+
+    // The video uses object-fit:cover, so native detection coordinates
+    // need to be mapped through the same cover-crop scale/offset.
+    const scale = Math.max(displayWidth / video.videoWidth, displayHeight / video.videoHeight);
+    const offsetX = (video.videoWidth * scale - displayWidth) / 2;
+    const offsetY = (video.videoHeight * scale - displayHeight) / 2;
+
+    const box = detection.box;
+    const x = box.x * scale - offsetX;
+    const y = box.y * scale - offsetY;
+    const w = box.width * scale;
+    const h = box.height * scale;
+    const r = Math.max(4, Math.min(16, w / 4, h / 4));
+
+    ctx.strokeStyle = "#22c55e";
+    ctx.lineWidth = 3;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+    ctx.stroke();
+}
+
 async function runFaceDetectionLoop() {
 
     if (!cameraStream) {
@@ -70,6 +139,8 @@ async function runFaceDetectionLoop() {
     if (!faceDetectionAvailable) {
         setFaceStatus("face_unavailable", "#64748b");
         setTakePhotoEnabled(true);
+        resetFaceBoxTimer();
+        clearFaceBox();
         faceDetectionRunning = false;
         return;
     }
@@ -99,10 +170,26 @@ async function runFaceDetectionLoop() {
         if (faceDetected) {
             setFaceStatus("face_detected", "#16a34a");
             setTakePhotoEnabled(true);
+
+            if (!faceWasDetected) {
+                // Face just appeared: show the box, then auto-hide it
+                // after a few seconds so the camera view stays clean.
+                resetFaceBoxTimer();
+                faceBoxVisible = true;
+                faceBoxTimer = setTimeout(function () {
+                    faceBoxVisible = false;
+                    clearFaceBox();
+                }, FACE_BOX_DISPLAY_MS);
+            }
         } else {
             setFaceStatus("face_not_detected", "#d97706");
             setTakePhotoEnabled(false);
+            resetFaceBoxTimer();
         }
+
+        faceWasDetected = faceDetected;
+
+        drawFaceBox(faceBoxVisible ? result : null);
 
     } catch (error) {
         console.error("Face detection error:", error);
@@ -119,6 +206,8 @@ async function runFaceDetectionLoop() {
 function startFaceDetection() {
 
     faceDetected = false;
+    faceWasDetected = false;
+    resetFaceBoxTimer();
     setTakePhotoEnabled(false);
 
     loadFaceModels();
@@ -327,6 +416,9 @@ context.restore();
     // Sembunyikan kamera live
     video.style.display = "none";
 
+    resetFaceBoxTimer();
+    clearFaceBox();
+
 }
 
     // =====================================
@@ -393,8 +485,11 @@ function stopCamera() {
     }
 
     faceDetected = false;
+    faceWasDetected = false;
     faceDetectionRunning = false;
+    resetFaceBoxTimer();
     setTakePhotoEnabled(false);
+    clearFaceBox();
 
     const faceStatusEl = document.getElementById("faceStatus");
     if (faceStatusEl) {

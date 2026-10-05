@@ -111,17 +111,23 @@ function drawFaceBox(detection) {
 
     const box = detection.box;
 
-    // Use the detector's box as-is (it already scales to each user's face
-    // size/distance automatically) with just a small upward nudge, since
-    // TinyFaceDetector's raw box tends to miss the forehead slightly.
+    // TinyFaceDetector's raw box runs wider than the actual face and sits a
+    // little low, so narrow it inward (keeping it centered) and nudge it up.
+    // It's still fully recomputed every frame, so it keeps tracking the
+    // face's real size as the user moves closer/farther or turns.
+    const rawX = box.x * scale - offsetX;
+    const rawY = box.y * scale - offsetY;
     const rawW = box.width * scale;
     const rawH = box.height * scale;
-    const shiftUp = rawH * 0.06;
 
-    const x = box.x * scale - offsetX;
-    const y = (box.y * scale - offsetY) - shiftUp;
-    const w = rawW;
-    const h = rawH;
+    const insetW = rawW * 0.14;
+    const insetH = rawH * 0.06;
+    const shiftUp = rawH * 0.08;
+
+    const w = rawW - insetW * 2;
+    const h = rawH - insetH;
+    const x = rawX + insetW;
+    const y = rawY + insetH - shiftUp;
     const r = Math.max(4, Math.min(16, w / 4, h / 4));
 
     ctx.strokeStyle = "#22c55e";

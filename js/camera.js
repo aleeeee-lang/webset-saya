@@ -111,22 +111,25 @@ function drawFaceBox(detection) {
 
     const box = detection.box;
 
-    // TinyFaceDetector's raw box runs wider than the actual face and sits a
-    // little low, so narrow it inward (keeping it centered) and nudge it up.
-    // It's still fully recomputed every frame, so it keeps tracking the
-    // face's real size as the user moves closer/farther or turns.
+    // TinyFaceDetector's raw box is close to square, which is noticeably
+    // wider than a real face. Derive the box width from its height using a
+    // typical face width/height ratio instead, centered on the detected
+    // box, and nudge it up a little since the raw box sits low. This is
+    // recomputed every frame, so it keeps tracking the face's real
+    // position/size as the user moves closer/farther or turns.
     const rawX = box.x * scale - offsetX;
     const rawY = box.y * scale - offsetY;
     const rawW = box.width * scale;
     const rawH = box.height * scale;
+    const centerX = rawX + rawW / 2;
 
-    const insetW = rawW * 0.14;
     const insetH = rawH * 0.06;
     const shiftUp = rawH * 0.08;
+    const FACE_WIDTH_RATIO = 0.62;   // typical face width as a fraction of its height
 
-    const w = rawW - insetW * 2;
     const h = rawH - insetH;
-    const x = rawX + insetW;
+    const w = h * FACE_WIDTH_RATIO;
+    const x = centerX - w / 2;
     const y = rawY + insetH - shiftUp;
     const r = Math.max(4, Math.min(16, w / 4, h / 4));
 

@@ -123,7 +123,7 @@ function renderDayCheckboxes() {
         const label = translations[d.key] ? translations[d.key][lang] : d.key;
         const shortLabel = label.slice(0, 3);
         return `
-            <label style="display:flex;align-items:center;gap:4px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;cursor:pointer">
+            <label class="schedule-day-pill" style="display:flex;align-items:center;gap:4px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;cursor:pointer;color:#20243a">
                 <input type="checkbox" class="schedule-day-checkbox" value="${d.iso}" style="margin:0">
                 ${shortLabel}
             </label>

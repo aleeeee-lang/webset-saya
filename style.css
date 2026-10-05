@@ -546,6 +546,18 @@ html[data-theme="dark"] .notification-item.unread {
     background: #262a40;
 }
 
+html[data-theme="dark"] .schedule-day-pill {
+    background: #1f1f1f !important;
+    border-color: #262626 !important;
+    color: #ececec !important;
+}
+
+html[data-theme="dark"] .schedule-day-pill:has(input:checked) {
+    background: #3730a3 !important;
+    border-color: #4f46e5 !important;
+    color: #fff !important;
+}
+
 /* =========================================================
    DARK MODE: SETTINGS GEAR BUTTON
 ========================================================= */

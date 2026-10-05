@@ -136,9 +136,15 @@
 
             <div class="hero-full-image">
 
+                <div class="hero-image-loader" id="heroImageLoader">
+                    <span class="hero-spinner"></span>
+                </div>
+
                 <img
                     src="image/attendance-hero.png"
                     alt="Attendreem attendance"
+                    onload="this.classList.add('loaded');var l=document.getElementById('heroImageLoader');if(l)l.remove();"
+                    onerror="var l=document.getElementById('heroImageLoader');if(l)l.remove();"
                 >
 
                 <a

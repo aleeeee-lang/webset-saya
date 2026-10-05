@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Schedule - Attendreem</title>
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_schedule">Manage Attendance Schedule</h2>
+    </section>
+
+    <!-- EDIT SCHEDULE -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_schedule_class">Class</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <select id="scheduleClassSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_class">Choose a class...</option>
+            </select>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_active_days">Active Days</div>
+                <div id="activeDaysGroup" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+            </div>
+
+            <div style="display:flex;gap:10px">
+                <div style="flex:1">
+                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_start_time">Opens At</div>
+                    <input type="time" id="scheduleStartTime" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_end_time">Closes At</div>
+                    <input type="time" id="scheduleEndTime" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_late_mode">If Outside Schedule</div>
+                <select id="scheduleLateMode" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <option value="block" data-i18n="option_mode_block">Block check-in</option>
+                    <option value="late" data-i18n="option_mode_late">Allow, mark as late</option>
+                </select>
+            </div>
+
+            <button type="button" class="submit-button" id="saveScheduleBtn" onclick="saveSchedule()" style="margin-top:2px" data-i18n="btn_save_schedule">
+                Save Schedule
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- EXISTING SCHEDULES -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_existing_schedules">Configured Schedules</div>
+        <div id="scheduleList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const dayOptions = [
+    { iso: 1, key: "day_mon" },
+    { iso: 2, key: "day_tue" },
+    { iso: 3, key: "day_wed" },
+    { iso: 4, key: "day_thu" },
+    { iso: 5, key: "day_fri" },
+    { iso: 6, key: "day_sat" },
+    { iso: 7, key: "day_sun" }
+];
+
+let allClasses = [];
+let allSchedules = [];
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    renderDayCheckboxes();
+    await loadClasses();
+    await loadSchedules();
+}
+
+function renderDayCheckboxes() {
+    const lang = getLang();
+    const group = document.getElementById("activeDaysGroup");
+
+    group.innerHTML = dayOptions.map(function (d) {
+        const label = translations[d.key] ? translations[d.key][lang] : d.key;
+        const shortLabel = label.slice(0, 3);
+        return `
+            <label style="display:flex;align-items:center;gap:4px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;cursor:pointer">
+                <input type="checkbox" class="schedule-day-checkbox" value="${d.iso}" style="margin:0">
+                ${shortLabel}
+            </label>
+        `;
+    }).join("");
+}
+
+async function loadClasses() {
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("class")
+        .eq("role", "murid");
+
+    if (error || !data) return;
+
+    allClasses = Array.from(new Set(data.map(s => s.class).filter(Boolean))).sort();
+
+    const select = document.getElementById("scheduleClassSelect");
+    allClasses.forEach(function (c) {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+    });
+}
+
+function dayLabelsOf(activeDays, lang) {
+    return dayOptions
+        .filter(function (d) { return activeDays.indexOf(d.iso) !== -1; })
+        .map(function (d) { return (translations[d.key] ? translations[d.key][lang] : d.key).slice(0, 3); })
+        .join(", ");
+}
+
+async function loadSchedules() {
+
+    const { data, error } = await supabaseClient
+        .from("attendance_schedules")
+        .select("*")
+        .order("class", { ascending: true });
+
+    const container = document.getElementById("scheduleList");
+    const lang = getLang();
+
+    if (error || !data || data.length === 0) {
+        allSchedules = [];
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_schedules_yet[lang] + "</p>";
+        return;
+    }
+
+    allSchedules = data;
+
+    container.innerHTML = data.map(function (s) {
+        const modeLabel = s.late_mode === "late" ? translations.label_mode_late_short[lang] : translations.label_mode_block_short[lang];
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${s.class}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayLabelsOf(s.active_days || [], lang)} · ${s.start_time ? s.start_time.slice(0,5) : "-"}-${s.end_time ? s.end_time.slice(0,5) : "-"} · ${modeLabel}</span>
+                </div>
+                <button type="button" onclick="editSchedule('${s.class}')" style="border:none;background:none;color:#4f46e5;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
+                <button type="button" onclick="deleteSchedule('${s.class}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+            </div>
+        `;
+    }).join("");
+}
+
+function editSchedule(cls) {
+    const schedule = allSchedules.find(s => s.class === cls);
+    if (!schedule) return;
+
+    document.getElementById("scheduleClassSelect").value = cls;
+    document.getElementById("scheduleStartTime").value = schedule.start_time ? schedule.start_time.slice(0, 5) : "";
+    document.getElementById("scheduleEndTime").value = schedule.end_time ? schedule.end_time.slice(0, 5) : "";
+    document.getElementById("scheduleLateMode").value = schedule.late_mode || "block";
+
+    document.querySelectorAll(".schedule-day-checkbox").forEach(function (cb) {
+        cb.checked = (schedule.active_days || []).indexOf(Number(cb.value)) !== -1;
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function deleteSchedule(cls) {
+    const lang = getLang();
+
+    if (!confirm(translations.confirm_delete_schedule[lang].replace("{class}", cls))) return;
+
+    const { error } = await supabaseClient.from("attendance_schedules").delete().eq("class", cls);
+
+    if (error) {
+        showToast(translations.toast_schedule_delete_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_schedule_deleted[lang], "success");
+    await loadSchedules();
+}
+
+async function saveSchedule() {
+
+    const lang = getLang();
+    const cls = document.getElementById("scheduleClassSelect").value;
+    const startTime = document.getElementById("scheduleStartTime").value;
+    const endTime = document.getElementById("scheduleEndTime").value;
+    const lateMode = document.getElementById("scheduleLateMode").value;
+    const btn = document.getElementById("saveScheduleBtn");
+
+    if (!cls) {
+        showToast(translations.toast_select_class_first[lang], "error");
+        return;
+    }
+
+    const activeDays = Array.from(document.querySelectorAll(".schedule-day-checkbox:checked")).map(function (cb) {
+        return Number(cb.value);
+    });
+
+    if (activeDays.length === 0) {
+        showToast(translations.toast_select_one_day[lang], "error");
+        return;
+    }
+
+    if (!startTime || !endTime) {
+        showToast(translations.toast_select_class_first[lang], "error");
+        return;
+    }
+
+    const user = await requireLogin();
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_saving[lang];
+
+    const { error } = await supabaseClient
+        .from("attendance_schedules")
+        .upsert(
+            {
+                class: cls,
+                active_days: activeDays,
+                start_time: startTime,
+                end_time: endTime,
+                late_mode: lateMode,
+                updated_by: user.id
+            },
+            { onConflict: "class" }
+        );
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_save_schedule[lang];
+
+    if (error) {
+        showToast(translations.toast_schedule_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_schedule_saved[lang], "success");
+    await loadSchedules();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

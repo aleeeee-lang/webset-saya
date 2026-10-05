@@ -38,6 +38,53 @@ async function saveAttendance() {
 
     const studentClass =
         (profile && profile.class) ? profile.class : null;
+
+    // =========================
+    // CHECK ATTENDANCE SCHEDULE
+    // =========================
+
+    let isLateCheckIn = false;
+
+    if (studentClass) {
+
+        const { data: schedule } = await supabaseClient
+            .from("attendance_schedules")
+            .select("*")
+            .eq("class", studentClass)
+            .maybeSingle();
+
+        if (schedule) {
+
+            const lang = getLang();
+            const nowCheck = new Date();
+            const isoDay = nowCheck.getDay() === 0 ? 7 : nowCheck.getDay();
+            const nowTime = nowCheck.toTimeString().slice(0, 5);
+            const activeDays = schedule.active_days || [];
+            const startTime = (schedule.start_time || "").slice(0, 5);
+            const endTime = (schedule.end_time || "").slice(0, 5);
+
+            if (activeDays.length && activeDays.indexOf(isoDay) === -1) {
+                showToast(translations.toast_schedule_day_inactive[lang], "error");
+                return;
+            }
+
+            if (startTime && nowTime < startTime) {
+                showToast(translations.toast_schedule_not_open_yet[lang] + " " + startTime, "error");
+                return;
+            }
+
+            if (endTime && nowTime > endTime) {
+                if (schedule.late_mode === "late") {
+                    isLateCheckIn = true;
+                    showToast(translations.toast_schedule_late_notice[lang], "error");
+                } else {
+                    showToast(translations.toast_schedule_closed[lang] + " " + endTime, "error");
+                    return;
+                }
+            }
+        }
+    }
+
     // =========================
     // GET STATUS
     // =========================
@@ -97,6 +144,8 @@ async function saveAttendance() {
 
         return;
     }
+
+    const finalReason = isLateCheckIn ? ("[Telat] " + reason).trim() : reason;
 
 
     // =========================
@@ -171,7 +220,7 @@ async function saveAttendance() {
 
                 status: status,
 
-                reason: reason,
+                reason: finalReason,
 
                 photo_url: photoUrl
             }

@@ -133,6 +133,7 @@ const translations = {
     menu_manage_students: { en: "Manage Students", id: "Kelola Siswa" },
     menu_manage_attendance: { en: "Manage Attendance", id: "Kelola Absensi" },
     menu_send_notification: { en: "Send Notification", id: "Kirim Notifikasi" },
+    menu_manage_schedule: { en: "Manage Schedule", id: "Kelola Jadwal" },
     btn_logout: { en: "Logout", id: "Keluar" },
     label_admin: { en: "Admin", id: "Admin" },
 
@@ -219,7 +220,33 @@ const translations = {
     toast_notification_failed: { en: "Failed to send: ", id: "Gagal mengirim: " },
     label_recent_broadcasts: { en: "Recently Sent", id: "Baru Dikirim" },
     text_no_broadcasts_yet: { en: "No notifications sent yet.", id: "Belum ada notifikasi yang dikirim." },
-    target_label_all: { en: "All Members", id: "Semua Anggota" }
+    target_label_all: { en: "All Members", id: "Semua Anggota" },
+
+    page_manage_schedule: { en: "Manage Attendance Schedule", id: "Kelola Jadwal Absen" },
+    label_schedule_class: { en: "Class", id: "Kelas" },
+    option_choose_class: { en: "Choose a class...", id: "Pilih kelas..." },
+    label_active_days: { en: "Active Days", id: "Hari Aktif" },
+    label_start_time: { en: "Opens At", id: "Dibuka Jam" },
+    label_end_time: { en: "Closes At", id: "Ditutup Jam" },
+    label_late_mode: { en: "If Outside Schedule", id: "Jika Di Luar Jadwal" },
+    option_mode_block: { en: "Block check-in", id: "Blokir absen" },
+    option_mode_late: { en: "Allow, mark as late", id: "Tetap bisa, tandai telat" },
+    btn_save_schedule: { en: "Save Schedule", id: "Simpan Jadwal" },
+    toast_schedule_saved: { en: "Schedule saved.", id: "Jadwal disimpan." },
+    toast_schedule_failed: { en: "Failed to save schedule: ", id: "Gagal menyimpan jadwal: " },
+    toast_select_class_first: { en: "Please select a class first.", id: "Silakan pilih kelas dulu." },
+    toast_select_one_day: { en: "Please select at least one active day.", id: "Pilih minimal satu hari aktif." },
+    label_existing_schedules: { en: "Configured Schedules", id: "Jadwal yang Sudah Diatur" },
+    text_no_schedules_yet: { en: "No schedules configured yet.", id: "Belum ada jadwal yang diatur." },
+    confirm_delete_schedule: { en: "Delete the schedule for {class}?", id: "Hapus jadwal untuk {class}?" },
+    toast_schedule_deleted: { en: "Schedule deleted.", id: "Jadwal dihapus." },
+    toast_schedule_delete_failed: { en: "Failed to delete: ", id: "Gagal menghapus: " },
+    label_mode_block_short: { en: "Block", id: "Blokir" },
+    label_mode_late_short: { en: "Mark late", id: "Tandai telat" },
+    toast_schedule_not_open_yet: { en: "Attendance hasn't opened yet. It opens at", id: "Absen belum dibuka. Dibuka jam" },
+    toast_schedule_closed: { en: "Attendance is closed for today. It closed at", id: "Absen sudah ditutup untuk hari ini. Tutup jam" },
+    toast_schedule_day_inactive: { en: "Attendance is not scheduled for today.", id: "Hari ini bukan jadwal absen." },
+    toast_schedule_late_notice: { en: "You checked in outside the schedule, marked as late.", id: "Kamu absen di luar jadwal, dicatat sebagai telat." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

@@ -39,10 +39,10 @@ function resetFaceBoxTimer() {
 // (lighting, distance, lens quality all shift the numbers), so instead we
 // track a per-person baseline "eyes open" EAR and look for a relative dip,
 // which adapts automatically to whoever is in frame.
-const EAR_CLOSE_RATIO = 0.92;   // eyes considered closed below 92% of the open baseline (very sensitive: some faces/angles only show a small EAR drop on a blink)
-const EAR_OPEN_RATIO = 0.90;    // eyes considered open again above 90% of the open baseline
-const EAR_BASELINE_SMOOTHING = 0.15;
-const EAR_CALIBRATION_FRAMES = 12;   // how many frames to sample before locking the "eyes open" baseline
+const EAR_CLOSE_RATIO = 0.96;   // eyes considered closed below 96% of the open baseline (extremely sensitive, so any distance/angle still registers a blink)
+const EAR_OPEN_RATIO = 0.93;    // eyes considered open again above 93% of the open baseline
+const EAR_BASELINE_SMOOTHING = 0.2;
+const EAR_CALIBRATION_FRAMES = 8;   // how many frames to sample before locking the "eyes open" baseline (fewer = ready sooner)
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
 let earBaseline = null;              // running "eyes open" EAR baseline, recalculated per face

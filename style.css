@@ -51,8 +51,8 @@ button,input,select,textarea{font-family:inherit}
 .hero-full-image img{width:100%;height:auto;display:block;opacity:0;transition:opacity .35s ease}
 .hero-full-image img.loaded{opacity:1}
 .hero-checkin-link{position:absolute;top:17.5%;right:5.5%;width:23%;height:13%;display:block;background:transparent;cursor:pointer}
-.hero-image-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:25px;background:linear-gradient(135deg,#6861ff,#8d6bff)}
-.hero-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:heroSpin .8s linear infinite}
+.hero-image-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:25px;background:#fff}
+.hero-spinner{width:32px;height:32px;border:3px solid rgba(0,0,0,.12);border-top-color:#20243a;border-radius:50%;animation:heroSpin .8s linear infinite}
 @keyframes heroSpin{to{transform:rotate(360deg)}}
 
 /* HOME SECTION HEADER */
@@ -559,6 +559,15 @@ html[data-theme="dark"] .notification-item-delete {
 html[data-theme="dark"] .notification-item-delete:hover {
     color: #ff6b85 !important;
     background: rgba(255, 107, 133, 0.12);
+}
+
+html[data-theme="dark"] .hero-image-loader {
+    background: #000 !important;
+}
+
+html[data-theme="dark"] .hero-spinner {
+    border-color: rgba(255, 255, 255, 0.18);
+    border-top-color: #fff;
 }
 
 html[data-theme="dark"] .schedule-day-pill {

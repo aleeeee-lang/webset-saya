@@ -39,8 +39,8 @@ function resetFaceBoxTimer() {
 // (lighting, distance, lens quality all shift the numbers), so instead we
 // track a per-person baseline "eyes open" EAR and look for a relative dip,
 // which adapts automatically to whoever is in frame.
-const EAR_CLOSE_RATIO = 0.80;   // eyes considered closed below 80% of the open baseline
-const EAR_OPEN_RATIO = 0.88;    // eyes considered open again above 88% of the open baseline
+const EAR_CLOSE_RATIO = 0.85;   // eyes considered closed below 85% of the open baseline
+const EAR_OPEN_RATIO = 0.85;    // eyes considered open again above 85% of the open baseline (same as close: any dip-then-rise counts)
 const EAR_BASELINE_SMOOTHING = 0.15;
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
@@ -281,7 +281,7 @@ async function runFaceDetectionLoop() {
         const result = await faceapi
             .detectSingleFace(
                 video,
-                new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.5 })
+                new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.5 })
             )
             .withFaceLandmarks(true);
 

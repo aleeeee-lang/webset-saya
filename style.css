@@ -530,6 +530,22 @@ html[data-theme="dark"] .top-notification-icon svg {
     stroke: #e5e7f5 !important;
 }
 
+html[data-theme="dark"] .notification-item-text {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .notification-item-time {
+    color: #8b90a8 !important;
+}
+
+html[data-theme="dark"] .notification-item {
+    border-bottom-color: #2a2e45;
+}
+
+html[data-theme="dark"] .notification-item.unread {
+    background: #262a40;
+}
+
 /* =========================================================
    DARK MODE: SETTINGS GEAR BUTTON
 ========================================================= */

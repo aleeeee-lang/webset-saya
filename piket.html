@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duty Roster - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_piket">Duty Roster</h2>
+    </section>
+
+    <!-- TODAY -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_piket_today">Today's Duty</div>
+        <div id="piketTodayDate" style="font-size:12px;color:#888;margin-bottom:10px">-</div>
+
+        <div id="piketTodayStudents" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
+
+        <div id="piketTodayStatus" style="font-size:13px;margin-bottom:10px"></div>
+
+        <button type="button" class="submit-button" id="markDoneBtn" onclick="markDone()" style="display:none" data-i18n="btn_mark_done">
+            Mark as Done
+        </button>
+    </section>
+
+    <!-- WEEKLY -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_piket_weekly">Weekly Schedule</div>
+        <div id="piketWeekList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const dayOptions = [
+    { iso: 1, key: "day_mon" },
+    { iso: 2, key: "day_tue" },
+    { iso: 3, key: "day_wed" },
+    { iso: 4, key: "day_thu" },
+    { iso: 5, key: "day_fri" },
+    { iso: 6, key: "day_sat" },
+    { iso: 7, key: "day_sun" }
+];
+
+let myProfile = null;
+let myUser = null;
+let todayIsoDay = null;
+let todayDateStr = null;
+let todayAssignees = [];
+let todayLog = null;
+
+function dayLabelOf(iso, lang) {
+    const d = dayOptions.find(function (d) { return d.iso === iso; });
+    return d && translations[d.key] ? translations[d.key][lang] : String(iso);
+}
+
+async function init() {
+
+    myUser = await requireLogin();
+    if (!myUser) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("id, name, class, role")
+        .eq("id", myUser.id)
+        .single();
+
+    const lang = getLang();
+
+    if (error || !profile || !profile.class) {
+        document.getElementById("piketTodayStudents").innerHTML =
+            "<p style='color:#888;font-size:13px'>" + translations.text_piket_no_class[lang] + "</p>";
+        return;
+    }
+
+    myProfile = profile;
+
+    const now = new Date();
+    todayIsoDay = now.getDay() === 0 ? 7 : now.getDay();
+    todayDateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+
+    document.getElementById("piketTodayDate").textContent = dayLabelOf(todayIsoDay, lang) + ", " + dayMonthYearLabel(now);
+
+    await loadToday();
+    await loadWeekly();
+}
+
+async function loadToday() {
+
+    const lang = getLang();
+
+    const { data: assignees, error: assignError } = await supabaseClient
+        .from("piket_assignments")
+        .select("*")
+        .eq("class", myProfile.class)
+        .eq("day_of_week", todayIsoDay);
+
+    todayAssignees = (assignError || !assignees) ? [] : assignees;
+
+    const studentsContainer = document.getElementById("piketTodayStudents");
+
+    if (todayAssignees.length === 0) {
+        studentsContainer.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_piket_no_duty_today[lang] + "</p>";
+    } else {
+        const amIAssigned = todayAssignees.some(function (a) { return a.student_id === myUser.id; });
+
+        studentsContainer.innerHTML = todayAssignees.map(function (a) {
+            const isMe = a.student_id === myUser.id;
+            const youBadge = isMe ? " <span style='color:#1530c2;font-size:11px;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "";
+            return `
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#eef0ff" : "#f8f8ff"};font-size:13px;color:#20243a">
+                    ${a.student_name}${youBadge}
+                </div>
+            `;
+        }).join("");
+    }
+
+    const { data: log } = await supabaseClient
+        .from("piket_logs")
+        .select("*")
+        .eq("class", myProfile.class)
+        .eq("date", todayDateStr)
+        .maybeSingle();
+
+    todayLog = log || null;
+
+    const statusEl = document.getElementById("piketTodayStatus");
+    const btn = document.getElementById("markDoneBtn");
+
+    const amIAssigned = todayAssignees.some(function (a) { return a.student_id === myUser.id; });
+
+    if (todayAssignees.length === 0) {
+        statusEl.innerHTML = "";
+        btn.style.display = "none";
+    } else if (todayLog) {
+        statusEl.innerHTML =
+            "<span style='color:#16a34a;font-weight:600'>&#10003; " + translations.label_piket_status_done[lang] + "</span>" +
+            " &middot; " + translations.label_piket_done_by[lang] + " " + (todayLog.done_by_name || "-");
+        btn.style.display = "none";
+    } else {
+        statusEl.innerHTML = "<span style='color:#c2850d;font-weight:600'>" + translations.label_piket_status_pending[lang] + "</span>";
+        btn.style.display = amIAssigned ? "block" : "none";
+    }
+}
+
+async function markDone() {
+
+    const lang = getLang();
+    const btn = document.getElementById("markDoneBtn");
+
+    const amIAssigned = todayAssignees.some(function (a) { return a.student_id === myUser.id; });
+
+    if (!amIAssigned) {
+        showToast(translations.toast_piket_not_assigned[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_marking_done[lang];
+
+    const { error } = await supabaseClient
+        .from("piket_logs")
+        .insert({
+            class: myProfile.class,
+            date: todayDateStr,
+            done_by: myUser.id,
+            done_by_name: myProfile.name
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_mark_done[lang];
+
+    if (error) {
+        showToast(translations.toast_piket_mark_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_piket_marked_done[lang], "success");
+    await loadToday();
+}
+
+async function loadWeekly() {
+
+    const lang = getLang();
+
+    const { data, error } = await supabaseClient
+        .from("piket_assignments")
+        .select("*")
+        .eq("class", myProfile.class)
+        .order("day_of_week", { ascending: true });
+
+    const container = document.getElementById("piketWeekList");
+
+    const grouped = {};
+    (data || []).forEach(function (r) {
+        if (!grouped[r.day_of_week]) grouped[r.day_of_week] = [];
+        grouped[r.day_of_week].push(r.student_name);
+    });
+
+    container.innerHTML = dayOptions.map(function (d) {
+        const names = grouped[d.iso];
+        const isToday = d.iso === todayIsoDay;
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:${isToday ? "#eef0ff" : "#f8f8ff"};border-radius:12px">
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${translations[d.key][lang]}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+init();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "index.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

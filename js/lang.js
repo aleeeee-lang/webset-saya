@@ -299,7 +299,39 @@ const translations = {
     label_late_until: { en: "Late Until (optional)", id: "Telat Sampai (opsional)" },
     hint_late_until: { en: "After this time, attendance is fully closed. Leave empty to close right after Closes At.", id: "Setelah jam ini, absen ditutup total. Kosongkan untuk langsung menutup absen setelah Jam Tutup." },
     toast_schedule_late_closed: { en: "Attendance is fully closed now. The late window has ended.", id: "Absen sudah ditutup total. Batas waktu telat sudah lewat." },
-    label_late_window_short: { en: "late until", id: "telat sampai" }
+    label_late_window_short: { en: "late until", id: "telat sampai" },
+
+    /* ===== PIKET ===== */
+    menu_piket: { en: "Duty Roster", id: "Piket" },
+    piket_subtitle: { en: "Cleaning duty schedule", id: "Jadwal piket kebersihan" },
+    page_piket: { en: "Duty Roster", id: "Piket" },
+    page_manage_piket: { en: "Manage Duty Roster", id: "Atur Jadwal Piket" },
+    menu_manage_piket: { en: "Manage Duty Roster", id: "Atur Jadwal Piket" },
+    label_piket_today: { en: "Today's Duty", id: "Piket Hari Ini" },
+    label_piket_class: { en: "Class", id: "Kelas" },
+    label_piket_day: { en: "Day", id: "Hari" },
+    label_piket_students: { en: "Students on Duty", id: "Siswa yang Piket" },
+    btn_save_piket: { en: "Save Duty Roster", id: "Simpan Jadwal Piket" },
+    btn_mark_done: { en: "Mark as Done", id: "Tandai Sudah Piket" },
+    btn_marking_done: { en: "Saving...", id: "Menyimpan..." },
+    label_piket_status_done: { en: "Done", id: "Sudah piket" },
+    label_piket_status_pending: { en: "Not done yet", id: "Belum piket" },
+    label_piket_done_by: { en: "Marked done by", id: "Ditandai oleh" },
+    text_piket_no_duty_today: { en: "No one is scheduled for duty today.", id: "Tidak ada jadwal piket untuk hari ini." },
+    text_piket_no_class: { en: "Your profile has no class assigned yet. Contact your admin.", id: "Profil kamu belum punya kelas. Hubungi admin." },
+    text_no_piket_yet: { en: "No duty roster set for this class yet.", id: "Belum ada jadwal piket untuk kelas ini." },
+    toast_piket_select_class_day: { en: "Please select a class and a day.", id: "Pilih kelas dan hari dulu." },
+    toast_piket_select_student: { en: "Please select at least one student.", id: "Pilih minimal satu siswa." },
+    toast_piket_saved: { en: "Duty roster saved.", id: "Jadwal piket disimpan." },
+    toast_piket_save_failed: { en: "Failed to save duty roster: ", id: "Gagal menyimpan jadwal piket: " },
+    toast_piket_marked_done: { en: "Marked as done. Thanks!", id: "Ditandai sudah piket. Terima kasih!" },
+    toast_piket_mark_failed: { en: "Failed to mark as done: ", id: "Gagal menandai piket: " },
+    toast_piket_not_assigned: { en: "You're not scheduled for duty today.", id: "Kamu tidak terjadwal piket hari ini." },
+    confirm_delete_piket: { en: "Delete the duty roster for {class} on {day}?", id: "Hapus jadwal piket {class} hari {day}?" },
+    toast_piket_deleted: { en: "Duty roster deleted.", id: "Jadwal piket dihapus." },
+    label_piket_weekly: { en: "Weekly Schedule", id: "Jadwal Mingguan" },
+    label_piket_no_students_day: { en: "No one assigned", id: "Belum ada yang ditugaskan" },
+    label_you: { en: "You", id: "Kamu" }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

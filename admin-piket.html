@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Duty Roster - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_piket">Manage Duty Roster</h2>
+    </section>
+
+    <!-- SET DUTY ROSTER -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_piket_class">Class</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <select id="piketClassSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_class">Choose a class...</option>
+            </select>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_piket_day">Day</div>
+                <div id="piketDayGroup" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+            </div>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_piket_students">Students on Duty</div>
+                <div id="piketStudentGroup" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;padding:4px;border:1px solid #e2e8f0;border-radius:12px"></div>
+            </div>
+
+            <button type="button" class="submit-button" id="savePiketBtn" onclick="savePiket()" style="margin-top:2px" data-i18n="btn_save_piket">
+                Save Duty Roster
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- EXISTING ROSTER -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_existing_schedules">Configured Schedules</div>
+        <div id="piketList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const dayOptions = [
+    { iso: 1, key: "day_mon" },
+    { iso: 2, key: "day_tue" },
+    { iso: 3, key: "day_wed" },
+    { iso: 4, key: "day_thu" },
+    { iso: 5, key: "day_fri" },
+    { iso: 6, key: "day_sat" },
+    { iso: 7, key: "day_sun" }
+];
+
+let allClasses = [];
+let allStudentsInClass = [];
+let allPiketRows = [];
+let selectedDay = null;
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    renderDayPills();
+    await loadClasses();
+    await loadPiketList();
+
+    document.getElementById("piketClassSelect").addEventListener("change", onClassChange);
+}
+
+function renderDayPills() {
+    const lang = getLang();
+    const group = document.getElementById("piketDayGroup");
+
+    group.innerHTML = dayOptions.map(function (d) {
+        const label = translations[d.key] ? translations[d.key][lang] : d.key;
+        const shortLabel = label.slice(0, 3);
+        return `
+            <button type="button" class="am-btn piket-day-btn" data-day="${d.iso}" onclick="selectDay(${d.iso})" style="border:1px solid #e2e8f0;background:#fafafa;border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;color:#20243a">
+                ${shortLabel}
+            </button>
+        `;
+    }).join("");
+}
+
+function selectDay(iso) {
+    selectedDay = iso;
+
+    document.querySelectorAll(".piket-day-btn").forEach(function (btn) {
+        const isActive = Number(btn.getAttribute("data-day")) === iso;
+        btn.style.background = isActive ? "#1530c2" : "#fafafa";
+        btn.style.color = isActive ? "#fff" : "#20243a";
+        btn.style.borderColor = isActive ? "#1530c2" : "#e2e8f0";
+    });
+
+    syncCheckedFromExisting();
+}
+
+async function loadClasses() {
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("class")
+        .eq("role", "murid");
+
+    if (error || !data) return;
+
+    allClasses = Array.from(new Set(data.map(s => s.class).filter(Boolean))).sort();
+
+    const select = document.getElementById("piketClassSelect");
+    allClasses.forEach(function (c) {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+    });
+}
+
+async function onClassChange() {
+    const cls = document.getElementById("piketClassSelect").value;
+    const group = document.getElementById("piketStudentGroup");
+
+    if (!cls) {
+        group.innerHTML = "";
+        allStudentsInClass = [];
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, name, nis")
+        .eq("role", "murid")
+        .eq("class", cls)
+        .order("name", { ascending: true });
+
+    if (error || !data) {
+        allStudentsInClass = [];
+        group.innerHTML = "";
+        return;
+    }
+
+    allStudentsInClass = data;
+
+    group.innerHTML = data.map(function (s) {
+        return `
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#f8f8ff;font-size:13px;color:#20243a;cursor:pointer">
+                <input type="checkbox" class="piket-student-checkbox" value="${s.id}" style="margin:0">
+                ${s.name || "-"} ${s.nis ? "<span style=\"color:#888;font-size:11px\">(" + s.nis + ")</span>" : ""}
+            </label>
+        `;
+    }).join("");
+
+    syncCheckedFromExisting();
+}
+
+function syncCheckedFromExisting() {
+    const cls = document.getElementById("piketClassSelect").value;
+    if (!cls || !selectedDay) return;
+
+    const assignedIds = allPiketRows
+        .filter(function (r) { return r.class === cls && r.day_of_week === selectedDay; })
+        .map(function (r) { return r.student_id; });
+
+    document.querySelectorAll(".piket-student-checkbox").forEach(function (cb) {
+        cb.checked = assignedIds.indexOf(cb.value) !== -1;
+    });
+}
+
+function dayLabelOf(iso, lang) {
+    const d = dayOptions.find(function (d) { return d.iso === iso; });
+    return d && translations[d.key] ? translations[d.key][lang] : String(iso);
+}
+
+async function loadPiketList() {
+
+    const { data, error } = await supabaseClient
+        .from("piket_assignments")
+        .select("*")
+        .order("class", { ascending: true })
+        .order("day_of_week", { ascending: true });
+
+    const container = document.getElementById("piketList");
+    const lang = getLang();
+
+    if (error || !data || data.length === 0) {
+        allPiketRows = [];
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_piket_yet[lang] + "</p>";
+        return;
+    }
+
+    allPiketRows = data;
+
+    const groups = {};
+    data.forEach(function (r) {
+        const key = r.class + "|" + r.day_of_week;
+        if (!groups[key]) groups[key] = { class: r.class, day_of_week: r.day_of_week, names: [] };
+        groups[key].names.push(r.student_name);
+    });
+
+    container.innerHTML = Object.values(groups).map(function (g) {
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${g.class} &middot; ${dayLabelOf(g.day_of_week, lang)}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${g.names.join(", ")}</span>
+                </div>
+                <button type="button" onclick="editPiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
+                <button type="button" onclick="deletePiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+            </div>
+        `;
+    }).join("");
+}
+
+async function editPiket(cls, dayIso) {
+    document.getElementById("piketClassSelect").value = cls;
+    await onClassChange();
+    selectDay(dayIso);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function deletePiket(cls, dayIso) {
+    const lang = getLang();
+    const dayLabel = dayLabelOf(dayIso, lang);
+
+    if (!confirm(translations.confirm_delete_piket[lang].replace("{class}", cls).replace("{day}", dayLabel))) return;
+
+    const { error } = await supabaseClient
+        .from("piket_assignments")
+        .delete()
+        .eq("class", cls)
+        .eq("day_of_week", dayIso);
+
+    if (error) {
+        showToast(translations.toast_piket_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_piket_deleted[lang], "success");
+    await loadPiketList();
+    syncCheckedFromExisting();
+}
+
+async function savePiket() {
+
+    const lang = getLang();
+    const cls = document.getElementById("piketClassSelect").value;
+    const btn = document.getElementById("savePiketBtn");
+
+    if (!cls || !selectedDay) {
+        showToast(translations.toast_piket_select_class_day[lang], "error");
+        return;
+    }
+
+    const selectedIds = Array.from(document.querySelectorAll(".piket-student-checkbox:checked")).map(function (cb) {
+        return cb.value;
+    });
+
+    if (selectedIds.length === 0) {
+        showToast(translations.toast_piket_select_student[lang], "error");
+        return;
+    }
+
+    const user = await requireLogin();
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_saving[lang];
+
+    const { error: deleteError } = await supabaseClient
+        .from("piket_assignments")
+        .delete()
+        .eq("class", cls)
+        .eq("day_of_week", selectedDay);
+
+    if (deleteError) {
+        btn.disabled = false;
+        btn.textContent = translations.btn_save_piket[lang];
+        showToast(translations.toast_piket_save_failed[lang] + deleteError.message, "error");
+        return;
+    }
+
+    const rows = selectedIds.map(function (id) {
+        const student = allStudentsInClass.find(function (s) { return s.id === id; });
+        return {
+            class: cls,
+            day_of_week: selectedDay,
+            student_id: id,
+            student_name: student ? student.name : "-",
+            created_by: user.id
+        };
+    });
+
+    const { error: insertError } = await supabaseClient
+        .from("piket_assignments")
+        .insert(rows);
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_save_piket[lang];
+
+    if (insertError) {
+        showToast(translations.toast_piket_save_failed[lang] + insertError.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_piket_saved[lang], "success");
+    await loadPiketList();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

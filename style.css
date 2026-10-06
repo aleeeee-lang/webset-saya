@@ -403,8 +403,8 @@ button.filter-select {
 }
 
 .calendar-days .holiday-day {
-    background: #eef0f5;
-    color: #64748b;
+    background: #d9d9d9;
+    color: #555555;
     font-weight: bold;
 }
 
@@ -440,7 +440,7 @@ button.filter-select {
 }
 
 .legend.holiday {
-    background: #64748b;
+    background: #d9d9d9;
 }
 
 .legend.spp {
@@ -1228,8 +1228,8 @@ html[data-theme="dark"] .lang-btn.active {
 ========================================================= */
 
 html[data-theme="dark"] .calendar-days .holiday-day {
-    background: #2a2e45 !important;
-    color: #9aa0b8 !important;
+    background: #d9d9d9 !important;
+    color: #333333 !important;
 }
 
 html[data-theme="dark"] .calendar-days .spp-day {

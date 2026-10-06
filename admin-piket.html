@@ -275,10 +275,13 @@ async function loadPiketList() {
             return `<span class="piket-name-chip" style="display:inline-block;padding:3px 9px;margin:2px 4px 2px 0;border-radius:999px;background:#eef0ff;color:#1530c2;font-size:11px;font-weight:600">${name}</span>`;
         }).join("");
 
+        const dayHue = dayColors[g.day_of_week].hue;
+        const dayBadge = `<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(${dayHue},0.14);color:rgb(${dayHue});font-size:12px;font-weight:600">${dayLabelOf(g.day_of_week, lang)}</span>`;
+
         return `
             <tr class="piket-table-row" style="border-bottom:1px solid #f0f0f5">
                 <td style="padding:10px 12px;vertical-align:top;font-size:13px;font-weight:600;color:#20243a;white-space:nowrap">${g.class}</td>
-                <td style="padding:10px 12px;vertical-align:top;font-size:13px;color:#20243a;white-space:nowrap">${dayLabelOf(g.day_of_week, lang)}</td>
+                <td style="padding:10px 12px;vertical-align:top;white-space:nowrap">${dayBadge}</td>
                 <td style="padding:10px 12px;vertical-align:top">${chips}</td>
                 <td style="padding:10px 12px;vertical-align:top;text-align:right;white-space:nowrap">
                     <button type="button" onclick="editPiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>

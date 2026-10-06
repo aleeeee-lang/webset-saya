@@ -434,6 +434,47 @@ button.filter-select {
     box-shadow: 0 10px 30px rgba(19, 9, 245, .25);
 }
 
+.savings-balance-card.personal {
+    background: linear-gradient(135deg, #1ba97e, #2dd4a7);
+    box-shadow: 0 10px 30px rgba(27, 169, 126, .25);
+}
+
+.savings-tab-switch {
+    display: flex;
+    gap: 8px;
+    padding: 5px;
+    border-radius: 16px;
+    background: #f0f1f7;
+    margin-bottom: 16px;
+}
+
+.savings-tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: #777;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.savings-tab-btn.active {
+    background: #fff;
+    color: #1309f5;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .08);
+}
+
+.savings-form-card {
+    padding: 18px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+}
+
 .savings-balance-card .savings-balance-label {
     margin: 0;
     font-size: 11px;
@@ -996,5 +1037,31 @@ html[data-theme="dark"] #studentBalanceBox span {
 
 html[data-theme="dark"] #studentBalanceBox h2 {
     color: #fff !important;
+}
+
+html[data-theme="dark"] .savings-balance-card.personal {
+    background: linear-gradient(135deg, #0d7a58, #1ba97e) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .4) !important;
+}
+
+html[data-theme="dark"] .savings-tab-switch {
+    background: #1a1d2e;
+}
+
+html[data-theme="dark"] .savings-tab-btn {
+    color: #9aa0b8;
+}
+
+html[data-theme="dark"] .savings-tab-btn.active {
+    background: #242842;
+    color: #7a74fb;
+}
+
+html[data-theme="dark"] .savings-form-card {
+    background: #1a1d2e;
+}
+
+html[data-theme="dark"] .savings-form-card [style*="color:#172554"] {
+    color: #e5e7f5 !important;
 }
 .app-toast-info { background: #334155; }

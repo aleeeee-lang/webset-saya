@@ -79,6 +79,9 @@ const translations = {
     no_history_text: { en: "Your attendance records will appear here.", id: "Catatan absensimu akan muncul di sini." },
     checkin_at: { en: "Check-in at", id: "Absen masuk pukul" },
 
+    tab_school_savings: { en: "School", id: "Sekolah" },
+    tab_personal_savings: { en: "Personal", id: "Pribadi" },
+    label_personal_balance: { en: "PERSONAL SAVINGS BALANCE", id: "SALDO TABUNGAN PRIBADI" },
     label_savings_balance: { en: "SAVINGS BALANCE", id: "SALDO TABUNGAN" },
     label_savings_history: { en: "TRANSACTION HISTORY", id: "RIWAYAT TRANSAKSI" },
     label_type_filter: { en: "TYPE", id: "JENIS" },

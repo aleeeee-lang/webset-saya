@@ -43,6 +43,23 @@
 
 </section>
 
+        <!-- TAB SWITCH -->
+
+        <div class="savings-tab-switch">
+            <button type="button" class="savings-tab-btn active" id="tabSchoolBtn" data-tab="school">
+                <span data-i18n="tab_school_savings">Sekolah</span>
+            </button>
+            <button type="button" class="savings-tab-btn" id="tabPersonalBtn" data-tab="personal">
+                <span data-i18n="tab_personal_savings">Pribadi</span>
+            </button>
+        </div>
+
+        <!-- =========================
+             SCHOOL SAVINGS TAB
+        ========================== -->
+
+        <div id="schoolTabContent">
+
         <!-- BALANCE -->
 
         <section class="savings-balance-card">
@@ -105,6 +122,110 @@
     <h2 data-i18n="no_savings_title">No savings yet</h2>
     <p data-i18n="no_savings_text">Your savings transactions will appear here.</p>
 </section>
+
+        </div>
+
+        <!-- =========================
+             PERSONAL SAVINGS TAB
+        ========================== -->
+
+        <div id="personalTabContent" style="display:none">
+
+        <!-- BALANCE -->
+
+        <section class="savings-balance-card personal">
+            <p class="savings-balance-label" data-i18n="label_personal_balance">PERSONAL SAVINGS BALANCE</p>
+            <h2 id="personalBalance">Rp0</h2>
+
+            <div class="savings-balance-summary">
+                <div>
+                    <span data-i18n="label_total_deposit">Total Deposit</span>
+                    <strong id="personalTotalSetor">Rp0</strong>
+                </div>
+                <div>
+                    <span data-i18n="label_total_withdraw">Total Withdrawal</span>
+                    <strong id="personalTotalTarik">Rp0</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADD TRANSACTION -->
+
+        <section class="savings-form-card" style="margin-top:16px">
+
+            <div style="margin-bottom:10px;color:#172554;font-size:14px;font-weight:600" data-i18n="label_transaction_type">Transaction Type</div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+
+                <select id="personalTransactionType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <option value="setor" data-i18n="type_setor">Deposit</option>
+                    <option value="tarik" data-i18n="type_tarik">Withdrawal</option>
+                </select>
+
+                <div>
+                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_amount">Amount (Rp)</div>
+                    <input type="number" id="personalTransactionAmount" class="am-field" data-i18n-placeholder="placeholder_amount" placeholder="e.g. 10000" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                </div>
+
+                <div>
+                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_note_optional">Note (optional)</div>
+                    <input type="text" id="personalTransactionNote" class="am-field" data-i18n-placeholder="placeholder_savings_note" placeholder="e.g. Weekly savings" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                </div>
+
+                <button type="button" class="submit-button" id="addPersonalTransactionBtn" onclick="addPersonalTransaction()" style="margin-top:2px" data-i18n="btn_add_transaction">
+                    Add Transaction
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- FILTER -->
+
+     <section class="history-filter-card" style="margin-top:16px">
+
+    <div class="history-status" style="grid-column:1 / -1">
+        <span data-i18n="label_type_filter">TYPE</span>
+
+        <button type="button" class="filter-select" id="personalStatusSelectBtn">
+            <span class="filter-dot all" id="personalStatusSelectDot"></span>
+            <span id="personalStatusSelectLabel" data-i18n="all_types">All Transactions</span>
+            <span class="filter-arrow">⌄</span>
+        </button>
+
+        <div class="filter-dropdown" id="personalStatusDropdown">
+            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
+            <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
+            <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
+        </div>
+    </div>
+
+</section>
+
+        <!-- SUMMARY LABEL -->
+
+        <div class="my-attendance-section-header" style="margin-top:20px">
+            <div>
+                <span data-i18n="label_savings_history">TRANSACTION HISTORY</span>
+            </div>
+        </div>
+
+        <!-- HISTORY LIST -->
+
+       <section class="history-list" id="personalHistoryList"></section>
+
+<section class="history-empty" id="personalHistoryEmpty" style="display:none">
+    <div class="history-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4C8 7 5 10 5 13.5C5 17.1 8.1 20 12 20C15.9 20 19 17.1 19 13.5C19 10 16 7 12 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M12 9.5V15.5M10 11.2C10 10.3 10.9 9.5 12 9.5C13.1 9.5 14 10.1 14 10.9C14 12.1 10 11.9 10 13.3C10 14.1 10.9 14.8 12 14.8C13.1 14.8 14 14 14 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+    </div>
+    <h2 data-i18n="no_savings_title">No savings yet</h2>
+    <p data-i18n="no_savings_text">Your savings transactions will appear here.</p>
+</section>
+
+        </div>
 
 
     </main>
@@ -457,6 +578,196 @@ document.addEventListener("click", function () {
 
 loadHistory();
 window.addEventListener("tabshow", loadHistory);
+
+/* =========================
+   PERSONAL SAVINGS
+========================== */
+
+let allPersonalData = [];
+let selectedPersonalType = "all";
+let personalLoaded = false;
+
+function renderPersonalHistory() {
+    const typeValue = selectedPersonalType;
+
+    let filtered = allPersonalData.filter(function (item) {
+        return typeValue === "all" || item.type === typeValue;
+    });
+
+    const totalSetor = allPersonalData.filter(i => i.type === "setor").reduce((sum, i) => sum + Number(i.amount), 0);
+    const totalTarik = allPersonalData.filter(i => i.type === "tarik").reduce((sum, i) => sum + Number(i.amount), 0);
+    const balance = totalSetor - totalTarik;
+
+    document.getElementById("personalBalance").textContent = formatRupiah(balance);
+    document.getElementById("personalTotalSetor").textContent = formatRupiah(totalSetor);
+    document.getElementById("personalTotalTarik").textContent = formatRupiah(totalTarik);
+
+    const listEl = document.getElementById("personalHistoryList");
+    const emptyEl = document.getElementById("personalHistoryEmpty");
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = "";
+        emptyEl.style.display = "block";
+        return;
+    }
+
+    emptyEl.style.display = "none";
+
+    const todayStr = new Date().toDateString();
+
+    listEl.innerHTML = filtered.map(function (item) {
+        const d = new Date(item.created_at);
+        const isToday = d.toDateString() === todayStr;
+        const label = isToday
+            ? tr("label_today")
+            : dayMonthLabel(d).toUpperCase();
+
+        const isSetor = item.type === "setor";
+        const typeLabel = isSetor ? tr("type_setor") : tr("type_tarik");
+        const sign = isSetor ? "+" : "-";
+
+        return `
+            <div class="history-date-group">
+                <p class="history-date">${label}</p>
+                <div class="history-card">
+                    <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
+                    <div class="history-content">
+                        <strong>${typeLabel}</strong>
+                        <span>${dayMonthYearLabel(d)}</span>
+                        <small>${item.note || "-"}</small>
+                    </div>
+                    <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
+                    <button type="button" onclick="deletePersonalTransaction('${item.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function loadPersonalSavings() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data, error } = await supabaseClient
+        .from("personal_savings")
+        .select("*")
+        .eq("student_id", user.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Personal savings error:", error);
+        return;
+    }
+
+    allPersonalData = data || [];
+    personalLoaded = true;
+    renderPersonalHistory();
+}
+
+async function addPersonalTransaction() {
+    const lang = getLang();
+
+    const type = document.getElementById("personalTransactionType").value;
+    const amount = Number(document.getElementById("personalTransactionAmount").value);
+    const note = document.getElementById("personalTransactionNote").value.trim();
+    const btn = document.getElementById("addPersonalTransactionBtn");
+
+    if (!amount || amount <= 0) {
+        showToast(translations.toast_enter_valid_amount[lang], "error");
+        return;
+    }
+
+    if (type === "tarik") {
+        const totalSetor = allPersonalData.filter(i => i.type === "setor").reduce((sum, i) => sum + Number(i.amount), 0);
+        const totalTarik = allPersonalData.filter(i => i.type === "tarik").reduce((sum, i) => sum + Number(i.amount), 0);
+        const currentBalance = totalSetor - totalTarik;
+        if (amount > currentBalance) {
+            showToast(translations.toast_insufficient_balance[lang], "error");
+            return;
+        }
+    }
+
+    const user = await requireLogin();
+    if (!user) return;
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_saving[lang];
+
+    const { error } = await supabaseClient
+        .from("personal_savings")
+        .insert({
+            student_id: user.id,
+            type: type,
+            amount: amount,
+            note: note || null
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_add_transaction[lang];
+
+    if (error) {
+        showToast(translations.toast_transaction_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("personalTransactionAmount").value = "";
+    document.getElementById("personalTransactionNote").value = "";
+    showToast(translations.toast_transaction_added[lang], "success");
+    await loadPersonalSavings();
+}
+
+async function deletePersonalTransaction(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_transaction[lang])) return;
+
+    const { error } = await supabaseClient.from("personal_savings").delete().eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_transaction_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_transaction_deleted[lang], "success");
+    await loadPersonalSavings();
+}
+
+document.getElementById("personalStatusSelectBtn").addEventListener("click", function (e) {
+    e.stopPropagation();
+    document.getElementById("personalStatusDropdown").classList.toggle("show");
+});
+
+document.querySelectorAll("#personalStatusDropdown .filter-option").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        selectedPersonalType = this.dataset.value;
+        document.getElementById("personalStatusSelectLabel").textContent =
+            this.querySelector("span:last-child") ? this.textContent.trim() : this.textContent;
+        document.getElementById("personalStatusSelectDot").className =
+            "filter-dot " + this.querySelector(".filter-dot").className.replace("filter-dot", "").trim();
+        document.getElementById("personalStatusDropdown").classList.remove("show");
+        renderPersonalHistory();
+    });
+});
+
+document.addEventListener("click", function () {
+    document.getElementById("personalStatusDropdown").classList.remove("show");
+});
+
+/* TAB SWITCHING */
+
+document.getElementById("tabSchoolBtn").addEventListener("click", function () {
+    document.getElementById("tabSchoolBtn").classList.add("active");
+    document.getElementById("tabPersonalBtn").classList.remove("active");
+    document.getElementById("schoolTabContent").style.display = "block";
+    document.getElementById("personalTabContent").style.display = "none";
+});
+
+document.getElementById("tabPersonalBtn").addEventListener("click", function () {
+    document.getElementById("tabPersonalBtn").classList.add("active");
+    document.getElementById("tabSchoolBtn").classList.remove("active");
+    document.getElementById("personalTabContent").style.display = "block";
+    document.getElementById("schoolTabContent").style.display = "none";
+    if (!personalLoaded) loadPersonalSavings();
+});
 </script>
 
     <script>

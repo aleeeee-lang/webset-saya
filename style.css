@@ -912,8 +912,7 @@ html[data-theme="dark"] .piket-table-row td {
 }
 
 html[data-theme="dark"] .piket-name-chip {
-    background: #24265a !important;
-    color: #aab4ff !important;
+    color: #e5e7f5 !important;
 }
 
 /* =========================================================

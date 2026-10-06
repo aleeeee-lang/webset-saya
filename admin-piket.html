@@ -57,7 +57,20 @@
     <!-- EXISTING ROSTER -->
     <section class="attendance-card">
         <div class="card-label" data-i18n="label_existing_schedules">Configured Schedules</div>
-        <div id="piketList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <div id="piketList" style="overflow-x:auto">
+            <table class="piket-table" style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                    <tr>
+                        <th data-i18n="label_piket_class" style="text-align:left;padding:10px 12px;border-bottom:1px solid #e2e8f0;color:#888;font-weight:600;font-size:12px">Class</th>
+                        <th data-i18n="label_piket_day" style="text-align:left;padding:10px 12px;border-bottom:1px solid #e2e8f0;color:#888;font-weight:600;font-size:12px">Day</th>
+                        <th data-i18n="label_piket_students" style="text-align:left;padding:10px 12px;border-bottom:1px solid #e2e8f0;color:#888;font-weight:600;font-size:12px">Students on Duty</th>
+                        <th style="text-align:right;padding:10px 12px;border-bottom:1px solid #e2e8f0"></th>
+                    </tr>
+                </thead>
+                <tbody id="piketTableBody"></tbody>
+            </table>
+            <p id="piketListEmpty" style="color:#888;font-size:13px;display:none"></p>
+        </div>
     </section>
 
 </main>
@@ -215,12 +228,17 @@ async function loadPiketList() {
         .order("class", { ascending: true })
         .order("day_of_week", { ascending: true });
 
-    const container = document.getElementById("piketList");
+    const tableBody = document.getElementById("piketTableBody");
+    const emptyMsg = document.getElementById("piketListEmpty");
+    const table = document.querySelector(".piket-table");
     const lang = getLang();
 
     if (error || !data || data.length === 0) {
         allPiketRows = [];
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_piket_yet[lang] + "</p>";
+        tableBody.innerHTML = "";
+        table.style.display = "none";
+        emptyMsg.textContent = translations.text_no_piket_yet[lang];
+        emptyMsg.style.display = "block";
         return;
     }
 
@@ -233,16 +251,24 @@ async function loadPiketList() {
         groups[key].names.push(r.student_name);
     });
 
-    container.innerHTML = Object.values(groups).map(function (g) {
+    table.style.display = "table";
+    emptyMsg.style.display = "none";
+
+    tableBody.innerHTML = Object.values(groups).map(function (g) {
+        const chips = g.names.map(function (name) {
+            return `<span class="piket-name-chip" style="display:inline-block;padding:3px 9px;margin:2px 4px 2px 0;border-radius:999px;background:#eef0ff;color:#1530c2;font-size:11px;font-weight:600">${name}</span>`;
+        }).join("");
+
         return `
-            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
-                <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:14px;color:#20243a">${g.class} &middot; ${dayLabelOf(g.day_of_week, lang)}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${g.names.join(", ")}</span>
-                </div>
-                <button type="button" onclick="editPiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
-                <button type="button" onclick="deletePiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
-            </div>
+            <tr class="piket-table-row" style="border-bottom:1px solid #f0f0f5">
+                <td style="padding:10px 12px;vertical-align:top;font-size:13px;font-weight:600;color:#20243a;white-space:nowrap">${g.class}</td>
+                <td style="padding:10px 12px;vertical-align:top;font-size:13px;color:#20243a;white-space:nowrap">${dayLabelOf(g.day_of_week, lang)}</td>
+                <td style="padding:10px 12px;vertical-align:top">${chips}</td>
+                <td style="padding:10px 12px;vertical-align:top;text-align:right;white-space:nowrap">
+                    <button type="button" onclick="editPiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
+                    <button type="button" onclick="deletePiket('${g.class}', ${g.day_of_week})" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                </td>
+            </tr>
         `;
     }).join("");
 }

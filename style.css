@@ -916,6 +916,24 @@ html[data-theme="dark"] .piket-assignee-row.piket-assignee-me {
     background: #24265a !important;
 }
 
+html[data-theme="dark"] .piket-table th {
+    color: #9aa0b8 !important;
+    border-bottom-color: #262626 !important;
+}
+
+html[data-theme="dark"] .piket-table-row {
+    border-bottom-color: #262626 !important;
+}
+
+html[data-theme="dark"] .piket-table-row td {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .piket-name-chip {
+    background: #24265a !important;
+    color: #aab4ff !important;
+}
+
 /* =========================================================
    DARK MODE: SETTINGS GEAR BUTTON
 ========================================================= */

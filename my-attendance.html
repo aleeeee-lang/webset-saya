@@ -86,6 +86,10 @@
                 <span data-i18n="monthly_overview_label">MONTHLY OVERVIEW</span>
                 <h2 id="calendarMonthLabel">-</h2>
             </div>
+            <div class="calendar-nav">
+                <button type="button" class="calendar-arrow" id="calendarPrevBtn" aria-label="Previous month">‹</button>
+                <button type="button" class="calendar-arrow" id="calendarNextBtn" aria-label="Next month">›</button>
+            </div>
         </div>
 
         <div class="calendar-week">
@@ -99,6 +103,7 @@
             <span><i class="legend izin"></i><span data-i18n="status_permission">Permission</span></span>
             <span><i class="legend sakit"></i><span data-i18n="status_sick">Sick</span></span>
             <span><i class="legend alpa"></i><span data-i18n="status_absent">Absent</span></span>
+            <span><i class="legend holiday"></i><span data-i18n="status_holiday">Holiday</span></span>
         </div>
 
     </section>
@@ -158,9 +163,10 @@
     <a href="history.html">
         <span class="nav-history-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M12 7.5V12L15 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M4 6V10H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 10H21" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M7 7V5.5C7 4.7 7.7 4 8.5 4H17C18.1 4 19 4.9 19 6V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/>
             </svg>
         </span>
         <small data-i18n="nav_history">History</small>
@@ -277,13 +283,26 @@ function renderActivity(data) {
     }).join("");
 }
 
-function renderCalendar(data) {
+let calendarViewYear = new Date().getFullYear();
+let calendarViewMonth = new Date().getMonth();
+let myAttendanceData = [];
+let holidaySet = new Set();
+
+async function loadHolidays() {
+    if (typeof supabaseClient === "undefined") return;
+    const { data, error } = await supabaseClient.from("holidays").select("date,label");
+    if (error || !data) return;
+    holidaySet = new Set(data.map(function (h) { return h.date; }));
+}
+
+function renderCalendar() {
+    const year = calendarViewYear;
+    const month = calendarViewMonth;
+    const data = myAttendanceData;
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
 
     document.getElementById("calendarMonthLabel").textContent =
-        monthYearLabel(now);
+        monthYearLabel(new Date(year, month, 1));
 
     const statusByDay = {};
     data.forEach(function (item) {
@@ -300,21 +319,42 @@ function renderCalendar(data) {
     let html = "";
     for (let i = 0; i < firstWeekday; i++) html += '<span class="empty"></span>';
 
+    const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
     const todayNum = now.getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
         const status = statusByDay[day];
+        const key = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+        const isHoliday = holidaySet.has(key);
+
         let cls = "";
-        if (status === "Izin") cls = "izin-day";
+        if (isHoliday) cls = "holiday-day";
+        else if (status === "Izin") cls = "izin-day";
         else if (status === "Sakit") cls = "sakit-day";
         else if (status === "Alpa") cls = "alpa-day";
         else if (status === "Hadir") cls = "hadir-day";
-        if (day === todayNum) cls += " today-day";
+
+        if (isCurrentMonth && day === todayNum) cls += " today-day";
         html += `<span class="${cls.trim()}">${day}</span>`;
     }
 
     document.getElementById("myCalendarDays").innerHTML = html;
 }
+
+function prevCalendarMonth() {
+    calendarViewMonth--;
+    if (calendarViewMonth < 0) { calendarViewMonth = 11; calendarViewYear--; }
+    renderCalendar();
+}
+
+function nextCalendarMonth() {
+    calendarViewMonth++;
+    if (calendarViewMonth > 11) { calendarViewMonth = 0; calendarViewYear++; }
+    renderCalendar();
+}
+
+document.getElementById("calendarPrevBtn").addEventListener("click", prevCalendarMonth);
+document.getElementById("calendarNextBtn").addEventListener("click", nextCalendarMonth);
 
 function renderInsight(data) {
     const total = data.length;
@@ -346,10 +386,15 @@ async function loadMyAttendance() {
         return;
     }
 
+    myAttendanceData = data;
+    calendarViewYear = new Date().getFullYear();
+    calendarViewMonth = new Date().getMonth();
+
     renderScore(data);
     renderQuickStats(data);
     renderActivity(data);
-    renderCalendar(data);
+    await loadHolidays();
+    renderCalendar();
     renderInsight(data);
 }
 

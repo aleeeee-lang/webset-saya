@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Savings - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_savings">Manage Savings</h2>
+    </section>
+
+    <!-- SELECT STUDENT -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_select_student">Select Student</div>
+
+        <select id="studentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <option value="" data-i18n="option_choose_student">Choose a student...</option>
+        </select>
+
+        <div id="studentBalanceBox" style="display:none;margin-top:14px;padding:16px;border-radius:14px;background:#eeeeff">
+            <span style="font-size:11px;letter-spacing:1.5px;color:#1309f5" data-i18n="label_current_balance">Current Balance</span>
+            <h2 id="studentBalance" style="margin:4px 0 0;font-size:26px;color:#20243a">Rp0</h2>
+        </div>
+
+    </section>
+
+    <!-- ADD TRANSACTION -->
+    <section class="attendance-card" id="addTransactionCard" style="display:none">
+
+        <div class="card-label" data-i18n="label_transaction_type">Transaction Type</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <select id="transactionType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="setor" data-i18n="type_setor">Deposit</option>
+                <option value="tarik" data-i18n="type_tarik">Withdrawal</option>
+            </select>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_amount">Amount (Rp)</div>
+                <input type="number" id="transactionAmount" class="am-field" data-i18n-placeholder="placeholder_amount" placeholder="e.g. 10000" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_note_optional">Note (optional)</div>
+                <input type="text" id="transactionNote" class="am-field" data-i18n-placeholder="placeholder_savings_note" placeholder="e.g. Weekly savings" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <button type="button" class="submit-button" id="addTransactionBtn" onclick="addTransaction()" style="margin-top:2px" data-i18n="btn_add_transaction">
+                Add Transaction
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- TRANSACTION HISTORY -->
+    <section class="attendance-card" id="transactionHistoryCard" style="display:none">
+        <div class="card-label" data-i18n="label_savings_history">TRANSACTION HISTORY</div>
+        <div id="transactionList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let allStudents = [];
+let allTransactions = [];
+let selectedStudentId = "";
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadStudents();
+}
+
+async function loadStudents() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .eq("role", "murid")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allStudents = data;
+
+    const select = document.getElementById("studentSelect");
+    data.forEach(function (s) {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name + (s.class ? " · " + s.class : "");
+        select.appendChild(opt);
+    });
+}
+
+function computeBalance(transactions) {
+    const totalSetor = transactions.filter(t => t.type === "setor").reduce((sum, t) => sum + Number(t.amount), 0);
+    const totalTarik = transactions.filter(t => t.type === "tarik").reduce((sum, t) => sum + Number(t.amount), 0);
+    return totalSetor - totalTarik;
+}
+
+function renderTransactionList() {
+    const container = document.getElementById("transactionList");
+    const lang = getLang();
+
+    if (allTransactions.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_transactions_yet[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = allTransactions.map(function (t) {
+        const d = new Date(t.created_at);
+        const isSetor = t.type === "setor";
+        const typeLabel = isSetor ? translations.type_setor[lang] : translations.type_tarik[lang];
+        const sign = isSetor ? "+" : "-";
+
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div class="savings-type-icon ${t.type}" style="width:38px;height:38px;border-radius:10px;font-size:15px">${isSetor ? "+" : "−"}</div>
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${typeLabel}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(d)}${t.note ? " · " + t.note : ""}</span>
+                </div>
+                <div class="savings-amount ${t.type}" style="font-size:13px;font-weight:700">${sign}${formatRupiah(t.amount)}</div>
+                <button type="button" onclick="deleteTransaction('${t.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+            </div>
+        `;
+    }).join("");
+}
+
+async function loadStudentSavings(studentId) {
+    const { data, error } = await supabaseClient
+        .from("savings")
+        .select("*")
+        .eq("student_id", studentId)
+        .order("created_at", { ascending: false });
+
+    if (error || !data) {
+        allTransactions = [];
+    } else {
+        allTransactions = data;
+    }
+
+    document.getElementById("studentBalance").textContent = formatRupiah(computeBalance(allTransactions));
+    renderTransactionList();
+}
+
+document.getElementById("studentSelect").addEventListener("change", async function () {
+    selectedStudentId = this.value;
+
+    const balanceBox = document.getElementById("studentBalanceBox");
+    const addCard = document.getElementById("addTransactionCard");
+    const historyCard = document.getElementById("transactionHistoryCard");
+
+    if (!selectedStudentId) {
+        balanceBox.style.display = "none";
+        addCard.style.display = "none";
+        historyCard.style.display = "none";
+        return;
+    }
+
+    balanceBox.style.display = "block";
+    addCard.style.display = "block";
+    historyCard.style.display = "block";
+
+    await loadStudentSavings(selectedStudentId);
+});
+
+async function addTransaction() {
+    const lang = getLang();
+
+    if (!selectedStudentId) {
+        showToast(translations.toast_select_student_first[lang], "error");
+        return;
+    }
+
+    const type = document.getElementById("transactionType").value;
+    const amount = Number(document.getElementById("transactionAmount").value);
+    const note = document.getElementById("transactionNote").value.trim();
+    const btn = document.getElementById("addTransactionBtn");
+
+    if (!amount || amount <= 0) {
+        showToast(translations.toast_enter_valid_amount[lang], "error");
+        return;
+    }
+
+    if (type === "tarik") {
+        const currentBalance = computeBalance(allTransactions);
+        if (amount > currentBalance) {
+            showToast(translations.toast_insufficient_balance[lang], "error");
+            return;
+        }
+    }
+
+    const user = await requireLogin();
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_saving[lang];
+
+    const { error } = await supabaseClient
+        .from("savings")
+        .insert({
+            student_id: selectedStudentId,
+            type: type,
+            amount: amount,
+            note: note || null,
+            created_by: user.id
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_add_transaction[lang];
+
+    if (error) {
+        showToast(translations.toast_transaction_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("transactionAmount").value = "";
+    document.getElementById("transactionNote").value = "";
+    showToast(translations.toast_transaction_added[lang], "success");
+    await loadStudentSavings(selectedStudentId);
+}
+
+async function deleteTransaction(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_transaction[lang])) return;
+
+    const { error } = await supabaseClient.from("savings").delete().eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_transaction_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_transaction_deleted[lang], "success");
+    await loadStudentSavings(selectedStudentId);
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

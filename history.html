@@ -10,10 +10,10 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>History - Attendreem</title>
+    <title>Savings - Attendreem</title>
 <link rel="icon" type="image/png" href="favicon.png">
 
-   <link rel="stylesheet" href="style.css?v=4">
+   <link rel="stylesheet" href="style.css?v=5">
 
     <script src="js/theme.js"></script>
 
@@ -38,65 +38,67 @@
           <section class="attendance-intro">
 
     <h1 data-i18n="page_history">
-        History
+        Savings
     </h1>
 
 </section>
 
+        <!-- BALANCE -->
 
+        <section class="savings-balance-card">
+            <p class="savings-balance-label" data-i18n="label_savings_balance">SAVINGS BALANCE</p>
+            <h2 id="savingsBalance">Rp0</h2>
+
+            <div class="savings-balance-summary">
+                <div>
+                    <span data-i18n="label_total_deposit">Total Deposit</span>
+                    <strong id="savingsTotalSetor">Rp0</strong>
+                </div>
+                <div>
+                    <span data-i18n="label_total_withdraw">Total Withdrawal</span>
+                    <strong id="savingsTotalTarik">Rp0</strong>
+                </div>
+            </div>
+        </section>
 
         <!-- FILTER -->
 
-     <section class="history-filter-card">
+     <section class="history-filter-card" style="margin-top:16px">
 
-    <div class="history-month">
-        <span data-i18n="label_month">MONTH</span>
-
-        <button type="button" class="filter-select" id="monthSelectBtn">
-            <i class="filter-icon-cal"></i>
-            <span id="monthSelectLabel" data-i18n="all_months">All Months</span>
-            <span class="filter-arrow">⌄</span>
-        </button>
-
-        <div class="filter-dropdown" id="monthDropdown"></div>
-    </div>
-
-    <div class="history-status">
-        <span data-i18n="label_status_filter">STATUS</span>
+    <div class="history-status" style="grid-column:1 / -1">
+        <span data-i18n="label_type_filter">TYPE</span>
 
         <button type="button" class="filter-select" id="statusSelectBtn">
             <span class="filter-dot all" id="statusSelectDot"></span>
-            <span id="statusSelectLabel" data-i18n="all_status">All Status</span>
+            <span id="statusSelectLabel" data-i18n="all_types">All Transactions</span>
             <span class="filter-arrow">⌄</span>
         </button>
 
         <div class="filter-dropdown" id="statusDropdown">
-            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_status">All Status</span></button>
-            <button type="button" class="filter-option" data-value="Hadir"><span class="filter-dot hadir"></span><span data-i18n="status_present">Present</span></button>
-            <button type="button" class="filter-option" data-value="Izin"><span class="filter-dot izin"></span><span data-i18n="status_permission">Permission</span></button>
-            <button type="button" class="filter-option" data-value="Sakit"><span class="filter-dot sakit"></span><span data-i18n="status_sick">Sick</span></button>
-            <button type="button" class="filter-option" data-value="Alpa"><span class="filter-dot alpa"></span><span data-i18n="status_absent">Absent</span></button>
+            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
+            <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
+            <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
         </div>
     </div>
 
 </section>
-        <!-- SUMMARY -->
 
-      <section class="history-summary">
-    <div class="history-summary-item"><strong id="sumHadir">0</strong><span data-i18n="status_present">Present</span></div>
-    <div class="history-summary-item"><strong id="sumIzin">0</strong><span data-i18n="status_permission">Permission</span></div>
-    <div class="history-summary-item"><strong id="sumSakit">0</strong><span data-i18n="status_sick">Sick</span></div>
-    <div class="history-summary-item"><strong id="sumAlpa">0</strong><span data-i18n="status_absent">Absent</span></div>
-</section>
+        <!-- SUMMARY LABEL -->
+
+        <div class="my-attendance-section-header" style="margin-top:20px">
+            <div>
+                <span data-i18n="label_savings_history">TRANSACTION HISTORY</span>
+            </div>
+        </div>
 
         <!-- HISTORY LIST -->
 
        <section class="history-list" id="historyList"></section>
 
 <section class="history-empty" id="historyEmpty" style="display:none">
-    <div class="history-empty-icon">📋</div>
-    <h2 data-i18n="no_history_title">No attendance history</h2>
-    <p data-i18n="no_history_text">Your attendance records will appear here.</p>
+    <div class="history-empty-icon">🐷</div>
+    <h2 data-i18n="no_savings_title">No savings yet</h2>
+    <p data-i18n="no_savings_text">Your savings transactions will appear here.</p>
 </section>
 
 
@@ -185,7 +187,7 @@
     </a>
 
       <!-- dashboard -->
-       
+
      <a
             href="dashboard.html"
         >
@@ -262,9 +264,9 @@
 
 
 
-       
 
-        <!-- HISTORY -->
+
+        <!-- SAVINGS -->
 
         <a
             href="history.html"
@@ -273,42 +275,17 @@
 
             <span class="nav-history-icon">
 
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <circle
-                        cx="12"
-                        cy="12"
-                        r="8"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M12 7.5V12L15 14"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-
-                    <path
-                        d="M4 6V10H8"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M3 10H21" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M7 7V5.5C7 4.7 7.7 4 8.5 4H17C18.1 4 19 4.9 19 6V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    <circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/>
                 </svg>
 
             </span>
 
             <small data-i18n="nav_history">
-                History
+                Savings
             </small>
 
         </a>
@@ -316,8 +293,7 @@
 
 
 
-
-    <!-- MY -->
+        <!-- MY -->
 
     <a href="my-attendance.html">
 
@@ -361,8 +337,8 @@
     <!-- =========================
          SUPABASE
     ========================== -->
-   
-    
+
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="js/supabase.js"></script>
@@ -370,68 +346,28 @@
     <script src="js/auth.js"></script>
 
      <script>
-const statusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
-const statusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
 function tr(key) {
     const lang = getLang();
     return (translations[key] && translations[key][lang]) || key;
 }
-function statusLabelOf(status) {
-    return tr(statusKeyMap[status]) || status;
-}
-let allHistoryData = [];
 
-let selectedMonth = "all";
-let selectedStatus = "all";
-
-function fillMonthOptions(data) {
-    const seen = new Set();
-    const options = [{ key: "all", label: tr("all_months") }];
-
-    data.forEach(function (item) {
-        const d = new Date(item.date);
-        const key = d.getFullYear() + "-" + d.getMonth();
-        if (!seen.has(key)) {
-            seen.add(key);
-            options.push({
-                key: key,
-                label: monthYearLabel(d)
-            });
-        }
-    });
-
-    const dropdown = document.getElementById("monthDropdown");
-
-    dropdown.innerHTML = options.map(function (o) {
-        return `<button type="button" class="filter-option" data-value="${o.key}">${o.label}</button>`;
-    }).join("");
-
-    dropdown.querySelectorAll(".filter-option").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            selectedMonth = this.dataset.value;
-            document.getElementById("monthSelectLabel").textContent = this.textContent;
-            dropdown.classList.remove("show");
-            renderHistory();
-        });
-    });
-}
+let allSavingsData = [];
+let selectedType = "all";
 
 function renderHistory() {
-    const monthValue = selectedMonth;
-    const statusValue = selectedStatus;
+    const typeValue = selectedType;
 
-    let filtered = allHistoryData.filter(function (item) {
-        const d = new Date(item.date);
-        const key = d.getFullYear() + "-" + d.getMonth();
-        const monthOk = monthValue === "all" || monthValue === key;
-        const statusOk = statusValue === "all" || item.status === statusValue;
-        return monthOk && statusOk;
+    let filtered = allSavingsData.filter(function (item) {
+        return typeValue === "all" || item.type === typeValue;
     });
 
-    document.getElementById("sumHadir").textContent = filtered.filter(i => i.status === "Hadir").length;
-    document.getElementById("sumIzin").textContent = filtered.filter(i => i.status === "Izin").length;
-    document.getElementById("sumSakit").textContent = filtered.filter(i => i.status === "Sakit").length;
-    document.getElementById("sumAlpa").textContent = filtered.filter(i => i.status === "Alpa").length;
+    const totalSetor = allSavingsData.filter(i => i.type === "setor").reduce((sum, i) => sum + Number(i.amount), 0);
+    const totalTarik = allSavingsData.filter(i => i.type === "tarik").reduce((sum, i) => sum + Number(i.amount), 0);
+    const balance = totalSetor - totalTarik;
+
+    document.getElementById("savingsBalance").textContent = formatRupiah(balance);
+    document.getElementById("savingsTotalSetor").textContent = formatRupiah(totalSetor);
+    document.getElementById("savingsTotalTarik").textContent = formatRupiah(totalTarik);
 
     const listEl = document.getElementById("historyList");
     const emptyEl = document.getElementById("historyEmpty");
@@ -447,29 +383,27 @@ function renderHistory() {
     const todayStr = new Date().toDateString();
 
     listEl.innerHTML = filtered.map(function (item) {
-        const d = new Date(item.date);
+        const d = new Date(item.created_at);
         const isToday = d.toDateString() === todayStr;
         const label = isToday
             ? tr("label_today")
             : dayMonthLabel(d).toUpperCase();
 
-        const cls = item.status.toLowerCase();
-        const sub = item.status === "Hadir"
-            ? tr("checkin_at") + " " + (item.time || "-")
-            : (item.reason || statusLabelOf(item.status));
+        const isSetor = item.type === "setor";
+        const typeLabel = isSetor ? tr("type_setor") : tr("type_tarik");
+        const sign = isSetor ? "+" : "-";
 
         return `
             <div class="history-date-group">
                 <p class="history-date">${label}</p>
                 <div class="history-card">
-                    <div class="history-status-icon ${cls}">${statusIcon[item.status] || "?"}</div>
+                    <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
                     <div class="history-content">
-                        <strong>${statusLabelOf(item.status)}</strong>
+                        <strong>${typeLabel}</strong>
                         <span>${dayMonthYearLabel(d)}</span>
-                        <small>${sub}</small>
+                        <small>${item.note || "-"}</small>
                     </div>
-                    <div class="history-time">${item.time || "--"}</div>
-                    <span class="history-arrow">›</span>
+                    <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
                 </div>
             </div>
         `;
@@ -477,33 +411,32 @@ function renderHistory() {
 }
 
 async function loadHistory() {
-      const { data, error } = await getMyAttendance();
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data, error } = await supabaseClient
+        .from("savings")
+        .select("*")
+        .eq("student_id", user.id)
+        .order("created_at", { ascending: false });
 
     if (error) {
-        console.error("History error:", error);
+        console.error("Savings error:", error);
         return;
     }
 
-    allHistoryData = data;
-    fillMonthOptions(data);
+    allSavingsData = data || [];
     renderHistory();
 }
 
-document.getElementById("monthSelectBtn").addEventListener("click", function (e) {
-    e.stopPropagation();
-    document.getElementById("statusDropdown").classList.remove("show");
-    document.getElementById("monthDropdown").classList.toggle("show");
-});
-
 document.getElementById("statusSelectBtn").addEventListener("click", function (e) {
     e.stopPropagation();
-    document.getElementById("monthDropdown").classList.remove("show");
     document.getElementById("statusDropdown").classList.toggle("show");
 });
 
 document.querySelectorAll("#statusDropdown .filter-option").forEach(function (btn) {
     btn.addEventListener("click", function () {
-        selectedStatus = this.dataset.value;
+        selectedType = this.dataset.value;
         document.getElementById("statusSelectLabel").textContent =
             this.querySelector("span:last-child") ? this.textContent.trim() : this.textContent;
         document.getElementById("statusSelectDot").className =
@@ -514,7 +447,6 @@ document.querySelectorAll("#statusDropdown .filter-option").forEach(function (bt
 });
 
 document.addEventListener("click", function () {
-    document.getElementById("monthDropdown").classList.remove("show");
     document.getElementById("statusDropdown").classList.remove("show");
 });
 

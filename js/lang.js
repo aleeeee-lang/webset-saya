@@ -16,7 +16,7 @@ const translations = {
     nav_home: { en: "Home", id: "Beranda" },
     nav_attendance: { en: "Attendance", id: "Absensi" },
     nav_dashboard: { en: "Dashboard", id: "Dasbor" },
-    nav_history: { en: "History", id: "Riwayat" },
+    nav_history: { en: "Savings", id: "Tabungan" },
     nav_my: { en: "My", id: "Saya" },
 
     page_attendance: { en: "Attendance", id: "Absensi" },
@@ -70,7 +70,7 @@ const translations = {
     quick_action_text: { en: "Don't forget to record your attendance.", id: "Jangan lupa catat absensimu." },
     quick_action_btn: { en: "Attendance →", id: "Absensi →" },
 
-    page_history: { en: "History", id: "Riwayat" },
+    page_history: { en: "Savings", id: "Tabungan" },
     label_month: { en: "MONTH", id: "BULAN" },
     label_status_filter: { en: "STATUS", id: "STATUS" },
     all_months: { en: "All Months", id: "Semua Bulan" },
@@ -78,6 +78,51 @@ const translations = {
     no_history_title: { en: "No attendance history", id: "Belum ada riwayat absensi" },
     no_history_text: { en: "Your attendance records will appear here.", id: "Catatan absensimu akan muncul di sini." },
     checkin_at: { en: "Check-in at", id: "Absen masuk pukul" },
+
+    label_savings_balance: { en: "SAVINGS BALANCE", id: "SALDO TABUNGAN" },
+    label_savings_history: { en: "TRANSACTION HISTORY", id: "RIWAYAT TRANSAKSI" },
+    label_type_filter: { en: "TYPE", id: "JENIS" },
+    all_types: { en: "All Transactions", id: "Semua Transaksi" },
+    type_setor: { en: "Deposit", id: "Setor" },
+    type_tarik: { en: "Withdrawal", id: "Tarik" },
+    no_savings_title: { en: "No savings yet", id: "Belum ada tabungan" },
+    no_savings_text: { en: "Your savings transactions will appear here.", id: "Transaksi tabunganmu akan muncul di sini." },
+    label_total_deposit: { en: "Total Deposit", id: "Total Setor" },
+    label_total_withdraw: { en: "Total Withdrawal", id: "Total Tarik" },
+
+    page_manage_savings: { en: "Manage Savings", id: "Kelola Tabungan" },
+    menu_manage_savings: { en: "Manage Savings", id: "Kelola Tabungan" },
+    label_select_student: { en: "Select Student", id: "Pilih Siswa" },
+    label_current_balance: { en: "Current Balance", id: "Saldo Saat Ini" },
+    label_transaction_type: { en: "Transaction Type", id: "Jenis Transaksi" },
+    label_amount: { en: "Amount (Rp)", id: "Jumlah (Rp)" },
+    placeholder_amount: { en: "e.g. 10000", id: "misal: 10000" },
+    label_note_optional: { en: "Note (optional)", id: "Catatan (opsional)" },
+    placeholder_savings_note: { en: "e.g. Weekly savings", id: "misal: Tabungan mingguan" },
+    btn_add_transaction: { en: "Add Transaction", id: "Tambah Transaksi" },
+    toast_select_student_first: { en: "Please select a student first.", id: "Silakan pilih siswa dulu." },
+    toast_enter_valid_amount: { en: "Please enter a valid amount.", id: "Masukkan jumlah yang valid." },
+    toast_insufficient_balance: { en: "Insufficient balance for this withdrawal.", id: "Saldo tidak cukup untuk penarikan ini." },
+    toast_transaction_added: { en: "Transaction added.", id: "Transaksi ditambahkan." },
+    toast_transaction_failed: { en: "Failed to save transaction: ", id: "Gagal menyimpan transaksi: " },
+    toast_transaction_deleted: { en: "Transaction deleted.", id: "Transaksi dihapus." },
+    confirm_delete_transaction: { en: "Delete this transaction?", id: "Hapus transaksi ini?" },
+    text_no_transactions_yet: { en: "No transactions yet for this student.", id: "Belum ada transaksi untuk siswa ini." },
+    option_choose_student: { en: "Choose a student...", id: "Pilih siswa..." },
+
+    label_manage_holidays: { en: "Holidays (Red Dates)", id: "Hari Libur (Tanggal Merah)" },
+    label_holiday_date: { en: "Date", id: "Tanggal" },
+    label_holiday_label: { en: "Label", id: "Keterangan" },
+    placeholder_holiday_label: { en: "e.g. Independence Day", id: "misal: Hari Kemerdekaan" },
+    btn_add_holiday: { en: "Add Holiday", id: "Tambah Libur" },
+    text_no_holidays_yet: { en: "No holidays added yet.", id: "Belum ada hari libur yang ditambahkan." },
+    toast_select_date_label: { en: "Please fill in the date and label.", id: "Silakan isi tanggal dan keterangan." },
+    toast_holiday_added: { en: "Holiday added.", id: "Hari libur ditambahkan." },
+    toast_holiday_exists: { en: "That date is already marked as a holiday.", id: "Tanggal itu sudah ditandai sebagai libur." },
+    toast_holiday_failed: { en: "Failed to save: ", id: "Gagal menyimpan: " },
+    toast_holiday_deleted: { en: "Holiday deleted.", id: "Hari libur dihapus." },
+    confirm_delete_holiday: { en: "Delete this holiday?", id: "Hapus hari libur ini?" },
+    status_holiday: { en: "Holiday", id: "Libur" },
 
     page_my_attendance: { en: "My Attendance", id: "Absensi Saya" },
     score_label: { en: "ATTENDANCE SCORE", id: "SKOR ABSENSI" },
@@ -281,6 +326,15 @@ function dayMonthYearLabel(date) {
 
 function monthYearLabel(date) {
     return monthNameOf(date.getMonth()) + " " + date.getFullYear();
+}
+
+function dateKey(date) {
+    return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+}
+
+function formatRupiah(amount) {
+    const n = Number(amount) || 0;
+    return "Rp" + n.toLocaleString("id-ID");
 }
 
 function getLang() {

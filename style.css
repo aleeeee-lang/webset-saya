@@ -790,7 +790,7 @@ html[data-theme="dark"] .attendance-page #faceStatus {
 }
 
 html[data-theme="dark"] .bottom-nav a.active {
-    color: #7a74fb;
+    color: #5b8dff;
     background: transparent;
 }
 
@@ -1035,7 +1035,7 @@ html[data-theme="dark"] .attendance-page #faceStatus {
 }
 
 html[data-theme="dark"] .bottom-nav a.active {
-    color: #7a74fb;
+    color: #5b8dff;
     background: transparent;
 }
 
@@ -1203,7 +1203,7 @@ html[data-theme="dark"] .calendar-days .holiday-day {
 
 html[data-theme="dark"] .calendar-arrow {
     background: #242842 !important;
-    color: #7a74fb !important;
+    color: #5b8dff !important;
 }
 
 html[data-theme="dark"] .savings-balance-card {
@@ -1276,7 +1276,7 @@ html[data-theme="dark"] .savings-form-header strong {
 
 html[data-theme="dark"] .savings-form-icon {
     background: #242842;
-    color: #7a74fb;
+    color: #5b8dff;
 }
 
 html[data-theme="dark"] #personalTabContent .savings-form-icon {

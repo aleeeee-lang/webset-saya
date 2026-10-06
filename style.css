@@ -47,7 +47,7 @@ button,input,select,textarea{font-family:inherit}
 .welcome-description{margin:10px 0 0;color:#777;font-size:16px}
 
 /* HOME HERO */
-.attendance-hero{width:100%;overflow:hidden;border-radius:25px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.attendance-hero{width:100%;overflow:hidden;border-radius:25px;background:#fff;box-shadow:0 12px 30px rgba(19,9,245,.2)}
 .hero-full-image{position:relative;display:block;width:100%;min-height:160px}
 .hero-full-image img{width:100%;height:auto;display:block;opacity:0;transition:opacity .35s ease}
 .hero-full-image img.loaded{opacity:1}
@@ -73,9 +73,9 @@ button,input,select,textarea{font-family:inherit}
 .home-menu-card p{margin:0;color:#777;font-size:13px;line-height:1.4}
 
 /* HOME INFORMATION BANNER */
-.home-info-banner{width:100%;min-height:155px;margin-top:25px;display:flex;align-items:center;overflow:hidden;border-radius:22px;background:linear-gradient(135deg,#2f7df0,#6cb2fb);color:#fff;box-shadow:0 10px 30px rgba(59,130,246,.25)}
+.home-info-banner{width:100%;min-height:155px;margin-top:25px;display:flex;align-items:center;overflow:hidden;border-radius:22px;background:linear-gradient(135deg,#1309f5,#5752fa);color:#fff;box-shadow:0 10px 30px rgba(37,65,255,.2)}
 .info-banner-content{flex:1;padding:25px 30px}.info-banner-content p{margin:0 0 7px;font-size:12px;letter-spacing:2px;opacity:.8}.info-banner-content h2{margin:0 0 8px;font-size:23px}.info-banner-content span{display:block;color:#eeeeff;font-size:14px}
-.info-arrow{width:56px;height:56px;margin-right:25px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:#2f7df0;text-decoration:none;font-size:28px;line-height:1}.info-arrow span{display:block;position:relative;top:-5px}
+.info-arrow{width:56px;height:56px;margin-right:25px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:#1309f5;text-decoration:none;font-size:28px;line-height:1}.info-arrow span{display:block;position:relative;top:-5px}
 
 /* BOTTOM NAVIGATION */
 .bottom-nav{position:fixed;z-index:1000;left:50%;bottom:15px;transform:translateX(-50%);width:min(550px,calc(100% - 30px));padding:9px;display:flex;justify-content:space-around;background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.12)}

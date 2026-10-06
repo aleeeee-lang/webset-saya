@@ -129,7 +129,7 @@ async function loadToday() {
             const isMe = a.student_id === myUser.id;
             const youBadge = isMe ? " <span style='color:#1530c2;font-size:11px;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "";
             return `
-                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#eef0ff" : "#f8f8ff"};font-size:13px;color:#20243a">
+                <div class="piket-assignee-row${isMe ? " piket-assignee-me" : ""}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#eef0ff" : "#f8f8ff"};font-size:13px;color:#20243a">
                     ${a.student_name}${youBadge}
                 </div>
             `;

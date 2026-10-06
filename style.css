@@ -1287,17 +1287,18 @@ html[data-theme="dark"] .type-toggle {
 }
 
 html[data-theme="dark"] .type-toggle-btn {
+    background: #2a2e45;
     color: #9aa0b8;
 }
 
 html[data-theme="dark"] .type-toggle-btn.setor.active {
-    background: #123524;
+    background: #2a2e45;
     color: #4ade80;
     box-shadow: none;
 }
 
 html[data-theme="dark"] .type-toggle-btn.tarik.active {
-    background: #3a1420;
+    background: #2a2e45;
     color: #ff6b7a;
     box-shadow: none;
 }

@@ -278,10 +278,10 @@ async function loadWeekly() {
         const names = grouped[d.iso];
         const hasDuty = !!(names && names.length > 0);
         return `
-            <div class="am-row${hasDuty ? " piket-duty-row" : ""}" style="display:flex;align-items:center;gap:12px;padding:12px;background:${hasDuty ? "#2f6feb" : "#f8f8ff"};border-radius:12px">
+            <div class="am-row${hasDuty ? " piket-duty-row" : ""}" style="display:flex;align-items:center;gap:12px;padding:12px;background:${hasDuty ? "#ea580c" : "#f8f8ff"};border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:${hasDuty ? "#fff" : "#20243a"}">${translations[d.key][lang]}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#dbe6ff" : "#888"}">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#ffe3cc" : "#888"}">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
                 </div>
             </div>
         `;

@@ -114,7 +114,7 @@ const translations = {
     text_no_transactions_yet: { en: "No transactions yet for this student.", id: "Belum ada transaksi untuk siswa ini." },
     option_choose_student: { en: "Choose a student...", id: "Pilih siswa..." },
 
-    label_manage_holidays: { en: "Holidays (Red Dates)", id: "Hari Libur (Tanggal Merah)" },
+    label_manage_holidays: { en: "Calendar Events", id: "Acara Kalender" },
     label_holiday_date: { en: "Date", id: "Tanggal" },
     label_holiday_label: { en: "Label", id: "Keterangan" },
     placeholder_holiday_label: { en: "e.g. Independence Day", id: "misal: Hari Kemerdekaan" },
@@ -127,6 +127,11 @@ const translations = {
     toast_holiday_deleted: { en: "Holiday deleted.", id: "Hari libur dihapus." },
     confirm_delete_holiday: { en: "Delete this holiday?", id: "Hapus hari libur ini?" },
     status_holiday: { en: "Holiday", id: "Libur" },
+    label_holiday_type: { en: "Event type", id: "Jenis Acara" },
+    type_holiday: { en: "Holiday", id: "Libur" },
+    type_spp: { en: "SPP Payment", id: "Bayar SPP" },
+    type_exam: { en: "Exam", id: "Ujian" },
+    type_event: { en: "School Event", id: "Acara Sekolah" },
 
     page_my_attendance: { en: "My Attendance", id: "Absensi Saya" },
     score_label: { en: "ATTENDANCE SCORE", id: "SKOR ABSENSI" },

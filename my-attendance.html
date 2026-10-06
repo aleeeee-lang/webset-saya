@@ -104,6 +104,9 @@
             <span><i class="legend sakit"></i><span data-i18n="status_sick">Sick</span></span>
             <span><i class="legend alpa"></i><span data-i18n="status_absent">Absent</span></span>
             <span><i class="legend holiday"></i><span data-i18n="status_holiday">Holiday</span></span>
+            <span><i class="legend spp"></i><span data-i18n="type_spp">SPP Payment</span></span>
+            <span><i class="legend exam"></i><span data-i18n="type_exam">Exam</span></span>
+            <span><i class="legend event"></i><span data-i18n="type_event">School Event</span></span>
         </div>
 
     </section>
@@ -287,12 +290,15 @@ let calendarViewYear = new Date().getFullYear();
 let calendarViewMonth = new Date().getMonth();
 let myAttendanceData = [];
 let holidaySet = new Set();
+let holidayTypeByDate = {};
 
 async function loadHolidays() {
     if (typeof supabaseClient === "undefined") return;
-    const { data, error } = await supabaseClient.from("holidays").select("date,label");
+    const { data, error } = await supabaseClient.from("holidays").select("date,label,type");
     if (error || !data) return;
     holidaySet = new Set(data.map(function (h) { return h.date; }));
+    holidayTypeByDate = {};
+    data.forEach(function (h) { holidayTypeByDate[h.date] = h.type || "holiday"; });
 }
 
 function renderCalendar() {
@@ -326,9 +332,10 @@ function renderCalendar() {
         const status = statusByDay[day];
         const key = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
         const isHoliday = holidaySet.has(key);
+        const eventType = holidayTypeByDate[key] || "holiday";
 
         let cls = "";
-        if (isHoliday) cls = "holiday-day";
+        if (isHoliday) cls = eventType + "-day";
         else if (status === "Izin") cls = "izin-day";
         else if (status === "Sakit") cls = "sakit-day";
         else if (status === "Alpa") cls = "alpa-day";

@@ -408,6 +408,24 @@ button.filter-select {
     font-weight: bold;
 }
 
+.calendar-days .spp-day {
+    background: #e0f5f3;
+    color: #0d9488;
+    font-weight: bold;
+}
+
+.calendar-days .exam-day {
+    background: #ffead9;
+    color: #ea580c;
+    font-weight: bold;
+}
+
+.calendar-days .event-day {
+    background: #fde3f0;
+    color: #db2777;
+    font-weight: bold;
+}
+
 .calendar-nav {
     display: flex;
     align-items: center;
@@ -423,6 +441,18 @@ button.filter-select {
 
 .legend.holiday {
     background: #64748b;
+}
+
+.legend.spp {
+    background: #0d9488;
+}
+
+.legend.exam {
+    background: #ea580c;
+}
+
+.legend.event {
+    background: #db2777;
 }
 
 /* ===== SAVINGS (TABUNGAN) ===== */
@@ -1200,6 +1230,21 @@ html[data-theme="dark"] .lang-btn.active {
 html[data-theme="dark"] .calendar-days .holiday-day {
     background: #2a2e45 !important;
     color: #9aa0b8 !important;
+}
+
+html[data-theme="dark"] .calendar-days .spp-day {
+    background: #0f3d38 !important;
+    color: #2dd4bf !important;
+}
+
+html[data-theme="dark"] .calendar-days .exam-day {
+    background: #4a2410 !important;
+    color: #fb923c !important;
+}
+
+html[data-theme="dark"] .calendar-days .event-day {
+    background: #4a1030 !important;
+    color: #f472b6 !important;
 }
 
 html[data-theme="dark"] .calendar-days .alpa-day {

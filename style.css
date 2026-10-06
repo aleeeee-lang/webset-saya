@@ -68,7 +68,7 @@ button,input,select,textarea{font-family:inherit}
 .home-menu-card:active{transform:scale(.96)}
 .attendance-card-home,.dashboard-card-home,.history-card-home,.my-attendance-card-home,.information-card-home,.piket-card-home{grid-column:span 2}
 .home-menu-icon{width:46px;height:46px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#eeeeff;font-size:23px}
-.attendance-card-home .home-menu-icon{background:#e7ecff;color:#1309f5}.dashboard-card-home .home-menu-icon{background:#e5faf3;color:#1ba97e}.history-card-home .home-menu-icon{background:#f0e9ff;color:#5752fa}.my-attendance-card-home .home-menu-icon{background:#e9edff;color:#1309f5}.information-card-home .home-menu-icon{background:#fff2d8;color:#d99a1f}.piket-card-home .home-menu-icon{background:#ffe4ec;color:#db2777}
+.attendance-card-home .home-menu-icon{background:#e7ecff;color:#1309f5}.dashboard-card-home .home-menu-icon{background:#e5faf3;color:#1ba97e}.history-card-home .home-menu-icon{background:#e0ecff;color:#3b82f6}.my-attendance-card-home .home-menu-icon{background:#e9edff;color:#1309f5}.information-card-home .home-menu-icon{background:#fff2d8;color:#d99a1f}.piket-card-home .home-menu-icon{background:#ffe4ec;color:#db2777}
 .home-menu-card h3{margin:0 0 5px;font-size:17px}
 .home-menu-card p{margin:0;color:#777;font-size:13px;line-height:1.4}
 

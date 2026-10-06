@@ -82,6 +82,7 @@ const translations = {
     tab_school_savings: { en: "School", id: "Sekolah" },
     tab_personal_savings: { en: "Personal", id: "Pribadi" },
     label_personal_balance: { en: "PERSONAL SAVINGS BALANCE", id: "SALDO TABUNGAN PRIBADI" },
+    label_add_personal_hint: { en: "Track your own savings", id: "Catat tabunganmu sendiri" },
     label_savings_balance: { en: "SAVINGS BALANCE", id: "SALDO TABUNGAN" },
     label_savings_history: { en: "TRANSACTION HISTORY", id: "RIWAYAT TRANSAKSI" },
     label_type_filter: { en: "TYPE", id: "JENIS" },

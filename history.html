@@ -153,26 +153,46 @@
 
         <section class="savings-form-card" style="margin-top:16px">
 
-            <div style="margin-bottom:10px;color:#172554;font-size:14px;font-weight:600" data-i18n="label_transaction_type">Transaction Type</div>
-
-            <div style="display:flex;flex-direction:column;gap:10px">
-
-                <select id="personalTransactionType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                    <option value="setor" data-i18n="type_setor">Deposit</option>
-                    <option value="tarik" data-i18n="type_tarik">Withdrawal</option>
-                </select>
-
+            <div class="savings-form-header">
+                <div class="savings-form-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4C8 7 5 10 5 13.5C5 17.1 8.1 20 12 20C15.9 20 19 17.1 19 13.5C19 10 16 7 12 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        <path d="M12 9.5V15.5M10 11.2C10 10.3 10.9 9.5 12 9.5C13.1 9.5 14 10.1 14 10.9C14 12.1 10 11.9 10 13.3C10 14.1 10.9 14.8 12 14.8C13.1 14.8 14 14 14 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div>
-                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_amount">Amount (Rp)</div>
-                    <input type="number" id="personalTransactionAmount" class="am-field" data-i18n-placeholder="placeholder_amount" placeholder="e.g. 10000" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <strong data-i18n="label_transaction_type">Transaction Type</strong>
+                    <span data-i18n="label_add_personal_hint">Catat tabunganmu sendiri</span>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px">
+
+                <div class="type-toggle">
+                    <button type="button" class="type-toggle-btn setor active" id="personalTypeSetorBtn" onclick="setPersonalType('setor')">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M12 5L6 11M12 5L18 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span data-i18n="type_setor">Deposit</span>
+                    </button>
+                    <button type="button" class="type-toggle-btn tarik" id="personalTypeTarikBtn" onclick="setPersonalType('tarik')">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span data-i18n="type_tarik">Withdrawal</span>
+                    </button>
                 </div>
 
                 <div>
-                    <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_note_optional">Note (optional)</div>
+                    <div class="savings-field-label" data-i18n="label_amount">Amount (Rp)</div>
+                    <div class="savings-amount-field">
+                        <span class="rp-prefix">Rp</span>
+                        <input type="number" id="personalTransactionAmount" class="am-field" placeholder="10000" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="savings-field-label" data-i18n="label_note_optional">Note (optional)</div>
                     <input type="text" id="personalTransactionNote" class="am-field" data-i18n-placeholder="placeholder_savings_note" placeholder="e.g. Weekly savings" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 </div>
 
-                <button type="button" class="submit-button" id="addPersonalTransactionBtn" onclick="addPersonalTransaction()" style="margin-top:2px" data-i18n="btn_add_transaction">
+                <button type="button" class="savings-submit-btn" id="addPersonalTransactionBtn" onclick="addPersonalTransaction()" data-i18n="btn_add_transaction">
                     Add Transaction
                 </button>
 
@@ -664,10 +684,18 @@ async function loadPersonalSavings() {
     renderPersonalHistory();
 }
 
+let selectedPersonalFormType = "setor";
+
+function setPersonalType(type) {
+    selectedPersonalFormType = type;
+    document.getElementById("personalTypeSetorBtn").classList.toggle("active", type === "setor");
+    document.getElementById("personalTypeTarikBtn").classList.toggle("active", type === "tarik");
+}
+
 async function addPersonalTransaction() {
     const lang = getLang();
 
-    const type = document.getElementById("personalTransactionType").value;
+    const type = selectedPersonalFormType;
     const amount = Number(document.getElementById("personalTransactionAmount").value);
     const note = document.getElementById("personalTransactionNote").value.trim();
     const btn = document.getElementById("addPersonalTransactionBtn");

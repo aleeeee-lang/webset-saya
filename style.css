@@ -469,10 +469,160 @@ button.filter-select {
 }
 
 .savings-form-card {
-    padding: 18px;
+    padding: 20px;
     background: #fff;
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+}
+
+.savings-form-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.savings-form-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eeeeff;
+    color: #1309f5;
+}
+
+.savings-form-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.savings-form-header strong {
+    display: block;
+    font-size: 14px;
+    color: #172554;
+}
+
+.savings-form-header span {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #999;
+}
+
+.savings-field-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.type-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 4px;
+    border-radius: 14px;
+    background: #f0f1f7;
+}
+
+.type-toggle-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 0;
+    border: none;
+    border-radius: 11px;
+    background: transparent;
+    color: #777;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.type-toggle-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.type-toggle-btn.setor.active {
+    background: #fff;
+    color: #1ba97e;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .08);
+}
+
+.type-toggle-btn.tarik.active {
+    background: #fff;
+    color: #dc3545;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .08);
+}
+
+.savings-amount-field {
+    position: relative;
+}
+
+.savings-amount-field .rp-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #999;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.savings-amount-field input {
+    padding-left: 38px !important;
+}
+
+.savings-submit-btn {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1309f5, #5752fa);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(37, 65, 255, .18);
+    transition: transform .15s ease;
+}
+
+.savings-submit-btn:hover {
+    transform: translateY(-1px);
+}
+
+.savings-submit-btn:disabled {
+    opacity: .7;
+    cursor: default;
+    transform: none;
+}
+
+/* PERSONAL SAVINGS GREEN THEME */
+
+#personalTabContent .savings-form-icon {
+    background: #e5faf3;
+    color: #1ba97e;
+}
+
+#personalTabContent .savings-submit-btn {
+    background: linear-gradient(135deg, #1ba97e, #2dd4a7);
+    box-shadow: 0 8px 20px rgba(27, 169, 126, .22);
+}
+
+#personalTabContent .am-field:focus {
+    border-color: #1ba97e !important;
+}
+
+.savings-tab-btn[data-tab="personal"].active {
+    color: #1ba97e;
 }
 
 .savings-balance-card .savings-balance-label {
@@ -883,6 +1033,11 @@ html[data-theme="dark"] .am-field,
 html[data-theme="dark"] .am-btn {
     background: #1f1f1f !important;
     border-color: #262626 !important;
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .am-field::placeholder {
+    color: #6b7190 !important;
 }
 
 html[data-theme="dark"] .am-icon {
@@ -1063,5 +1218,47 @@ html[data-theme="dark"] .savings-form-card {
 
 html[data-theme="dark"] .savings-form-card [style*="color:#172554"] {
     color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .savings-form-header strong {
+    color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .savings-form-icon {
+    background: #242842;
+    color: #7a74fb;
+}
+
+html[data-theme="dark"] #personalTabContent .savings-form-icon {
+    background: #123524;
+    color: #4ade80;
+}
+
+html[data-theme="dark"] .type-toggle {
+    background: #1a1d2e;
+}
+
+html[data-theme="dark"] .type-toggle-btn {
+    color: #9aa0b8;
+}
+
+html[data-theme="dark"] .type-toggle-btn.setor.active {
+    background: #123524;
+    color: #4ade80;
+    box-shadow: none;
+}
+
+html[data-theme="dark"] .type-toggle-btn.tarik.active {
+    background: #3a1420;
+    color: #ff6b7a;
+    box-shadow: none;
+}
+
+html[data-theme="dark"] .savings-amount-field .rp-prefix {
+    color: #9aa0b8;
+}
+
+html[data-theme="dark"] .savings-tab-btn[data-tab="personal"].active {
+    color: #4ade80;
 }
 .app-toast-info { background: #334155; }

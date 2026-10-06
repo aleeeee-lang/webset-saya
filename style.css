@@ -1130,12 +1130,16 @@ html[data-theme="dark"] .am-row:not(.piket-duty-row) span {
 }
 
 html[data-theme="dark"] .piket-duty-row {
-    background: #1a2a52 !important;
-    border-color: #2d4a8a !important;
+    background: #5b9dff !important;
+    border-color: #5b9dff !important;
+}
+
+html[data-theme="dark"] .piket-duty-row strong {
+    color: #0a1430 !important;
 }
 
 html[data-theme="dark"] .piket-duty-row span {
-    color: #7fa8ff !important;
+    color: #16244d !important;
 }
 
 /* =========================================================

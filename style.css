@@ -1247,7 +1247,8 @@ html[data-theme="dark"] .savings-balance-card.personal {
 }
 
 html[data-theme="dark"] .savings-tab-switch {
-    background: #1a1d2e;
+    background: #141414;
+    border: 1px solid #262626;
 }
 
 html[data-theme="dark"] .savings-tab-btn {
@@ -1283,7 +1284,8 @@ html[data-theme="dark"] #personalTabContent .savings-form-icon {
 }
 
 html[data-theme="dark"] .type-toggle {
-    background: #1a1d2e;
+    background: #141414;
+    border: 1px solid #262626;
 }
 
 html[data-theme="dark"] .type-toggle-btn {

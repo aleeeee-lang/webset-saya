@@ -1105,7 +1105,7 @@ html[data-theme="dark"] #settingsGearBtn {
    DARK MODE: ADMIN ATTENDANCE PAGE
 ========================================================= */
 
-html[data-theme="dark"] .am-row,
+html[data-theme="dark"] .am-row:not(.piket-duty-row),
 html[data-theme="dark"] .am-field,
 html[data-theme="dark"] .am-btn:not(.piket-day-btn):not(.holiday-type-btn):not(.feedback-category-btn):not(.feedback-filter-btn):not(.info-category-btn):not(.info-filter-btn) {
     background: #1f1f1f !important;
@@ -1125,8 +1125,17 @@ html[data-theme="dark"] .am-row strong {
     color: #ececec !important;
 }
 
-html[data-theme="dark"] .am-row span {
+html[data-theme="dark"] .am-row:not(.piket-duty-row) span {
     color: #a0a0a0 !important;
+}
+
+html[data-theme="dark"] .piket-duty-row {
+    background: #1a2a52 !important;
+    border-color: #2d4a8a !important;
+}
+
+html[data-theme="dark"] .piket-duty-row span {
+    color: #7fa8ff !important;
 }
 
 /* =========================================================

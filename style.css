@@ -1108,7 +1108,7 @@ html[data-theme="dark"] #settingsGearBtn {
 
 html[data-theme="dark"] .am-row,
 html[data-theme="dark"] .am-field,
-html[data-theme="dark"] .am-btn:not(.piket-day-btn) {
+html[data-theme="dark"] .am-btn:not(.piket-day-btn):not(.holiday-type-btn) {
     background: #1f1f1f !important;
     border-color: #262626 !important;
     color: #e5e7f5 !important;

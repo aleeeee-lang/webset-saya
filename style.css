@@ -740,6 +740,10 @@ html[data-theme="dark"] .filter-dropdown {
     border-color: #2a2e45;
 }
 
+html[data-theme="dark"] .attendance-hero {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
 html[data-theme="dark"] .calendar-day,
 html[data-theme="dark"] .recent-attendance-item,
 html[data-theme="dark"] .statistics-info div,

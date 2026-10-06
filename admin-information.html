@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Information - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_admin_information">Manage Information</h2>
+    </section>
+
+    <!-- COMPOSE -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_compose_info">Add Information</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryPengumumanBtn" data-category="pengumuman" onclick="selectInfoCategory('pengumuman')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_pengumuman">Announcement</button>
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryJadwalBtn" data-category="jadwal" onclick="selectInfoCategory('jadwal')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_jadwal">Schedule</button>
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryLainnyaBtn" data-category="lainnya" onclick="selectInfoCategory('lainnya')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_lainnya">Other</button>
+            </div>
+
+            <input type="text" id="infoTitle" class="am-field" data-i18n-placeholder="placeholder_info_title" placeholder="Title" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit">
+
+            <textarea id="infoBody" class="am-field" rows="6" data-i18n-placeholder="placeholder_info_body" placeholder="Details..." style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
+
+            <button type="button" class="submit-button" id="publishInfoBtn" onclick="publishInfo()" style="margin-top:2px" data-i18n="btn_publish_info">
+                Publish
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- LIST -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_all_info">Information</div>
+        <div id="infoList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const infoCategoryColors = {
+    pengumuman: { hue: "37,99,235", labelKey: "label_category_pengumuman" },
+    jadwal: { hue: "13,148,136", labelKey: "label_category_jadwal" },
+    lainnya: { hue: "217,119,6", labelKey: "label_category_lainnya" }
+};
+
+let allInfo = [];
+let selectedInfoCategory = "pengumuman";
+let currentUser = null;
+
+function selectInfoCategory(category) {
+    selectedInfoCategory = category;
+    renderInfoCategoryButtons();
+}
+
+function renderInfoCategoryButtons() {
+    Object.keys(infoCategoryColors).forEach(function (cat) {
+        const meta = infoCategoryColors[cat];
+        const btn = document.getElementById(
+            cat === "pengumuman" ? "infoCategoryPengumumanBtn" :
+            cat === "jadwal" ? "infoCategoryJadwalBtn" : "infoCategoryLainnyaBtn"
+        );
+        const isActive = cat === selectedInfoCategory;
+        btn.style.background = isActive ? `rgb(${meta.hue})` : `rgba(${meta.hue},0.14)`;
+        btn.style.color = isActive ? "#fff" : `rgb(${meta.hue})`;
+        btn.style.border = `1.5px solid ${isActive ? `rgb(${meta.hue})` : `rgba(${meta.hue},0.35)`}`;
+    });
+}
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+    currentUser = user;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    renderInfoCategoryButtons();
+    await loadInfo();
+}
+
+async function loadInfo() {
+    const { data, error } = await supabaseClient
+        .from("school_info")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    allInfo = (error || !data) ? [] : data;
+    renderInfoList();
+}
+
+function renderInfoList() {
+    const container = document.getElementById("infoList");
+    const lang = getLang();
+
+    if (allInfo.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_info_yet[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = allInfo.map(function (i) {
+        const meta = infoCategoryColors[i.category] || infoCategoryColors.lainnya;
+        const catLabel = translations[meta.labelKey] ? translations[meta.labelKey][lang] : i.category;
+        const date = new Date(i.created_at);
+        const timeStr = isNaN(date.getTime()) ? "" : dayMonthYearLabel(date);
+
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
+                    <span style="font-size:11px;color:#aaa">${timeStr}</span>
+                </div>
+                <strong style="font-size:14px;color:#20243a">${i.title}</strong>
+                <span style="font-size:13px;color:#555;white-space:pre-line;line-height:1.5">${i.body}</span>
+                <div style="display:flex;justify-content:flex-end">
+                    <button type="button" onclick="deleteInfo('${i.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function publishInfo() {
+    const lang = getLang();
+    const title = document.getElementById("infoTitle").value.trim();
+    const body = document.getElementById("infoBody").value.trim();
+    const btn = document.getElementById("publishInfoBtn");
+
+    if (!title) {
+        showToast(translations.toast_info_title_required[lang], "error");
+        return;
+    }
+    if (!body) {
+        showToast(translations.toast_info_body_required[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_publishing[lang];
+
+    const { error } = await supabaseClient.from("school_info").insert([{
+        category: selectedInfoCategory,
+        title: title,
+        body: body,
+        created_by: currentUser.id
+    }]);
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_publish_info[lang];
+
+    if (error) {
+        showToast(translations.toast_info_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_info_published[lang], "success");
+    document.getElementById("infoTitle").value = "";
+    document.getElementById("infoBody").value = "";
+    await loadInfo();
+}
+
+async function deleteInfo(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_info[lang])) return;
+
+    const { error } = await supabaseClient.from("school_info").delete().eq("id", id);
+    if (error) {
+        showToast(translations.toast_info_failed[lang] + error.message, "error");
+        return;
+    }
+    showToast(translations.toast_info_deleted[lang], "success");
+    await loadInfo();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

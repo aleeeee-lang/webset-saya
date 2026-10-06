@@ -363,7 +363,27 @@ const translations = {
     btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
     btn_photo_selected: { en: "Photo selected", id: "Foto terpilih" },
     toast_piket_photo_required: { en: "Please take a photo as proof before marking done.", id: "Ambil foto bukti dulu sebelum menandai sudah piket." },
-    toast_piket_photo_upload_failed: { en: "Failed to upload photo: ", id: "Gagal mengunggah foto: " }
+    toast_piket_photo_upload_failed: { en: "Failed to upload photo: ", id: "Gagal mengunggah foto: " },
+
+    page_information: { en: "Information", id: "Informasi" },
+    page_admin_information: { en: "Manage Information", id: "Kelola Informasi" },
+    menu_manage_information: { en: "Manage Information", id: "Kelola Informasi" },
+    label_compose_info: { en: "Add Information", id: "Tambah Informasi" },
+    label_all_info: { en: "Information", id: "Informasi" },
+    label_category_pengumuman: { en: "School Announcement", id: "Pengumuman Sekolah" },
+    label_category_jadwal: { en: "Class Schedule", id: "Jadwal Pelajaran" },
+    label_category_lainnya: { en: "Other", id: "Lainnya" },
+    placeholder_info_title: { en: "Title", id: "Judul" },
+    placeholder_info_body: { en: "Details...", id: "Detail..." },
+    btn_publish_info: { en: "Publish", id: "Terbitkan" },
+    btn_publishing: { en: "Publishing...", id: "Menerbitkan..." },
+    text_no_info_yet: { en: "No information posted yet.", id: "Belum ada informasi." },
+    toast_info_title_required: { en: "Please enter a title.", id: "Masukkan judul dulu." },
+    toast_info_body_required: { en: "Please enter the details.", id: "Masukkan detail informasinya dulu." },
+    toast_info_published: { en: "Information published.", id: "Informasi diterbitkan." },
+    toast_info_failed: { en: "Failed to save: ", id: "Gagal menyimpan: " },
+    confirm_delete_info: { en: "Delete this information?", id: "Hapus informasi ini?" },
+    toast_info_deleted: { en: "Information deleted.", id: "Informasi dihapus." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

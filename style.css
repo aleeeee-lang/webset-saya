@@ -48,7 +48,7 @@ button,input,select,textarea{font-family:inherit}
 
 /* HOME HERO */
 .attendance-hero{width:100%;overflow:hidden;border-radius:25px;background:linear-gradient(135deg,#1309f5,#5752fa);box-shadow:0 12px 30px rgba(19,9,245,.2)}
-.hero-full-image{position:relative;display:block;width:100%;aspect-ratio:1735/630}
+.hero-full-image{position:relative;display:block;width:100%;aspect-ratio:1732/626}
 .hero-full-image img{width:100%;height:100%;display:block;object-fit:cover;opacity:0;transition:opacity .35s ease}
 .hero-full-image img.loaded{opacity:1}
 .hero-checkin-link{position:absolute;top:17.5%;right:5.5%;width:23%;height:13%;display:block;background:transparent;cursor:pointer}

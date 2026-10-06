@@ -1251,12 +1251,12 @@ html[data-theme="dark"] .savings-tab-switch {
 }
 
 html[data-theme="dark"] .savings-tab-btn {
-    background: #2a2e45;
+    background: transparent;
     color: #9aa0b8;
 }
 
 html[data-theme="dark"] .savings-tab-btn.active {
-    background: #2a2e45;
+    background: linear-gradient(135deg, #1309c4, #4a44c9);
     color: #fff;
 }
 
@@ -1287,19 +1287,19 @@ html[data-theme="dark"] .type-toggle {
 }
 
 html[data-theme="dark"] .type-toggle-btn {
-    background: #2a2e45;
+    background: transparent;
     color: #9aa0b8;
 }
 
 html[data-theme="dark"] .type-toggle-btn.setor.active {
-    background: #2a2e45;
-    color: #4ade80;
+    background: linear-gradient(135deg, #0d7a58, #1ba97e);
+    color: #fff;
     box-shadow: none;
 }
 
 html[data-theme="dark"] .type-toggle-btn.tarik.active {
-    background: #2a2e45;
-    color: #ff6b7a;
+    background: linear-gradient(135deg, #a4283a, #d63754);
+    color: #fff;
     box-shadow: none;
 }
 
@@ -1308,7 +1308,7 @@ html[data-theme="dark"] .savings-amount-field .rp-prefix {
 }
 
 html[data-theme="dark"] .savings-tab-btn[data-tab="personal"].active {
-    background: #2a2e45;
-    color: #4ade80;
+    background: linear-gradient(135deg, #0d7a58, #1ba97e);
+    color: #fff;
 }
 .app-toast-info { background: #334155; }

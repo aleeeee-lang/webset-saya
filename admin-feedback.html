@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saran & Keluhan Siswa - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_admin_feedback">Student Suggestions & Complaints</h2>
+    </section>
+
+    <section class="attendance-card" style="padding:8px 16px">
+        <div style="display:flex;gap:8px;padding:12px 0 4px">
+            <button type="button" class="am-btn feedback-filter-btn" id="filterAllBtn" data-filter="all" onclick="setFilter('all')" style="flex:1;padding:9px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer" data-i18n="label_filter_all">All</button>
+            <button type="button" class="am-btn feedback-filter-btn" id="filterNewBtn" data-filter="new" onclick="setFilter('new')" style="flex:1;padding:9px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer" data-i18n="label_status_new">New</button>
+            <button type="button" class="am-btn feedback-filter-btn" id="filterSaranBtn" data-filter="saran" onclick="setFilter('saran')" style="flex:1;padding:9px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer" data-i18n="label_category_saran">Suggestion</button>
+            <button type="button" class="am-btn feedback-filter-btn" id="filterKeluhanBtn" data-filter="keluhan" onclick="setFilter('keluhan')" style="flex:1;padding:9px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer" data-i18n="label_category_keluhan">Complaint</button>
+        </div>
+    </section>
+
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_all_feedback">Submissions</div>
+        <div id="feedbackList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const feedbackCategoryColors = {
+    saran: { hue: "13,148,136", labelKey: "label_category_saran" },
+    keluhan: { hue: "220,38,38", labelKey: "label_category_keluhan" }
+};
+
+let allFeedback = [];
+let currentFilter = "all";
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    renderFilterButtons();
+    await loadFeedback();
+}
+
+function renderFilterButtons() {
+    const activeHue = "19,9,245";
+    ["all", "new", "saran", "keluhan"].forEach(function (f) {
+        const btn = document.getElementById(
+            f === "all" ? "filterAllBtn" :
+            f === "new" ? "filterNewBtn" :
+            f === "saran" ? "filterSaranBtn" : "filterKeluhanBtn"
+        );
+        const isActive = f === currentFilter;
+        btn.style.background = isActive ? `rgb(${activeHue})` : "rgba(19,9,245,0.1)";
+        btn.style.color = isActive ? "#fff" : `rgb(${activeHue})`;
+        btn.style.border = "1.5px solid " + (isActive ? `rgb(${activeHue})` : "rgba(19,9,245,0.3)");
+    });
+}
+
+function setFilter(f) {
+    currentFilter = f;
+    renderFilterButtons();
+    renderFeedbackList();
+}
+
+async function loadFeedback() {
+    const { data, error } = await supabaseClient
+        .from("feedback")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error || !data) {
+        allFeedback = [];
+    } else {
+        allFeedback = data;
+    }
+
+    renderFeedbackList();
+}
+
+function statusLabelOf(status, lang) {
+    return status === "read" ? translations.label_status_read[lang] : translations.label_status_new[lang];
+}
+
+function renderFeedbackList() {
+    const container = document.getElementById("feedbackList");
+    const lang = getLang();
+
+    let list = allFeedback;
+    if (currentFilter === "new") list = list.filter(f => f.status === "new");
+    else if (currentFilter === "saran" || currentFilter === "keluhan") list = list.filter(f => f.category === currentFilter);
+
+    if (list.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_feedback_yet[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = list.map(function (f) {
+        const meta = feedbackCategoryColors[f.category] || feedbackCategoryColors.saran;
+        const catLabel = translations[meta.labelKey] ? translations[meta.labelKey][lang] : f.category;
+        const date = new Date(f.created_at);
+        const timeStr = isNaN(date.getTime()) ? "" : dayMonthYearLabel(date) + ", " + String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
+        const statusColor = f.status === "read" ? "100,116,139" : "37,99,235";
+        const markReadBtn = f.status === "new"
+            ? `<button type="button" onclick="markRead('${f.id}')" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_mark_read">Mark as Read</button>`
+            : "";
+
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <strong style="font-size:14px;color:#20243a">${f.student_name || "-"}${f.class ? " · " + f.class : ""}</strong>
+                    <span style="font-size:11px;color:#aaa">${timeStr}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${statusColor},0.14);color:rgb(${statusColor});font-size:11px;font-weight:600">${statusLabelOf(f.status, lang)}</span>
+                </div>
+                <span style="font-size:14px;color:#20243a">${f.message}</span>
+                <div style="display:flex;justify-content:flex-end;gap:4px">
+                    ${markReadBtn}
+                    <button type="button" onclick="deleteFeedback('${f.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function markRead(id) {
+    const { error } = await supabaseClient.from("feedback").update({ status: "read" }).eq("id", id);
+    if (error) {
+        showToast(translations.toast_feedback_failed[getLang()] + error.message, "error");
+        return;
+    }
+    await loadFeedback();
+}
+
+async function deleteFeedback(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_feedback[lang])) return;
+
+    const { error } = await supabaseClient.from("feedback").delete().eq("id", id);
+    if (error) {
+        showToast(translations.toast_feedback_failed[lang] + error.message, "error");
+        return;
+    }
+    showToast(translations.toast_feedback_deleted[lang], "success");
+    await loadFeedback();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

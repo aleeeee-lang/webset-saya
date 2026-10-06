@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saran & Keluhan - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_feedback">Suggestions & Complaints</h2>
+    </section>
+
+    <!-- COMPOSE -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_compose_feedback">Write Something</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="display:flex;gap:8px">
+                <button type="button" class="am-btn feedback-category-btn" id="categorySaranBtn" data-category="saran" onclick="selectCategory('saran')" style="flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_saran">Suggestion</button>
+                <button type="button" class="am-btn feedback-category-btn" id="categoryKeluhanBtn" data-category="keluhan" onclick="selectCategory('keluhan')" style="flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_keluhan">Complaint</button>
+            </div>
+
+            <textarea id="feedbackMessage" class="am-field" rows="5" data-i18n-placeholder="placeholder_feedback_message" placeholder="Write your suggestion or complaint..." style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
+
+            <button type="button" class="submit-button" id="sendFeedbackBtn" onclick="sendFeedback()" style="margin-top:2px" data-i18n="btn_send_feedback">
+                Send
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- MY SUBMISSIONS -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_my_feedback">My Submissions</div>
+        <div id="myFeedbackList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const feedbackCategoryColors = {
+    saran: { hue: "13,148,136", labelKey: "label_category_saran" },
+    keluhan: { hue: "220,38,38", labelKey: "label_category_keluhan" }
+};
+
+let selectedCategory = "saran";
+let currentUser = null;
+
+function selectCategory(category) {
+    selectedCategory = category;
+    renderCategoryButtons();
+}
+
+function renderCategoryButtons() {
+    Object.keys(feedbackCategoryColors).forEach(function (cat) {
+        const meta = feedbackCategoryColors[cat];
+        const btn = document.getElementById(cat === "saran" ? "categorySaranBtn" : "categoryKeluhanBtn");
+        const isActive = cat === selectedCategory;
+        btn.style.background = isActive ? `rgb(${meta.hue})` : `rgba(${meta.hue},0.14)`;
+        btn.style.color = isActive ? "#fff" : `rgb(${meta.hue})`;
+        btn.style.border = `1.5px solid ${isActive ? `rgb(${meta.hue})` : `rgba(${meta.hue},0.35)`}`;
+    });
+}
+
+function statusLabelOf(status, lang) {
+    return status === "read" ? translations.label_status_read[lang] : translations.label_status_new[lang];
+}
+
+async function loadMyFeedback() {
+    const container = document.getElementById("myFeedbackList");
+    const lang = getLang();
+
+    const { data, error } = await supabaseClient
+        .from("feedback")
+        .select("*")
+        .eq("student_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    if (error || !data || data.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_feedback_yet[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = data.map(function (f) {
+        const meta = feedbackCategoryColors[f.category] || feedbackCategoryColors.saran;
+        const catLabel = translations[meta.labelKey] ? translations[meta.labelKey][lang] : f.category;
+        const date = new Date(f.created_at);
+        const timeStr = isNaN(date.getTime()) ? "" : dayMonthLabel(date) + ", " + String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
+        const statusColor = f.status === "read" ? "100,116,139" : "37,99,235";
+
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${statusColor},0.14);color:rgb(${statusColor});font-size:11px;font-weight:600">${statusLabelOf(f.status, lang)}</span>
+                </div>
+                <span style="font-size:14px;color:#20243a">${f.message}</span>
+                <span style="font-size:11px;color:#aaa">${timeStr}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+async function sendFeedback() {
+    const lang = getLang();
+    const message = document.getElementById("feedbackMessage").value.trim();
+    const btn = document.getElementById("sendFeedbackBtn");
+
+    if (!message) {
+        showToast(translations.toast_feedback_message_required[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_sending[lang];
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("name, class")
+        .eq("id", currentUser.id)
+        .single();
+
+    const { error } = await supabaseClient.from("feedback").insert([{
+        student_id: currentUser.id,
+        student_name: profile ? profile.name : "",
+        class: profile ? profile.class : "",
+        category: selectedCategory,
+        message: message
+    }]);
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_send_feedback[lang];
+
+    if (error) {
+        showToast(translations.toast_feedback_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_feedback_sent[lang], "success");
+    document.getElementById("feedbackMessage").value = "";
+    await loadMyFeedback();
+}
+
+async function init() {
+    const user = await requireLogin();
+    if (!user) return;
+    currentUser = user;
+
+    renderCategoryButtons();
+    await loadMyFeedback();
+}
+
+init();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

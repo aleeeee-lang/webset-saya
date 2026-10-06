@@ -1262,7 +1262,8 @@ html[data-theme="dark"] .savings-tab-btn.active {
 }
 
 html[data-theme="dark"] .savings-form-card {
-    background: #1a1d2e;
+    background: #141414;
+    border: 1px solid #262626;
 }
 
 html[data-theme="dark"] .savings-form-card [style*="color:#172554"] {

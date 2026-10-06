@@ -32,10 +32,10 @@
 
         <div style="display:flex;flex-direction:column;gap:10px">
 
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button type="button" class="am-btn info-category-btn" id="infoCategoryPengumumanBtn" data-category="pengumuman" onclick="selectInfoCategory('pengumuman')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_pengumuman">Announcement</button>
-                <button type="button" class="am-btn info-category-btn" id="infoCategoryJadwalBtn" data-category="jadwal" onclick="selectInfoCategory('jadwal')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_jadwal">Schedule</button>
-                <button type="button" class="am-btn info-category-btn" id="infoCategoryLainnyaBtn" data-category="lainnya" onclick="selectInfoCategory('lainnya')" style="flex:1;min-width:100px;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_lainnya">Other</button>
+            <div style="display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch">
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryPengumumanBtn" data-category="pengumuman" onclick="selectInfoCategory('pengumuman')" style="flex:0 0 auto;white-space:nowrap;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_pengumuman">Announcement</button>
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryJadwalBtn" data-category="jadwal" onclick="selectInfoCategory('jadwal')" style="flex:0 0 auto;white-space:nowrap;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_jadwal">Schedule</button>
+                <button type="button" class="am-btn info-category-btn" id="infoCategoryLainnyaBtn" data-category="lainnya" onclick="selectInfoCategory('lainnya')" style="flex:0 0 auto;white-space:nowrap;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="label_category_lainnya">Other</button>
             </div>
 
             <input type="text" id="infoTitle" class="am-field" data-i18n-placeholder="placeholder_info_title" placeholder="Title" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit">

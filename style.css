@@ -1247,7 +1247,7 @@ html[data-theme="dark"] .savings-balance-card.personal {
 }
 
 html[data-theme="dark"] .savings-tab-switch {
-    background: #1a1d2e;
+    background: #000;
 }
 
 html[data-theme="dark"] .savings-tab-btn {
@@ -1255,8 +1255,8 @@ html[data-theme="dark"] .savings-tab-btn {
 }
 
 html[data-theme="dark"] .savings-tab-btn.active {
-    background: #242842;
-    color: #7a74fb;
+    background: linear-gradient(135deg, #1309c4, #4a44c9);
+    color: #fff;
 }
 
 html[data-theme="dark"] .savings-form-card {
@@ -1306,6 +1306,7 @@ html[data-theme="dark"] .savings-amount-field .rp-prefix {
 }
 
 html[data-theme="dark"] .savings-tab-btn[data-tab="personal"].active {
-    color: #4ade80;
+    background: linear-gradient(135deg, #0d7a58, #1ba97e);
+    color: #fff;
 }
 .app-toast-info { background: #334155; }

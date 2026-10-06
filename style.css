@@ -403,8 +403,8 @@ button.filter-select {
 }
 
 .calendar-days .holiday-day {
-    background: #ffe8eb;
-    color: #dc3545;
+    background: #eef0f5;
+    color: #64748b;
     font-weight: bold;
 }
 
@@ -422,7 +422,7 @@ button.filter-select {
 }
 
 .legend.holiday {
-    background: #dc3545;
+    background: #64748b;
 }
 
 /* ===== SAVINGS (TABUNGAN) ===== */
@@ -1198,6 +1198,11 @@ html[data-theme="dark"] .lang-btn.active {
 ========================================================= */
 
 html[data-theme="dark"] .calendar-days .holiday-day {
+    background: #2a2e45 !important;
+    color: #9aa0b8 !important;
+}
+
+html[data-theme="dark"] .calendar-days .alpa-day {
     background: #3a1420 !important;
     color: #ff6b7a !important;
 }

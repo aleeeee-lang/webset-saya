@@ -1251,6 +1251,7 @@ html[data-theme="dark"] .savings-tab-switch {
 }
 
 html[data-theme="dark"] .savings-tab-btn {
+    background: #2a2e45;
     color: #9aa0b8;
 }
 

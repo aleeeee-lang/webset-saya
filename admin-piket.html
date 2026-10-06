@@ -91,6 +91,16 @@ const dayOptions = [
     { iso: 7, key: "day_sun" }
 ];
 
+const dayColors = {
+    1: { hue: "79,70,229" },   // Senin - indigo
+    2: { hue: "22,163,74" },   // Selasa - green
+    3: { hue: "217,119,6" },   // Rabu - amber
+    4: { hue: "147,51,234" },  // Kamis - purple
+    5: { hue: "219,39,119" },  // Jumat - pink
+    6: { hue: "234,88,12" },   // Sabtu - orange
+    7: { hue: "220,38,38" }    // Minggu - red
+};
+
 let allClasses = [];
 let allStudentsInClass = [];
 let allPiketRows = [];
@@ -126,8 +136,9 @@ function renderDayPills() {
     group.innerHTML = dayOptions.map(function (d) {
         const label = translations[d.key] ? translations[d.key][lang] : d.key;
         const shortLabel = label.slice(0, 3);
+        const hue = dayColors[d.iso].hue;
         return `
-            <button type="button" class="am-btn piket-day-btn" data-day="${d.iso}" onclick="selectDay(${d.iso})" style="border:1px solid #e2e8f0;background:#fafafa;border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;color:#20243a">
+            <button type="button" class="am-btn piket-day-btn" data-day="${d.iso}" data-hue="${hue}" onclick="selectDay(${d.iso})" style="border:1px solid rgba(${hue},0.35);background:rgba(${hue},0.14);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;color:rgb(${hue})">
                 ${shortLabel}
             </button>
         `;
@@ -139,7 +150,12 @@ function selectDay(iso) {
 
     document.querySelectorAll(".piket-day-btn").forEach(function (btn) {
         const isActive = Number(btn.getAttribute("data-day")) === iso;
+        const hue = btn.getAttribute("data-hue");
+
         btn.classList.toggle("active", isActive);
+        btn.style.background = isActive ? `rgb(${hue})` : `rgba(${hue},0.14)`;
+        btn.style.color = isActive ? "#fff" : `rgb(${hue})`;
+        btn.style.borderColor = isActive ? `rgb(${hue})` : `rgba(${hue},0.35)`;
     });
 
     syncCheckedFromExisting();

@@ -876,24 +876,6 @@ html[data-theme="dark"] .schedule-day-pill:has(input:checked) {
    DARK MODE: PIKET (DUTY ROSTER) PAGES
 ========================================================= */
 
-.piket-day-btn.active {
-    background: #1530c2 !important;
-    border-color: #1530c2 !important;
-    color: #fff !important;
-}
-
-html[data-theme="dark"] .piket-day-btn {
-    background: #1f1f1f !important;
-    border-color: #262626 !important;
-    color: #ececec !important;
-}
-
-html[data-theme="dark"] .piket-day-btn.active {
-    background: #1309c4 !important;
-    border-color: #0d06c4 !important;
-    color: #fff !important;
-}
-
 html[data-theme="dark"] #piketStudentGroup {
     border-color: #262626 !important;
 }

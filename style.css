@@ -985,4 +985,16 @@ html[data-theme="dark"] .savings-amount.setor {
 html[data-theme="dark"] .savings-amount.tarik {
     color: #ff6b7a !important;
 }
+
+html[data-theme="dark"] #studentBalanceBox {
+    background: linear-gradient(135deg, #1309c4, #4a44c9) !important;
+}
+
+html[data-theme="dark"] #studentBalanceBox span {
+    color: #c7c4ff !important;
+}
+
+html[data-theme="dark"] #studentBalanceBox h2 {
+    color: #fff !important;
+}
 .app-toast-info { background: #334155; }

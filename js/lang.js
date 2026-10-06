@@ -358,7 +358,12 @@ const translations = {
     toast_piket_deleted: { en: "Duty roster deleted.", id: "Jadwal piket dihapus." },
     label_piket_weekly: { en: "Weekly Schedule", id: "Jadwal Mingguan" },
     label_piket_no_students_day: { en: "No one assigned", id: "Belum ada yang ditugaskan" },
-    label_you: { en: "You", id: "Kamu" }
+    label_you: { en: "You", id: "Kamu" },
+    label_piket_photo_proof: { en: "Cleaning proof photo", id: "Foto bukti kebersihan" },
+    btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
+    btn_photo_selected: { en: "Photo selected", id: "Foto terpilih" },
+    toast_piket_photo_required: { en: "Please take a photo as proof before marking done.", id: "Ambil foto bukti dulu sebelum menandai sudah piket." },
+    toast_piket_photo_upload_failed: { en: "Failed to upload photo: ", id: "Gagal mengunggah foto: " }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

@@ -291,6 +291,7 @@ let calendarViewMonth = new Date().getMonth();
 let myAttendanceData = [];
 let holidaySet = new Set();
 let holidayTypeByDate = {};
+let holidayInfoByDate = {};
 
 async function loadHolidays() {
     if (typeof supabaseClient === "undefined") return;
@@ -298,7 +299,11 @@ async function loadHolidays() {
     if (error || !data) return;
     holidaySet = new Set(data.map(function (h) { return h.date; }));
     holidayTypeByDate = {};
-    data.forEach(function (h) { holidayTypeByDate[h.date] = h.type || "holiday"; });
+    holidayInfoByDate = {};
+    data.forEach(function (h) {
+        holidayTypeByDate[h.date] = h.type || "holiday";
+        holidayInfoByDate[h.date] = h.label || "";
+    });
 }
 
 function renderCalendar() {
@@ -342,10 +347,26 @@ function renderCalendar() {
         else if (status === "Hadir") cls = "hadir-day";
 
         if (isCurrentMonth && day === todayNum) cls += " today-day";
-        html += `<span class="${cls.trim()}">${day}</span>`;
+
+        if (isHoliday) {
+            html += `<span class="${cls.trim()}" onclick="showHolidayInfo('${key}')" style="cursor:pointer">${day}</span>`;
+        } else {
+            html += `<span class="${cls.trim()}">${day}</span>`;
+        }
     }
 
     document.getElementById("myCalendarDays").innerHTML = html;
+}
+
+function showHolidayInfo(dateKey) {
+    const lang = getLang();
+    const type = holidayTypeByDate[dateKey] || "holiday";
+    const label = holidayInfoByDate[dateKey] || "";
+    const typeKey = "type_" + type;
+    const typeLabel = translations[typeKey] ? translations[typeKey][lang] : type;
+    const dateLabel = dayMonthYearLabel(new Date(dateKey + "T00:00:00"));
+    const message = label ? (typeLabel + " — " + label + " (" + dateLabel + ")") : (typeLabel + " (" + dateLabel + ")");
+    showToast(message, "info");
 }
 
 function prevCalendarMonth() {

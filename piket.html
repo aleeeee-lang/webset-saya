@@ -80,7 +80,8 @@ let myUser = null;
 let todayIsoDay = null;
 let todayDateStr = null;
 let todayAssignees = [];
-let todayLog = null;
+let todayLogs = [];
+let myLog = null;
 let capturedPiketPhoto = null;
 
 function dayLabelOf(iso, lang) {
@@ -149,18 +150,21 @@ async function loadToday() {
         }).join("");
     }
 
-    const { data: log } = await supabaseClient
+    const { data: logs } = await supabaseClient
         .from("piket_logs")
         .select("*")
         .eq("class", myProfile.class)
         .eq("date", todayDateStr)
-        .maybeSingle();
+        .order("created_at", { ascending: true });
 
-    todayLog = log || null;
+    todayLogs = logs || [];
+    myLog = todayLogs.find(function (l) { return l.done_by === myUser.id; }) || null;
 
     const statusEl = document.getElementById("piketTodayStatus");
     const btn = document.getElementById("markDoneBtn");
     const photoSection = document.getElementById("piketPhotoSection");
+    const previewEl = document.getElementById("piketPhotoPreview");
+    const photoLabelEl = document.getElementById("piketPhotoLabel");
 
     const amIAssigned = todayAssignees.some(function (a) { return a.student_id === myUser.id; });
 
@@ -168,26 +172,71 @@ async function loadToday() {
         statusEl.innerHTML = "";
         btn.style.display = "none";
         photoSection.style.display = "none";
-    } else if (todayLog) {
+        return;
+    }
+
+    if (todayLogs.length > 0) {
         statusEl.innerHTML =
-            "<span style='color:#16a34a;font-weight:600'>&#10003; " + translations.label_piket_status_done[lang] + "</span>" +
-            " &middot; " + translations.label_piket_done_by[lang] + " " + (todayLog.done_by_name || "-");
-        btn.style.display = "none";
-        photoSection.style.display = "none";
+            "<span style='color:#16a34a;font-weight:600'>&#10003; " + translations.label_piket_status_done[lang] + "</span>";
 
-        if (todayLog.photo_url) {
-            const { data: signedData } = await supabaseClient.storage
+        const photosWrap = document.createElement("div");
+        photosWrap.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:10px";
+
+        const heading = document.createElement("div");
+        heading.style.cssText = "font-size:11px;color:#999;font-weight:600;letter-spacing:.5px";
+        heading.textContent = translations.label_piket_photos_submitted[lang] + " (" + todayLogs.length + ")";
+        photosWrap.appendChild(heading);
+
+        for (const l of todayLogs) {
+            const isMe = l.done_by === myUser.id;
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;flex-direction:column;gap:6px";
+
+            const nameRow = document.createElement("div");
+            nameRow.style.cssText = "font-size:12px;color:#555";
+            nameRow.innerHTML = (l.done_by_name || "-") + (isMe ? " <span style='color:#1530c2;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "");
+            row.appendChild(nameRow);
+
+            if (l.photo_url) {
+                const { data: signedData } = await supabaseClient.storage
+                    .from("piket-photos")
+                    .createSignedUrl(l.photo_url, 3600);
+
+                if (signedData && signedData.signedUrl) {
+                    const img = document.createElement("img");
+                    img.src = signedData.signedUrl;
+                    img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:14px;cursor:pointer";
+                    img.onclick = function () { window.open(signedData.signedUrl, "_blank"); };
+                    row.appendChild(img);
+                }
+            }
+
+            photosWrap.appendChild(row);
+        }
+
+        statusEl.appendChild(photosWrap);
+    } else {
+        statusEl.innerHTML = "<span style='color:#c2850d;font-weight:600'>" + translations.label_piket_status_pending[lang] + "</span>";
+    }
+
+    if (amIAssigned) {
+        btn.style.display = "block";
+        photoSection.style.display = "flex";
+        btn.textContent = myLog ? translations.btn_change_photo[lang] : translations.btn_mark_done[lang];
+
+        if (myLog && myLog.photo_url && !capturedPiketPhoto) {
+            const { data: mySigned } = await supabaseClient.storage
                 .from("piket-photos")
-                .createSignedUrl(todayLog.photo_url, 3600);
-
-            if (signedData && signedData.signedUrl) {
-                statusEl.innerHTML += `<div style="margin-top:10px"><img src="${signedData.signedUrl}" onclick="window.open('${signedData.signedUrl}','_blank')" style="width:100%;max-height:220px;object-fit:cover;border-radius:14px;cursor:pointer"></div>`;
+                .createSignedUrl(myLog.photo_url, 3600);
+            if (mySigned && mySigned.signedUrl) {
+                previewEl.src = mySigned.signedUrl;
+                previewEl.style.display = "block";
+                photoLabelEl.textContent = translations.btn_photo_selected[lang];
             }
         }
     } else {
-        statusEl.innerHTML = "<span style='color:#c2850d;font-weight:600'>" + translations.label_piket_status_pending[lang] + "</span>";
-        btn.style.display = amIAssigned ? "block" : "none";
-        photoSection.style.display = amIAssigned ? "flex" : "none";
+        btn.style.display = "none";
+        photoSection.style.display = "none";
     }
 }
 
@@ -195,6 +244,7 @@ async function markDone() {
 
     const lang = getLang();
     const btn = document.getElementById("markDoneBtn");
+    const isResubmit = !!myLog;
 
     const amIAssigned = todayAssignees.some(function (a) { return a.student_id === myUser.id; });
 
@@ -221,7 +271,7 @@ async function markDone() {
 
     if (uploadError) {
         btn.disabled = false;
-        btn.textContent = translations.btn_mark_done[lang];
+        btn.textContent = isResubmit ? translations.btn_change_photo[lang] : translations.btn_mark_done[lang];
         showToast(translations.toast_piket_photo_upload_failed[lang] + uploadError.message, "error");
         return;
     }
@@ -230,16 +280,16 @@ async function markDone() {
 
     const { error } = await supabaseClient
         .from("piket_logs")
-        .insert({
+        .upsert({
             class: myProfile.class,
             date: todayDateStr,
             done_by: myUser.id,
             done_by_name: myProfile.name,
             photo_url: photoPath
-        });
+        }, { onConflict: "class,date,done_by" });
 
     btn.disabled = false;
-    btn.textContent = translations.btn_mark_done[lang];
+    btn.textContent = isResubmit ? translations.btn_change_photo[lang] : translations.btn_mark_done[lang];
 
     if (error) {
         showToast(translations.toast_piket_mark_failed[lang] + error.message, "error");
@@ -252,7 +302,7 @@ async function markDone() {
     previewEl.style.display = "none";
     document.getElementById("piketPhotoLabel").textContent = translations.btn_take_photo[lang];
 
-    showToast(translations.toast_piket_marked_done[lang], "success");
+    showToast(isResubmit ? translations.toast_piket_photo_updated[lang] : translations.toast_piket_marked_done[lang], "success");
     await loadToday();
 }
 

@@ -364,6 +364,9 @@ const translations = {
     btn_photo_selected: { en: "Photo selected", id: "Foto terpilih" },
     toast_piket_photo_required: { en: "Please take a photo as proof before marking done.", id: "Ambil foto bukti dulu sebelum menandai sudah piket." },
     toast_piket_photo_upload_failed: { en: "Failed to upload photo: ", id: "Gagal mengunggah foto: " },
+    btn_change_photo: { en: "Change Photo", id: "Ganti Foto" },
+    label_piket_photos_submitted: { en: "Proof photos submitted", id: "Foto bukti yang terkumpul" },
+    toast_piket_photo_updated: { en: "Photo updated. Thanks!", id: "Foto berhasil diganti. Terima kasih!" },
 
     page_information: { en: "Information", id: "Informasi" },
     page_admin_information: { en: "Manage Information", id: "Kelola Informasi" },

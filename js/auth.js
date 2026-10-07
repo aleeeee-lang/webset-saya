@@ -86,8 +86,9 @@ async function getMyAttendance() {
  * computed on the fly — nothing is written to the database.
  *
  * A "school day" is any date, between the student's earliest attendance
- * record and yesterday, whose weekday is in that class's active_days
- * (from attendance_schedules) and that isn't a marked holiday.
+ * record and "today" (inclusive of today once that class's scheduled end
+ * time has passed), whose weekday is in that class's active_days (from
+ * attendance_schedules) and that isn't a marked holiday.
  *
  * Returns 0 if the student has no attendance history yet (nothing to
  * anchor the range to) or no schedule/class is configured.
@@ -105,7 +106,7 @@ async function getAutoAlpaCount(user, attendanceData) {
 
     const { data: schedule } = await supabaseClient
         .from("attendance_schedules")
-        .select("active_days")
+        .select("active_days, end_time")
         .eq("class", profile.class)
         .maybeSingle();
 
@@ -123,10 +124,21 @@ async function getAutoAlpaCount(user, attendanceData) {
     const dates = attendanceData.map(a => a.date).sort();
     const start = new Date(dates[0] + "T00:00:00");
 
-    const today = new Date();
+    const now = new Date();
+    const today = new Date(now);
     today.setHours(0, 0, 0, 0);
+
+    // Today only counts once the class's scheduled end time has passed.
+    let includeToday = false;
+    if (schedule.end_time) {
+        const [eh, em] = schedule.end_time.split(":").map(Number);
+        const todayEnd = new Date(today);
+        todayEnd.setHours(eh, em || 0, 0, 0);
+        includeToday = now >= todayEnd;
+    }
+
     const end = new Date(today);
-    end.setDate(end.getDate() - 1);
+    end.setDate(end.getDate() - (includeToday ? 0 : 1));
 
     let missing = 0;
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {

@@ -679,6 +679,42 @@ button.filter-select {
     color: #0d9488;
 }
 
+/* DEVELOPMENT (GRADES + ACTIVITIES) */
+
+.attendance-score-card.dev {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, .22);
+}
+
+.history-empty-icon.dev {
+    color: #7c3aed;
+}
+
+.activity-status-icon.dev-grade {
+    background: #f1e9ff;
+    color: #7c3aed;
+}
+
+.activity-status-icon.kegiatan {
+    background: #e7f0ff;
+    color: #3b82f6;
+}
+
+.activity-status-icon.prestasi {
+    background: #fff4df;
+    color: #d97706;
+}
+
+.activity-status-icon.pelanggaran {
+    background: #ffe8eb;
+    color: #ef4444;
+}
+
+.activity-status-icon.catatan {
+    background: #f1e9ff;
+    color: #7c3aed;
+}
+
 .savings-tab-btn[data-tab="personal"].active {
     color: #1ba97e;
 }

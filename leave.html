@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leave Request - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_leave_request">Leave Request</h2>
+    </section>
+
+    <!-- SUBMIT LEAVE REQUEST -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_submit_leave_request">Submit Leave Request</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_leave_request">Submit this ahead of time for a future absence. Your admin will review and approve it.</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_leave_type">Type</div>
+                <select id="leaveType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <option value="Izin" data-i18n="status_permission">Permission</option>
+                    <option value="Sakit" data-i18n="status_sick">Sick</option>
+                </select>
+            </div>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_start_date">Start Date</div>
+                <input type="date" id="leaveStartDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_end_date">End Date</div>
+                <input type="date" id="leaveEndDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <input type="text" id="leaveReason" class="am-field" data-i18n-placeholder="placeholder_leave_reason" placeholder="Reason" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <button type="button" class="submit-button" id="submitLeaveBtn" onclick="submitLeaveRequest()" style="margin-top:4px" data-i18n="btn_submit_leave_request">
+                Submit Request
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- MY LEAVE REQUESTS -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_my_leave_requests">My Leave Requests</div>
+        <div id="leaveRequestsList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let currentUser = null;
+let myProfile = null;
+let myLeaveRequests = [];
+
+async function checkUser() {
+    const user = await requireLogin();
+    if (!user) return;
+    currentUser = user;
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("name,class")
+        .eq("id", user.id)
+        .single();
+
+    myProfile = profile;
+
+    document.getElementById("leaveStartDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("leaveEndDate").value = new Date().toISOString().slice(0, 10);
+
+    await loadMyLeaveRequests();
+}
+
+async function loadMyLeaveRequests() {
+    const { data } = await supabaseClient
+        .from("leave_requests")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    myLeaveRequests = data || [];
+    renderLeaveRequests();
+}
+
+function renderLeaveRequests() {
+    const lang = getLang();
+    const container = document.getElementById("leaveRequestsList");
+
+    if (myLeaveRequests.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_leave_requests[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = myLeaveRequests.map(function (r) {
+        const typeLabel = r.type === "Sakit" ? translations.status_sick[lang] : translations.status_permission[lang];
+        const statusLabel = translations["badge_leave_" + r.status][lang];
+        const dateRange = r.start_date === r.end_date ? r.start_date : (r.start_date + " - " + r.end_date);
+        return `
+            <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:13px;color:#20243a">${typeLabel}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dateRange}${r.reason ? " · " + r.reason : ""}</span>
+                </div>
+                <span class="spp-status-badge ${r.status}">${statusLabel}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+async function submitLeaveRequest() {
+    const lang = getLang();
+    const type = document.getElementById("leaveType").value;
+    const startDate = document.getElementById("leaveStartDate").value;
+    const endDate = document.getElementById("leaveEndDate").value || startDate;
+    const reason = document.getElementById("leaveReason").value.trim();
+    const btn = document.getElementById("submitLeaveBtn");
+
+    if (!startDate) {
+        showToast(translations.toast_select_leave_date[lang], "error");
+        return;
+    }
+
+    if (endDate < startDate) {
+        showToast(translations.toast_invalid_date_range[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_submitting[lang];
+
+    const { error } = await supabaseClient
+        .from("leave_requests")
+        .insert({
+            user_id: currentUser.id,
+            name: myProfile ? myProfile.name : null,
+            class: myProfile ? myProfile.class : null,
+            type: type,
+            start_date: startDate,
+            end_date: endDate,
+            reason: reason || null
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_submit_leave_request[lang];
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("leaveReason").value = "";
+
+    showToast(translations.toast_leave_request_submitted[lang], "success");
+    await loadMyLeaveRequests();
+}
+
+checkUser();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "my-attendance.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

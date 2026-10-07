@@ -27,10 +27,17 @@
 
     <section class="attendance-card" id="accountInfoCard">
         <div class="card-label" data-i18n="label_account_info">Account Info</div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-            <span style="font-size:14px;color:#20243a" id="settingsName">-</span>
-            <span style="font-size:12px;color:#888" id="settingsEmail">-</span>
-            <span style="font-size:12px;color:#888" id="settingsClass"></span>
+        <div style="display:flex;align-items:center;gap:14px">
+            <div style="position:relative;flex-shrink:0">
+                <div id="avatarPreview" style="width:56px;height:56px;border-radius:50%;background:#f0f0ff;color:#1309f5;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;overflow:hidden;cursor:pointer" onclick="document.getElementById('avatarInput').click()">?</div>
+                <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+                <span style="font-size:14px;color:#20243a" id="settingsName">-</span>
+                <span style="font-size:12px;color:#888" id="settingsEmail">-</span>
+                <span style="font-size:12px;color:#888" id="settingsClass"></span>
+                <button type="button" onclick="document.getElementById('avatarInput').click()" style="border:none;background:none;color:#1309f5;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-align:left;margin-top:2px" data-i18n="btn_change_photo">Change Photo</button>
+            </div>
         </div>
     </section>
 
@@ -148,6 +155,18 @@
             <span style="flex:1;font-size:13px" data-i18n="menu_manage_teachers">Manage Teachers</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
+
+               <a href="admin-leave.html" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M4 10H20" stroke="currentColor" stroke-width="1.7"/><path d="M8 3V7M16 3V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span style="flex:1;font-size:13px" data-i18n="menu_manage_leave">Leave Requests</span>
+            <span style="color:#aaa;font-size:16px">›</span>
+        </a>
+
+               <a href="admin-audit-log.html" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M9 4H17C18.1 4 19 4.9 19 6V20L15 17.5L12 20L9 17.5L5 20V6C5 4.9 5.9 4 7 4H9Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 9H15M9 12.5H15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span style="flex:1;font-size:13px" data-i18n="menu_audit_log">Audit Log</span>
+            <span style="color:#aaa;font-size:16px">›</span>
+        </a>
     </section>
 
     <section class="attendance-card" style="padding:8px 16px">
@@ -186,14 +205,28 @@ document.querySelector("label").addEventListener("click", function (e) {
     syncDarkUI(!isDark);
 });
 
+let currentSettingsUser = null;
+
+function renderAvatarPreview(name, avatarUrl) {
+    const preview = document.getElementById("avatarPreview");
+    if (avatarUrl) {
+        preview.innerHTML = `<img src="${avatarUrl}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+    } else {
+        const initial = (name || "?").trim().charAt(0).toUpperCase() || "?";
+        preview.textContent = initial;
+    }
+}
+
 async function loadAccountInfo() {
 
     const user = await requireLogin();
     if (!user) return;
 
+    currentSettingsUser = user;
+
     const { data: profile } = await supabaseClient
         .from("profiles")
-        .select("name, class, role")
+        .select("name, class, role, avatar_url")
         .eq("id", user.id)
         .single();
 
@@ -204,12 +237,51 @@ async function loadAccountInfo() {
         document.getElementById("settingsClass").textContent =
             profile.role === "admin" ? translations.label_admin[getLang()] : (profile.class || "-");
 
+        renderAvatarPreview(profile.name, profile.avatar_url);
+
         if (profile.role === "admin") {
             document.getElementById("adminSettingsSection").style.display = "block";
         }
     }
 
 }
+
+document.getElementById("avatarInput").addEventListener("change", async function () {
+    const lang = getLang();
+    const file = this.files && this.files[0];
+    if (!file || !currentSettingsUser) return;
+
+    const ext = (file.name.split(".").pop() || "png").toLowerCase();
+    const path = currentSettingsUser.id + "/avatar." + ext;
+
+    const { error: uploadError } = await supabaseClient.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true, cacheControl: "3600" });
+
+    if (uploadError) {
+        showToast(translations.toast_photo_upload_failed[lang] + uploadError.message, "error");
+        this.value = "";
+        return;
+    }
+
+    const { data: urlData } = supabaseClient.storage.from("avatars").getPublicUrl(path);
+    const publicUrl = urlData.publicUrl + "?t=" + Date.now();
+
+    const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", currentSettingsUser.id);
+
+    this.value = "";
+
+    if (profileError) {
+        showToast(translations.toast_save_failed[lang] + profileError.message, "error");
+        return;
+    }
+
+    renderAvatarPreview(document.getElementById("settingsName").textContent, publicUrl);
+    showToast(translations.toast_photo_updated[lang], "success");
+});
     function syncLangUI() {
     const lang = getLang();
     document.getElementById("langIdBtn").classList.toggle("active", lang === "id");

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Log - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_audit_log">Audit Log</h2>
+    </section>
+
+    <section class="attendance-card">
+        <p style="font-size:12px;color:#888;margin:0 0 14px" data-i18n="hint_audit_log">Tracks grade changes, SPP verification decisions, student status changes, and account deletions. Most recent first.</p>
+
+        <select id="auditFilter" class="am-field" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px;margin-bottom:14px">
+            <option value="" data-i18n="option_all_tables">All</option>
+            <option value="student_grades" data-i18n="label_grades">Grades</option>
+            <option value="spp_payments" data-i18n="menu_manage_spp">Manage SPP</option>
+            <option value="profiles" data-i18n="label_account_info">Account Info</option>
+        </select>
+
+        <div id="auditLogList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let allAuditEntries = [];
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadAuditLog();
+
+    document.getElementById("auditFilter").addEventListener("change", renderAuditLog);
+}
+
+async function loadAuditLog() {
+    const { data, error } = await supabaseClient
+        .from("audit_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200);
+
+    if (error || !data) {
+        allAuditEntries = [];
+    } else {
+        allAuditEntries = data;
+    }
+
+    renderAuditLog();
+}
+
+function actionBadgeColor(action) {
+    if (action === "insert") return "#16a34a";
+    if (action === "delete") return "#dc2626";
+    if (action === "status_change") return "#b45309";
+    return "#1530c2";
+}
+
+function renderAuditLog() {
+    const lang = getLang();
+    const filter = document.getElementById("auditFilter").value;
+    const container = document.getElementById("auditLogList");
+
+    const entries = filter ? allAuditEntries.filter(function (e) { return e.table_name === filter; }) : allAuditEntries;
+
+    if (entries.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_audit_entries[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = entries.map(function (e) {
+        const when = new Date(e.created_at).toLocaleString(lang === "id" ? "id-ID" : "en-US", { dateStyle: "medium", timeStyle: "short" });
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span style="font-size:11px;font-weight:700;color:${actionBadgeColor(e.action)};text-transform:uppercase">${e.action.replace("_", " ")}</span>
+                    <span style="font-size:11px;color:#aaa">${when}</span>
+                </div>
+                <span style="font-size:13px;color:#20243a">${e.summary || "-"}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

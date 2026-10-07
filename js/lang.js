@@ -598,7 +598,44 @@ const translations = {
     label_todays_attendance: { en: "Today's Attendance", id: "Absensi Hari Ini" },
     text_no_students_in_class: { en: "No students in this class yet.", id: "Belum ada siswa di kelas ini." },
     toast_select_status: { en: "Please select a status first.", id: "Pilih status dulu." },
-    toast_attendance_saved: { en: "Attendance saved.", id: "Absensi berhasil disimpan." }
+    toast_attendance_saved: { en: "Attendance saved.", id: "Absensi berhasil disimpan." },
+
+    btn_change_photo: { en: "Change Photo", id: "Ubah Foto" },
+    toast_photo_upload_failed: { en: "Failed to upload photo: ", id: "Gagal mengunggah foto: " },
+    toast_photo_updated: { en: "Profile photo updated.", id: "Foto profil berhasil diperbarui." },
+
+    page_leave_request: { en: "Leave Request", id: "Pengajuan Izin" },
+    menu_leave_request: { en: "Submit a Leave Request", id: "Ajukan Izin / Cuti" },
+    label_submit_leave_request: { en: "Submit Leave Request", id: "Ajukan Izin" },
+    hint_leave_request: { en: "Submit this ahead of time for a future absence. Your admin will review and approve it.", id: "Ajukan ini sebelum hari-H untuk ketidakhadiran di masa depan. Admin akan meninjau dan menyetujuinya." },
+    label_leave_type: { en: "Type", id: "Jenis" },
+    label_start_date: { en: "Start Date", id: "Tanggal Mulai" },
+    label_end_date: { en: "End Date", id: "Tanggal Selesai" },
+    placeholder_leave_reason: { en: "Reason", id: "Alasan" },
+    btn_submit_leave_request: { en: "Submit Request", id: "Ajukan" },
+    label_my_leave_requests: { en: "My Leave Requests", id: "Pengajuan Izin Saya" },
+    text_no_leave_requests: { en: "No leave requests yet.", id: "Belum ada pengajuan izin." },
+    toast_invalid_date_range: { en: "End date must not be before start date.", id: "Tanggal selesai tidak boleh sebelum tanggal mulai." },
+    toast_leave_request_submitted: { en: "Leave request submitted.", id: "Pengajuan izin berhasil dikirim." },
+    badge_leave_pending: { en: "Pending", id: "Menunggu" },
+    badge_leave_approved: { en: "Approved", id: "Disetujui" },
+    badge_leave_rejected: { en: "Rejected", id: "Ditolak" },
+    page_manage_leave: { en: "Leave Requests", id: "Pengajuan Izin" },
+    menu_manage_leave: { en: "Leave Requests", id: "Pengajuan Izin" },
+    label_pending_leave_requests: { en: "Pending Requests", id: "Menunggu Persetujuan" },
+    label_reviewed_leave_requests: { en: "Reviewed", id: "Sudah Ditinjau" },
+    text_no_pending_leave: { en: "No pending leave requests.", id: "Tidak ada pengajuan yang menunggu." },
+    text_no_reviewed_leave: { en: "No reviewed leave requests yet.", id: "Belum ada pengajuan yang ditinjau." },
+    btn_approve: { en: "Approve", id: "Setujui" },
+    btn_reject: { en: "Reject", id: "Tolak" },
+    toast_leave_approved: { en: "Leave request approved.", id: "Pengajuan izin disetujui." },
+    toast_leave_rejected: { en: "Leave request rejected.", id: "Pengajuan izin ditolak." },
+
+    page_audit_log: { en: "Audit Log", id: "Log Audit" },
+    menu_audit_log: { en: "Audit Log", id: "Log Audit" },
+    hint_audit_log: { en: "Tracks grade changes, SPP verification decisions, student status changes, and account deletions. Most recent first.", id: "Mencatat perubahan nilai, keputusan verifikasi SPP, perubahan status siswa, dan penghapusan akun. Terbaru di atas." },
+    option_all_tables: { en: "All", id: "Semua" },
+    text_no_audit_entries: { en: "No audit entries yet.", id: "Belum ada catatan audit." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

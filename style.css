@@ -830,6 +830,11 @@ html[data-theme="dark"] .filter-dropdown {
     border-color: #2a2e45;
 }
 
+html[data-theme="dark"] .attendance-page .status-option:hover,
+html[data-theme="dark"] .filter-option:hover {
+    background: #262a40;
+}
+
 html[data-theme="dark"] .dashboard-status-card {
     background: #23273d;
 }

@@ -59,6 +59,14 @@
 
 </main>
 
+<div id="piketPhotoModal" class="piket-photo-modal" onclick="closePiketPhotoModal(event)">
+    <div class="piket-photo-modal-inner">
+        <button type="button" class="piket-photo-modal-close" onclick="closePiketPhotoModal(event)" aria-label="Close">&times;</button>
+        <img id="piketPhotoModalImg" src="" alt="">
+        <div id="piketPhotoModalName" class="piket-photo-modal-name"></div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
@@ -179,42 +187,45 @@ async function loadToday() {
         statusEl.innerHTML =
             "<span style='color:#16a34a;font-weight:600'>&#10003; " + translations.label_piket_status_done[lang] + "</span>";
 
-        const photosWrap = document.createElement("div");
-        photosWrap.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:10px";
-
         const heading = document.createElement("div");
-        heading.style.cssText = "font-size:11px;color:#999;font-weight:600;letter-spacing:.5px";
+        heading.style.cssText = "font-size:11px;color:#999;font-weight:600;letter-spacing:.5px;margin-top:10px";
         heading.textContent = translations.label_piket_photos_submitted[lang] + " (" + todayLogs.length + ")";
-        photosWrap.appendChild(heading);
+        statusEl.appendChild(heading);
+
+        const grid = document.createElement("div");
+        grid.className = "piket-photo-grid";
 
         for (const l of todayLogs) {
             const isMe = l.done_by === myUser.id;
-            const row = document.createElement("div");
-            row.style.cssText = "display:flex;flex-direction:column;gap:6px";
 
-            const nameRow = document.createElement("div");
-            nameRow.style.cssText = "font-size:12px;color:#555";
-            nameRow.innerHTML = (l.done_by_name || "-") + (isMe ? " <span style='color:#1530c2;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "");
-            row.appendChild(nameRow);
+            if (!l.photo_url) continue;
 
-            if (l.photo_url) {
-                const { data: signedData } = await supabaseClient.storage
-                    .from("piket-photos")
-                    .createSignedUrl(l.photo_url, 3600);
+            const { data: signedData } = await supabaseClient.storage
+                .from("piket-photos")
+                .createSignedUrl(l.photo_url, 3600);
 
-                if (signedData && signedData.signedUrl) {
-                    const img = document.createElement("img");
-                    img.src = signedData.signedUrl;
-                    img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:14px;cursor:pointer";
-                    img.onclick = function () { window.open(signedData.signedUrl, "_blank"); };
-                    row.appendChild(img);
-                }
-            }
+            if (!signedData || !signedData.signedUrl) continue;
 
-            photosWrap.appendChild(row);
+            const url = signedData.signedUrl;
+            const name = (l.done_by_name || "-") + (isMe ? " (" + translations.label_you[lang] + ")" : "");
+
+            const thumb = document.createElement("div");
+            thumb.className = "piket-photo-thumb";
+            thumb.onclick = function () { openPiketPhotoModal(url, name); };
+
+            const img = document.createElement("img");
+            img.src = url;
+            thumb.appendChild(img);
+
+            const label = document.createElement("span");
+            label.className = "piket-photo-thumb-name";
+            label.textContent = name;
+            thumb.appendChild(label);
+
+            grid.appendChild(thumb);
         }
 
-        statusEl.appendChild(photosWrap);
+        statusEl.appendChild(grid);
     } else {
         statusEl.innerHTML = "<span style='color:#c2850d;font-weight:600'>" + translations.label_piket_status_pending[lang] + "</span>";
     }
@@ -353,6 +364,17 @@ document.getElementById("piketPhotoInput").addEventListener("change", function (
 
     document.getElementById("piketPhotoLabel").textContent = translations.btn_photo_selected[lang];
 });
+
+function openPiketPhotoModal(url, name) {
+    document.getElementById("piketPhotoModalImg").src = url;
+    document.getElementById("piketPhotoModalName").textContent = name;
+    document.getElementById("piketPhotoModal").classList.add("open");
+}
+
+function closePiketPhotoModal(e) {
+    if (e) e.stopPropagation();
+    document.getElementById("piketPhotoModal").classList.remove("open");
+}
 
 function goBack() {
     if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {

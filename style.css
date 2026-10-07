@@ -1142,6 +1142,100 @@ html[data-theme="dark"] .piket-duty-row span {
     color: #5c3400 !important;
 }
 
+/* PIKET PHOTO GRID + VIEWER MODAL */
+.piket-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.piket-photo-thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #eee;
+}
+
+.piket-photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.piket-photo-thumb-name {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 5px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0, 0, 0, .55), transparent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.piket-photo-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.piket-photo-modal.open {
+    display: flex;
+}
+
+.piket-photo-modal-inner {
+    position: relative;
+    max-width: 480px;
+    width: 100%;
+}
+
+.piket-photo-modal-inner img {
+    width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 14px;
+    display: block;
+}
+
+.piket-photo-modal-name {
+    margin-top: 12px;
+    text-align: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.piket-photo-modal-close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .15);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* =========================================================
    DARK MODE: DATE INPUT NATIVE PICKER ICON
 ========================================================= */

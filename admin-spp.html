@@ -43,6 +43,36 @@
 
     </section>
 
+    <!-- PER-STUDENT SPP OVERRIDE -->
+    <section class="attendance-card" style="margin-top:22px">
+
+        <div class="card-label" data-i18n="label_spp_per_student">Per-Student SPP Amount</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_spp_per_student">Set a different SPP amount for a specific student, overriding the default above.</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <select id="sppStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_student">Choose a student...</option>
+            </select>
+
+            <div id="sppStudentOverrideCard" style="display:none">
+                <div style="font-size:12px;color:#888;margin:4px 0 8px" id="sppStudentCurrentLabel">-</div>
+                <input type="number" id="sppStudentAmountInput" class="am-field" min="0" data-i18n-placeholder="placeholder_spp_student_amount" placeholder="Leave empty to use default" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <div style="display:flex;gap:8px;margin-top:10px">
+                    <button type="button" class="submit-button" id="saveSppStudentAmountBtn" onclick="saveSppStudentAmount()" style="flex:1;margin-top:0" data-i18n="btn_save_spp_student_amount">Save for This Student</button>
+                    <button type="button" class="am-btn" onclick="resetSppStudentAmount()" style="border:1px solid #fecaca;background:#fff;border-radius:12px;padding:0 16px;font-size:13px;cursor:pointer;color:#dc2626" data-i18n="btn_reset_spp_student_amount">Use Default</button>
+                </div>
+            </div>
+
+            <div style="margin-top:6px">
+                <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_spp_active_overrides">Students with a custom amount</div>
+                <div id="sppOverrideList" style="display:flex;flex-direction:column;gap:8px"></div>
+            </div>
+
+        </div>
+
+    </section>
+
     <!-- SPP PENDING REVIEW -->
     <section class="attendance-card" style="margin-top:22px">
 
@@ -87,18 +117,30 @@ async function checkAdmin() {
 
     await loadStudents();
     await loadSppAdmin();
+
+    document.getElementById("sppStudentSelect").addEventListener("change", onSppStudentSelectChange);
 }
 
 async function loadStudents() {
     const { data, error } = await supabaseClient
         .from("profiles")
-        .select("id,name,class")
+        .select("id,name,class,spp_custom_amount")
         .eq("role", "murid")
         .order("name", { ascending: true });
 
     if (error || !data) return;
 
     allStudents = data;
+
+    const select = document.getElementById("sppStudentSelect");
+    allStudents.forEach(function (s) {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name + (s.class ? " · " + s.class : "");
+        select.appendChild(opt);
+    });
+
+    renderSppOverrideList();
 }
 
 /* =========================
@@ -177,6 +219,121 @@ async function saveSppAmount() {
 
     sppAmount = amount;
     showToast(translations.toast_spp_amount_saved[lang], "success");
+}
+
+/* =========================
+   PER-STUDENT SPP OVERRIDE
+========================== */
+
+function onSppStudentSelectChange() {
+    const id = document.getElementById("sppStudentSelect").value;
+    const card = document.getElementById("sppStudentOverrideCard");
+
+    if (!id) {
+        card.style.display = "none";
+        return;
+    }
+
+    const student = allStudents.find(function (s) { return s.id === id; });
+    const lang = getLang();
+    const custom = student ? student.spp_custom_amount : null;
+    const labelEl = document.getElementById("sppStudentCurrentLabel");
+
+    if (custom !== null && custom !== undefined) {
+        labelEl.textContent = translations.label_spp_current_custom[lang].replace("{amount}", formatRupiah(custom));
+    } else {
+        labelEl.textContent = translations.label_spp_current_default[lang].replace("{amount}", formatRupiah(sppAmount));
+    }
+
+    document.getElementById("sppStudentAmountInput").value = (custom !== null && custom !== undefined) ? custom : "";
+    card.style.display = "block";
+}
+
+async function saveSppStudentAmount() {
+    const lang = getLang();
+    const id = document.getElementById("sppStudentSelect").value;
+    if (!id) return;
+
+    const raw = document.getElementById("sppStudentAmountInput").value;
+    const amount = Number(raw);
+
+    if (!raw || !amount || amount <= 0) {
+        showToast(translations.toast_enter_valid_spp_amount[lang], "error");
+        return;
+    }
+
+    const btn = document.getElementById("saveSppStudentAmountBtn");
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ spp_custom_amount: amount })
+        .eq("id", id);
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    const student = allStudents.find(function (s) { return s.id === id; });
+    if (student) student.spp_custom_amount = amount;
+
+    showToast(translations.toast_spp_student_amount_saved[lang], "success");
+    onSppStudentSelectChange();
+    renderSppOverrideList();
+}
+
+async function resetSppStudentAmount(presetId) {
+    const lang = getLang();
+    const id = presetId || document.getElementById("sppStudentSelect").value;
+    if (!id) return;
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ spp_custom_amount: null })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    const student = allStudents.find(function (s) { return s.id === id; });
+    if (student) student.spp_custom_amount = null;
+
+    showToast(translations.toast_spp_student_amount_reset[lang], "success");
+
+    if (document.getElementById("sppStudentSelect").value === id) {
+        onSppStudentSelectChange();
+    }
+    renderSppOverrideList();
+}
+
+function renderSppOverrideList() {
+    const lang = getLang();
+    const container = document.getElementById("sppOverrideList");
+    const overridden = allStudents.filter(function (s) {
+        return s.spp_custom_amount !== null && s.spp_custom_amount !== undefined;
+    });
+
+    if (overridden.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px;margin:0'>" + translations.text_no_spp_overrides[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = overridden.map(function (s) {
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:140px">
+                    <strong style="display:block;font-size:13px;color:#20243a">${s.name}${s.class ? " · " + s.class : ""}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${formatRupiah(s.spp_custom_amount)}</span>
+                </div>
+                <button type="button" class="am-btn" onclick="resetSppStudentAmount('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reset[lang]}</button>
+            </div>
+        `;
+    }).join("");
 }
 
 async function viewSppProof(path) {

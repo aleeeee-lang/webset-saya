@@ -1003,13 +1003,16 @@ async function loadSpp() {
     const user = await requireLogin();
     if (!user) return;
 
-    const { data: settingsData } = await supabaseClient
-        .from("spp_settings")
-        .select("amount")
-        .eq("id", "global")
-        .maybeSingle();
+    const [settingsRes, profileRes] = await Promise.all([
+        supabaseClient.from("spp_settings").select("amount").eq("id", "global").maybeSingle(),
+        supabaseClient.from("profiles").select("spp_custom_amount").eq("id", user.id).maybeSingle()
+    ]);
 
-    sppSettings = settingsData || { amount: 0 };
+    const defaultAmount = (settingsRes.data && settingsRes.data.amount) || 0;
+    const customAmount = profileRes.data ? profileRes.data.spp_custom_amount : null;
+    const effectiveAmount = (customAmount !== null && customAmount !== undefined) ? customAmount : defaultAmount;
+
+    sppSettings = { amount: effectiveAmount };
 
     const { data, error } = await supabaseClient
         .from("spp_payments")

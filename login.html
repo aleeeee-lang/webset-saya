@@ -81,6 +81,10 @@
 
 <script>
 
+if (new URLSearchParams(window.location.search).get("inactive") === "1") {
+    showToast("This account is no longer active. Please contact your admin.", "error");
+}
+
 document.getElementById("togglePwd").addEventListener("click", function () {
     const pwd = document.getElementById("password");
     const isHidden = pwd.type === "password";
@@ -159,13 +163,21 @@ async function loginUser() {
 
     const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("role")
+        .select("role, status")
         .eq("id", data.user.id)
         .single();
 
     if (profileError || !profile) {
         console.error("Profile not found:", profileError);
         showToast("Login succeeded, but no profile was found for this account. Contact your admin.", "error");
+        btn.disabled = false;
+        btn.textContent = "Login";
+        return;
+    }
+
+    if (profile.status === "inactive") {
+        await supabaseClient.auth.signOut();
+        showToast("This account is no longer active. Please contact your admin.", "error");
         btn.disabled = false;
         btn.textContent = "Login";
         return;

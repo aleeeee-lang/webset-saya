@@ -281,6 +281,18 @@ const translations = {
     toast_student_deleted: { en: "Student deleted.", id: "Siswa dihapus." },
     fallback_this_student: { en: "this student", id: "siswa ini" },
 
+    badge_inactive: { en: "Inactive", id: "Non-aktif" },
+    btn_mark_left: { en: "Mark Left", id: "Tandai Keluar" },
+    btn_reactivate: { en: "Reactivate", id: "Aktifkan Lagi" },
+    label_leave_date: { en: "Leave date", id: "Tanggal keluar" },
+    hint_mark_left: { en: "Marks this student as no longer attending. Their login will be blocked and auto-absence stops counting after the leave date, but their attendance history stays intact.", id: "Menandai siswa ini sudah tidak sekolah di sini. Login mereka akan diblokir dan alpa otomatis berhenti dihitung setelah tanggal keluar, tapi riwayat absensinya tetap tersimpan." },
+    toast_select_leave_date: { en: "Please select a leave date.", id: "Silakan pilih tanggal keluar." },
+    toast_student_marked_left: { en: "Student marked as left/graduated.", id: "Siswa ditandai sudah keluar/lulus." },
+    toast_student_reactivated: { en: "Student reactivated.", id: "Siswa diaktifkan lagi." },
+    confirm_reactivate_student: { en: "Reactivate {name}? They will be able to log in again.", id: "Aktifkan lagi {name}? Mereka akan bisa login lagi." },
+    text_left_on: { en: "Left on", id: "Keluar sejak" },
+    login_blocked_inactive: { en: "This account is no longer active. Please contact your admin.", id: "Akun ini sudah tidak aktif. Silakan hubungi admin." },
+
     page_manage_attendance: { en: "Manage Attendance", id: "Kelola Absensi" },
     label_today_attendance: { en: "Today's Attendance", id: "Absensi Hari Ini" },
     label_filter_records: { en: "Filter Records", id: "Filter Catatan" },

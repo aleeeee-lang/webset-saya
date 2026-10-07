@@ -14,6 +14,21 @@ async function requireLogin() {
 
     }
 
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("status")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+    if (profile && profile.status === "inactive") {
+
+        await supabaseClient.auth.signOut();
+        window.location.href = "login.html?inactive=1";
+
+        return null;
+
+    }
+
 
     return data.user;
 
@@ -155,7 +170,7 @@ async function getAutoAlpaCount(user, attendanceData, period) {
 
     const { data: profile } = await supabaseClient
         .from("profiles")
-        .select("class")
+        .select("class, status, left_date")
         .eq("id", user.id)
         .single();
 
@@ -209,6 +224,13 @@ async function getAutoAlpaCount(user, attendanceData, period) {
     if (periodEnd) {
         const periodEndDate = new Date(periodEnd + "T00:00:00");
         if (periodEndDate < end) end = periodEndDate;
+    }
+
+    // If the student has been marked as left/graduated, auto-Alpa must stop
+    // advancing past the date they left — missing days after that aren't theirs.
+    if (profile.status === "inactive" && profile.left_date) {
+        const leftDateObj = new Date(profile.left_date + "T00:00:00");
+        if (leftDateObj < end) end = leftDateObj;
     }
 
     if (end < start) return 0;

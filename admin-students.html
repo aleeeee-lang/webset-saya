@@ -183,23 +183,104 @@ async function loadStudents() {
         return;
     }
 
-    const btnEditLabel = translations.btn_edit[getLang()];
-    const btnDeleteLabel = translations.btn_delete[getLang()];
+    const lang = getLang();
+    const btnEditLabel = translations.btn_edit[lang];
+    const btnDeleteLabel = translations.btn_delete[lang];
+    const btnMarkLeftLabel = translations.btn_mark_left[lang];
+    const btnReactivateLabel = translations.btn_reactivate[lang];
+    const badgeInactiveLabel = translations.badge_inactive[lang];
+    const textLeftOnLabel = translations.text_left_on[lang];
 
     list.innerHTML = data.map(function (s) {
+        const isInactive = s.status === "inactive";
+        const nameRowStyle = isInactive ? "opacity:.6" : "";
+        const badge = isInactive
+            ? `<span style="display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:#dc2626;background:#fef2f2;border-radius:6px;padding:2px 8px">${badgeInactiveLabel}${s.left_date ? " · " + textLeftOnLabel + " " + s.left_date : ""}</span>`
+            : "";
+
+        const statusActionBtn = isInactive
+            ? `<button type="button" class="am-btn" onclick="reactivateStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${btnReactivateLabel}</button>`
+            : `<button type="button" class="am-btn" onclick="startMarkLeft('${s.id}')" style="border:1px solid #fde68a;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#b45309">${btnMarkLeftLabel}</button>`;
+
         return `
             <div class="student-row am-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
-                <div class="student-view" id="view-${s.id}" style="flex:1;min-width:0">
+                <div class="student-view" id="view-${s.id}" style="flex:1;min-width:0;${nameRowStyle}">
                     <strong style="display:block;font-size:14px;color:#20243a">${s.name || "-"}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
+                    ${badge}
                 </div>
-                <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0">
+                <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
                     <button type="button" class="am-btn" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
+                    ${statusActionBtn}
                     <button type="button" class="am-btn" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
                 </div>
             </div>
         `;
     }).join("");
+}
+
+function startMarkLeft(id) {
+    const student = allStudentsData.find(s => s.id === id);
+    if (!student) return;
+
+    const view = document.getElementById("view-" + id);
+    const actions = document.getElementById("actions-" + id);
+    const lang = getLang();
+
+    view.innerHTML = `
+        <strong style="display:block;font-size:14px;color:#20243a;margin-bottom:6px">${(student.name || "-")}</strong>
+        <label style="display:block;font-size:12px;color:#64748b;margin-bottom:4px;font-weight:600">${translations.label_leave_date[lang]}</label>
+        <input type="date" id="leaveDate-${id}" class="am-field" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;margin-bottom:6px">
+        <p style="font-size:11px;color:#888;margin:0">${translations.hint_mark_left[lang]}</p>
+    `;
+
+    actions.innerHTML = `
+        <button type="button" onclick="saveMarkLeft('${id}')" style="border:none;background:#b45309;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_mark_left[lang]}</button>
+        <button type="button" class="am-btn" onclick="loadStudents()" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_cancel[lang]}</button>
+    `;
+}
+
+async function saveMarkLeft(id) {
+    const lang = getLang();
+    const leaveDate = document.getElementById("leaveDate-" + id).value;
+
+    if (!leaveDate) {
+        showToast(translations.toast_select_leave_date[lang], "error");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ status: "inactive", left_date: leaveDate })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_student_marked_left[lang], "success");
+    loadStudents();
+}
+
+async function reactivateStudent(id, name) {
+    const lang = getLang();
+    const confirmMsg = translations.confirm_reactivate_student[lang].replace("{name}", name || translations.fallback_this_student[lang]);
+    const ok = confirm(confirmMsg);
+    if (!ok) return;
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ status: "active", left_date: null })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_student_reactivated[lang], "success");
+    loadStudents();
 }
 
 function startEditStudent(id) {

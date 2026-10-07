@@ -645,15 +645,18 @@
                     )
                     : 0;
 
-            document.getElementById(
-                "attendancePercentage"
-            ).textContent =
-                percentage + "%";
+            const rateClass =
+                percentage >= 90 ? "" : (percentage >= 75 ? "warn" : "bad");
 
-            document.getElementById(
-                "attendanceProgress"
-            ).style.width =
-                percentage + "%";
+            const percentageEl = document.getElementById("attendancePercentage");
+            percentageEl.textContent = percentage + "%";
+            percentageEl.classList.remove("warn", "bad");
+            if (rateClass) percentageEl.classList.add(rateClass);
+
+            const progressEl = document.getElementById("attendanceProgress");
+            progressEl.style.width = percentage + "%";
+            progressEl.classList.remove("warn", "bad");
+            if (rateClass) progressEl.classList.add(rateClass);
 
 
 

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_about">About Attendreem</h2>
+    </section>
+
+    <section class="attendance-card" style="text-align:center;padding:36px 24px">
+
+        <img src="favicon.png" alt="Attendreem" style="width:72px;height:72px;border-radius:20px;box-shadow:0 8px 20px rgba(19,9,245,.2)">
+
+        <h1 style="margin:16px 0 2px;font-size:22px;color:#20243a">Attendreem</h1>
+        <p style="margin:0 0 18px;font-size:13px;color:#888" data-i18n="about_tagline">Attendance &amp; student management for schools</p>
+
+        <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#555;text-align:left" data-i18n="about_description">
+            Attendreem helps schools track daily attendance, SPP payments, savings, duty rosters, and student development — all in one simple app for students, teachers and admins.
+        </p>
+
+        <div class="about-version-pill" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:#f0f0ff;color:#1309f5;font-size:12px;font-weight:600">
+            <span data-i18n="label_app_version">Version</span>
+            <span>1.0.0</span>
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+
+    <a href="index.html">
+        <span class="nav-home-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 10.5L12 3L21 10.5V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 21V14H15V21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <small data-i18n="nav_home">Home</small>
+    </a>
+
+    <a href="attendance.html">
+        <span class="nav-camera-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+        </span>
+        <small data-i18n="nav_attendance">Attendance</small>
+    </a>
+
+    <a href="dashboard.html">
+        <span class="nav-dashboard-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M7.5 9H10M14 9H16.5M7.5 13H11.5M14 13H16.5M7.5 17H10M14 17H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <small data-i18n="nav_dashboard">Dashboard</small>
+    </a>
+
+    <a href="history.html">
+        <span class="nav-history-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 10H21" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M7 7V5.5C7 4.7 7.7 4 8.5 4H17C18.1 4 19 4.9 19 6V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/>
+            </svg>
+        </span>
+        <small data-i18n="nav_history">History</small>
+    </a>
+
+    <a href="my-attendance.html">
+        <span class="nav-person-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="7" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <small data-i18n="nav_my">My</small>
+    </a>
+
+</nav>
+
+
+<script>
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+</script>
+
+</body>
+</html>

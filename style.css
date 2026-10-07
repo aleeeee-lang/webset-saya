@@ -718,6 +718,12 @@ html[data-theme="dark"] .attendance-page .piket-scan-btn {
     color: #8b85ff !important;
 }
 
+html[data-theme="dark"] .about-version-pill,
+html[data-theme="dark"] .attendance-page .about-version-pill {
+    background: #1c1a3a !important;
+    color: #8b85ff !important;
+}
+
 /* DEVELOPMENT (GRADES + ACTIVITIES) */
 
 .attendance-score-card.dev {

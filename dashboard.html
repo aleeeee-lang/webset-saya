@@ -114,9 +114,56 @@
 
 
 
-        <!-- STATUS CARDS -->
+        <!-- ATTENDANCE STATISTICS -->
 
-        <section class="dashboard-status-grid">
+        <section class="dashboard-card">
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                   <p data-i18n="statistics_label">
+    STATISTICS
+</p>
+
+<h2 data-i18n="attendance_statistics">
+    Attendance Statistics
+</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="attendance-progress">
+
+                <div class="progress-header">
+
+                   <span data-i18n="attendance_rate">
+    Attendance Rate
+</span>
+                    <strong id="attendancePercentage">
+                        0%
+                    </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        id="attendanceProgress"
+                        class="progress-fill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS CARDS -->
+
+            <div class="dashboard-status-grid">
 
 
             <div class="dashboard-status-card hadir">
@@ -206,11 +253,11 @@
             </div>
 
 
+            </div>
+
         </section>
 
 
-
-        <!-- ATTENDANCE CALENDAR -->
 
         <!-- RECENT ATTENDANCE -->
 
@@ -589,6 +636,27 @@
 
 
 
+            /* STATISTICS */
+
+            const percentage =
+                total > 0
+                    ? Math.round(
+                        (hadir / total) * 100
+                    )
+                    : 0;
+
+            document.getElementById(
+                "attendancePercentage"
+            ).textContent =
+                percentage + "%";
+
+            document.getElementById(
+                "attendanceProgress"
+            ).style.width =
+                percentage + "%";
+
+
+
            /* RECENT ATTENDANCE */
 
 window.allAttendanceData = data;
@@ -680,13 +748,6 @@ const recent =
 
 
             /* INSIGHT */
-
-            const percentage =
-                total > 0
-                    ? Math.round(
-                        (hadir / total) * 100
-                    )
-                    : 0;
 
             const insightTitle =
                 document.getElementById(

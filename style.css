@@ -679,6 +679,35 @@ button.filter-select {
     color: #0d9488;
 }
 
+.piket-scan-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #c7c6fb;
+    background: #f0efff;
+    color: #1309f5;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.piket-scan-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+html[data-theme="dark"] .piket-scan-btn,
+html[data-theme="dark"] .attendance-page .piket-scan-btn {
+    background: #1c1a3a !important;
+    border-color: #35319e !important;
+    color: #8b85ff !important;
+}
+
 /* DEVELOPMENT (GRADES + ACTIVITIES) */
 
 .attendance-score-card.dev {

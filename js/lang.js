@@ -492,6 +492,14 @@ const translations = {
     label_piket_photos_submitted: { en: "Proof photos submitted", id: "Foto bukti yang terkumpul" },
     toast_piket_photo_updated: { en: "Photo updated. Thanks!", id: "Foto berhasil diganti. Terima kasih!" },
 
+    btn_scan_piket: { en: "📷 Scan Duty Paper", id: "📷 Scan Kertas Piket" },
+    text_scanning_piket: { en: "Reading photo...", id: "Membaca foto..." },
+    toast_scan_select_class_day: { en: "Please choose a class and day first before scanning.", id: "Pilih kelas dan hari dulu sebelum scan." },
+    toast_scan_matched: { en: "{matched} of {total} names recognized automatically. Please review the checkboxes below before saving.", id: "{matched} dari {total} nama berhasil dikenali otomatis. Cek kembali daftar di bawah sebelum simpan." },
+    toast_scan_no_match: { en: "No matching names were detected in the photo. Try a clearer photo or check the boxes manually.", id: "Tidak ada nama yang cocok terdeteksi dari foto. Coba foto yang lebih jelas atau centang manual." },
+    toast_scan_failed: { en: "Failed to read the photo: ", id: "Gagal membaca foto: " },
+    label_scan_hint: { en: "Take a clear, well-lit photo of the duty list. You can still fix anything manually below.", id: "Foto kertas piket dengan jelas dan terang. Kamu tetap bisa koreksi manual di bawah." },
+
     page_information: { en: "Information", id: "Informasi" },
     page_admin_information: { en: "Manage Information", id: "Kelola Informasi" },
     menu_manage_information: { en: "Manage Information", id: "Kelola Informasi" },

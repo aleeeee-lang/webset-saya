@@ -43,6 +43,13 @@
 
             <div>
                 <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_piket_students">Students on Duty</div>
+
+                <button type="button" class="piket-scan-btn" id="scanPiketBtn" onclick="triggerScan()" data-i18n="btn_scan_piket" style="margin-bottom:8px">
+                    📷 Scan Kertas Piket
+                </button>
+                <input type="file" id="piketPhotoInput" accept="image/*" capture="environment" style="display:none">
+                <p style="font-size:11px;color:#9aa0b4;margin:0 0 10px" data-i18n="label_scan_hint">Foto kertas piket dengan jelas dan terang. Kamu tetap bisa koreksi manual di bawah.</p>
+
                 <div id="piketStudentGroup" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;padding:4px;border:1px solid #e2e8f0;border-radius:12px"></div>
             </div>
 
@@ -127,6 +134,7 @@ async function checkAdmin() {
     await loadPiketList();
 
     document.getElementById("piketClassSelect").addEventListener("change", onClassChange);
+    document.getElementById("piketPhotoInput").addEventListener("change", onPiketPhotoSelected);
 }
 
 function renderDayPills() {
@@ -229,6 +237,156 @@ function syncCheckedFromExisting() {
     document.querySelectorAll(".piket-student-checkbox").forEach(function (cb) {
         cb.checked = assignedIds.indexOf(cb.value) !== -1;
     });
+}
+
+/* SMART CAMERA: SCAN DUTY PAPER (OCR) */
+
+let tesseractLoadingPromise = null;
+
+function loadTesseractLib() {
+    if (window.Tesseract) return Promise.resolve();
+    if (tesseractLoadingPromise) return tesseractLoadingPromise;
+
+    tesseractLoadingPromise = new Promise(function (resolve, reject) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+
+    return tesseractLoadingPromise;
+}
+
+function triggerScan() {
+    const lang = getLang();
+    const cls = document.getElementById("piketClassSelect").value;
+
+    if (!cls || !selectedDay) {
+        showToast(translations.toast_scan_select_class_day[lang], "error");
+        return;
+    }
+
+    document.getElementById("piketPhotoInput").value = "";
+    document.getElementById("piketPhotoInput").click();
+}
+
+function normalizeName(s) {
+    return (s || "")
+        .toLowerCase()
+        .replace(/[^a-z\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const d = Array.from({ length: m + 1 }, function () { return new Array(n + 1).fill(0); });
+
+    for (let i = 0; i <= m; i++) d[i][0] = i;
+    for (let j = 0; j <= n; j++) d[0][j] = j;
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (a[i - 1] === b[j - 1]) {
+                d[i][j] = d[i - 1][j - 1];
+            } else {
+                d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + 1);
+            }
+        }
+    }
+
+    return d[m][n];
+}
+
+function nameSimilarity(a, b) {
+    if (!a || !b) return 0;
+    const maxLen = Math.max(a.length, b.length);
+    if (maxLen === 0) return 1;
+    const dist = levenshtein(a, b);
+    return 1 - (dist / maxLen);
+}
+
+function extractCandidateLines(rawText) {
+    return rawText
+        .split(/\r?\n/)
+        .map(function (line) {
+            return line.replace(/^[\s\-–•*]*\d*[\.\)\-–]?\s*/, "").trim();
+        })
+        .filter(function (line) { return line.length >= 3; });
+}
+
+function matchLinesToStudents(lines, students) {
+    const remaining = students.slice();
+    const matchedIds = [];
+
+    lines.forEach(function (line) {
+        const normLine = normalizeName(line);
+        if (!normLine) return;
+
+        let bestIndex = -1;
+        let bestScore = 0;
+
+        remaining.forEach(function (student, idx) {
+            const normName = normalizeName(student.name);
+            if (!normName) return;
+
+            let score = nameSimilarity(normLine, normName);
+
+            if (normLine.indexOf(normName) !== -1 || normName.indexOf(normLine) !== -1) {
+                score = Math.max(score, 0.75);
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestIndex = idx;
+            }
+        });
+
+        if (bestIndex !== -1 && bestScore >= 0.55) {
+            matchedIds.push(remaining[bestIndex].id);
+            remaining.splice(bestIndex, 1);
+        }
+    });
+
+    return matchedIds;
+}
+
+async function onPiketPhotoSelected(e) {
+    const lang = getLang();
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const btn = document.getElementById("scanPiketBtn");
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = translations.text_scanning_piket[lang];
+
+    try {
+        await loadTesseractLib();
+
+        const result = await Tesseract.recognize(file, "eng");
+        const lines = extractCandidateLines(result.data.text || "");
+        const matchedIds = matchLinesToStudents(lines, allStudentsInClass);
+
+        if (matchedIds.length === 0) {
+            showToast(translations.toast_scan_no_match[lang], "error");
+        } else {
+            document.querySelectorAll(".piket-student-checkbox").forEach(function (cb) {
+                if (matchedIds.indexOf(cb.value) !== -1) cb.checked = true;
+            });
+
+            const msg = translations.toast_scan_matched[lang]
+                .replace("{matched}", matchedIds.length)
+                .replace("{total}", lines.length);
+            showToast(msg, "success");
+        }
+    } catch (err) {
+        showToast(translations.toast_scan_failed[lang] + err.message, "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+    }
 }
 
 function dayLabelOf(iso, lang) {

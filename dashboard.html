@@ -578,8 +578,8 @@
 
 
             const currentUser = await getCurrentUser();
-            const periodStart = await getAttendancePeriodStart();
-            const autoAlpa = await getAutoAlpaCount(currentUser, data, periodStart);
+            const period = await getAttendancePeriod();
+            const autoAlpa = await getAutoAlpaCount(currentUser, data, period);
 
             const total =
                 data.length + autoAlpa;

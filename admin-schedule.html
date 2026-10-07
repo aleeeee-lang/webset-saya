@@ -46,6 +46,18 @@
                 <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('sem2')" data-i18n="btn_preset_sem2">Semester 2 (January)</button>
             </div>
 
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_period_end">Until (optional)</div>
+                <input type="date" id="periodEndInput" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <div style="font-size:11px;color:#999;margin-top:6px" data-i18n="hint_period_end">Leave empty to keep counting through today with no end date.</div>
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodEndPreset('end_sem1')" data-i18n="btn_preset_end_sem1">End of Semester 1 (Dec)</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodEndPreset('end_sem2')" data-i18n="btn_preset_end_sem2">End of Semester 2 (June)</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodEndPreset('none')" data-i18n="btn_preset_no_end">No end date</button>
+            </div>
+
             <button type="button" class="submit-button" id="savePeriodBtn" onclick="savePeriod()" style="margin-top:2px" data-i18n="btn_save_period">
                 Save Period
             </button>
@@ -216,6 +228,23 @@ function setPeriodPreset(preset) {
     document.getElementById("periodStartInput").value = dateStr(d);
 }
 
+function setPeriodEndPreset(preset) {
+    const now = new Date();
+    const input = document.getElementById("periodEndInput");
+
+    if (preset === "none") {
+        input.value = "";
+        return;
+    }
+
+    let d;
+    if (preset === "end_sem1") d = new Date(now.getFullYear(), 11, 31); // Dec 31
+    else if (preset === "end_sem2") d = new Date(now.getFullYear(), 5, 30); // Jun 30
+    else return;
+
+    input.value = dateStr(d);
+}
+
 async function loadPeriod() {
     const { data, error } = await supabaseClient
         .from("attendance_period_settings")
@@ -232,15 +261,28 @@ async function loadPeriod() {
     }
 
     document.getElementById("periodStartInput").value = data.period_start;
-    textEl.textContent = translations.text_period_current[lang] + " " + dayMonthYearLabel(new Date(data.period_start + "T00:00:00"));
+    document.getElementById("periodEndInput").value = data.period_end || "";
+
+    const startLabel = dayMonthYearLabel(new Date(data.period_start + "T00:00:00"));
+    const endLabel = data.period_end
+        ? dayMonthYearLabel(new Date(data.period_end + "T00:00:00"))
+        : translations.text_period_no_end[lang];
+
+    textEl.textContent = translations.text_period_current[lang] + " " + startLabel + " " + translations.text_period_to[lang] + " " + endLabel;
 }
 
 async function savePeriod() {
     const value = document.getElementById("periodStartInput").value;
+    const endValue = document.getElementById("periodEndInput").value;
     const lang = getLang();
 
     if (!value) {
         showToast(translations.toast_select_date_first[lang], "error");
+        return;
+    }
+
+    if (endValue && endValue < value) {
+        showToast(translations.toast_end_before_start[lang], "error");
         return;
     }
 
@@ -254,6 +296,7 @@ async function savePeriod() {
         .upsert({
             id: "global",
             period_start: value,
+            period_end: endValue || null,
             updated_by: user.id,
             updated_at: new Date().toISOString()
         }, { onConflict: "id" });

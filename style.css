@@ -674,6 +674,11 @@ button.filter-select {
     color: #0d9488;
 }
 
+.savings-type-icon.spp {
+    background: #e3f8f6;
+    color: #0d9488;
+}
+
 .savings-tab-btn[data-tab="personal"].active {
     color: #1ba97e;
 }
@@ -1518,6 +1523,11 @@ html[data-theme="dark"] .spp-proof-btn {
     background: #0d2e2a;
     border-color: #0f4a42;
     color: #2dd4bf;
+}
+
+html[data-theme="dark"] .savings-type-icon.spp {
+    background: #0d2e2a !important;
+    color: #2dd4bf !important;
 }
 
 html[data-theme="dark"] .type-toggle {

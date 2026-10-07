@@ -975,13 +975,12 @@ function renderSppHistory() {
 
     listEl.innerHTML = sorted.map(function (item) {
         const badgeKey = "badge_spp_" + item.status;
-        const cls = item.status === "approved" ? "hadir" : (item.status === "rejected" ? "alpa" : "izin");
 
         return `
             <div class="history-date-group">
                 <p class="history-date">${sppPeriodLabel(item.period).toUpperCase()}</p>
                 <div class="history-card">
-                    <div class="savings-type-icon ${cls}">Rp</div>
+                    <div class="savings-type-icon spp">Rp</div>
                     <div class="history-content">
                         <strong>${tr(badgeKey)}</strong>
                         <span>${dayMonthYearLabel(new Date(item.submitted_at))}</span>

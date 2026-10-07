@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+        <div>
+            <h2 style="margin:0" data-i18n="page_teacher_dashboard">Teacher Dashboard</h2>
+            <span style="font-size:12px;color:#888" id="teacherClassLabel">-</span>
+        </div>
+        <a href="settings.html" aria-label="Settings" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#20243a;flex-shrink:0">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+    </section>
+
+    <!-- TODAY'S ATTENDANCE -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_todays_attendance">Today's Attendance</div>
+        <div id="teacherAttendanceList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+    </section>
+
+    <!-- ADD GRADE -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_add_grade">Add Grade</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <select id="gradeStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_student">Choose a student...</option>
+            </select>
+            <input type="text" id="gradeSubject" class="am-field" data-i18n-placeholder="placeholder_subject" placeholder="Subject (e.g. Mathematics)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="gradePeriod" class="am-field" data-i18n-placeholder="placeholder_period" placeholder="Period (e.g. UTS 1, Semester 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="number" id="gradeScore" class="am-field" min="0" max="100" data-i18n-placeholder="placeholder_score" placeholder="Score (0-100)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="gradeNote" class="am-field" data-i18n-placeholder="placeholder_grade_note" placeholder="Note (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <button type="button" class="submit-button" id="addGradeBtn" onclick="addTeacherGrade()" data-i18n="btn_add_grade">
+                Add Grade
+            </button>
+        </div>
+    </section>
+
+    <!-- ADD ACTIVITY / NOTE -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_add_activity">Add Activity or Note</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <select id="activityStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_student">Choose a student...</option>
+            </select>
+            <select id="activityType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="kegiatan" data-i18n="type_kegiatan">Activity</option>
+                <option value="prestasi" data-i18n="type_prestasi">Achievement</option>
+                <option value="pelanggaran" data-i18n="type_pelanggaran">Violation</option>
+                <option value="catatan" data-i18n="type_catatan">Note</option>
+            </select>
+            <input type="text" id="activityTitle" class="am-field" data-i18n-placeholder="placeholder_activity_title" placeholder="Title" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="activityDesc" class="am-field" data-i18n-placeholder="placeholder_activity_desc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="date" id="activityDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <button type="button" class="submit-button" id="addActivityBtn" onclick="addTeacherActivity()" data-i18n="btn_add_activity">
+                Add
+            </button>
+        </div>
+    </section>
+
+    <!-- SPP STATUS -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_spp_status">SPP Status</div>
+        <div id="teacherSppList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let myClass = "";
+let classStudents = [];
+let currentUser = null;
+
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+
+function weekdayOf(dateStr) {
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    return days[new Date(dateStr + "T00:00:00").getDay()];
+}
+
+async function checkTeacher() {
+    const user = await requireLogin();
+    if (!user) return;
+    currentUser = user;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role, class")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "guru") {
+        window.location.href = "index.html";
+        return;
+    }
+
+    myClass = profile.class || "";
+    document.getElementById("teacherClassLabel").textContent = myClass || "-";
+
+    await loadClassStudents();
+    await Promise.all([loadTodaysAttendance(), loadSppStatus()]);
+}
+
+async function loadClassStudents() {
+    const { data } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .eq("role", "murid")
+        .eq("class", myClass)
+        .order("name", { ascending: true });
+
+    classStudents = data || [];
+
+    const gradeSelect = document.getElementById("gradeStudentSelect");
+    const activitySelect = document.getElementById("activityStudentSelect");
+
+    [gradeSelect, activitySelect].forEach(function (sel) {
+        classStudents.forEach(function (s) {
+            const opt = document.createElement("option");
+            opt.value = s.id;
+            opt.textContent = s.name;
+            sel.appendChild(opt);
+        });
+    });
+
+    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+}
+
+async function loadTodaysAttendance() {
+    const container = document.getElementById("teacherAttendanceList");
+    const ids = classStudents.map(function (s) { return s.id; });
+
+    if (ids.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
+        return;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const { data } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("date", today)
+        .in("user_id", ids);
+
+    const byStudent = {};
+    (data || []).forEach(function (a) { byStudent[a.user_id] = a; });
+
+    container.innerHTML = classStudents.map(function (s) {
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
+                <strong style="flex:1;min-width:100px;font-size:13px;color:#20243a">${s.name}</strong>
+                <select id="attStatus-${s.id}" class="am-field" style="padding:6px 8px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px">
+                    <option value="">${tr("status_not_selected")}</option>
+                    <option value="Hadir">${tr("status_present")}</option>
+                    <option value="Izin">${tr("status_permission")}</option>
+                    <option value="Sakit">${tr("status_sick")}</option>
+                    <option value="Alpa">${tr("status_absent")}</option>
+                </select>
+                <button type="button" onclick="saveTeacherAttendance('${s.id}', '${s.name.replace(/'/g, "\\'")}')" style="border:none;background:#1530c2;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${tr("btn_save")}</button>
+            </div>
+        `;
+    }).join("");
+
+    classStudents.forEach(function (s) {
+        const sel = document.getElementById("attStatus-" + s.id);
+        const record = byStudent[s.id];
+        if (sel && record) sel.value = record.status || "";
+    });
+}
+
+async function saveTeacherAttendance(studentId, studentName) {
+    const lang = getLang();
+    const status = document.getElementById("attStatus-" + studentId).value;
+
+    if (!status) {
+        showToast(translations.toast_select_status[lang], "error");
+        return;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const student = classStudents.find(function (s) { return s.id === studentId; });
+
+    const { data: existing } = await supabaseClient
+        .from("attendance")
+        .select("id")
+        .eq("user_id", studentId)
+        .eq("date", today)
+        .maybeSingle();
+
+    const payload = {
+        user_id: studentId,
+        name: studentName,
+        class: student ? student.class : myClass,
+        date: today,
+        day: weekdayOf(today),
+        status: status,
+        reason: ""
+    };
+
+    let error;
+    if (existing) {
+        const res = await supabaseClient.from("attendance").update(payload).eq("id", existing.id);
+        error = res.error;
+    } else {
+        const res = await supabaseClient.from("attendance").insert([payload]);
+        error = res.error;
+    }
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_attendance_saved[lang], "success");
+}
+
+async function addTeacherGrade() {
+    const lang = getLang();
+    const studentId = document.getElementById("gradeStudentSelect").value;
+    const subject = document.getElementById("gradeSubject").value.trim();
+    const period = document.getElementById("gradePeriod").value.trim();
+    const score = Number(document.getElementById("gradeScore").value);
+    const note = document.getElementById("gradeNote").value.trim();
+    const btn = document.getElementById("addGradeBtn");
+
+    if (!studentId) {
+        showToast(translations.toast_select_student_first[lang], "error");
+        return;
+    }
+
+    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score)) {
+        showToast(translations.toast_enter_valid_score[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("student_grades")
+        .insert({
+            user_id: studentId,
+            subject: subject,
+            period: period,
+            score: score,
+            note: note || null,
+            created_by: currentUser.id
+        });
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("gradeSubject").value = "";
+    document.getElementById("gradePeriod").value = "";
+    document.getElementById("gradeScore").value = "";
+    document.getElementById("gradeNote").value = "";
+
+    showToast(translations.toast_grade_added[lang], "success");
+}
+
+async function addTeacherActivity() {
+    const lang = getLang();
+    const studentId = document.getElementById("activityStudentSelect").value;
+    const type = document.getElementById("activityType").value;
+    const title = document.getElementById("activityTitle").value.trim();
+    const description = document.getElementById("activityDesc").value.trim();
+    const date = document.getElementById("activityDate").value || new Date().toISOString().slice(0, 10);
+    const btn = document.getElementById("addActivityBtn");
+
+    if (!studentId) {
+        showToast(translations.toast_select_student_first[lang], "error");
+        return;
+    }
+
+    if (!title) {
+        showToast(translations.toast_fill_activity_title[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("student_activities")
+        .insert({
+            user_id: studentId,
+            type: type,
+            title: title,
+            description: description || null,
+            date: date,
+            created_by: currentUser.id
+        });
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("activityTitle").value = "";
+    document.getElementById("activityDesc").value = "";
+    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+
+    showToast(translations.toast_activity_added[lang], "success");
+}
+
+function currentSppPeriodTeacher() {
+    const now = new Date();
+    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+}
+
+async function loadSppStatus() {
+    const container = document.getElementById("teacherSppList");
+    const ids = classStudents.map(function (s) { return s.id; });
+
+    if (ids.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
+        return;
+    }
+
+    const period = currentSppPeriodTeacher();
+
+    const { data } = await supabaseClient
+        .from("spp_payments")
+        .select("*")
+        .eq("period", period)
+        .in("user_id", ids);
+
+    const byStudent = {};
+    (data || []).forEach(function (r) { byStudent[r.user_id] = r; });
+
+    container.innerHTML = classStudents.map(function (s) {
+        const record = byStudent[s.id];
+        const statusClass = record ? record.status : "unpaid";
+        const statusKey = "badge_spp_" + statusClass;
+        return `
+            <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
+                <strong style="font-size:13px;color:#20243a">${s.name}</strong>
+                <span class="spp-status-badge ${statusClass}">${tr(statusKey)}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+checkTeacher();
+
+</script>
+
+</body>
+</html>

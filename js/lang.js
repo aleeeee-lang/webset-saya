@@ -567,7 +567,38 @@ const translations = {
     page_parent_portal: { en: "Parent Portal", id: "Portal Orang Tua" },
     label_select_child: { en: "Viewing", id: "Melihat" },
     no_children_title: { en: "No students linked yet", id: "Belum ada siswa yang ditautkan" },
-    no_children_text: { en: "Ask the school admin to link your account to your child's student profile.", id: "Minta admin sekolah untuk menautkan akunmu ke profil anakmu." }
+    no_children_text: { en: "Ask the school admin to link your account to your child's student profile.", id: "Minta admin sekolah untuk menautkan akunmu ke profil anakmu." },
+
+    label_bulk_import: { en: "Bulk Import (CSV)", id: "Impor Massal (CSV)" },
+    hint_bulk_import: { en: "Upload a CSV file with columns: name, class, nis, email, password.", id: "Unggah file CSV dengan kolom: name, class, nis, email, password." },
+    btn_download_template: { en: "Download Template", id: "Unduh Template" },
+    btn_import: { en: "Import", id: "Impor" },
+    btn_importing: { en: "Importing {current}/{total}...", id: "Mengimpor {current}/{total}..." },
+    toast_choose_csv_file: { en: "Please choose a CSV file first.", id: "Pilih file CSV dulu." },
+    toast_csv_empty: { en: "The CSV file is empty.", id: "File CSV kosong." },
+    toast_csv_missing_columns: { en: "CSV must have at least name, email, and password columns.", id: "CSV harus punya minimal kolom name, email, dan password." },
+    toast_bulk_import_done: { en: "Import finished: {success}/{total} students added.", id: "Impor selesai: {success}/{total} siswa berhasil ditambahkan." },
+    label_failed_rows: { en: "Failed rows", id: "Baris yang gagal" },
+
+    page_manage_teachers: { en: "Manage Teachers", id: "Kelola Guru" },
+    menu_manage_teachers: { en: "Manage Teachers", id: "Kelola Guru" },
+    label_add_new_teacher: { en: "Add New Teacher Account", id: "Tambah Akun Guru Baru" },
+    btn_add_teacher: { en: "Add Teacher Account", id: "Tambah Akun Guru" },
+    label_teacher_accounts: { en: "Teacher Accounts", id: "Akun Guru" },
+    option_choose_class: { en: "Choose a class...", id: "Pilih kelas..." },
+    text_no_teachers_yet: { en: "No teacher accounts yet.", id: "Belum ada akun guru." },
+    label_class_assigned: { en: "Class", id: "Kelas" },
+    toast_choose_class_first: { en: "Please choose a class first.", id: "Pilih kelas dulu." },
+    toast_teacher_class_saved: { en: "Teacher's class updated.", id: "Kelas guru berhasil diperbarui." },
+    toast_teacher_fields_required: { en: "Please fill in name, class, email, and password.", id: "Isi nama, kelas, email, dan password dulu." },
+    toast_teacher_created: { en: "Teacher account created.", id: "Akun guru berhasil dibuat." },
+    confirm_delete_teacher: { en: "Delete teacher account {name}?", id: "Hapus akun guru {name}?" },
+    toast_teacher_deleted: { en: "Teacher account deleted.", id: "Akun guru berhasil dihapus." },
+    page_teacher_dashboard: { en: "Teacher Dashboard", id: "Dasbor Guru" },
+    label_todays_attendance: { en: "Today's Attendance", id: "Absensi Hari Ini" },
+    text_no_students_in_class: { en: "No students in this class yet.", id: "Belum ada siswa di kelas ini." },
+    toast_select_status: { en: "Please select a status first.", id: "Pilih status dulu." },
+    toast_attendance_saved: { en: "Attendance saved.", id: "Absensi berhasil disimpan." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

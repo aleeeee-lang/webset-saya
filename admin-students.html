@@ -46,6 +46,26 @@
 
     </section>
 
+    <!-- BULK IMPORT -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_bulk_import">Bulk Import (CSV)</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_bulk_import">Upload a CSV file with columns: name, class, nis, email, password.</p>
+
+        <button type="button" class="am-btn" onclick="downloadStudentTemplate()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:8px 14px;font-size:12px;cursor:pointer;color:#20243a;margin-bottom:10px" data-i18n="btn_download_template">
+            Download Template
+        </button>
+
+        <input type="file" id="bulkImportFile" accept=".csv" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px;margin-bottom:10px">
+
+        <button type="button" class="submit-button" id="bulkImportBtn" onclick="runBulkImport()" data-i18n="btn_import">
+            Import
+        </button>
+
+        <div id="bulkImportResults" style="margin-top:12px;font-size:12px;color:#444;white-space:pre-wrap"></div>
+
+    </section>
+
     <!-- STUDENT LIST -->
     <section class="attendance-card">
 
@@ -354,6 +374,168 @@ async function deleteStudent(id, name) {
     }
 
     showToast(translations.toast_student_deleted[lang], "success");
+    loadStudents();
+}
+
+function csvEscape(value) {
+    const s = (value === null || value === undefined) ? "" : String(value);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+}
+
+function downloadStudentTemplate() {
+    const header = ["name", "class", "nis", "email", "password"];
+    const sample = ["Budi Santoso", "XII IPA 1", "12345", "budi@sekolah.id", "password123"];
+    const csv = "﻿" + header.map(csvEscape).join(",") + "\n" + sample.map(csvEscape).join(",") + "\n";
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "student_import_template.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+// Minimal CSV parser: handles quoted fields with embedded commas, quotes and newlines.
+function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+            if (c === '"') {
+                if (text[i + 1] === '"') { field += '"'; i++; }
+                else { inQuotes = false; }
+            } else {
+                field += c;
+            }
+        } else if (c === '"') {
+            inQuotes = true;
+        } else if (c === ",") {
+            row.push(field);
+            field = "";
+        } else if (c === "\n") {
+            row.push(field);
+            field = "";
+            rows.push(row);
+            row = [];
+        } else if (c === "\r") {
+            // skip
+        } else {
+            field += c;
+        }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+    }
+
+    return rows.filter(function (r) { return r.some(function (cell) { return cell.trim() !== ""; }); });
+}
+
+async function runBulkImport() {
+    const lang = getLang();
+    const fileInput = document.getElementById("bulkImportFile");
+    const resultsEl = document.getElementById("bulkImportResults");
+    const btn = document.getElementById("bulkImportBtn");
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        showToast(translations.toast_choose_csv_file[lang], "error");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const text = await file.text();
+    let rows = parseCsv(text);
+
+    if (rows.length === 0) {
+        showToast(translations.toast_csv_empty[lang], "error");
+        return;
+    }
+
+    if (rows[0][0]) rows[0][0] = rows[0][0].replace(/^﻿/, "");
+
+    const header = rows[0].map(function (h) { return h.trim().toLowerCase(); });
+    const nameIdx = header.indexOf("name");
+    const classIdx = header.indexOf("class");
+    const nisIdx = header.indexOf("nis");
+    const emailIdx = header.indexOf("email");
+    const passwordIdx = header.indexOf("password");
+
+    if (nameIdx === -1 || emailIdx === -1 || passwordIdx === -1) {
+        showToast(translations.toast_csv_missing_columns[lang], "error");
+        return;
+    }
+
+    const dataRows = rows.slice(1);
+
+    btn.disabled = true;
+    resultsEl.textContent = "";
+
+    let successCount = 0;
+    const failures = [];
+
+    for (let i = 0; i < dataRows.length; i++) {
+        const r = dataRows[i];
+        const name = (r[nameIdx] || "").trim();
+        const studentClass = classIdx > -1 ? (r[classIdx] || "").trim() : "";
+        const nis = nisIdx > -1 ? (r[nisIdx] || "").trim() : "";
+        const email = (r[emailIdx] || "").trim();
+        const password = (r[passwordIdx] || "").trim();
+
+        btn.textContent = translations.btn_importing[lang].replace("{current}", i + 1).replace("{total}", dataRows.length);
+
+        if (!name || !email || !password) {
+            failures.push((name || email || ("Row " + (i + 2))) + ": " + translations.toast_name_email_password_required[lang]);
+            continue;
+        }
+
+        const { data: signUpData, error: signUpError } = await supabaseSignupClient.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        if (signUpError) {
+            failures.push(name + " (" + email + "): " + signUpError.message);
+            continue;
+        }
+
+        const { error: profileError } = await supabaseClient
+            .from("profiles")
+            .insert({
+                id: signUpData.user.id,
+                role: "murid",
+                name: name,
+                class: studentClass,
+                nis: nis
+            });
+
+        if (profileError) {
+            failures.push(name + " (" + email + "): " + profileError.message);
+            continue;
+        }
+
+        successCount++;
+    }
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_import[lang];
+    fileInput.value = "";
+
+    const summary = translations.toast_bulk_import_done[lang]
+        .replace("{success}", successCount)
+        .replace("{total}", dataRows.length);
+
+    resultsEl.textContent = summary + (failures.length > 0 ? "\n\n" + translations.label_failed_rows[lang] + ":\n" + failures.join("\n") : "");
+
+    showToast(summary, failures.length > 0 ? "error" : "success");
+
     loadStudents();
 }
 

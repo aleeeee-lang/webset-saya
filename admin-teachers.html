@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Teachers - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_teachers">Manage Teachers</h2>
+    </section>
+
+    <!-- ADD TEACHER FORM -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_add_new_teacher">Add New Teacher Account</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <input type="text" id="newTeacherName" class="am-field" data-i18n-placeholder="placeholder_full_name" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <select id="newTeacherClass" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_class">Choose a class...</option>
+            </select>
+
+            <input type="email" id="newTeacherEmail" class="am-field" data-i18n-placeholder="placeholder_email_login" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newTeacherPassword" class="am-field" data-i18n-placeholder="placeholder_password_login" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <button type="button" class="submit-button" id="addTeacherBtn" onclick="addTeacher()" style="margin-top:4px" data-i18n="btn_add_teacher">
+                Add Teacher Account
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- TEACHER LIST -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_teacher_accounts">Teacher Accounts</div>
+
+        <div id="teacherList" style="display:flex;flex-direction:column;gap:8px"></div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+// Second, isolated client just for creating teacher accounts, so creating
+// one never overwrites the admin's own login session.
+const supabaseSignupClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        storageKey: "sb-temp-signup-auth"
+    }
+});
+
+let allTeachers = [];
+let allClasses = [];
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadClasses();
+    await loadTeachers();
+}
+
+async function loadClasses() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("class")
+        .eq("role", "murid");
+
+    if (error || !data) return;
+
+    const set = new Set();
+    data.forEach(function (s) { if (s.class) set.add(s.class); });
+    allClasses = Array.from(set).sort();
+
+    const select = document.getElementById("newTeacherClass");
+    select.innerHTML = '<option value="">' + translations.option_choose_class[getLang()] + "</option>";
+    allClasses.forEach(function (c) {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+    });
+}
+
+async function loadTeachers() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .eq("role", "guru")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allTeachers = data;
+    renderTeacherList();
+}
+
+function renderTeacherList() {
+    const lang = getLang();
+    const container = document.getElementById("teacherList");
+
+    if (allTeachers.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_teachers_yet[lang] + "</p>";
+        return;
+    }
+
+    const classOptions = allClasses.map(function (c) {
+        return '<option value="' + c + '">' + c + '</option>';
+    }).join("");
+
+    container.innerHTML = allTeachers.map(function (t) {
+        return `
+            <div class="am-row" id="teacherRow-${t.id}" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:120px">
+                    <strong style="display:block;font-size:14px;color:#20243a">${t.name || "-"}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${translations.label_class_assigned[lang]}: ${t.class || "-"}</span>
+                </div>
+                <select id="classSelect-${t.id}" class="am-field" style="padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px">
+                    <option value="">${translations.option_choose_class[lang]}</option>
+                    ${classOptions}
+                </select>
+                <button type="button" onclick="saveTeacherClass('${t.id}')" style="border:none;background:#1530c2;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
+                <button type="button" onclick="deleteTeacher('${t.id}', '${(t.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_delete[lang]}</button>
+            </div>
+        `;
+    }).join("");
+
+    allTeachers.forEach(function (t) {
+        const sel = document.getElementById("classSelect-" + t.id);
+        if (sel) sel.value = t.class || "";
+    });
+}
+
+async function saveTeacherClass(id) {
+    const lang = getLang();
+    const newClass = document.getElementById("classSelect-" + id).value;
+
+    if (!newClass) {
+        showToast(translations.toast_choose_class_first[lang], "error");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .update({ class: newClass })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_teacher_class_saved[lang], "success");
+    await loadTeachers();
+}
+
+async function addTeacher() {
+    const lang = getLang();
+    const name = document.getElementById("newTeacherName").value.trim();
+    const teacherClass = document.getElementById("newTeacherClass").value;
+    const email = document.getElementById("newTeacherEmail").value.trim();
+    const password = document.getElementById("newTeacherPassword").value;
+
+    if (!name || !email || !password || !teacherClass) {
+        showToast(translations.toast_teacher_fields_required[lang], "error");
+        return;
+    }
+
+    const btn = document.getElementById("addTeacherBtn");
+    btn.disabled = true;
+    btn.textContent = translations.btn_adding[lang];
+
+    const { data: signUpData, error: signUpError } = await supabaseSignupClient.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (signUpError) {
+        showToast(translations.toast_create_account_failed[lang] + signUpError.message, "error");
+        btn.disabled = false;
+        btn.textContent = translations.btn_add_teacher[lang];
+        return;
+    }
+
+    const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .insert({
+            id: signUpData.user.id,
+            role: "guru",
+            name: name,
+            class: teacherClass
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_add_teacher[lang];
+
+    if (profileError) {
+        showToast(translations.toast_save_profile_failed[lang] + profileError.message, "error");
+        return;
+    }
+
+    document.getElementById("newTeacherName").value = "";
+    document.getElementById("newTeacherClass").value = "";
+    document.getElementById("newTeacherEmail").value = "";
+    document.getElementById("newTeacherPassword").value = "";
+
+    showToast(translations.toast_teacher_created[lang], "success");
+    await loadTeachers();
+}
+
+async function deleteTeacher(id, name) {
+    const lang = getLang();
+    const confirmMsg = translations.confirm_delete_teacher[lang].replace("{name}", name || translations.fallback_this_student[lang]);
+    if (!confirm(confirmMsg)) return;
+
+    const { error } = await supabaseClient
+        .from("profiles")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_delete_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_teacher_deleted[lang], "success");
+    await loadTeachers();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

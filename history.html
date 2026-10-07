@@ -52,6 +52,9 @@
             <button type="button" class="savings-tab-btn" id="tabPersonalBtn" data-tab="personal">
                 <span data-i18n="tab_personal_savings">Pribadi</span>
             </button>
+            <button type="button" class="savings-tab-btn" id="tabSppBtn" data-tab="spp">
+                <span data-i18n="tab_spp">SPP</span>
+            </button>
         </div>
 
         <!-- =========================
@@ -244,6 +247,107 @@
     <h2 data-i18n="no_savings_title">No savings yet</h2>
     <p data-i18n="no_savings_text">Your savings transactions will appear here.</p>
 </section>
+
+        </div>
+
+        <!-- =========================
+             SPP TAB
+        ========================== -->
+
+        <div id="sppTabContent" style="display:none">
+
+        <!-- STATUS -->
+
+        <section class="savings-balance-card spp">
+            <p class="savings-balance-label" data-i18n="label_spp_status">SPP STATUS</p>
+            <h2 id="sppMonthLabel">-</h2>
+            <span class="spp-status-badge" id="sppStatusBadge">-</span>
+
+            <div class="savings-balance-summary">
+                <div>
+                    <span data-i18n="label_spp_amount">Amount</span>
+                    <strong id="sppAmountLabel">Rp0</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- INFO (pending / approved / rejected) -->
+
+        <section class="attendance-insight" id="sppInfoCard" style="display:none;margin-top:16px">
+            <div class="insight-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3C8.5 3 6 5.6 6 9C6 11.2 7.1 12.6 8.1 13.7C8.8 14.5 9 15.2 9 16H15C15 15.2 15.2 14.5 15.9 13.7C16.9 12.6 18 11.2 18 9C18 5.6 15.5 3 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                    <path d="M9 18H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    <path d="M10 21H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+            </div>
+            <div>
+                <span data-i18n="label_spp_status">SPP STATUS</span>
+                <h3 id="sppInfoTitle">-</h3>
+                <p id="sppInfoText">-</p>
+            </div>
+        </section>
+
+        <!-- SUBMIT PROOF -->
+
+        <section class="savings-form-card" style="margin-top:16px" id="sppSubmitCard">
+
+            <div class="savings-form-header">
+                <div class="savings-form-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.6"/>
+                    </svg>
+                </div>
+                <div>
+                    <strong data-i18n="label_submit_spp_proof">Submit Payment Proof</strong>
+                    <span data-i18n="label_submit_spp_hint">Upload bukti transfer SPP bulan ini</span>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px">
+
+                <label for="sppProofInput" class="am-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;border:1px solid #e2e8f0;background:#fafafa">
+                    <span id="sppProofLabel" data-i18n="btn_choose_proof">Choose Proof Photo</span>
+                </label>
+                <input type="file" id="sppProofInput" accept="image/*" style="display:none">
+                <img id="sppProofPreview" alt="" style="display:none;width:100%;border-radius:12px;max-height:220px;object-fit:cover">
+
+                <div>
+                    <div class="savings-field-label" data-i18n="label_note_optional">Note (optional)</div>
+                    <input type="text" id="sppNote" class="am-field" data-i18n-placeholder="placeholder_spp_note" placeholder="e.g. Transferred via BCA" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                </div>
+
+                <button type="button" class="savings-submit-btn" id="submitSppBtn" onclick="submitSppProof()" data-i18n="btn_submit_proof">
+                    Submit Proof
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- SUMMARY LABEL -->
+
+        <div class="my-attendance-section-header" style="margin-top:20px">
+            <div>
+                <span data-i18n="label_spp_history">SPP HISTORY</span>
+            </div>
+        </div>
+
+        <!-- HISTORY LIST -->
+
+        <section class="history-list" id="sppHistoryList"></section>
+
+        <section class="history-empty" id="sppHistoryEmpty" style="display:none">
+            <div class="history-empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4C8 7 5 10 5 13.5C5 17.1 8.1 20 12 20C15.9 20 19 17.1 19 13.5C19 10 16 7 12 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="M12 9.5V15.5M10 11.2C10 10.3 10.9 9.5 12 9.5C13.1 9.5 14 10.1 14 10.9C14 12.1 10 11.9 10 13.3C10 14.1 10.9 14.8 12 14.8C13.1 14.8 14 14 14 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 data-i18n="no_spp_title">No SPP records yet</h2>
+            <p data-i18n="no_spp_text">Your SPP payment records will appear here.</p>
+        </section>
 
         </div>
 
@@ -597,7 +701,11 @@ document.addEventListener("click", function () {
 });
 
 loadHistory();
-window.addEventListener("tabshow", loadHistory);
+window.addEventListener("tabshow", function () {
+    loadHistory();
+    if (personalLoaded) loadPersonalSavings();
+    if (sppLoaded) loadSpp();
+});
 
 /* =========================
    PERSONAL SAVINGS
@@ -780,22 +888,228 @@ document.addEventListener("click", function () {
     document.getElementById("personalStatusDropdown").classList.remove("show");
 });
 
+/* =========================
+   SPP
+========================== */
+
+let sppSettings = { amount: 0 };
+let sppData = [];
+let sppLoaded = false;
+let sppProofFile = null;
+let currentSppRecord = null;
+
+function currentSppPeriod() {
+    const now = new Date();
+    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+}
+
+function sppPeriodLabel(period) {
+    const d = new Date(period + "-01T00:00:00");
+    return monthYearLabel(d);
+}
+
+function renderSpp() {
+    const lang = getLang();
+    const period = currentSppPeriod();
+
+    currentSppRecord = sppData.find(function (r) { return r.period === period; }) || null;
+
+    document.getElementById("sppMonthLabel").textContent = sppPeriodLabel(period);
+    document.getElementById("sppAmountLabel").textContent = formatRupiah(sppSettings.amount || 0);
+
+    const badge = document.getElementById("sppStatusBadge");
+    const infoCard = document.getElementById("sppInfoCard");
+    const infoTitle = document.getElementById("sppInfoTitle");
+    const infoText = document.getElementById("sppInfoText");
+    const submitCard = document.getElementById("sppSubmitCard");
+
+    if (!currentSppRecord) {
+        badge.textContent = tr("badge_spp_unpaid");
+        badge.className = "spp-status-badge unpaid";
+        infoCard.style.display = "none";
+        submitCard.style.display = "block";
+    } else if (currentSppRecord.status === "pending") {
+        badge.textContent = tr("badge_spp_pending");
+        badge.className = "spp-status-badge pending";
+        infoCard.style.display = "flex";
+        infoTitle.textContent = tr("badge_spp_pending");
+        infoText.textContent = tr("text_spp_pending_info");
+        submitCard.style.display = "none";
+    } else if (currentSppRecord.status === "approved") {
+        badge.textContent = tr("badge_spp_approved");
+        badge.className = "spp-status-badge approved";
+        infoCard.style.display = "flex";
+        infoTitle.textContent = tr("badge_spp_approved");
+        const d = currentSppRecord.reviewed_at ? new Date(currentSppRecord.reviewed_at) : null;
+        infoText.textContent = tr("text_spp_approved_info") + (d ? " " + dayMonthYearLabel(d) : "");
+        submitCard.style.display = "none";
+    } else {
+        badge.textContent = tr("badge_spp_rejected");
+        badge.className = "spp-status-badge rejected";
+        infoCard.style.display = "flex";
+        infoTitle.textContent = tr("badge_spp_rejected");
+        infoText.textContent = tr("text_spp_rejected_info") + (currentSppRecord.reject_reason || "-") + " " + tr("text_spp_rejected_hint");
+        submitCard.style.display = "block";
+    }
+
+    renderSppHistory();
+}
+
+function renderSppHistory() {
+    const listEl = document.getElementById("sppHistoryList");
+    const emptyEl = document.getElementById("sppHistoryEmpty");
+
+    const sorted = sppData.slice().sort(function (a, b) { return b.period.localeCompare(a.period); });
+
+    if (sorted.length === 0) {
+        listEl.innerHTML = "";
+        emptyEl.style.display = "block";
+        return;
+    }
+
+    emptyEl.style.display = "none";
+
+    listEl.innerHTML = sorted.map(function (item) {
+        const badgeKey = "badge_spp_" + item.status;
+        const cls = item.status === "approved" ? "hadir" : (item.status === "rejected" ? "alpa" : "izin");
+
+        return `
+            <div class="history-date-group">
+                <p class="history-date">${sppPeriodLabel(item.period).toUpperCase()}</p>
+                <div class="history-card">
+                    <div class="savings-type-icon ${cls}">Rp</div>
+                    <div class="history-content">
+                        <strong>${tr(badgeKey)}</strong>
+                        <span>${dayMonthYearLabel(new Date(item.submitted_at))}</span>
+                        <small>${item.note || "-"}</small>
+                    </div>
+                    <div class="history-time">${formatRupiah(item.amount)}</div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function loadSpp() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: settingsData } = await supabaseClient
+        .from("spp_settings")
+        .select("amount")
+        .eq("id", "global")
+        .maybeSingle();
+
+    sppSettings = settingsData || { amount: 0 };
+
+    const { data, error } = await supabaseClient
+        .from("spp_payments")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("period", { ascending: false });
+
+    if (error) {
+        console.error("SPP error:", error);
+        return;
+    }
+
+    sppData = data || [];
+    sppLoaded = true;
+    renderSpp();
+}
+
+document.getElementById("sppProofInput").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    sppProofFile = file;
+
+    const preview = document.getElementById("sppProofPreview");
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+    document.getElementById("sppProofLabel").textContent = translations.btn_proof_selected[getLang()];
+});
+
+async function submitSppProof() {
+    const lang = getLang();
+    const user = await requireLogin();
+    if (!user) return;
+
+    if (!sppProofFile) {
+        showToast(translations.toast_spp_proof_required[lang], "error");
+        return;
+    }
+
+    const note = document.getElementById("sppNote").value.trim();
+    const period = currentSppPeriod();
+    const btn = document.getElementById("submitSppBtn");
+
+    btn.disabled = true;
+    btn.textContent = translations.btn_submitting[lang];
+
+    const filePath = user.id + "/" + period + "-" + Date.now() + ".jpg";
+
+    const { error: uploadError } = await supabaseClient
+        .storage
+        .from("spp-proofs")
+        .upload(filePath, sppProofFile, { contentType: sppProofFile.type || "image/jpeg" });
+
+    if (uploadError) {
+        btn.disabled = false;
+        btn.textContent = translations.btn_submit_proof[lang];
+        showToast(translations.toast_spp_upload_failed[lang] + uploadError.message, "error");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("spp_payments")
+        .upsert({
+            user_id: user.id,
+            period: period,
+            amount: sppSettings.amount || 0,
+            proof_url: filePath,
+            note: note || null,
+            status: "pending",
+            reject_reason: null,
+            submitted_at: new Date().toISOString(),
+            reviewed_at: null,
+            reviewed_by: null
+        }, { onConflict: "user_id,period" });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_submit_proof[lang];
+
+    if (error) {
+        showToast(translations.toast_spp_submit_failed[lang] + error.message, "error");
+        return;
+    }
+
+    sppProofFile = null;
+    document.getElementById("sppProofPreview").style.display = "none";
+    document.getElementById("sppProofLabel").textContent = translations.btn_choose_proof[lang];
+    document.getElementById("sppNote").value = "";
+
+    showToast(translations.toast_spp_submitted[lang], "success");
+    await loadSpp();
+}
+
 /* TAB SWITCHING */
 
-document.getElementById("tabSchoolBtn").addEventListener("click", function () {
-    document.getElementById("tabSchoolBtn").classList.add("active");
-    document.getElementById("tabPersonalBtn").classList.remove("active");
-    document.getElementById("schoolTabContent").style.display = "block";
-    document.getElementById("personalTabContent").style.display = "none";
-});
+function showSavingsTab(tab) {
+    document.getElementById("tabSchoolBtn").classList.toggle("active", tab === "school");
+    document.getElementById("tabPersonalBtn").classList.toggle("active", tab === "personal");
+    document.getElementById("tabSppBtn").classList.toggle("active", tab === "spp");
+    document.getElementById("schoolTabContent").style.display = tab === "school" ? "block" : "none";
+    document.getElementById("personalTabContent").style.display = tab === "personal" ? "block" : "none";
+    document.getElementById("sppTabContent").style.display = tab === "spp" ? "block" : "none";
 
-document.getElementById("tabPersonalBtn").addEventListener("click", function () {
-    document.getElementById("tabPersonalBtn").classList.add("active");
-    document.getElementById("tabSchoolBtn").classList.remove("active");
-    document.getElementById("personalTabContent").style.display = "block";
-    document.getElementById("schoolTabContent").style.display = "none";
-    if (!personalLoaded) loadPersonalSavings();
-});
+    if (tab === "personal" && !personalLoaded) loadPersonalSavings();
+    if (tab === "spp" && !sppLoaded) loadSpp();
+}
+
+document.getElementById("tabSchoolBtn").addEventListener("click", function () { showSavingsTab("school"); });
+document.getElementById("tabPersonalBtn").addEventListener("click", function () { showSavingsTab("personal"); });
+document.getElementById("tabSppBtn").addEventListener("click", function () { showSavingsTab("spp"); });
 </script>
 
     <script>

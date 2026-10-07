@@ -638,8 +638,8 @@ button.filter-select {
 /* PERSONAL SAVINGS GREEN THEME */
 
 #personalTabContent .savings-form-icon {
-    background: #eeeeff;
-    color: #1309f5;
+    background: #e5faf3;
+    color: #1ba97e;
 }
 
 #personalTabContent .savings-submit-btn {
@@ -1343,8 +1343,8 @@ html[data-theme="dark"] .savings-form-icon {
 }
 
 html[data-theme="dark"] #personalTabContent .savings-form-icon {
-    background: #242842;
-    color: #3b82f6;
+    background: #123524;
+    color: #4ade80;
 }
 
 html[data-theme="dark"] .type-toggle {

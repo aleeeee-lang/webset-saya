@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Parent Accounts - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_parents">Manage Parent Accounts</h2>
+    </section>
+
+    <!-- ADD PARENT FORM -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_add_new_parent">Add New Parent Account</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <input type="text" id="newParentName" class="am-field" data-i18n-placeholder="placeholder_full_name" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="email" id="newParentEmail" class="am-field" data-i18n-placeholder="placeholder_email_login" placeholder="Email (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="newParentPassword" class="am-field" data-i18n-placeholder="placeholder_password_login" placeholder="Password (for login)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <button type="button" class="submit-button" id="addParentBtn" onclick="addParent()" style="margin-top:4px" data-i18n="btn_add_parent">
+                Add Parent Account
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- PARENT LIST -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_parent_accounts">Parent Accounts</div>
+
+        <select id="parentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;margin-bottom:10px">
+            <option value="" data-i18n="option_choose_parent">Choose a parent account...</option>
+        </select>
+
+        <div id="parentList" style="display:flex;flex-direction:column;gap:8px"></div>
+
+    </section>
+
+    <!-- LINKED STUDENTS -->
+    <section class="attendance-card" id="linkStudentsCard" style="display:none">
+
+        <div class="card-label" data-i18n="label_linked_students">Linked Students</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_linked_students">This parent can view these students' attendance, SPP, and development (read-only).</p>
+
+        <div id="linkedStudentsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="linkStudentSelect" class="am-field" style="flex:1;min-width:160px;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_student">Choose a student...</option>
+            </select>
+            <button type="button" class="am-btn" onclick="linkStudent()" style="border:none;background:#1309f5;color:#fff;border-radius:12px;padding:0 18px;font-size:13px;font-weight:600;cursor:pointer" data-i18n="btn_link_student">Link</button>
+        </div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+// Second, isolated client just for creating parent accounts, so creating
+// one never overwrites the admin's own login session.
+const supabaseSignupClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        storageKey: "sb-temp-signup-auth"
+    }
+});
+
+let allParents = [];
+let allStudents = [];
+let allLinks = [];
+let selectedParentId = "";
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await Promise.all([loadParents(), loadStudents(), loadLinks()]);
+
+    document.getElementById("parentSelect").addEventListener("change", onParentSelectChange);
+}
+
+async function loadParents() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,name")
+        .eq("role", "orangtua")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allParents = data;
+    renderParentOptions();
+    renderParentList();
+}
+
+function renderParentOptions() {
+    const select = document.getElementById("parentSelect");
+    const current = select.value;
+    select.innerHTML = '<option value="">' + translations.option_choose_parent[getLang()] + "</option>";
+    allParents.forEach(function (p) {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+    });
+    select.value = current;
+}
+
+async function loadStudents() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .eq("role", "murid")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allStudents = data;
+}
+
+async function loadLinks() {
+    const { data, error } = await supabaseClient
+        .from("parent_links")
+        .select("*");
+
+    if (error || !data) {
+        allLinks = [];
+    } else {
+        allLinks = data;
+    }
+
+    renderParentList();
+    if (selectedParentId) renderLinkedStudents();
+}
+
+function studentLabel(id) {
+    const s = allStudents.find(function (st) { return st.id === id; });
+    return s ? (s.name + (s.class ? " · " + s.class : "")) : id;
+}
+
+function renderParentList() {
+    const lang = getLang();
+    const container = document.getElementById("parentList");
+
+    if (allParents.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_parents_yet[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = allParents.map(function (p) {
+        const links = allLinks.filter(function (l) { return l.parent_id === p.id; });
+        const names = links.length > 0 ? links.map(function (l) { return studentLabel(l.student_id); }).join(", ") : translations.text_no_children_linked[lang];
+
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;cursor:pointer" onclick="selectParent('${p.id}')">
+                <div style="flex:1;min-width:0">
+                    <strong style="display:block;font-size:14px;color:#20243a">${p.name}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${names}</span>
+                </div>
+                <span style="color:#aaa;font-size:16px">›</span>
+            </div>
+        `;
+    }).join("");
+}
+
+function selectParent(id) {
+    document.getElementById("parentSelect").value = id;
+    onParentSelectChange();
+    window.scrollTo({ top: document.getElementById("linkStudentsCard").offsetTop - 20, behavior: "smooth" });
+}
+
+function onParentSelectChange() {
+    selectedParentId = document.getElementById("parentSelect").value;
+    const card = document.getElementById("linkStudentsCard");
+
+    if (!selectedParentId) {
+        card.style.display = "none";
+        return;
+    }
+
+    card.style.display = "block";
+    renderLinkedStudents();
+}
+
+function renderLinkedStudents() {
+    const lang = getLang();
+    const container = document.getElementById("linkedStudentsList");
+    const links = allLinks.filter(function (l) { return l.parent_id === selectedParentId; });
+
+    if (links.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px;margin:0'>" + translations.text_no_children_linked[lang] + "</p>";
+    } else {
+        container.innerHTML = links.map(function (l) {
+            return `
+                <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
+                    <strong style="flex:1;min-width:0;font-size:13px;color:#20243a">${studentLabel(l.student_id)}</strong>
+                    <button type="button" onclick="unlinkStudent('${l.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_unlink">Unlink</button>
+                </div>
+            `;
+        }).join("");
+    }
+
+    const linkedIds = new Set(links.map(function (l) { return l.student_id; }));
+    const select = document.getElementById("linkStudentSelect");
+    select.innerHTML = '<option value="">' + translations.option_choose_student[lang] + "</option>";
+    allStudents.filter(function (s) { return !linkedIds.has(s.id); }).forEach(function (s) {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name + (s.class ? " · " + s.class : "");
+        select.appendChild(opt);
+    });
+}
+
+async function addParent() {
+    const lang = getLang();
+    const name = document.getElementById("newParentName").value.trim();
+    const email = document.getElementById("newParentEmail").value.trim();
+    const password = document.getElementById("newParentPassword").value;
+
+    if (!name || !email || !password) {
+        showToast(translations.toast_name_email_password_required[lang], "error");
+        return;
+    }
+
+    const btn = document.getElementById("addParentBtn");
+    btn.disabled = true;
+    btn.textContent = translations.btn_adding[lang];
+
+    const { data: signUpData, error: signUpError } = await supabaseSignupClient.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (signUpError) {
+        showToast(translations.toast_create_account_failed[lang] + signUpError.message, "error");
+        btn.disabled = false;
+        btn.textContent = translations.btn_add_parent[lang];
+        return;
+    }
+
+    const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .insert({
+            id: signUpData.user.id,
+            role: "orangtua",
+            name: name
+        });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_add_parent[lang];
+
+    if (profileError) {
+        showToast(translations.toast_save_profile_failed[lang] + profileError.message, "error");
+        return;
+    }
+
+    document.getElementById("newParentName").value = "";
+    document.getElementById("newParentEmail").value = "";
+    document.getElementById("newParentPassword").value = "";
+
+    showToast(translations.toast_parent_created[lang], "success");
+    await loadParents();
+}
+
+async function linkStudent() {
+    const lang = getLang();
+    const studentId = document.getElementById("linkStudentSelect").value;
+
+    if (!selectedParentId || !studentId) {
+        showToast(translations.toast_select_student_first[lang], "error");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("parent_links")
+        .insert({ parent_id: selectedParentId, student_id: studentId });
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_link_added[lang], "success");
+    await loadLinks();
+}
+
+async function unlinkStudent(linkId) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_unlink_student[lang])) return;
+
+    const { error } = await supabaseClient
+        .from("parent_links")
+        .delete()
+        .eq("id", linkId);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_link_removed[lang], "success");
+    await loadLinks();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

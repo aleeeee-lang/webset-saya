@@ -27,8 +27,28 @@
 
     <!-- TODAY'S ATTENDANCE -->
     <section class="attendance-card">
-        <div class="card-label" data-i18n="label_today_attendance">Today's Attendance</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px">
+            <div class="card-label" data-i18n="label_today_attendance" style="margin:0">Today's Attendance</div>
+            <button type="button" id="remindAttendanceBtn" onclick="sendAttendanceReminder()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#1309f5;display:flex;align-items:center;gap:6px;white-space:nowrap">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" fill="currentColor"/><path d="M18 16V11C18 7.9 16.4 5.3 13.5 4.6V4C13.5 3.2 12.8 2.5 12 2.5C11.2 2.5 10.5 3.2 10.5 4V4.6C7.6 5.3 6 7.9 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                <span data-i18n="btn_remind_missing_attendance">Remind Who's Missing</span>
+            </button>
+        </div>
         <div id="todayList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+    <!-- ATTENDANCE TREND -->
+    <section class="attendance-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div class="card-label" data-i18n="label_attendance_trend" style="margin:0">Attendance Trend (Last 14 Days)</div>
+            <span id="trendRangeLabel" style="font-size:11px;color:#999">-</span>
+        </div>
+        <svg id="trendChartSvg" viewBox="0 0 280 110" style="width:100%;height:110px;display:block;margin-top:8px"></svg>
+        <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block"></i><span data-i18n="trend_legend_good">90%+</span></span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></i><span data-i18n="trend_legend_ok">75-89%</span></span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block"></i><span data-i18n="trend_legend_low">&lt;75%</span></span>
+        </div>
     </section>
 
     <!-- FILTER + HISTORY -->
@@ -138,6 +158,7 @@ async function checkAdmin() {
     document.getElementById("recordDate").value = todayStr();
     await loadToday();
     await loadFiltered();
+    await loadTrendChart();
 }
 
 async function loadStudents() {
@@ -173,7 +194,121 @@ async function loadStudents() {
     });
 
     classSelect.addEventListener("change", loadFiltered);
+    classSelect.addEventListener("change", loadTrendChart);
     document.getElementById("filterDate").addEventListener("change", loadFiltered);
+}
+
+/* REMINDER: STUDENTS MISSING TODAY'S ATTENDANCE */
+
+async function sendAttendanceReminder() {
+    const lang = getLang();
+    const user = await requireLogin();
+    if (!user) return;
+
+    const btn = document.getElementById("remindAttendanceBtn");
+    const today = todayStr();
+
+    const { data: records, error: recErr } = await supabaseClient
+        .from("attendance")
+        .select("user_id")
+        .eq("date", today);
+
+    if (recErr) {
+        showToast(translations.toast_reminder_failed[lang] + recErr.message, "error");
+        return;
+    }
+
+    const checkedInIds = new Set((records || []).map(function (r) { return r.user_id; }));
+    const missing = allStudents.filter(function (s) { return !checkedInIds.has(s.id); });
+
+    if (missing.length === 0) {
+        showToast(translations.toast_nobody_to_remind[lang], "success");
+        return;
+    }
+
+    btn.disabled = true;
+
+    const message = translations.text_attendance_reminder_message[lang];
+    const rows = missing.map(function (s) {
+        return { message: message, target_type: "student", target_value: s.id, created_by: user.id };
+    });
+
+    const { error } = await supabaseClient.from("broadcasts").insert(rows);
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_reminder_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_reminder_sent[lang].replace("{count}", missing.length), "success");
+}
+
+/* ATTENDANCE TREND CHART (last 14 days) */
+
+function trendBarColor(pct) {
+    if (pct >= 90) return "#22c55e";
+    if (pct >= 75) return "#f59e0b";
+    return "#ef4444";
+}
+
+async function loadTrendChart() {
+    const selectedClass = document.getElementById("filterClass").value;
+    const scopedStudents = selectedClass === "all" ? allStudents : allStudents.filter(function (s) { return s.class === selectedClass; });
+    const totalStudents = scopedStudents.length;
+
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        days.push(d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"));
+    }
+
+    let query = supabaseClient
+        .from("attendance")
+        .select("user_id,date,status")
+        .gte("date", days[0])
+        .lte("date", days[days.length - 1]);
+
+    const { data, error } = await query;
+    const records = (error || !data) ? [] : data;
+
+    const scopedIds = new Set(scopedStudents.map(function (s) { return s.id; }));
+    const byDate = {};
+    days.forEach(function (d) { byDate[d] = 0; });
+
+    records.forEach(function (r) {
+        if (selectedClass !== "all" && !scopedIds.has(r.user_id)) return;
+        if (r.status === "Hadir" && byDate.hasOwnProperty(r.date)) byDate[r.date]++;
+    });
+
+    const svg = document.getElementById("trendChartSvg");
+    const barWidth = 14;
+    const gap = 6;
+    const chartHeight = 90;
+    const baseY = 100;
+
+    const bars = days.map(function (d, i) {
+        const pct = totalStudents > 0 ? Math.round((byDate[d] / totalStudents) * 100) : 0;
+        const barHeight = Math.max(2, (pct / 100) * chartHeight);
+        const x = i * (barWidth + gap) + 4;
+        const y = baseY - barHeight;
+        const color = trendBarColor(pct);
+        const dateLabel = new Date(d + "T00:00:00").getDate();
+
+        return `
+            <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3" fill="${color}">
+                <title>${d}: ${pct}%</title>
+            </rect>
+            <text x="${x + barWidth / 2}" y="108" text-anchor="middle" font-size="7" fill="#aaa">${dateLabel}</text>
+        `;
+    }).join("");
+
+    svg.innerHTML = bars;
+
+    const rangeLabel = dayMonthLabel(new Date(days[0] + "T00:00:00")) + " - " + dayMonthLabel(new Date(days[days.length - 1] + "T00:00:00"));
+    document.getElementById("trendRangeLabel").textContent = rangeLabel;
 }
 
 async function renderRow(item, showDate) {

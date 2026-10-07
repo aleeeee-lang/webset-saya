@@ -73,7 +73,13 @@
 
     <!-- TRANSACTION HISTORY -->
     <section class="attendance-card" id="transactionHistoryCard" style="display:none">
-        <div class="card-label" data-i18n="label_savings_history">TRANSACTION HISTORY</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+            <div class="card-label" data-i18n="label_savings_history" style="margin:0">TRANSACTION HISTORY</div>
+            <button type="button" onclick="exportSavingsCsv()" style="border:none;background:none;color:#1309f5;font-size:12px;font-weight:600;cursor:pointer;padding:4px;display:flex;align-items:center;gap:5px">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 4V15M12 15L8 11M12 15L16 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17V18.5C5 19.33 5.67 20 6.5 20H17.5C18.33 20 19 19.33 19 18.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span data-i18n="btn_export_csv">Export to CSV</span>
+            </button>
+        </div>
         <div id="transactionList" style="display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
@@ -254,6 +260,53 @@ async function addTransaction() {
     document.getElementById("transactionNote").value = "";
     showToast(translations.toast_transaction_added[lang], "success");
     await loadStudentSavings(selectedStudentId);
+}
+
+function csvEscape(value) {
+    const str = (value === null || value === undefined) ? "" : String(value);
+    if (/[",\n]/.test(str)) {
+        return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+}
+
+function exportSavingsCsv() {
+    const lang = getLang();
+
+    if (!allTransactions || allTransactions.length === 0) {
+        showToast(translations.toast_no_records_export[lang], "error");
+        return;
+    }
+
+    const student = allStudents.find(function (s) { return s.id === selectedStudentId; });
+    const headers = ["Date", "Type", "Amount", "Note"];
+    const lines = [headers.join(",")];
+
+    allTransactions.forEach(function (t) {
+        const d = new Date(t.created_at);
+        lines.push([
+            csvEscape(dayMonthYearLabel(d)),
+            csvEscape(t.type === "setor" ? translations.type_setor[lang] : translations.type_tarik[lang]),
+            csvEscape(t.amount),
+            csvEscape(t.note)
+        ].join(","));
+    });
+
+    const csvContent = "﻿" + lines.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const fileName = "savings_" + (student ? student.name : "student").replace(/[^a-zA-Z0-9._-]/g, "_") + ".csv";
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast(translations.toast_csv_exported[lang], "success");
 }
 
 async function deleteTransaction(id) {

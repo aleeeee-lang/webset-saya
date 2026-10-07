@@ -403,7 +403,18 @@ const translations = {
 
     page_manage_attendance: { en: "Manage Attendance", id: "Kelola Absensi" },
     label_today_attendance: { en: "Today's Attendance", id: "Absensi Hari Ini" },
+    btn_remind_missing_attendance: { en: "Remind Who's Missing", id: "Ingatkan yang Belum Absen" },
+    toast_reminder_failed: { en: "Failed to send reminders: ", id: "Gagal mengirim pengingat: " },
+    toast_nobody_to_remind: { en: "Everyone has checked in today.", id: "Semua siswa sudah absen hari ini." },
+    toast_reminder_sent: { en: "Reminder sent to {count} student(s).", id: "Pengingat terkirim ke {count} siswa." },
+    text_attendance_reminder_message: { en: "Reminder: you haven't checked in your attendance today. Please check in as soon as possible.", id: "Pengingat: kamu belum absen hari ini. Segera lakukan absensi ya." },
+    btn_remind_missing_spp: { en: "Remind Who Hasn't Paid", id: "Ingatkan yang Belum Bayar" },
+    text_spp_reminder_message: { en: "Reminder: you haven't submitted your SPP payment proof for this month. Please submit it as soon as possible.", id: "Pengingat: kamu belum mengirim bukti pembayaran SPP bulan ini. Segera kirim ya." },
     label_filter_records: { en: "Filter Records", id: "Filter Catatan" },
+    label_attendance_trend: { en: "Attendance Trend (Last 14 Days)", id: "Tren Kehadiran (14 Hari Terakhir)" },
+    trend_legend_good: { en: "90%+", id: "90%+" },
+    trend_legend_ok: { en: "75-89%", id: "75-89%" },
+    trend_legend_low: { en: "<75%", id: "<75%" },
     option_all_classes: { en: "All Classes", id: "Semua Kelas" },
     btn_export_csv: { en: "Export to CSV", id: "Ekspor ke CSV" },
     label_add_correct_attendance: { en: "Add or Correct Attendance", id: "Tambah atau Koreksi Absensi" },
@@ -535,7 +546,28 @@ const translations = {
     toast_info_published: { en: "Information published.", id: "Informasi diterbitkan." },
     toast_info_failed: { en: "Failed to save: ", id: "Gagal menyimpan: " },
     confirm_delete_info: { en: "Delete this information?", id: "Hapus informasi ini?" },
-    toast_info_deleted: { en: "Information deleted.", id: "Informasi dihapus." }
+    toast_info_deleted: { en: "Information deleted.", id: "Informasi dihapus." },
+
+    page_manage_parents: { en: "Manage Parent Accounts", id: "Kelola Akun Orang Tua" },
+    menu_manage_parents: { en: "Manage Parent Accounts", id: "Kelola Akun Orang Tua" },
+    label_add_new_parent: { en: "Add New Parent Account", id: "Tambah Akun Orang Tua Baru" },
+    btn_add_parent: { en: "Add Parent Account", id: "Tambah Akun Orang Tua" },
+    label_parent_accounts: { en: "Parent Accounts", id: "Akun Orang Tua" },
+    option_choose_parent: { en: "Choose a parent account...", id: "Pilih akun orang tua..." },
+    text_no_parents_yet: { en: "No parent accounts yet.", id: "Belum ada akun orang tua." },
+    text_no_children_linked: { en: "No children linked", id: "Belum ada anak yang ditautkan" },
+    label_linked_students: { en: "Linked Students", id: "Siswa Tertaut" },
+    hint_linked_students: { en: "This parent can view these students' attendance, SPP, and development (read-only).", id: "Orang tua ini dapat melihat absensi, SPP, dan perkembangan siswa ini (hanya lihat)." },
+    btn_link_student: { en: "Link", id: "Tautkan" },
+    btn_unlink: { en: "Unlink", id: "Lepas Tautan" },
+    toast_parent_created: { en: "Parent account created.", id: "Akun orang tua berhasil dibuat." },
+    toast_link_added: { en: "Student linked.", id: "Siswa berhasil ditautkan." },
+    toast_link_removed: { en: "Link removed.", id: "Tautan berhasil dilepas." },
+    confirm_unlink_student: { en: "Unlink this student from this parent account?", id: "Lepas tautan siswa ini dari akun orang tua ini?" },
+    page_parent_portal: { en: "Parent Portal", id: "Portal Orang Tua" },
+    label_select_child: { en: "Viewing", id: "Melihat" },
+    no_children_title: { en: "No students linked yet", id: "Belum ada siswa yang ditautkan" },
+    no_children_text: { en: "Ask the school admin to link your account to your child's student profile.", id: "Minta admin sekolah untuk menautkan akunmu ke profil anakmu." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

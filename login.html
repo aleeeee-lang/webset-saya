@@ -185,6 +185,8 @@ async function loginUser() {
 
     if (profile.role === "admin") {
         window.location.href = "index.html";
+    } else if (profile.role === "orangtua") {
+        window.location.href = "parent.html";
     } else {
         window.location.href = "index.html";
     }

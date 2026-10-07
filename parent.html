@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Portal - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="my-attendance-main">
+
+    <!-- TITLE + SETTINGS -->
+    <section class="attendance-intro" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h1 style="margin:0" data-i18n="page_parent_portal">Parent Portal</h1>
+        <a href="settings.html" id="settingsGearBtn" style="width:38px;height:38px;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;flex-shrink:0;color:#20243a">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </a>
+    </section>
+
+    <!-- CHILD SELECTOR -->
+    <section class="attendance-card" id="childSelectCard" style="display:none;margin-bottom:18px">
+        <div class="card-label" data-i18n="label_select_child" style="margin:0 0 10px">Viewing</div>
+        <select id="childSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px"></select>
+    </section>
+
+    <!-- NO CHILDREN LINKED -->
+    <section class="history-empty" id="noChildrenCard" style="display:none">
+        <div class="history-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M5 20C5.7 16.3 8.1 14.2 12 14.2C15.9 14.2 18.3 16.3 19 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h2 data-i18n="no_children_title">No students linked yet</h2>
+        <p data-i18n="no_children_text">Ask the school admin to link your account to your child's student profile.</p>
+    </section>
+
+    <div id="childDataWrap" style="display:none">
+
+        <!-- ATTENDANCE -->
+        <section class="attendance-score-card compact">
+            <p class="score-label" data-i18n="score_label">ATTENDANCE SCORE</p>
+            <h2 id="pScorePercent">0%</h2>
+            <p class="score-description" id="pScoreDesc">-</p>
+            <div class="score-progress">
+                <div class="score-progress-fill" id="pScoreProgressFill"></div>
+            </div>
+            <div class="score-summary">
+                <div><strong id="pHadir">0</strong><span data-i18n="status_present">Present</span></div>
+                <div><strong id="pIzin">0</strong><span data-i18n="status_permission">Permission</span></div>
+                <div><strong id="pSakit">0</strong><span data-i18n="status_sick">Sick</span></div>
+                <div><strong id="pAlpa">0</strong><span data-i18n="status_absent">Absent</span></div>
+            </div>
+        </section>
+
+        <!-- SPP -->
+        <div class="my-attendance-section-header" style="margin-top:28px">
+            <div><span data-i18n="label_spp_status">SPP STATUS</span><h2 id="pSppMonthLabel">-</h2></div>
+            <span class="spp-status-badge" id="pSppStatusBadge">-</span>
+        </div>
+        <section class="attendance-card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:12px;color:#888" data-i18n="label_spp_amount">Amount</span>
+                <strong id="pSppAmount" style="font-size:16px;color:#20243a">Rp0</strong>
+            </div>
+        </section>
+
+        <!-- GRADE AVERAGE -->
+        <section class="attendance-score-card dev compact" style="margin-top:18px">
+            <p class="score-label" data-i18n="label_grade_average">GRADE AVERAGE</p>
+            <h2 id="pDevAverageScore">-</h2>
+            <p class="score-description" id="pDevAverageDesc">-</p>
+        </section>
+
+        <!-- RECENT GRADES -->
+        <div class="my-attendance-section-header" style="margin-top:28px">
+            <div><span data-i18n="label_grades_label">GRADES</span><h2 data-i18n="label_grades">Grades</h2></div>
+        </div>
+        <section class="attendance-activity" id="pGradesList"></section>
+        <section class="history-empty" id="pGradesEmpty" style="display:none">
+            <h2 data-i18n="no_grades_title">No grades yet</h2>
+            <p data-i18n="no_grades_text">Your grades will appear here once added by the school.</p>
+        </section>
+
+        <!-- RECENT ACTIVITIES -->
+        <div class="my-attendance-section-header" style="margin-top:28px">
+            <div><span data-i18n="label_activities_label">ACTIVITIES & NOTES</span><h2 data-i18n="label_activities_notes">Activities & Notes</h2></div>
+        </div>
+        <section class="attendance-activity" id="pActivitiesList"></section>
+        <section class="history-empty" id="pActivitiesEmpty" style="display:none">
+            <h2 data-i18n="no_activities_title">No activities or notes yet</h2>
+            <p data-i18n="no_activities_text">Activities, achievements and notes from your school will appear here.</p>
+        </section>
+
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+const activityTypeIcon = { kegiatan: "📌", prestasi: "🏆", pelanggaran: "⚠", catatan: "📝" };
+const activityTypeKeyMap = { kegiatan: "type_kegiatan", prestasi: "type_prestasi", pelanggaran: "type_pelanggaran", catatan: "type_catatan" };
+
+let myChildren = [];
+let selectedChildId = "";
+
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+
+async function checkParent() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "orangtua") {
+        window.location.href = "index.html";
+        return;
+    }
+
+    const { data: links } = await supabaseClient
+        .from("parent_links")
+        .select("student_id")
+        .eq("parent_id", user.id);
+
+    if (!links || links.length === 0) {
+        document.getElementById("noChildrenCard").style.display = "block";
+        return;
+    }
+
+    const studentIds = links.map(function (l) { return l.student_id; });
+
+    const { data: students } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .in("id", studentIds);
+
+    myChildren = students || [];
+
+    if (myChildren.length === 0) {
+        document.getElementById("noChildrenCard").style.display = "block";
+        return;
+    }
+
+    const select = document.getElementById("childSelect");
+    select.innerHTML = myChildren.map(function (c) {
+        return `<option value="${c.id}">${c.name}${c.class ? " · " + c.class : ""}</option>`;
+    }).join("");
+
+    if (myChildren.length > 1) {
+        document.getElementById("childSelectCard").style.display = "block";
+    }
+
+    select.addEventListener("change", function () {
+        selectedChildId = this.value;
+        loadChildData();
+    });
+
+    selectedChildId = myChildren[0].id;
+    document.getElementById("childDataWrap").style.display = "block";
+    await loadChildData();
+}
+
+function renderPAttendance(data) {
+    const total = data.length;
+    const hadir = data.filter(i => i.status === "Hadir").length;
+    const izin = data.filter(i => i.status === "Izin").length;
+    const sakit = data.filter(i => i.status === "Sakit").length;
+    const alpa = data.filter(i => i.status === "Alpa").length;
+    const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+    document.getElementById("pScorePercent").textContent = percent + "%";
+    document.getElementById("pScoreProgressFill").style.width = percent + "%";
+    document.getElementById("pHadir").textContent = hadir;
+    document.getElementById("pIzin").textContent = izin;
+    document.getElementById("pSakit").textContent = sakit;
+    document.getElementById("pAlpa").textContent = alpa;
+
+    const descEl = document.getElementById("pScoreDesc");
+    if (total === 0) descEl.textContent = tr("score_no_data");
+    else if (percent >= 90) descEl.textContent = tr("score_excellent");
+    else if (percent >= 75) descEl.textContent = tr("score_good");
+    else descEl.textContent = tr("score_needs_improvement");
+}
+
+function currentSppPeriod() {
+    const now = new Date();
+    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+}
+
+async function renderPSpp(childId) {
+    const [settingsRes, profileRes, paymentsRes] = await Promise.all([
+        supabaseClient.from("spp_settings").select("amount").eq("id", "global").maybeSingle(),
+        supabaseClient.from("profiles").select("spp_custom_amount").eq("id", childId).maybeSingle(),
+        supabaseClient.from("spp_payments").select("*").eq("user_id", childId).order("period", { ascending: false })
+    ]);
+
+    const defaultAmount = (settingsRes.data && settingsRes.data.amount) || 0;
+    const customAmount = profileRes.data ? profileRes.data.spp_custom_amount : null;
+    const amount = (customAmount !== null && customAmount !== undefined) ? customAmount : defaultAmount;
+
+    const period = currentSppPeriod();
+    const record = (paymentsRes.data || []).find(function (r) { return r.period === period; }) || null;
+
+    document.getElementById("pSppMonthLabel").textContent = new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long", year: "numeric" });
+    document.getElementById("pSppAmount").textContent = formatRupiah(amount);
+
+    const badge = document.getElementById("pSppStatusBadge");
+    if (!record) {
+        badge.textContent = tr("badge_spp_unpaid");
+        badge.className = "spp-status-badge unpaid";
+    } else {
+        badge.textContent = tr("badge_spp_" + record.status);
+        badge.className = "spp-status-badge " + record.status;
+    }
+}
+
+async function renderPDevelopment(childId) {
+    const [gradesRes, activitiesRes] = await Promise.all([
+        supabaseClient.from("student_grades").select("*").eq("user_id", childId),
+        supabaseClient.from("student_activities").select("*").eq("user_id", childId)
+    ]);
+
+    const grades = gradesRes.data || [];
+    const activities = activitiesRes.data || [];
+
+    const gradesListEl = document.getElementById("pGradesList");
+    const gradesEmptyEl = document.getElementById("pGradesEmpty");
+
+    if (grades.length === 0) {
+        gradesListEl.innerHTML = "";
+        gradesEmptyEl.style.display = "block";
+        document.getElementById("pDevAverageScore").textContent = "-";
+        document.getElementById("pDevAverageDesc").textContent = tr("score_no_data");
+    } else {
+        gradesEmptyEl.style.display = "none";
+
+        const bySubject = {};
+        grades.forEach(function (g) {
+            const existing = bySubject[g.subject];
+            if (!existing || new Date(g.created_at) > new Date(existing.created_at)) bySubject[g.subject] = g;
+        });
+        const latest = Object.values(bySubject);
+        const avg = latest.reduce(function (sum, g) { return sum + Number(g.score); }, 0) / latest.length;
+
+        document.getElementById("pDevAverageScore").textContent = avg.toFixed(1);
+        if (avg >= 85) document.getElementById("pDevAverageDesc").textContent = tr("score_excellent");
+        else if (avg >= 70) document.getElementById("pDevAverageDesc").textContent = tr("score_good");
+        else document.getElementById("pDevAverageDesc").textContent = tr("score_needs_improvement");
+
+        const sorted = grades.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5);
+
+        gradesListEl.innerHTML = sorted.map(function (g) {
+            return `
+                <div class="activity-card">
+                    <div class="activity-status-icon dev-grade">${Number(g.score).toFixed(0)}</div>
+                    <div class="activity-content">
+                        <strong>${g.subject}</strong>
+                        <span>${g.period}${g.note ? " · " + g.note : ""}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    const actListEl = document.getElementById("pActivitiesList");
+    const actEmptyEl = document.getElementById("pActivitiesEmpty");
+
+    if (activities.length === 0) {
+        actListEl.innerHTML = "";
+        actEmptyEl.style.display = "block";
+    } else {
+        actEmptyEl.style.display = "none";
+        const sorted = activities.slice().sort(function (a, b) { return new Date(b.date) - new Date(a.date); }).slice(0, 5);
+
+        actListEl.innerHTML = sorted.map(function (item) {
+            return `
+                <div class="activity-card">
+                    <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
+                    <div class="activity-content">
+                        <strong>${item.title}</strong>
+                        <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date))}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+}
+
+async function loadChildData() {
+    const { data } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("user_id", selectedChildId)
+        .order("date", { ascending: false });
+
+    renderPAttendance(data || []);
+    await renderPSpp(selectedChildId);
+    await renderPDevelopment(selectedChildId);
+}
+
+checkParent();
+
+</script>
+
+</body>
+</html>

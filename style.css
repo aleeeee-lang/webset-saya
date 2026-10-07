@@ -652,6 +652,28 @@ button.filter-select {
     border-color: #1ba97e !important;
 }
 
+/* SPP TEAL THEME */
+
+#sppTabContent .savings-form-icon {
+    background: #e3f8f6;
+    color: #0d9488;
+}
+
+#sppTabContent .savings-submit-btn {
+    background: linear-gradient(135deg, #0d9488, #2dd4bf);
+    box-shadow: 0 8px 20px rgba(13, 148, 136, .22);
+}
+
+#sppTabContent .am-field:focus {
+    border-color: #0d9488 !important;
+}
+
+.spp-proof-btn {
+    border: 1px solid #99e4da;
+    background: #e3f8f6;
+    color: #0d9488;
+}
+
 .savings-tab-btn[data-tab="personal"].active {
     color: #1ba97e;
 }
@@ -1476,6 +1498,26 @@ html[data-theme="dark"] .savings-form-icon {
 html[data-theme="dark"] #personalTabContent .savings-form-icon {
     background: #123524;
     color: #4ade80;
+}
+
+html[data-theme="dark"] #sppTabContent .savings-form-icon {
+    background: #0d2e2a;
+    color: #2dd4bf;
+}
+
+html[data-theme="dark"] #sppTabContent .savings-submit-btn {
+    background: linear-gradient(135deg, #0a6d63, #2dd4bf);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
+}
+
+html[data-theme="dark"] #sppTabContent .am-field:focus {
+    border-color: #2dd4bf !important;
+}
+
+html[data-theme="dark"] .spp-proof-btn {
+    background: #0d2e2a;
+    border-color: #0f4a42;
+    color: #2dd4bf;
 }
 
 html[data-theme="dark"] .type-toggle {

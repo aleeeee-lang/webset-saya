@@ -97,6 +97,8 @@ const translations = {
 
     page_manage_savings: { en: "Manage Savings", id: "Kelola Tabungan" },
     menu_manage_savings: { en: "Manage Savings", id: "Kelola Tabungan" },
+    page_manage_spp: { en: "Manage SPP", id: "Kelola SPP" },
+    menu_manage_spp: { en: "Manage SPP", id: "Kelola SPP" },
 
     menu_feedback: { en: "Suggestions & Complaints", id: "Saran & Keluhan" },
     menu_admin_feedback: { en: "Student Suggestions & Complaints", id: "Saran & Keluhan Siswa" },

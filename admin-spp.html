@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage SPP - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_manage_spp">Manage SPP</h2>
+    </section>
+
+    <!-- SPP AMOUNT SETTINGS -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_spp_settings">SPP Amount Settings</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_spp_settings">The fixed monthly SPP amount every student needs to pay.</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_spp_monthly_amount">Monthly SPP Amount (Rp)</div>
+                <input type="number" id="sppAmountInput" class="am-field" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+            <button type="button" class="submit-button" id="saveSppAmountBtn" onclick="saveSppAmount()" data-i18n="btn_save_spp_amount">
+                Save Amount
+            </button>
+        </div>
+
+    </section>
+
+    <!-- SPP PENDING REVIEW -->
+    <section class="attendance-card" style="margin-top:22px">
+
+        <div class="card-label" data-i18n="label_spp_pending_review">Pending SPP Verification</div>
+        <div id="sppPendingList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+
+    </section>
+
+    <!-- SPP RECENT REVIEWS -->
+    <section class="attendance-card" style="margin-top:22px">
+
+        <div class="card-label" data-i18n="label_spp_recent_reviews">Recently Reviewed</div>
+        <div id="sppReviewedList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let allStudents = [];
+
+async function checkAdmin() {
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+        alert(translations.alert_admin_only[getLang()]);
+        window.location.href = "index.html";
+        return;
+    }
+
+    await loadStudents();
+    await loadSppAdmin();
+}
+
+async function loadStudents() {
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id,name,class")
+        .eq("role", "murid")
+        .order("name", { ascending: true });
+
+    if (error || !data) return;
+
+    allStudents = data;
+}
+
+/* =========================
+   SPP VERIFICATION
+========================== */
+
+let sppAmount = 0;
+let sppAllPayments = [];
+
+function studentLabel(userId) {
+    const s = allStudents.find(function (st) { return st.id === userId; });
+    if (!s) return userId;
+    return s.name + (s.class ? " · " + s.class : "");
+}
+
+function sppPeriodLabelAdmin(period) {
+    const d = new Date(period + "-01T00:00:00");
+    return monthYearLabel(d);
+}
+
+async function loadSppAdmin() {
+    const { data: settingsData } = await supabaseClient
+        .from("spp_settings")
+        .select("amount")
+        .eq("id", "global")
+        .maybeSingle();
+
+    sppAmount = (settingsData && settingsData.amount) || 0;
+    document.getElementById("sppAmountInput").value = sppAmount;
+
+    const { data, error } = await supabaseClient
+        .from("spp_payments")
+        .select("*")
+        .order("submitted_at", { ascending: false });
+
+    if (error || !data) {
+        sppAllPayments = [];
+    } else {
+        sppAllPayments = data;
+    }
+
+    renderSppPending();
+    renderSppReviewed();
+}
+
+async function saveSppAmount() {
+    const lang = getLang();
+    const amount = Number(document.getElementById("sppAmountInput").value);
+
+    if (!amount || amount <= 0) {
+        showToast(translations.toast_enter_valid_spp_amount[lang], "error");
+        return;
+    }
+
+    const user = await requireLogin();
+    if (!user) return;
+
+    const btn = document.getElementById("saveSppAmountBtn");
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("spp_settings")
+        .upsert({
+            id: "global",
+            amount: amount,
+            updated_by: user.id,
+            updated_at: new Date().toISOString()
+        }, { onConflict: "id" });
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    sppAmount = amount;
+    showToast(translations.toast_spp_amount_saved[lang], "success");
+}
+
+async function viewSppProof(path) {
+    if (!path) return;
+    const { data, error } = await supabaseClient.storage
+        .from("spp-proofs")
+        .createSignedUrl(path, 3600);
+
+    if (error || !data || !data.signedUrl) return;
+    window.open(data.signedUrl, "_blank");
+}
+
+function renderSppPending() {
+    const lang = getLang();
+    const container = document.getElementById("sppPendingList");
+    const pending = sppAllPayments.filter(function (p) { return p.status === "pending"; });
+
+    if (pending.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_spp_pending[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = pending.map(function (p) {
+        const d = new Date(p.submitted_at);
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:140px">
+                    <strong style="display:block;font-size:14px;color:#20243a">${studentLabel(p.user_id)}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)} · ${dayMonthYearLabel(d)}</span>
+                    ${p.note ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${p.note}</span>` : ""}
+                </div>
+                <div style="display:flex;gap:6px;flex-shrink:0">
+                    <button type="button" class="am-btn" onclick="viewSppProof('${p.proof_url}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_view_proof[lang]}</button>
+                    <button type="button" class="am-btn" onclick="approveSpp('${p.id}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${translations.btn_approve[lang]}</button>
+                    <button type="button" class="am-btn" onclick="rejectSpp('${p.id}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reject[lang]}</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderSppReviewed() {
+    const lang = getLang();
+    const container = document.getElementById("sppReviewedList");
+    const reviewed = sppAllPayments
+        .filter(function (p) { return p.status !== "pending"; })
+        .sort(function (a, b) { return new Date(b.reviewed_at || b.submitted_at) - new Date(a.reviewed_at || a.submitted_at); })
+        .slice(0, 15);
+
+    if (reviewed.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_spp_reviews[lang] + "</p>";
+        return;
+    }
+
+    container.innerHTML = reviewed.map(function (p) {
+        const isApproved = p.status === "approved";
+        const badgeColor = isApproved ? "#16a34a" : "#dc2626";
+        const badgeLabel = translations["badge_spp_" + p.status][lang];
+
+        return `
+            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:140px">
+                    <strong style="display:block;font-size:14px;color:#20243a">${studentLabel(p.user_id)}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)}</span>
+                    ${p.reject_reason ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${p.reject_reason}</span>` : ""}
+                </div>
+                <span style="font-size:12px;font-weight:700;color:${badgeColor}">${badgeLabel}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+async function approveSpp(id) {
+    const lang = getLang();
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { error } = await supabaseClient
+        .from("spp_payments")
+        .update({
+            status: "approved",
+            reject_reason: null,
+            reviewed_at: new Date().toISOString(),
+            reviewed_by: user.id
+        })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_spp_review_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_spp_approved[lang], "success");
+    await loadSppAdmin();
+}
+
+async function rejectSpp(id) {
+    const lang = getLang();
+    const reason = prompt(translations.prompt_reject_reason[lang]);
+    if (reason === null) return;
+
+    const user = await requireLogin();
+    if (!user) return;
+
+    const { error } = await supabaseClient
+        .from("spp_payments")
+        .update({
+            status: "rejected",
+            reject_reason: reason || null,
+            reviewed_at: new Date().toISOString(),
+            reviewed_by: user.id
+        })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_spp_review_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_spp_rejected[lang], "success");
+    await loadSppAdmin();
+}
+
+checkAdmin();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "settings.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

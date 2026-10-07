@@ -28,18 +28,6 @@
 </a>
     </section>
 
-    <!-- TAB SWITCH -->
-    <div class="savings-tab-switch">
-        <button type="button" class="savings-tab-btn active" id="tabAttendanceSectionBtn" data-tab="attendance">
-            <span data-i18n="tab_attendance_section">Absensi</span>
-        </button>
-        <button type="button" class="savings-tab-btn" id="tabDevelopmentBtn" data-tab="development">
-            <span data-i18n="tab_development">Perkembangan</span>
-        </button>
-    </div>
-
-    <div id="attendanceTabContent">
-
     <!-- ATTENDANCE SCORE -->
     <section class="attendance-score-card">
         <p class="score-label" data-i18n="score_label">ATTENDANCE SCORE</p>
@@ -79,17 +67,53 @@
 
     </section>
 
-    <!-- ACTIVITY HEADER -->
-    <div class="my-attendance-section-header">
+    <!-- GRADE AVERAGE -->
+    <section class="attendance-score-card dev">
+        <p class="score-label" data-i18n="label_grade_average">GRADE AVERAGE</p>
+        <h2 id="devAverageScore">-</h2>
+        <p class="score-description" id="devAverageDesc">-</p>
+    </section>
+
+    <!-- GRADES -->
+    <div class="my-attendance-section-header" style="margin-top:28px">
         <div>
-            <span data-i18n="attendance_activity_label">ATTENDANCE ACTIVITY</span>
-            <h2 data-i18n="recent_activity">Recent Activity</h2>
+            <span data-i18n="label_grades_label">GRADES</span>
+            <h2 data-i18n="label_grades">Grades</h2>
         </div>
-        <button type="button" class="link-btn" id="myActivityViewAllBtn" onclick="toggleMyActivityViewAll()" data-i18n="view_all">View All</button>
     </div>
 
-    <!-- ACTIVITY LIST -->
-    <section class="attendance-activity" id="myActivityList"></section>
+    <section class="attendance-activity" id="devGradesList"></section>
+
+    <section class="history-empty" id="devGradesEmpty" style="display:none">
+        <div class="history-empty-icon dev">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 4H18V17L12 20L6 17V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M9 9H15M9 12.5H15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h2 data-i18n="no_grades_title">No grades yet</h2>
+        <p data-i18n="no_grades_text">Your grades will appear here once added by the school.</p>
+    </section>
+
+    <!-- ACTIVITIES & NOTES -->
+    <div class="my-attendance-section-header" style="margin-top:28px">
+        <div>
+            <span data-i18n="label_activities_label">ACTIVITIES & NOTES</span>
+            <h2 data-i18n="label_activities_notes">Activities & Notes</h2>
+        </div>
+    </div>
+
+    <section class="attendance-activity" id="devActivitiesList"></section>
+
+    <section class="history-empty" id="devActivitiesEmpty" style="display:none">
+        <div class="history-empty-icon dev">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.5L14.5 8.7L21.2 9.3L16.1 13.7L17.7 20.3L12 16.7L6.3 20.3L7.9 13.7L2.8 9.3L9.5 8.7L12 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h2 data-i18n="no_activities_title">No activities or notes yet</h2>
+        <p data-i18n="no_activities_text">Activities, achievements and notes from your school will appear here.</p>
+    </section>
 
     <!-- MONTHLY CALENDAR -->
     <section class="monthly-calendar-card">
@@ -139,64 +163,6 @@
             <p id="myInsightText">-</p>
         </div>
     </section>
-
-    </div>
-
-    <!-- =========================
-         DEVELOPMENT TAB
-    ========================== -->
-
-    <div id="developmentTabContent" style="display:none">
-
-        <!-- GRADE AVERAGE -->
-        <section class="attendance-score-card dev">
-            <p class="score-label" data-i18n="label_grade_average">GRADE AVERAGE</p>
-            <h2 id="devAverageScore">-</h2>
-            <p class="score-description" id="devAverageDesc">-</p>
-        </section>
-
-        <!-- GRADES -->
-        <div class="my-attendance-section-header" style="margin-top:28px">
-            <div>
-                <span data-i18n="label_grades_label">GRADES</span>
-                <h2 data-i18n="label_grades">Grades</h2>
-            </div>
-        </div>
-
-        <section class="attendance-activity" id="devGradesList"></section>
-
-        <section class="history-empty" id="devGradesEmpty" style="display:none">
-            <div class="history-empty-icon dev">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 4H18V17L12 20L6 17V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M9 9H15M9 12.5H15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <h2 data-i18n="no_grades_title">No grades yet</h2>
-            <p data-i18n="no_grades_text">Your grades will appear here once added by the school.</p>
-        </section>
-
-        <!-- ACTIVITIES & NOTES -->
-        <div class="my-attendance-section-header" style="margin-top:28px">
-            <div>
-                <span data-i18n="label_activities_label">ACTIVITIES & NOTES</span>
-                <h2 data-i18n="label_activities_notes">Activities & Notes</h2>
-            </div>
-        </div>
-
-        <section class="attendance-activity" id="devActivitiesList"></section>
-
-        <section class="history-empty" id="devActivitiesEmpty" style="display:none">
-            <div class="history-empty-icon dev">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2.5L14.5 8.7L21.2 9.3L16.1 13.7L17.7 20.3L12 16.7L6.3 20.3L7.9 13.7L2.8 9.3L9.5 8.7L12 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <h2 data-i18n="no_activities_title">No activities or notes yet</h2>
-            <p data-i18n="no_activities_text">Activities, achievements and notes from your school will appear here.</p>
-        </section>
-
-    </div>
 
 </main>
 
@@ -265,14 +231,9 @@
 <script src="js/auth.js"></script>
 
 <script>
-const myStatusIcon = { Hadir: "✓", Izin: "!", Sakit: "+", Alpa: "!" };
-const myStatusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
 function tr(key) {
     const lang = getLang();
     return (translations[key] && translations[key][lang]) || key;
-}
-function myStatusLabelOf(status) {
-    return tr(myStatusKeyMap[status]) || status;
 }
 
 function renderScore(data) {
@@ -315,51 +276,6 @@ function renderQuickStats(data) {
     const daysUnitLabel = translations.unit_days[getLang()];
     document.getElementById("myStreak").textContent = streak + " " + daysUnitLabel;
     document.getElementById("myActiveDays").textContent = activeDays + " " + daysUnitLabel;
-}
-
-let myActivityShowAll = false;
-let myActivityData = [];
-
-function toggleMyActivityViewAll() {
-    myActivityShowAll = !myActivityShowAll;
-    const btn = document.getElementById("myActivityViewAllBtn");
-    const key = myActivityShowAll ? "show_less" : "view_all";
-    btn.textContent = translations[key][getLang()];
-    renderActivity(myActivityData);
-}
-
-function renderActivity(data) {
-    myActivityData = data;
-    const full = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-    const sorted = myActivityShowAll ? full : full.slice(0, 3);
-    const container = document.getElementById("myActivityList");
-    const viewAllBtn = document.getElementById("myActivityViewAllBtn");
-
-    if (viewAllBtn) viewAllBtn.style.display = full.length > 3 ? "" : "none";
-
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-attendance"><span>📋</span><p>' + tr("no_activity_yet") + '</p></div>';
-        return;
-    }
-
-    container.innerHTML = sorted.map(function (item) {
-        const d = new Date(item.date);
-        const cls = item.status.toLowerCase();
-        const sub = item.status === "Hadir"
-            ? dayMonthLabel(d) + " · " + (item.time || "-")
-            : (item.time || "-") + " · " + (item.reason || myStatusLabelOf(item.status));
-
-        return `
-            <div class="activity-card">
-                <div class="activity-status-icon ${cls}">${myStatusIcon[item.status] || "?"}</div>
-                <div class="activity-content">
-                    <strong>${myStatusLabelOf(item.status)}</strong>
-                    <span>${sub}</span>
-                </div>
-                <span class="activity-arrow">›</span>
-            </div>
-        `;
-    }).join("");
 }
 
 let calendarViewYear = new Date().getFullYear();
@@ -496,16 +412,16 @@ async function loadMyAttendance() {
 
     renderScore(data);
     renderQuickStats(data);
-    renderActivity(data);
     await loadHolidays();
     renderCalendar();
     renderInsight(data);
 }
 
 loadMyAttendance();
+loadDevelopment();
 window.addEventListener("tabshow", function () {
     loadMyAttendance();
-    if (devLoaded) loadDevelopment();
+    loadDevelopment();
 });
 
 /* =========================
@@ -515,21 +431,8 @@ window.addEventListener("tabshow", function () {
 const activityTypeIcon = { kegiatan: "📌", prestasi: "🏆", pelanggaran: "⚠", catatan: "📝" };
 const activityTypeKeyMap = { kegiatan: "type_kegiatan", prestasi: "type_prestasi", pelanggaran: "type_pelanggaran", catatan: "type_catatan" };
 
-let devLoaded = false;
 let devGrades = [];
 let devActivities = [];
-
-function showMyTab(tab) {
-    document.getElementById("tabAttendanceSectionBtn").classList.toggle("active", tab === "attendance");
-    document.getElementById("tabDevelopmentBtn").classList.toggle("active", tab === "development");
-    document.getElementById("attendanceTabContent").style.display = tab === "attendance" ? "block" : "none";
-    document.getElementById("developmentTabContent").style.display = tab === "development" ? "block" : "none";
-
-    if (tab === "development" && !devLoaded) loadDevelopment();
-}
-
-document.getElementById("tabAttendanceSectionBtn").addEventListener("click", function () { showMyTab("attendance"); });
-document.getElementById("tabDevelopmentBtn").addEventListener("click", function () { showMyTab("development"); });
 
 function renderDevGrades() {
     const listEl = document.getElementById("devGradesList");
@@ -640,7 +543,6 @@ async function loadDevelopment() {
 
     devGrades = gradesRes.data || [];
     devActivities = activitiesRes.data || [];
-    devLoaded = true;
 
     renderDevGrades();
     renderDevActivities();

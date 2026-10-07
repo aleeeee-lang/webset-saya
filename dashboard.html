@@ -149,13 +149,11 @@
                 </div>
 
 
-                <div class="progress-bar">
-
-                    <div
-                        id="attendanceProgress"
-                        class="progress-fill"
-                    ></div>
-
+                <div class="progress-bar progress-bar-segmented">
+                    <div id="segHadir" class="progress-segment hadir" style="width:0"></div>
+                    <div id="segIzin" class="progress-segment izin" style="width:0"></div>
+                    <div id="segSakit" class="progress-segment sakit" style="width:0"></div>
+                    <div id="segAlpa" class="progress-segment alpa" style="width:0"></div>
                 </div>
 
             </div>
@@ -645,18 +643,16 @@
                     )
                     : 0;
 
-            const rateClass =
-                percentage >= 90 ? "" : (percentage >= 75 ? "warn" : "bad");
+            document.getElementById("attendancePercentage").textContent = percentage + "%";
 
-            const percentageEl = document.getElementById("attendancePercentage");
-            percentageEl.textContent = percentage + "%";
-            percentageEl.classList.remove("warn", "bad");
-            if (rateClass) percentageEl.classList.add(rateClass);
+            const pct = function (n) {
+                return total > 0 ? (n / total) * 100 : 0;
+            };
 
-            const progressEl = document.getElementById("attendanceProgress");
-            progressEl.style.width = percentage + "%";
-            progressEl.classList.remove("warn", "bad");
-            if (rateClass) progressEl.classList.add(rateClass);
+            document.getElementById("segHadir").style.width = pct(hadir) + "%";
+            document.getElementById("segIzin").style.width = pct(izin) + "%";
+            document.getElementById("segSakit").style.width = pct(sakit) + "%";
+            document.getElementById("segAlpa").style.width = pct(alpa) + "%";
 
 
 

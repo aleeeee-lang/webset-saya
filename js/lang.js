@@ -47,6 +47,7 @@ const translations = {
     overview_title: { en: "Your attendance summary", id: "Ringkasan absensimu" },
     overview_text: { en: "Keep your attendance consistent and stay on track.", id: "Jaga konsistensi absensimu dan tetap pada jalurnya." },
     total_attendance: { en: "Total Attendance", id: "Total Absensi" },
+    label_total_savings: { en: "Total Savings", id: "Total Tabungan" },
     status_hadir_label: { en: "Hadir", id: "Hadir" },
     status_izin_label: { en: "Izin", id: "Izin" },
     status_sakit_label: { en: "Sakit", id: "Sakit" },

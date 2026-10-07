@@ -97,6 +97,21 @@
 
         </section>
 
+        <!-- SAVINGS TOTAL -->
+        <a href="history.html" class="dashboard-savings-card">
+            <div class="dashboard-savings-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 7V17M9.5 9.3C9.5 8 10.6 7 12 7C13.5 7 14.6 7.9 14.6 9.1C14.6 11.3 9.5 10.6 9.5 12.9C9.5 14.1 10.6 15 12 15C13.4 15 14.5 14 14.5 12.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="dashboard-savings-text">
+                <span data-i18n="label_total_savings">Total Savings</span>
+                <strong id="dashboardTotalSavings">Rp0</strong>
+            </div>
+            <span class="dashboard-savings-arrow">›</span>
+        </a>
+
 
 
         <!-- STATUS CARDS -->
@@ -607,6 +622,27 @@
             return (entry ? entry[getLang()] : "") || status;
         }
 
+        async function loadDashboardSavings() {
+            const user = await requireLogin();
+            if (!user) return;
+
+            const [schoolRes, personalRes] = await Promise.all([
+                supabaseClient.from("savings").select("type,amount").eq("student_id", user.id),
+                supabaseClient.from("personal_savings").select("type,amount").eq("student_id", user.id)
+            ]);
+
+            const sumBalance = function (rows) {
+                if (!rows) return 0;
+                const setor = rows.filter(i => i.type === "setor").reduce((s, i) => s + Number(i.amount), 0);
+                const tarik = rows.filter(i => i.type === "tarik").reduce((s, i) => s + Number(i.amount), 0);
+                return setor - tarik;
+            };
+
+            const total = sumBalance(schoolRes.data) + sumBalance(personalRes.data);
+            const el = document.getElementById("dashboardTotalSavings");
+            if (el) el.textContent = formatRupiah(total);
+        }
+
         async function loadDashboard() {
 
             const { data, error } = await getMyAttendance();
@@ -884,8 +920,10 @@ const recent =
 
 
         loadDashboard();
+        loadDashboardSavings();
 
         window.addEventListener("tabshow", loadDashboard);
+        window.addEventListener("tabshow", loadDashboardSavings);
 
     </script>
 

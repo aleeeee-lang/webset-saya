@@ -73,6 +73,7 @@
             <span data-i18n="attendance_activity_label">ATTENDANCE ACTIVITY</span>
             <h2 data-i18n="recent_activity">Recent Activity</h2>
         </div>
+        <button type="button" class="link-btn" id="myActivityViewAllBtn" onclick="toggleMyActivityViewAll()" data-i18n="view_all">View All</button>
     </div>
 
     <!-- ACTIVITY LIST -->
@@ -246,41 +247,46 @@ function renderQuickStats(data) {
     document.getElementById("myActiveDays").textContent = activeDays + " " + daysUnitLabel;
 }
 
+let myActivityShowAll = false;
+let myActivityData = [];
+
+function toggleMyActivityViewAll() {
+    myActivityShowAll = !myActivityShowAll;
+    const btn = document.getElementById("myActivityViewAllBtn");
+    const key = myActivityShowAll ? "show_less" : "view_all";
+    btn.textContent = translations[key][getLang()];
+    renderActivity(myActivityData);
+}
+
 function renderActivity(data) {
-    const sorted = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+    myActivityData = data;
+    const full = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = myActivityShowAll ? full : full.slice(0, 3);
     const container = document.getElementById("myActivityList");
+    const viewAllBtn = document.getElementById("myActivityViewAllBtn");
+
+    if (viewAllBtn) viewAllBtn.style.display = full.length > 3 ? "" : "none";
 
     if (sorted.length === 0) {
         container.innerHTML = '<div class="empty-attendance"><span>📋</span><p>' + tr("no_activity_yet") + '</p></div>';
         return;
     }
 
-    const todayStr = new Date().toDateString();
-    const yestStr = new Date(Date.now() - 86400000).toDateString();
-
     container.innerHTML = sorted.map(function (item) {
         const d = new Date(item.date);
-        let label;
-        if (d.toDateString() === todayStr) label = tr("label_today");
-        else if (d.toDateString() === yestStr) label = tr("label_yesterday");
-        else label = dayMonthLabel(d).toUpperCase();
-
         const cls = item.status.toLowerCase();
         const sub = item.status === "Hadir"
             ? dayMonthLabel(d) + " · " + (item.time || "-")
             : (item.time || "-") + " · " + (item.reason || myStatusLabelOf(item.status));
 
         return `
-            <div class="activity-group">
-                <p class="activity-date">${label}</p>
-                <div class="activity-card">
-                    <div class="activity-status-icon ${cls}">${myStatusIcon[item.status] || "?"}</div>
-                    <div class="activity-content">
-                        <strong>${myStatusLabelOf(item.status)}</strong>
-                        <span>${sub}</span>
-                    </div>
-                    <span class="activity-arrow">›</span>
+            <div class="activity-card">
+                <div class="activity-status-icon ${cls}">${myStatusIcon[item.status] || "?"}</div>
+                <div class="activity-content">
+                    <strong>${myStatusLabelOf(item.status)}</strong>
+                    <span>${sub}</span>
                 </div>
+                <span class="activity-arrow">›</span>
             </div>
         `;
     }).join("");

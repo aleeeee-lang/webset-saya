@@ -218,7 +218,7 @@ main.attendance-page .submit-button {
    VIEW ALL BUTTON (looks like the old link)
 ========================================================= */
 
-.dashboard-section-title .link-btn {
+.dashboard-section-title .link-btn, .my-attendance-section-header .link-btn {
     background: none;
     border: none;
     padding: 0;

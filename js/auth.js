@@ -73,28 +73,54 @@ async function getMyAttendance() {
         return { data: null, error: { message: "Not logged in" } };
     }
 
-    return await supabaseClient
+    const periodStart = await getAttendancePeriodStart();
+
+    let query = supabaseClient
         .from("attendance")
         .select("*")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false });
+        .eq("user_id", user.id);
 
+    if (periodStart) {
+        query = query.gte("date", periodStart);
+    }
+
+    return await query.order("date", { ascending: false });
+
+}
+
+/**
+ * Reads the global "count attendance starting from" date set by an admin
+ * (attendance_period_settings, row id='global'). Returns null if no
+ * setting exists yet, meaning no filtering should be applied.
+ */
+async function getAttendancePeriodStart() {
+    const { data, error } = await supabaseClient
+        .from("attendance_period_settings")
+        .select("period_start")
+        .eq("id", "global")
+        .maybeSingle();
+
+    if (error || !data) return null;
+    return data.period_start;
 }
 
 /**
  * Counts school days the student has no attendance record for (auto-Alpa),
  * computed on the fly — nothing is written to the database.
  *
- * A "school day" is any date, between the student's earliest attendance
- * record and "today" (inclusive of today once that class's scheduled end
- * time has passed), whose weekday is in that class's active_days (from
- * attendance_schedules) and that isn't a marked holiday.
+ * A "school day" is any date, between the anchor start date and "today"
+ * (inclusive of today once that class's scheduled end time has passed),
+ * whose weekday is in that class's active_days (from attendance_schedules)
+ * and that isn't a marked holiday. The anchor start date is periodStart
+ * when an admin has set one (attendance_period_settings), otherwise the
+ * student's earliest attendance record.
  *
- * Returns 0 if the student has no attendance history yet (nothing to
- * anchor the range to) or no schedule/class is configured.
+ * Returns 0 if there's no attendance history and no periodStart to anchor
+ * the range to, or no schedule/class is configured.
  */
-async function getAutoAlpaCount(user, attendanceData) {
-    if (!user || !attendanceData || attendanceData.length === 0) return 0;
+async function getAutoAlpaCount(user, attendanceData, periodStart) {
+    if (!user) return 0;
+    if (!periodStart && (!attendanceData || attendanceData.length === 0)) return 0;
 
     const { data: profile } = await supabaseClient
         .from("profiles")
@@ -119,10 +145,18 @@ async function getAutoAlpaCount(user, attendanceData) {
         .select("date");
 
     const holidaySet = new Set((holidays || []).map(h => h.date));
-    const recordedSet = new Set(attendanceData.map(a => a.date));
+    const recordedSet = new Set((attendanceData || []).map(a => a.date));
 
-    const dates = attendanceData.map(a => a.date).sort();
-    const start = new Date(dates[0] + "T00:00:00");
+    const dates = (attendanceData || []).map(a => a.date).sort();
+    const earliestRecord = dates.length > 0 ? dates[0] : null;
+
+    const anchor = periodStart && earliestRecord
+        ? (periodStart > earliestRecord ? periodStart : earliestRecord)
+        : (periodStart || earliestRecord);
+
+    if (!anchor) return 0;
+
+    const start = new Date(anchor + "T00:00:00");
 
     const now = new Date();
     const today = new Date(now);

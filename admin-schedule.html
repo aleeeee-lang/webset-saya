@@ -25,6 +25,33 @@
         <h2 style="margin:0" data-i18n="page_manage_schedule">Manage Attendance Schedule</h2>
     </section>
 
+    <!-- ATTENDANCE PERIOD RESET -->
+    <section class="attendance-card">
+        <div class="card-label" data-i18n="label_period_reset">Attendance Calculation Period</div>
+        <p style="margin:0 0 14px;font-size:12px;color:#888;line-height:1.5" data-i18n="hint_period_reset">Attendance before this date is kept in history, but ignored by dashboards and auto-Alpa. Use this to restart the count for a new semester/year.</p>
+
+        <div id="periodCurrentText" style="font-size:12px;color:#555;margin-bottom:14px"></div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_period_start">Count attendance starting from</div>
+                <input type="date" id="periodStartInput" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('today')" data-i18n="btn_preset_today">Today</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('month')" data-i18n="btn_preset_month">Start of This Month</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('year')" data-i18n="btn_preset_year">Start of This Year</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('sem1')" data-i18n="btn_preset_sem1">Semester 1 (July)</button>
+                <button type="button" class="schedule-day-pill" style="border:1px solid #e2e8f0;border-radius:10px;background:#fafafa;font-size:12px;padding:8px 10px;cursor:pointer;color:#20243a" onclick="setPeriodPreset('sem2')" data-i18n="btn_preset_sem2">Semester 2 (January)</button>
+            </div>
+
+            <button type="button" class="submit-button" id="savePeriodBtn" onclick="savePeriod()" style="margin-top:2px" data-i18n="btn_save_period">
+                Save Period
+            </button>
+        </div>
+    </section>
+
     <!-- EDIT SCHEDULE -->
     <section class="attendance-card">
 
@@ -163,9 +190,85 @@ async function checkAdmin() {
     await loadClasses();
     await loadSchedules();
     await loadHolidays();
+    await loadPeriod();
 
     document.getElementById("scheduleLateMode").addEventListener("change", syncLateUntilVisibility);
     syncLateUntilVisibility();
+}
+
+function pad2(n) {
+    return String(n).padStart(2, "0");
+}
+function dateStr(d) {
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+}
+
+function setPeriodPreset(preset) {
+    const now = new Date();
+    let d;
+    if (preset === "today") d = now;
+    else if (preset === "month") d = new Date(now.getFullYear(), now.getMonth(), 1);
+    else if (preset === "year") d = new Date(now.getFullYear(), 0, 1);
+    else if (preset === "sem1") d = new Date(now.getFullYear(), 6, 1); // July
+    else if (preset === "sem2") d = new Date(now.getFullYear(), 0, 1); // January
+    else return;
+
+    document.getElementById("periodStartInput").value = dateStr(d);
+}
+
+async function loadPeriod() {
+    const { data, error } = await supabaseClient
+        .from("attendance_period_settings")
+        .select("*")
+        .eq("id", "global")
+        .maybeSingle();
+
+    const lang = getLang();
+    const textEl = document.getElementById("periodCurrentText");
+
+    if (error || !data) {
+        textEl.textContent = "";
+        return;
+    }
+
+    document.getElementById("periodStartInput").value = data.period_start;
+    textEl.textContent = translations.text_period_current[lang] + " " + dayMonthYearLabel(new Date(data.period_start + "T00:00:00"));
+}
+
+async function savePeriod() {
+    const value = document.getElementById("periodStartInput").value;
+    const lang = getLang();
+
+    if (!value) {
+        showToast(translations.toast_select_date_first[lang], "error");
+        return;
+    }
+
+    const user = await requireLogin();
+    const btn = document.getElementById("savePeriodBtn");
+    btn.disabled = true;
+    btn.textContent = translations.btn_saving[lang];
+
+    const { error } = await supabaseClient
+        .from("attendance_period_settings")
+        .upsert({
+            id: "global",
+            period_start: value,
+            updated_by: user.id,
+            updated_at: new Date().toISOString()
+        }, { onConflict: "id" });
+
+    btn.disabled = false;
+    btn.textContent = translations.btn_save_period[lang];
+
+    if (error) {
+        console.error("Save period error:", error);
+        showToast(error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_period_saved[lang], "success");
+    await loadPeriod();
 }
 
 let allHolidays = [];

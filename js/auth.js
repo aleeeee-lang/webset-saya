@@ -92,6 +92,28 @@ async function getMyAttendance() {
 }
 
 /**
+ * Same as getMyAttendance(), but ignores the admin's period reset and
+ * always returns the student's full attendance history. Used by pages
+ * that represent the student's whole time at school (e.g. My Attendance),
+ * as opposed to the Dashboard which shows the current counting period.
+ */
+async function getMyAttendanceAllTime() {
+
+    const user = await requireLogin();
+
+    if (!user) {
+        return { data: null, error: { message: "Not logged in" } };
+    }
+
+    return await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false });
+
+}
+
+/**
  * Reads the global attendance-counting window set by an admin
  * (attendance_period_settings, row id='global'): { start, end }.
  * Either can be null — start=null means "since the beginning",

@@ -414,7 +414,7 @@ function renderInsight(data) {
 }
 
 async function loadMyAttendance() {
-      const { data, error } = await getMyAttendance();
+      const { data, error } = await getMyAttendanceAllTime();
     if (error) {
         console.error("My Attendance error:", error);
         return;

@@ -236,6 +236,12 @@ function renderSppReviewed() {
         const badgeColor = isApproved ? "#16a34a" : "#dc2626";
         const badgeLabel = translations["badge_spp_" + p.status][lang];
 
+        const deleteBtn = p.status === "rejected"
+            ? `<button type="button" onclick="deleteSppPayment('${p.id}', '${p.proof_url || ""}')" aria-label="${translations.btn_delete_proof[lang]}" title="${translations.btn_delete_proof[lang]}" style="border:none;background:none;color:#dc2626;cursor:pointer;padding:6px;flex-shrink:0;display:flex">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M5 7H19M9 7V5C9 4.4 9.4 4 10 4H14C14.6 4 15 4.4 15 5V7M18 7L17.3 19C17.3 19.6 16.8 20 16.2 20H7.8C7.2 20 6.7 19.6 6.7 19L6 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11V16M14 11V16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>`
+            : "";
+
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
                 <div style="flex:1;min-width:140px">
@@ -244,9 +250,38 @@ function renderSppReviewed() {
                     ${p.reject_reason ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${p.reject_reason}</span>` : ""}
                 </div>
                 <span style="font-size:12px;font-weight:700;color:${badgeColor}">${badgeLabel}</span>
+                ${deleteBtn}
             </div>
         `;
     }).join("");
+}
+
+async function deleteSppPayment(id, proofPath) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_spp_proof[lang])) return;
+
+    if (proofPath) {
+        const { error: storageError } = await supabaseClient.storage
+            .from("spp-proofs")
+            .remove([proofPath]);
+
+        if (storageError) {
+            console.error("SPP proof delete error:", storageError);
+        }
+    }
+
+    const { error } = await supabaseClient
+        .from("spp_payments")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_spp_review_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_spp_proof_deleted[lang], "success");
+    await loadSppAdmin();
 }
 
 async function approveSpp(id) {

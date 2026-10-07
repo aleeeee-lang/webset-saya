@@ -182,6 +182,9 @@ const translations = {
     toast_spp_review_failed: { en: "Failed to save review: ", id: "Gagal menyimpan review: " },
     label_spp_recent_reviews: { en: "Recently Reviewed", id: "Baru Diperiksa" },
     text_no_spp_reviews: { en: "No reviewed submissions yet.", id: "Belum ada kiriman yang diperiksa." },
+    btn_delete_proof: { en: "Delete proof photo", id: "Hapus foto bukti" },
+    confirm_delete_spp_proof: { en: "Delete this rejected submission and its proof photo? This cannot be undone.", id: "Hapus kiriman yang ditolak ini beserta foto buktinya? Tindakan ini tidak bisa dibatalkan." },
+    toast_spp_proof_deleted: { en: "Submission and proof photo deleted.", id: "Kiriman dan foto bukti dihapus." },
 
     label_manage_holidays: { en: "Calendar Events", id: "Acara Kalender" },
     label_period_reset: { en: "Attendance Calculation Period", id: "Periode Perhitungan Absensi" },

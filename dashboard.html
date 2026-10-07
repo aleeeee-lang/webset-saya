@@ -577,8 +577,11 @@
             }
 
 
+            const currentUser = await getCurrentUser();
+            const autoAlpa = await getAutoAlpaCount(currentUser, data);
+
             const total =
-                data.length;
+                data.length + autoAlpa;
 
 
             const hadir =
@@ -606,7 +609,7 @@
                 data.filter(
                     item =>
                         item.status === "Alpa"
-                ).length;
+                ).length + autoAlpa;
 
 
 

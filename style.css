@@ -1522,6 +1522,13 @@ html[data-theme="dark"] .calendar-arrow {
     color: #3b82f6 !important;
 }
 
+html[data-theme="dark"] #viewAllScheduleBtn,
+html[data-theme="dark"] .attendance-page #viewAllScheduleBtn {
+    background: #1c1a3a !important;
+    border-color: #35319e !important;
+    color: #8b85ff !important;
+}
+
 html[data-theme="dark"] .savings-balance-card {
     background: linear-gradient(135deg, #1309c4, #4a44c9) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .4) !important;

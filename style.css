@@ -1288,6 +1288,11 @@ html[data-theme="dark"] .am-row:not(.piket-duty-row) span {
     color: #a0a0a0 !important;
 }
 
+html[data-theme="dark"] .attendance-page .am-row .goal-period-chip {
+    background: #2a2e55 !important;
+    color: #8b85ff !important;
+}
+
 html[data-theme="dark"] .piket-duty-row {
     background: #ffb366 !important;
     border-color: #ffb366 !important;

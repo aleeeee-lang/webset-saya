@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Goals - Attendreem</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/toast.js"></script>
+</head>
+
+<body>
+
+<main class="attendance-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <h2 style="margin:0" data-i18n="page_learning_goals">Learning Goals</h2>
+    </section>
+
+    <!-- ADD NEW GOAL -->
+    <section class="attendance-card">
+
+        <div class="card-label" data-i18n="label_add_goal">Add New Goal</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_period">Period</div>
+                <select id="goalPeriod" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <option value="weekly" data-i18n="period_weekly">Weekly</option>
+                    <option value="monthly" data-i18n="period_monthly">Monthly</option>
+                    <option value="yearly" data-i18n="period_yearly">Yearly</option>
+                </select>
+            </div>
+
+            <input type="text" id="goalTitle" class="am-field" data-i18n-placeholder="placeholder_goal_title" placeholder="Goal title (e.g. Finish 5 chapters)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <input type="text" id="goalDescription" class="am-field" data-i18n-placeholder="placeholder_goal_desc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+
+            <div>
+                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_target_date">Target Date (optional)</div>
+                <input type="date" id="goalTargetDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            </div>
+
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f8f8ff;border-radius:12px;cursor:pointer">
+                <input type="checkbox" id="goalShareToggle" style="width:18px;height:18px;flex-shrink:0;cursor:pointer">
+                <span style="font-size:13px;color:#20243a">
+                    <strong data-i18n="label_share_with_teacher">Share with teacher</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888" data-i18n="hint_share_goal">If off, only you can see this goal.</span>
+                </span>
+            </label>
+
+            <button type="button" class="submit-button" id="addGoalBtn" onclick="addGoal()" style="margin-top:4px" data-i18n="btn_add_goal">
+                Add Goal
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- MY GOALS -->
+    <section class="attendance-card" style="margin-top:22px">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <div class="card-label" style="margin:0" data-i18n="label_my_goals">My Goals</div>
+            <select id="goalFilter" onchange="renderGoals()" style="padding:6px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fafafa;font-size:12px">
+                <option value="all" data-i18n="filter_all_periods">All Periods</option>
+                <option value="weekly" data-i18n="period_weekly">Weekly</option>
+                <option value="monthly" data-i18n="period_monthly">Monthly</option>
+                <option value="yearly" data-i18n="period_yearly">Yearly</option>
+            </select>
+        </div>
+
+        <div id="goalsList" style="display:flex;flex-direction:column;gap:10px;margin-top:14px"></div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+
+let currentUser = null;
+let myProfile = null;
+let myGoals = [];
+
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+
+async function checkUser() {
+    const user = await requireLogin();
+    if (!user) return;
+    currentUser = user;
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("name,class")
+        .eq("id", user.id)
+        .single();
+
+    myProfile = profile;
+
+    await loadMyGoals();
+}
+
+async function loadMyGoals() {
+    const { data } = await supabaseClient
+        .from("learning_goals")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    myGoals = data || [];
+    renderGoals();
+}
+
+function periodLabel(period) {
+    return tr("period_" + period);
+}
+
+function statusLabel(status) {
+    return tr("status_" + status);
+}
+
+function renderGoals() {
+    const container = document.getElementById("goalsList");
+    const filter = document.getElementById("goalFilter").value;
+
+    const filtered = filter === "all" ? myGoals : myGoals.filter(function (g) { return g.period === filter; });
+
+    if (filtered.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_goals") + "</p>";
+        return;
+    }
+
+    container.innerHTML = filtered.map(function (g) {
+        const targetDateHtml = g.target_date
+            ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${tr("label_target_date")}: ${g.target_date}</span>`
+            : "";
+
+        const sharedBadge = g.is_shared
+            ? `<span class="spp-status-badge approved" style="margin:0">${tr("badge_shared")}</span>`
+            : `<span class="spp-status-badge unpaid" style="margin:0">${tr("badge_private")}</span>`;
+
+        const assignedByTeacher = g.created_by && g.created_by !== g.user_id;
+
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#f8f8ff;border-radius:14px">
+
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+                    <div style="flex:1;min-width:0">
+                        <span class="goal-period-chip" style="display:inline-block;margin-bottom:4px;padding:2px 8px;border-radius:8px;background:#e7ecff;color:#1309f5;font-size:11px;font-weight:700">${periodLabel(g.period)}</span>
+                        <strong style="display:block;font-size:14px;color:#20243a">${g.title}</strong>
+                        ${g.description ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${g.description}</span>` : ""}
+                        ${targetDateHtml}
+                        ${assignedByTeacher ? `<span style="display:block;margin-top:2px;font-size:11px;color:#1ba97e" data-i18n="label_assigned_by_teacher">${tr("label_assigned_by_teacher")}</span>` : ""}
+                    </div>
+                    <button type="button" onclick="deleteGoal('${g.id}')" aria-label="Delete" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <select id="goalStatus-${g.id}" style="flex:1;min-width:120px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px">
+                        <option value="not_started" ${g.status === "not_started" ? "selected" : ""}>${tr("status_not_started")}</option>
+                        <option value="in_progress" ${g.status === "in_progress" ? "selected" : ""}>${tr("status_in_progress")}</option>
+                        <option value="achieved" ${g.status === "achieved" ? "selected" : ""}>${tr("status_achieved")}</option>
+                    </select>
+                    <input type="number" id="goalProgress-${g.id}" min="0" max="100" value="${g.progress_percent}" style="width:64px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px">
+                    <span style="font-size:12px;color:#888">%</span>
+                    <button type="button" onclick="saveGoalProgress('${g.id}')" style="border:none;background:#1530c2;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;color:#fff">${tr("btn_save")}</button>
+                </div>
+
+                <div style="width:100%;height:6px;border-radius:999px;background:#e8e8f5;overflow:hidden">
+                    <div style="height:100%;border-radius:999px;background:#1309f5;width:${Math.max(0, Math.min(100, g.progress_percent))}%"></div>
+                </div>
+
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                    <input type="checkbox" onchange="toggleGoalShare('${g.id}', this.checked)" ${g.is_shared ? "checked" : ""} style="width:16px;height:16px;cursor:pointer">
+                    <span style="font-size:12px;color:#20243a" data-i18n="label_share_with_teacher">Share with teacher</span>
+                    ${sharedBadge}
+                </label>
+
+            </div>
+        `;
+    }).join("");
+}
+
+async function addGoal() {
+    const lang = getLang();
+    const period = document.getElementById("goalPeriod").value;
+    const title = document.getElementById("goalTitle").value.trim();
+    const description = document.getElementById("goalDescription").value.trim();
+    const targetDate = document.getElementById("goalTargetDate").value;
+    const isShared = document.getElementById("goalShareToggle").checked;
+    const btn = document.getElementById("addGoalBtn");
+
+    if (!title) {
+        showToast(translations.toast_fill_goal_title[lang], "error");
+        return;
+    }
+
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("learning_goals")
+        .insert({
+            user_id: currentUser.id,
+            name: myProfile ? myProfile.name : null,
+            class: myProfile ? myProfile.class : null,
+            period: period,
+            title: title,
+            description: description || null,
+            target_date: targetDate || null,
+            is_shared: isShared,
+            created_by: currentUser.id
+        });
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("goalTitle").value = "";
+    document.getElementById("goalDescription").value = "";
+    document.getElementById("goalTargetDate").value = "";
+    document.getElementById("goalShareToggle").checked = false;
+
+    showToast(translations.toast_goal_added[lang], "success");
+    await loadMyGoals();
+}
+
+async function saveGoalProgress(id) {
+    const lang = getLang();
+    const status = document.getElementById("goalStatus-" + id).value;
+    let progress = Number(document.getElementById("goalProgress-" + id).value);
+    if (isNaN(progress)) progress = 0;
+    progress = Math.max(0, Math.min(100, progress));
+
+    const { error } = await supabaseClient
+        .from("learning_goals")
+        .update({ status: status, progress_percent: progress, updated_at: new Date().toISOString() })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_goal_updated[lang], "success");
+    await loadMyGoals();
+}
+
+async function toggleGoalShare(id, checked) {
+    const lang = getLang();
+
+    const { error } = await supabaseClient
+        .from("learning_goals")
+        .update({ is_shared: checked, updated_at: new Date().toISOString() })
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_goal_updated[lang], "success");
+    await loadMyGoals();
+}
+
+async function deleteGoal(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_goal[lang])) return;
+
+    const { error } = await supabaseClient
+        .from("learning_goals")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    showToast(translations.toast_goal_deleted[lang], "success");
+    await loadMyGoals();
+}
+
+checkUser();
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        history.back();
+    } else {
+        window.location.href = "my-attendance.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

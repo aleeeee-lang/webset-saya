@@ -82,6 +82,34 @@
         <div id="teacherSppList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
     </section>
 
+    <!-- ASSIGN A GOAL -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_assign_goal">Assign a Goal</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <select id="goalStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="" data-i18n="option_choose_student">Choose a student...</option>
+            </select>
+            <select id="goalPeriodTeacher" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <option value="weekly" data-i18n="period_weekly">Weekly</option>
+                <option value="monthly" data-i18n="period_monthly">Monthly</option>
+                <option value="yearly" data-i18n="period_yearly">Yearly</option>
+            </select>
+            <input type="text" id="goalTitleTeacher" class="am-field" data-i18n-placeholder="placeholder_goal_title" placeholder="Goal title (e.g. Finish 5 chapters)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="text" id="goalDescriptionTeacher" class="am-field" data-i18n-placeholder="placeholder_goal_desc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <input type="date" id="goalTargetDateTeacher" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+            <button type="button" class="submit-button" id="assignGoalBtn" onclick="assignGoal()" data-i18n="btn_assign_goal">
+                Assign Goal
+            </button>
+        </div>
+    </section>
+
+    <!-- STUDENT GOALS -->
+    <section class="attendance-card" style="margin-top:22px">
+        <div class="card-label" data-i18n="label_student_goals">Student Goals</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_student_goals">Goals you assigned, plus goals students chose to share with you.</p>
+        <div id="studentGoalsList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -124,7 +152,7 @@ async function checkTeacher() {
     document.getElementById("teacherClassLabel").textContent = myClass || "-";
 
     await loadClassStudents();
-    await Promise.all([loadTodaysAttendance(), loadSppStatus()]);
+    await Promise.all([loadTodaysAttendance(), loadSppStatus(), loadStudentGoals()]);
 }
 
 async function loadClassStudents() {
@@ -139,8 +167,9 @@ async function loadClassStudents() {
 
     const gradeSelect = document.getElementById("gradeStudentSelect");
     const activitySelect = document.getElementById("activityStudentSelect");
+    const goalSelect = document.getElementById("goalStudentSelect");
 
-    [gradeSelect, activitySelect].forEach(function (sel) {
+    [gradeSelect, activitySelect, goalSelect].forEach(function (sel) {
         classStudents.forEach(function (s) {
             const opt = document.createElement("option");
             opt.value = s.id;
@@ -370,6 +399,108 @@ async function loadSppStatus() {
             </div>
         `;
     }).join("");
+}
+
+function tr(key) {
+    const lang = getLang();
+    return (translations[key] && translations[key][lang]) || key;
+}
+
+function periodLabelTeacher(period) {
+    return tr("period_" + period);
+}
+
+async function loadStudentGoals() {
+    const container = document.getElementById("studentGoalsList");
+    const ids = classStudents.map(function (s) { return s.id; });
+
+    if (ids.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
+        return;
+    }
+
+    const { data } = await supabaseClient
+        .from("learning_goals")
+        .select("*")
+        .in("user_id", ids)
+        .order("created_at", { ascending: false });
+
+    const goals = data || [];
+
+    if (goals.length === 0) {
+        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_student_goals") + "</p>";
+        return;
+    }
+
+    container.innerHTML = goals.map(function (g) {
+        const student = classStudents.find(function (s) { return s.id === g.user_id; });
+        const statusKey = "status_" + g.status;
+        return `
+            <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+                    <strong style="font-size:13px;color:#20243a">${student ? student.name : "-"}</strong>
+                    <span class="goal-period-chip" style="padding:2px 8px;border-radius:8px;background:#e7ecff;color:#1309f5;font-size:11px;font-weight:700">${periodLabelTeacher(g.period)}</span>
+                </div>
+                <span style="font-size:13px;color:#20243a">${g.title}</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                    <span class="spp-status-badge ${g.status === "achieved" ? "approved" : g.status === "in_progress" ? "pending" : "unpaid"}" style="margin:0">${tr(statusKey)}</span>
+                    <span style="font-size:12px;color:#888">${g.progress_percent}%</span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function assignGoal() {
+    const lang = getLang();
+    const studentId = document.getElementById("goalStudentSelect").value;
+    const period = document.getElementById("goalPeriodTeacher").value;
+    const title = document.getElementById("goalTitleTeacher").value.trim();
+    const description = document.getElementById("goalDescriptionTeacher").value.trim();
+    const targetDate = document.getElementById("goalTargetDateTeacher").value;
+    const btn = document.getElementById("assignGoalBtn");
+
+    if (!studentId) {
+        showToast(translations.toast_select_student_first[lang], "error");
+        return;
+    }
+
+    if (!title) {
+        showToast(translations.toast_fill_goal_title[lang], "error");
+        return;
+    }
+
+    const student = classStudents.find(function (s) { return s.id === studentId; });
+
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("learning_goals")
+        .insert({
+            user_id: studentId,
+            name: student ? student.name : null,
+            class: student ? student.class : myClass,
+            period: period,
+            title: title,
+            description: description || null,
+            target_date: targetDate || null,
+            is_shared: true,
+            created_by: currentUser.id
+        });
+
+    btn.disabled = false;
+
+    if (error) {
+        showToast(translations.toast_save_failed[lang] + error.message, "error");
+        return;
+    }
+
+    document.getElementById("goalTitleTeacher").value = "";
+    document.getElementById("goalDescriptionTeacher").value = "";
+    document.getElementById("goalTargetDateTeacher").value = "";
+
+    showToast(translations.toast_goal_added[lang], "success");
+    await loadStudentGoals();
 }
 
 checkTeacher();

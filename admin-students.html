@@ -224,7 +224,7 @@ async function loadStudents() {
 
         const avatarHtml = s.avatar_url
             ? `<img src="${s.avatar_url}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0">`
-            : `<div style="width:36px;height:36px;border-radius:50%;background:#f0f0ff;color:#1309f5;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0">${(s.name || "?").trim().charAt(0).toUpperCase() || "?"}</div>`;
+            : `<div style="width:36px;height:36px;border-radius:50%;background:#9aa5b1;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg></div>`;
 
         return `
             <div class="student-row am-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">

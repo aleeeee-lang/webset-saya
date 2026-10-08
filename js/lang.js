@@ -640,7 +640,10 @@ const translations = {
     menu_academic_calendar: { en: "Academic Calendar", id: "Kalender Akademik" },
     academic_calendar_subtitle: { en: "Holidays, exams & events", id: "Libur, ujian & acara" },
     label_upcoming_events: { en: "Upcoming Events", id: "Acara Mendatang" },
-    text_no_upcoming_events: { en: "No upcoming events.", id: "Tidak ada acara mendatang." }
+    text_no_upcoming_events: { en: "No upcoming events.", id: "Tidak ada acara mendatang." },
+    btn_view_all_schedule: { en: "View All Schedule", id: "Lihat Semua Jadwal" },
+    btn_hide_all_schedule: { en: "Hide Full Schedule", id: "Sembunyikan Jadwal" },
+    label_full_schedule: { en: "Full Academic Schedule", id: "Jadwal Akademik Lengkap" }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

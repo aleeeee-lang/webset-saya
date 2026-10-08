@@ -635,7 +635,12 @@ const translations = {
     menu_audit_log: { en: "Audit Log", id: "Log Audit" },
     hint_audit_log: { en: "Tracks grade changes, SPP verification decisions, student status changes, and account deletions. Most recent first.", id: "Mencatat perubahan nilai, keputusan verifikasi SPP, perubahan status siswa, dan penghapusan akun. Terbaru di atas." },
     option_all_tables: { en: "All", id: "Semua" },
-    text_no_audit_entries: { en: "No audit entries yet.", id: "Belum ada catatan audit." }
+    text_no_audit_entries: { en: "No audit entries yet.", id: "Belum ada catatan audit." },
+
+    menu_academic_calendar: { en: "Academic Calendar", id: "Kalender Akademik" },
+    academic_calendar_subtitle: { en: "Holidays, exams & events", id: "Libur, ujian & acara" },
+    label_upcoming_events: { en: "Upcoming Events", id: "Acara Mendatang" },
+    text_no_upcoming_events: { en: "No upcoming events.", id: "Tidak ada acara mendatang." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

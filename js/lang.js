@@ -678,7 +678,10 @@ const translations = {
     btn_assign_goal: { en: "Assign Goal", id: "Berikan Target" },
     label_student_goals: { en: "Student Goals", id: "Target Siswa" },
     hint_student_goals: { en: "Goals you assigned, plus goals students chose to share with you.", id: "Target yang kamu berikan, serta target yang dibagikan siswa ke kamu." },
-    text_no_student_goals: { en: "No shared student goals yet.", id: "Belum ada target siswa yang dibagikan." }
+    text_no_student_goals: { en: "No shared student goals yet.", id: "Belum ada target siswa yang dibagikan." },
+    confirm_delete_leave_request: { en: "Delete this leave request?", id: "Hapus pengajuan izin ini?" },
+    toast_leave_request_deleted: { en: "Leave request deleted.", id: "Pengajuan izin dihapus." },
+    toast_delete_not_allowed: { en: "Couldn't delete this item. It may already be processed, or the database permission isn't set up yet.", id: "Tidak bisa dihapus. Mungkin sudah diproses, atau izin database belum diatur." }
 };
 
 const dayKeys = ["day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat"];

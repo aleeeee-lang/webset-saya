@@ -114,14 +114,40 @@ async function loadMyFeedback() {
         return `
             <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1">
                     <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
                     <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${statusColor},0.14);color:rgb(${statusColor});font-size:11px;font-weight:600">${statusLabelOf(f.status, lang)}</span>
+                    </div>
+                    <button type="button" onclick="deleteMyFeedback('${f.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 </div>
                 <span style="font-size:14px;color:#20243a">${f.message}</span>
                 <span style="font-size:11px;color:#aaa">${timeStr}</span>
             </div>
         `;
     }).join("");
+}
+
+async function deleteMyFeedback(id) {
+    const lang = getLang();
+    if (!confirm(translations.confirm_delete_feedback[lang])) return;
+
+    const { data, error } = await supabaseClient
+        .from("feedback")
+        .delete()
+        .eq("id", id)
+        .select("id");
+
+    if (error) {
+        showToast(translations.toast_delete_failed[lang] + error.message, "error");
+        return;
+    }
+    if (!data || data.length === 0) {
+        showToast(translations.toast_delete_not_allowed[lang], "error");
+        return;
+    }
+
+    showToast(translations.toast_feedback_deleted[lang], "success");
+    await loadMyFeedback();
 }
 
 async function sendFeedback() {

@@ -1705,3 +1705,10 @@ html[data-theme="dark"] .savings-balance-card.spp {
 html[data-theme="dark"] .goal-progress-track {
     background: #2e2e3a !important;
 }
+
+html[data-theme="dark"] .attendance-page .trash-btn,
+html[data-theme="dark"] .attendance-page .trash-btn *,
+html[data-theme="dark"] .attendance-page .am-row .trash-btn,
+html[data-theme="dark"] .attendance-page .am-row .trash-btn * {
+    color: #f87171 !important;
+}

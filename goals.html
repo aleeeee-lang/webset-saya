@@ -168,7 +168,7 @@ function renderGoals() {
                         ${targetDateHtml}
                         ${assignedByTeacher ? `<span style="display:block;margin-top:2px;font-size:11px;color:#1ba97e" data-i18n="label_assigned_by_teacher">${tr("label_assigned_by_teacher")}</span>` : ""}
                     </div>
-                    <button type="button" onclick="deleteGoal('${g.id}')" aria-label="Delete" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0">
+                    <button type="button" onclick="deleteGoal('${g.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                 </div>

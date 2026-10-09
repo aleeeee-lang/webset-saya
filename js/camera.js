@@ -354,7 +354,7 @@ async function runFaceDetectionLoop() {
                     }, 2000);
                 }
             } else {
-                setFaceStatus("face_liveness_wait", "#2563eb");
+                setFaceStatus("face_liveness_wait", "#14162B");
                 setTakePhotoEnabled(false);
             }
         } else {

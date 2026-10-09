@@ -149,9 +149,9 @@ async function loadToday() {
 
         studentsContainer.innerHTML = todayAssignees.map(function (a) {
             const isMe = a.student_id === myUser.id;
-            const youBadge = isMe ? " <span style='color:#1530c2;font-size:11px;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "";
+            const youBadge = isMe ? " <span style='color:#14162B;font-size:11px;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "";
             return `
-                <div class="piket-assignee-row${isMe ? " piket-assignee-me" : ""}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#eef0ff" : "#f8f8ff"};font-size:13px;color:#20243a">
+                <div class="piket-assignee-row${isMe ? " piket-assignee-me" : ""}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#EEF7D4" : "#f8f8ff"};font-size:13px;color:#20243a">
                     ${a.student_name}${youBadge}
                 </div>
             `;
@@ -339,10 +339,10 @@ async function loadWeekly() {
         const names = grouped[d.iso];
         const hasDuty = !!(names && names.length > 0);
         return `
-            <div class="am-row${hasDuty ? " piket-duty-row" : ""}" style="display:flex;align-items:center;gap:12px;padding:12px;background:${hasDuty ? "#ea580c" : "#f8f8ff"};border-radius:12px">
+            <div class="am-row${hasDuty ? " piket-duty-row" : ""}" style="display:flex;align-items:center;gap:12px;padding:12px;background:${hasDuty ? "#14162B" : "#f8f8ff"};border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:${hasDuty ? "#fff" : "#20243a"}">${translations[d.key][lang]}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#ffe3cc" : "#888"}">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#C6F432" : "#888"}">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
                 </div>
             </div>
         `;

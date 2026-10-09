@@ -10,70 +10,89 @@
 <script src="js/theme.js"></script>
 <script src="js/toast.js"></script>
 <style>
-    html, body { margin: 0; padding: 0; min-height: 100%; background: #14162B; }
-.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #14162B; padding: 20px; box-sizing: border-box; }
-.login-card { width: 100%; max-width: 360px; background: #fff; border-radius: 24px; padding: 32px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.15); box-sizing: border-box; }
-.login-logo { width: 56px; height: 56px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; border-radius: 16px; overflow: hidden; }
-.login-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; }
-.login-brand { text-align: center; font-size: 20px; font-weight: 700; color: #20243a; margin-bottom: 4px; }
-.login-tagline { text-align: center; font-size: 13px; color: #888; margin-bottom: 28px; }
-.login-field { margin-bottom: 14px; }
-.login-field label { display: block; font-size: 12px; color: #64748b; margin-bottom: 6px; font-weight: 600; }
-.login-field input { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #fafafa; }
+html, body { margin: 0; padding: 0 !important; min-height: 100%; background: #14162B; font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
+.lg { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; max-width: 520px; margin: 0 auto; }
+.lg-top { flex: 1; color: #fff; padding: 28px 24px 32px; display: flex; flex-direction: column; gap: 24px; justify-content: center; }
+.lg-brand { display: flex; align-items: center; gap: 10px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800; }
+.lg-logo { width: 40px; height: 40px; border-radius: 14px; background: #C6F432; color: #14162B; display: flex; align-items: center; justify-content: center; }
+.lg-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lg-tile { border-radius: 20px; padding: 12px; height: 84px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; background: #1D2038; color: #fff; font-size: 12px; font-weight: 700; }
+.lg-tile svg { color: #C6F432; }
+.lg-tile.lime { background: #C6F432; color: #14162B; }
+.lg-tile.lime svg { color: #14162B; }
+.lg h1 { margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 40px; line-height: 1.02; font-weight: 800; letter-spacing: -.03em; }
+.lg-sub { margin: 10px 0 0; font-size: 14px; color: #A9ACC6; }
+.lg-sheet { background: #fff; border-radius: 32px 32px 0 0; padding: 24px 24px 32px; display: flex; flex-direction: column; gap: 12px; }
+.login-field label { display: block; font-size: 12px; font-weight: 700; color: #14162B; margin-bottom: 6px; }
+.login-field input { width: 100%; box-sizing: border-box; height: 52px; padding: 0 16px; border: 1.5px solid #E4E5EC; border-radius: 16px; font-family: inherit; font-size: 15px; background: #F7F7FA; color: #14162B; outline: none; }
+.login-field input:focus { border-color: #14162B; background: #fff; }
 .pwd-wrap { position: relative; }
-.pwd-wrap input { padding-right: 42px; }
-.pwd-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; font-size: 14px; background: none; border: none; padding: 0; }
-.login-btn { width: 100%; padding: 13px; margin-top: 6px; border: none; border-radius: 12px; background: #14162B; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(37,65,255,.25); }
+.pwd-wrap input { padding-right: 46px; }
+.pwd-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #8A8FA8; background: none; border: none; padding: 0; display: flex; }
+.login-btn { width: 100%; height: 56px; margin-top: 4px; border: none; border-radius: 18px; background: #14162B; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 20px; }
+.login-btn .arr { width: 40px; height: 40px; border-radius: 14px; background: #C6F432; color: #14162B; display: flex; align-items: center; justify-content: center; }
+.login-btn.plain { justify-content: center; background: #fff; color: #14162B; border: 1.5px solid #E4E5EC; }
 .login-btn:disabled { opacity: 0.6; cursor: default; }
+.lg-forgot { display: block; width: 100%; text-align: center; background: none; border: none; color: #3F6212; font-family: inherit; font-size: 13px; font-weight: 700; margin-top: 2px; cursor: pointer; padding: 6px; }
+#forgotPanel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #EEEEF3; flex-direction: column; gap: 12px; }
+html[data-theme="dark"] .lg-sheet { background: #191B2E; }
+html[data-theme="dark"] .login-field label { color: #ECEDF5; }
+html[data-theme="dark"] .login-field input { background: #12142A; border-color: #2A2D48; color: #ECEDF5; }
+html[data-theme="dark"] .login-field input:focus { border-color: #C6F432; }
+html[data-theme="dark"] .login-btn { background: #272B49; }
+html[data-theme="dark"] .login-btn.plain { background: transparent; color: #ECEDF5; border-color: #2A2D48; }
+html[data-theme="dark"] .lg-forgot { color: #C6F432; }
+html[data-theme="dark"] #forgotPanel { border-color: #262940; }
 </style>
 </head>
 
 <body>
 
-<div class="login-wrap">
-    <div class="login-card">
+<div class="lg">
+    <section class="lg-top">
+        <div class="lg-brand"><span class="lg-logo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>Attendreem</div>
+        <div class="lg-tiles" aria-hidden="true">
+            <div class="lg-tile"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>Absen</div>
+            <div class="lg-tile"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Tabungan</div>
+            <div class="lg-tile lime"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Target</div>
+        </div>
+        <div>
+            <h1>Absensi sekolah,<br>tanpa kertas.</h1>
+            <p class="lg-sub">Masuk dengan akun dari sekolahmu.</p>
+        </div>
+    </section>
 
-        <div class="login-logo"><img src="favicon.png" alt="Attendreem"></div>
-        <div class="login-brand">Attendreem</div>
-        <div class="login-tagline">Masuk untuk mencatat kehadiranmu</div>
-
+    <section class="lg-sheet">
         <div class="login-field">
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="nama@sekolah.id">
+            <input type="email" id="email" placeholder="nama@sekolah.id" autocomplete="email">
         </div>
 
         <div class="login-field">
-            <label for="password">Password</label>
+            <label for="password">Kata sandi</label>
             <div class="pwd-wrap">
-                <input type="password" id="password" placeholder="••••••••">
-               <button type="button" class="pwd-eye" id="togglePwd">
-    <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none">
-        <path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
-    </svg>
-</button>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+                <button type="button" class="pwd-eye" id="togglePwd" aria-label="Tampilkan kata sandi">
+                    <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none">
+                        <path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
-        <button type="button" class="login-btn" id="loginBtn" onclick="loginUser()">
-            Login
-        </button>
+        <button type="button" class="login-btn" id="loginBtn" onclick="loginUser()"><span id="loginBtnLabel">Masuk</span><span class="arr"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
 
-        <button type="button" id="forgotPwdLink" onclick="toggleForgotPanel()" style="display:block;width:100%;text-align:center;background:none;border:none;color:#3F6212;font-size:12.5px;font-weight:600;margin-top:14px;cursor:pointer;padding:4px">
-            Forgot password?
-        </button>
+        <button type="button" class="lg-forgot" id="forgotPwdLink" onclick="toggleForgotPanel()">Lupa kata sandi?</button>
 
-        <div id="forgotPanel" style="display:none;margin-top:10px;padding-top:14px;border-top:1px solid #f1f1f6">
+        <div id="forgotPanel" style="display:none">
             <div class="login-field">
-                <label for="forgotEmail">Enter your email to get a reset link</label>
+                <label for="forgotEmail">Masukkan email untuk menerima tautan reset</label>
                 <input type="email" id="forgotEmail" placeholder="nama@sekolah.id">
             </div>
-            <button type="button" class="login-btn" id="forgotBtn" onclick="sendResetEmail()" style="background:#fff;color:#3F6212;border:1px solid #e2e8f0;box-shadow:none">
-                Send Reset Link
-            </button>
+            <button type="button" class="login-btn plain" id="forgotBtn" onclick="sendResetEmail()">Kirim tautan reset</button>
         </div>
-
-    </div>
+    </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -98,7 +117,7 @@ document.getElementById("togglePwd").addEventListener("click", function () {
 function toggleForgotPanel() {
     const panel = document.getElementById("forgotPanel");
     const isHidden = panel.style.display === "none";
-    panel.style.display = isHidden ? "block" : "none";
+    panel.style.display = isHidden ? "flex" : "none";
     if (isHidden) {
         document.getElementById("forgotEmail").value = document.getElementById("email").value;
         document.getElementById("forgotEmail").focus();
@@ -115,7 +134,7 @@ async function sendResetEmail() {
     }
 
     btn.disabled = true;
-    btn.textContent = "Sending...";
+    btn.textContent = "Mengirim...";
 
     const redirectTo = window.location.href.replace(/login\.html.*$/, "reset-password.html");
 
@@ -124,7 +143,7 @@ async function sendResetEmail() {
     });
 
     btn.disabled = false;
-    btn.textContent = "Send Reset Link";
+    btn.textContent = "Kirim tautan reset";
 
     if (error) {
         showToast("Failed to send reset link: " + error.message, "error");
@@ -146,7 +165,7 @@ async function loginUser() {
     }
 
     btn.disabled = true;
-    btn.textContent = "Logging in...";
+    document.getElementById("loginBtnLabel").textContent = "Memproses...";
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
@@ -157,7 +176,7 @@ async function loginUser() {
         console.error(error);
         showToast("Login failed: " + error.message, "error");
         btn.disabled = false;
-        btn.textContent = "Login";
+        document.getElementById("loginBtnLabel").textContent = "Masuk";
         return;
     }
 
@@ -171,7 +190,7 @@ async function loginUser() {
         console.error("Profile not found:", profileError);
         showToast("Login succeeded, but no profile was found for this account. Contact your admin.", "error");
         btn.disabled = false;
-        btn.textContent = "Login";
+        document.getElementById("loginBtnLabel").textContent = "Masuk";
         return;
     }
 
@@ -179,7 +198,7 @@ async function loginUser() {
         await supabaseClient.auth.signOut();
         showToast("This account is no longer active. Please contact your admin.", "error");
         btn.disabled = false;
-        btn.textContent = "Login";
+        document.getElementById("loginBtnLabel").textContent = "Masuk";
         return;
     }
 

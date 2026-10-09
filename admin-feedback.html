@@ -76,7 +76,7 @@ async function checkAdmin() {
 }
 
 function renderFilterButtons() {
-    const activeHue = "19,9,245";
+    const activeHue = "20,22,43";
     ["all", "new", "saran", "keluhan"].forEach(function (f) {
         const btn = document.getElementById(
             f === "all" ? "filterAllBtn" :
@@ -135,7 +135,7 @@ function renderFeedbackList() {
         const timeStr = isNaN(date.getTime()) ? "" : dayMonthYearLabel(date) + ", " + String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
         const statusColor = f.status === "read" ? "100,116,139" : "37,99,235";
         const markReadBtn = f.status === "new"
-            ? `<button type="button" onclick="markRead('${f.id}')" style="border:none;background:none;color:#0d06c4;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_mark_read">Mark as Read</button>`
+            ? `<button type="button" onclick="markRead('${f.id}')" style="border:none;background:none;color:#0B0C1A;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_mark_read">Mark as Read</button>`
             : "";
 
         return `

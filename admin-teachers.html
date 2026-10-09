@@ -158,7 +158,7 @@ function renderTeacherList() {
                     <option value="">${translations.option_choose_class[lang]}</option>
                     ${classOptions}
                 </select>
-                <button type="button" onclick="saveTeacherClass('${t.id}')" style="border:none;background:#1530c2;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
+                <button type="button" onclick="saveTeacherClass('${t.id}')" style="border:none;background:#14162B;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
                 <button type="button" onclick="deleteTeacher('${t.id}', '${(t.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_delete[lang]}</button>
             </div>
         `;

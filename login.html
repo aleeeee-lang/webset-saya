@@ -35,14 +35,18 @@ html, body { margin: 0; padding: 0 !important; min-height: 100%; background: #14
 .login-btn:disabled { opacity: 0.6; cursor: default; }
 .lg-forgot { display: block; width: 100%; text-align: center; background: none; border: none; color: #3F6212; font-family: inherit; font-size: 13px; font-weight: 700; margin-top: 2px; cursor: pointer; padding: 6px; }
 #forgotPanel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #EEEEF3; flex-direction: column; gap: 12px; }
-html[data-theme="dark"] .lg-sheet { background: #191B2E; }
-html[data-theme="dark"] .login-field label { color: #ECEDF5; }
-html[data-theme="dark"] .login-field input { background: #12142A; border-color: #2A2D48; color: #ECEDF5; }
+html, body { }
+html[data-theme="dark"], html[data-theme="dark"] body { background: #000000; }
+html[data-theme="dark"] .lg-tile { background: #1C1C1E; }
+html[data-theme="dark"] .lg-tile.lime { background: #C6F432; }
+html[data-theme="dark"] .lg-sheet { background: #121212; }
+html[data-theme="dark"] .login-field label { color: #EDEDED; }
+html[data-theme="dark"] .login-field input { background: #0A0A0A; border-color: #2C2C2E; color: #EDEDED; }
 html[data-theme="dark"] .login-field input:focus { border-color: #C6F432; }
-html[data-theme="dark"] .login-btn { background: #272B49; }
-html[data-theme="dark"] .login-btn.plain { background: transparent; color: #ECEDF5; border-color: #2A2D48; }
+html[data-theme="dark"] .login-btn { background: #262628; }
+html[data-theme="dark"] .login-btn.plain { background: transparent; color: #EDEDED; border-color: #2C2C2E; }
 html[data-theme="dark"] .lg-forgot { color: #C6F432; }
-html[data-theme="dark"] #forgotPanel { border-color: #262940; }
+html[data-theme="dark"] #forgotPanel { border-color: #242424; }
 </style>
 </head>
 

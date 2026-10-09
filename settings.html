@@ -36,7 +36,7 @@
                 <span style="font-size:14px;color:#20243a" id="settingsName">-</span>
                 <span style="font-size:12px;color:#888" id="settingsEmail">-</span>
                 <span style="font-size:12px;color:#888" id="settingsClass"></span>
-                <button type="button" onclick="document.getElementById('avatarInput').click()" style="border:none;background:none;color:#1309f5;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-align:left;margin-top:2px" data-i18n="btn_change_photo">Change Photo</button>
+                <button type="button" onclick="document.getElementById('avatarInput').click()" style="border:none;background:none;color:#3F6212;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-align:left;margin-top:2px" data-i18n="btn_change_photo">Change Photo</button>
             </div>
         </div>
     </section>
@@ -210,7 +210,7 @@ let currentSettingsUser = null;
 function renderAvatarPreview(name, avatarUrl) {
     const preview = document.getElementById("avatarPreview");
     if (avatarUrl) {
-        preview.style.background = "#f0f0ff";
+        preview.style.background = "#EEF7D4";
         preview.innerHTML = `<img src="${avatarUrl}" alt="" style="width:100%;height:100%;object-fit:cover">`;
     } else {
         preview.style.background = "#9aa5b1";

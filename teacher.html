@@ -443,7 +443,7 @@ async function loadStudentGoals() {
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
                     <strong style="font-size:13px;color:#20243a">${student ? student.name : "-"}</strong>
                     <div style="display:flex;align-items:center;gap:6px">
-                        <span class="goal-period-chip" style="padding:2px 8px;border-radius:8px;background:#e7ecff;color:#1309f5;font-size:11px;font-weight:700">${periodLabelTeacher(g.period)}</span>
+                        <span class="goal-period-chip" style="padding:2px 8px;border-radius:8px;background:#e7ecff;color:#3F6212;font-size:11px;font-weight:700">${periodLabelTeacher(g.period)}</span>
                         ${g.created_by === currentUser.id ? `<button type="button" onclick="deleteAssignedGoal('${g.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ""}
                     </div>
                 </div>

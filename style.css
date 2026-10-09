@@ -1970,3 +1970,84 @@ html[data-theme="dark"] .v2-dash .recent-date span,html[data-theme="dark"] .v2-d
 .v2-card .v2-section-head{margin-top:0}
 .v2-card .v2-section-head h2{font-size:18px}
 html[data-theme="dark"] .v2-dash-badge.dash_badge_improve{background:#FBBF24;color:#14162B}
+
+/* ===== V2 Absensi Saya ===== */
+.v2-my-hero{background:#14162B;color:#fff;border-radius:28px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.v2-my-who{display:flex;align-items:center;gap:12px}
+.v2-avatar-lg{width:48px;height:48px;font-size:20px}
+.v2-my-name{flex:1;min-width:0}
+.v2-my-name h1{margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v2-my-name p{margin:2px 0 0;font-size:12px;color:#A9ACC6}
+.v2-my-gear{width:40px;height:40px;border-radius:14px;background:#1D2038;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.v2-my-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v2-my-stats div{background:#1D2038;border-radius:16px;padding:10px 12px;min-width:0}
+.v2-my-stats strong{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;white-space:nowrap}
+.v2-my-stats strong.lime{color:#C6F432}
+.v2-my-stats span{font-size:11px;color:#A9ACC6}
+.v2-my-counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#A9ACC6}
+.v2-my-counts b{color:#fff}
+.v2-my .monthly-calendar-card{margin-top:0;background:#fff;border-radius:28px;padding:16px;box-shadow:none}
+.v2-my .calendar-header span{display:none}
+.v2-my .calendar-header h2{margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800}
+.v2-my .calendar-arrow{width:34px;height:34px;border-radius:12px;background:#F3F3F7!important;color:#14162B!important;font-size:20px}
+.v2-my .calendar-arrow:last-child{background:#14162B!important;color:#fff!important}
+.v2-my .calendar-week{font-size:11px;font-weight:700;color:#4A4F6A}
+.v2-my .calendar-days{gap:6px;justify-items:center}
+.v2-my .calendar-days span{width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:700;color:#8A8FA8;background:transparent}
+.v2-my .calendar-days .hadir-day{background:#14162B;color:#fff}
+.v2-my .calendar-days .izin-day{background:#F59E0B;color:#14162B}
+.v2-my .calendar-days .sakit-day{background:#60A5FA;color:#14162B}
+.v2-my .calendar-days .alpa-day{background:#B91C1C;color:#fff}
+.v2-my .calendar-days .holiday-day{background:#E4E5EC;color:#4A4F6A}
+.v2-my .calendar-days .spp-day{background:#22A35A;color:#fff}
+.v2-my .calendar-days .exam-day{background:#F4EED9;color:#854D0E;box-shadow:inset 0 0 0 2px #F59E0B}
+.v2-my .calendar-days .event-day{background:#DAF3F7;color:#0E7490}
+.v2-my .calendar-days .today-day{outline:none;box-shadow:0 0 0 3px #C6F432}
+.v2-my .calendar-days span.today-day:not([class*="-day "]):not(.hadir-day):not(.izin-day):not(.sakit-day):not(.alpa-day){background:#C6F432;color:#14162B}
+.v2-my .calendar-legend{border-top:0;padding-top:0;margin-top:14px;gap:8px 12px}
+.v2-my .calendar-legend span{font-size:11px;font-weight:600;color:#4A4F6A}
+.v2-my .legend.hadir{background:#14162B}.v2-my .legend.izin{background:#F59E0B}.v2-my .legend.sakit{background:#60A5FA}.v2-my .legend.alpa{background:#B91C1C}
+.v2-my .legend.holiday{background:#C5CBD3}.v2-my .legend.spp{background:#22A35A}.v2-my .legend.exam{background:#F4EED9;box-shadow:inset 0 0 0 1.5px #F59E0B}.v2-my .legend.event{background:#0891B2}
+.v2-my .monthly-calendar-card>a{border-top-color:#EEEEF3!important}
+.v2-my-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v2-my-links a{height:56px;border-radius:20px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;text-decoration:none;color:#14162B;font-size:14px;font-weight:700}
+.v2-my-links a.sand{background:#F4EED9}.v2-my-links a.lime{background:#EEF7D4}
+.v2-my .savings-tab-switch{margin-top:4px!important}
+.v2-my .activity-card{box-shadow:none;border-radius:20px}
+
+html[data-theme="dark"] .v2-my-hero{background:#191B2E;border:1px solid #262940}
+html[data-theme="dark"] .v2-my-gear,html[data-theme="dark"] .v2-my-stats div{background:#23263F}
+html[data-theme="dark"] .v2-my-hero h1{color:#fff}
+html[data-theme="dark"] .v2-my .monthly-calendar-card{background:#191B2E}
+html[data-theme="dark"] .v2-my .calendar-arrow{background:#23263F!important;color:#ECEDF5!important}
+html[data-theme="dark"] .v2-my .calendar-arrow:last-child{background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-header h2{color:#ECEDF5}
+html[data-theme="dark"] .v2-my .calendar-week{color:#9A9EBD}
+html[data-theme="dark"] .v2-my .calendar-days span{color:#8085A6;background:transparent!important}
+html[data-theme="dark"] .v2-my .calendar-days .hadir-day{background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-days .izin-day{background:#FBBF24!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-days .sakit-day{background:#60A5FA!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-days .alpa-day{background:#F87171!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-days .holiday-day{background:#33375A!important;color:#C9CCDF!important}
+html[data-theme="dark"] .v2-my .calendar-days .spp-day{background:#4ADE80!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-days .exam-day{background:rgba(251,191,36,.13)!important;color:#FCD34D!important}
+html[data-theme="dark"] .v2-my .calendar-days .event-day{background:rgba(34,211,238,.13)!important;color:#67E8F9!important}
+html[data-theme="dark"] .v2-my .calendar-days .today-day{box-shadow:0 0 0 3px #fff}
+html[data-theme="dark"] .v2-my .calendar-days span.today-day:not(.hadir-day):not(.izin-day):not(.sakit-day):not(.alpa-day){background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-legend span{color:#9A9EBD}
+html[data-theme="dark"] .v2-my .legend.hadir{background:#C6F432}
+html[data-theme="dark"] .v2-my-links a{color:#ECEDF5}
+html[data-theme="dark"] .v2-my-links a.sand{background:rgba(251,191,36,.13)}html[data-theme="dark"] .v2-my-links a.lime{background:rgba(198,244,50,.12)}
+html[data-theme="dark"] .v2-my .monthly-calendar-card>a{border-top-color:#262940!important;color:#C6F432!important}
+html[data-theme="dark"] .v2-my .monthly-calendar-card>a span{color:#C6F432!important}
+
+/* ===== V2 tab switch (savings, grades, ...) ===== */
+.savings-tab-switch{background:#fff;border-radius:18px;padding:4px;gap:4px;border:0}
+.savings-tab-btn,.savings-tab-btn[data-tab]{height:40px;padding:0;border-radius:14px;background:transparent;color:#4A4F6A;font-weight:600;box-shadow:none}
+.savings-tab-btn.active,.savings-tab-btn[data-tab].active{background:#14162B;color:#fff;font-weight:700;box-shadow:none}
+.savings-tab-btn.active *{color:#fff}
+html[data-theme="dark"] .savings-tab-switch{background:#191B2E;border:0}
+html[data-theme="dark"] .savings-tab-btn,html[data-theme="dark"] .savings-tab-btn[data-tab]{background:transparent;color:#9A9EBD}
+html[data-theme="dark"] .savings-tab-btn.active,html[data-theme="dark"] .savings-tab-btn[data-tab].active{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .savings-tab-btn.active *{color:#14162B}
+html[data-theme="dark"] .v2-my-stats strong.lime{color:#C6F432}

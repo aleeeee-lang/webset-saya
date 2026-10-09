@@ -25,371 +25,101 @@
 </head>
 
 
-<body>
+<body class="v2-page">
 
+<div class="v2-home">
 
-    <!-- =========================
-         TOP BAR
-    ========================== -->
+    <section class="v2-hero">
 
-    <header class="home-topbar">
-
-        <div class="brand">
-
-            <div class="brand-icon">
-                <img src="favicon.png" alt="Attendreem">
+        <header class="v2-hero-top">
+            <a href="settings.html" class="v2-avatar" id="homeAvatar" aria-label="Pengaturan">?</a>
+            <div class="v2-hero-who">
+                <span id="homeGreeting" data-i18n="greet_morning">Good morning</span>
+                <strong id="homeName">&nbsp;</strong>
             </div>
 
-            <h2>
-                Attendreem
-            </h2>
+            <div class="top-actions">
+                <button type="button" class="top-action-button v2-icon-btn" id="notificationButton" aria-label="Notifications">
+                    <span class="top-notification-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 10C18 6.7 15.8 4 12 4C8.2 4 6 6.7 6 10V14L4.5 17H19.5L18 14V10Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 20H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                        <span class="notification-dot" id="notificationDot"></span>
+                    </span>
+                </button>
+                <div class="notification-panel" id="notificationPanel">
+                    <h3 data-i18n="notifications_title">Notifications</h3>
+                    <div id="notificationList">
+                        <p class="notification-empty" id="notificationEmpty" data-i18n="no_new_notifications">No new notifications.</p>
+                    </div>
+                </div>
+            </div>
+        </header>
 
+        <div>
+            <p class="v2-hero-date" id="homeDate">&nbsp;</p>
+            <h1 class="v2-hero-title" id="homeTitle" data-i18n="home_not_checked_in">You haven't checked in today</h1>
         </div>
 
+        <div class="v2-hero-chips" id="homeChips"></div>
 
-       <div class="top-actions">
+        <a href="attendance.html" class="v2-cta" id="homeCta">
+            <span id="homeCtaLabel" data-i18n="check_in">Check in</span>
+            <span class="v2-cta-arrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
 
-    <!-- NOTIFICATION -->
+    </section>
 
-    <button
-        type="button"
-        class="top-action-button"
-        id="notificationButton"
-    >
+    <main class="v2-home-main">
 
-        <span class="top-notification-icon">
+        <div class="v2-bento">
 
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-
-                <path
-                    d="M18 10C18 6.7 15.8 4 12 4C8.2 4 6 6.7 6 10V14L4.5 17H19.5L18 14V10Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                <path
-                    d="M10 20H14"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                />
-
-            </svg>
-
-            <!-- MERAH JIKA ADA NOTIFIKASI -->
-
-            <span
-                class="notification-dot"
-                id="notificationDot"
-            ></span>
-
-        </span>
-
-    </button>
-
-           <div class="notification-panel" id="notificationPanel">
-
-    <h3 data-i18n="notifications_title">Notifications</h3>
-
-    <div id="notificationList">
-        <p class="notification-empty" id="notificationEmpty" data-i18n="no_new_notifications">
-            No new notifications.
-        </p>
-    </div>
-
-</div>
-
-</div>
-    </header>
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main class="home-main">
-
-
-        <!-- =========================
-             WELCOME
-        ========================== -->
-
-        <section class="home-welcome">
-
-           <p class="welcome-small" data-i18n="welcome_back">
-    Welcome back
-</p>
-
-        </section>
-
-
-
-        <!-- =========================
-             HERO
-        ========================== -->
-
-        <section class="attendance-hero">
-
-            <div class="hero-full-image">
-
-                <div class="hero-image-loader" id="heroImageLoader">
-                    <span class="hero-spinner"></span>
-                </div>
-
-                <img
-                    src="image/attendance-hero.png"
-                    alt="Attendreem attendance"
-                    onload="this.classList.add('loaded');var l=document.getElementById('heroImageLoader');if(l)l.remove();"
-                    onerror="var l=document.getElementById('heroImageLoader');if(l)l.remove();"
-                >
-
-                <a
-                    href="attendance.html"
-                    class="hero-checkin-link"
-                    aria-label="Check In"
-                ></a>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             MAIN MENU
-        ========================== -->
-
-        <div class="home-section-header">
-
-            <div>
-
-                <h2 data-i18n="main_menu">
-    Main Menu
-</h2>
-            </div>
-
-        </div>
-
-
-
-        <!-- =========================
-             MENU GRID
-        ========================== -->
-
-        <section class="home-menu-grid">
-
-
-            <!-- ATTENDANCE -->
-
-            <a
-                href="attendance.html"
-                class="home-menu-card attendance-card-home"
-            >
-
-                <div class="home-menu-icon">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 8.5C4 7.67 4.67 7 5.5 7H8L9.5 5H14.5L16 7H18.5C19.33 7 20 7.67 20 8.5V18C20 18.83 19.33 19.5 18.5 19.5H5.5C4.67 19.5 4 18.83 4 18V8.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-                        <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8" />
-                    </svg>
-                </div>
-
-               <h3 data-i18n="menu_attendance">
-    Attendance
-</h3>
-
-<p data-i18n="check_in">
-    Check in
-</p>
-            </a>
-
-
-
-            <!-- DASHBOARD -->
-
-            <a
-                href="dashboard.html"
-                class="home-menu-card dashboard-card-home"
-            >
-
-                <div class="home-menu-icon">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8" />
-                        <path d="M7.5 9H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        <path d="M14 9H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        <path d="M7.5 13H11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        <path d="M14 13H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        <path d="M7.5 17H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        <path d="M14 17H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                    </svg>
-                </div>
-
-                <h3 data-i18n="menu_dashboard">
-    Dashboard
-</h3>
-
-<p data-i18n="statistics">
-    Statistics
-</p>
-
-            </a>
-
-
-
-            <!-- SAVINGS -->
-
-            <a
-                href="history.html"
-                class="home-menu-card history-card-home"
-            >
-
-                <div class="home-menu-icon">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M3 10H21" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M7 7V5.5C7 4.7 7.7 4 8.5 4H17C18.1 4 19 4.9 19 6V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                        <circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/>
-                    </svg>
-                </div>
-
-               <h3 data-i18n="menu_history">
-    Savings
-</h3>
-
-<p data-i18n="attendance_records">
-    Track your savings
-</p>
-
-            </a>
-
-
-
-            <!-- MY ATTENDANCE -->
-
-            <a
-                href="my-attendance.html"
-                class="home-menu-card my-attendance-card-home"
-            >
-
-                <div class="home-menu-icon">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="7" r="3.5" stroke="currentColor" stroke-width="1.8" />
-                        <path d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                    </svg>
-                </div>
-
-<h3 data-i18n="menu_my_attendance">
-    My Attendance
-</h3>
-
-<p data-i18n="my_personal_record">
-    My personal record
-</p>
-            </a>
-
-
-<!-- INFORMATION -->
-
-
-   <a href="information.html"
-    class="home-menu-card information-card-home"
->
-
-    <div class="home-menu-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8" />
-            <path d="M12 11V16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            <circle cx="12" cy="8" r="0.9" fill="currentColor" />
-        </svg>
-    </div>
-
-   <h3 data-i18n="menu_information">
-    Information
-</h3>
-
-<p data-i18n="information_links">
-    Information & links
-</p>
-
-</a>
-
-
-<!-- PIKET -->
-
-<a href="piket.html"
-    class="home-menu-card piket-card-home"
->
-
-    <div class="home-menu-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 8.5H11.5L10.8 20C10.75 20.6 10.25 21 9.7 21H5.8C5.25 21 4.75 20.6 4.7 20L4 8.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-            <path d="M3 8.5H12.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <path d="M6.3 8.5V6.8C6.3 6.3 6.7 6 7.1 6H8.4C8.8 6 9.2 6.3 9.2 6.8V8.5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-            <path d="M6.3 11.3L6.7 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <path d="M7.75 11.3L7.75 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <path d="M9.2 11.3L8.8 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <path d="M19.5 2.5L13.5 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <path d="M13.5 13L10.2 20.3C10 20.8 10.3 21.3 10.8 21.4L18.3 22.8C18.9 22.9 19.4 22.4 19.2 21.8L16.6 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M12.3 15.8L17.7 16.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-    </div>
-
-<h3 data-i18n="menu_piket">
-    Duty Roster
-</h3>
-
-<p data-i18n="piket_subtitle">
-    Cleaning duty schedule
-</p>
-
-</a>
-
-
-</section>
-
-
-        <!-- =========================
-             INFORMATION BANNER
-        ========================== -->
-
-        <section class="home-info-banner">
-
-            <div class="info-banner-content">
-
-                <p>
-                    ATTENDREEM
-                </p>
-
-                <h2 data-i18n="banner_title">
-    Keep your attendance organized.
-</h2>
-
-<span data-i18n="banner_text">
-    Check your records and stay up to date with Attendreem.
-</span>
-            </div>
-
-
-            <a
-                href="my-attendance.html"
-                class="info-arrow"
-            >
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    <path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <a href="dashboard.html" class="v2-tile v2-tile-lime v2-tile-tall">
+                <div class="v2-tile-head"><span data-i18n="tile_attendance">Attendance</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></div>
+                <svg class="v2-ring" viewBox="0 0 92 92" aria-hidden="true">
+                    <circle cx="46" cy="46" r="36" fill="none" stroke-width="10" class="v2-ring-track"></circle>
+                    <circle cx="46" cy="46" r="36" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 226.2" transform="rotate(-90 46 46)" class="v2-ring-fill" id="homeRing"></circle>
                 </svg>
+                <div>
+                    <div class="v2-big" id="homePercent">0%</div>
+                    <div class="v2-tile-sub" id="homePercentSub">&nbsp;</div>
+                </div>
             </a>
 
-        </section>
+            <a href="my-attendance.html" class="v2-tile v2-tile-sand">
+                <div class="v2-tile-head"><span data-i18n="tile_streak">Streak</span><span class="v2-tile-ic-amber"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span></div>
+                <div class="v2-mid"><span id="homeStreak">0</span> <small id="homeStreakUnit">days</small></div>
+            </a>
 
+            <a href="history.html" class="v2-tile v2-tile-lime">
+                <div class="v2-tile-head"><span id="homeSppLabel">SPP</span><span class="v2-tile-ic-green"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg></span></div>
+                <div class="v2-tile-status" id="homeSppStatus">-</div>
+            </a>
+
+        </div>
+
+        <div class="v2-section-head">
+            <h2 data-i18n="home_agenda">Agenda</h2>
+            <a href="calendar.html" data-i18n="link_calendar">Calendar</a>
+        </div>
+        <div class="v2-agenda" id="homeAgenda">
+            <p class="v2-empty" data-i18n="text_no_upcoming_events">No upcoming events.</p>
+        </div>
+
+        <div class="v2-section-head">
+            <h2 data-i18n="home_more_menu">More</h2>
+        </div>
+        <div class="v2-more">
+            <a href="information.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span data-i18n="menu_information">Information</span></a>
+            <a href="piket.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg><span data-i18n="menu_piket">Duty Roster</span></a>
+            <a href="leave.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span data-i18n="home_menu_leave">Leave</span></a>
+            <a href="goals.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span data-i18n="home_menu_goals">Goals</span></a>
+        </div>
 
     </main>
 
-
+</div>
 
     <!-- =========================
          BOTTOM NAVIGATION
@@ -625,9 +355,186 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
-    <script>requireLogin();</script>
 
 <script src="js/notification.js"></script>
+
+<script>
+function homeT(key) {
+    const e = translations[key];
+    return (e && e[getLang()]) || key;
+}
+
+function homeTime(t) {
+    return (t || "").slice(0, 5).replace(":", ".");
+}
+
+function homeChip(text, kind) {
+    return '<span class="v2-chip ' + (kind || "") + '">' + text + '</span>';
+}
+
+function homeGreetingKey() {
+    const h = new Date().getHours();
+    if (h < 11) return "greet_morning";
+    if (h < 15) return "greet_afternoon";
+    if (h < 18) return "greet_evening";
+    return "greet_night";
+}
+
+function renderHomeAvatar(name, url) {
+    const el = document.getElementById("homeAvatar");
+    if (url) {
+        el.innerHTML = '<img src="' + url + '" alt="">';
+    } else {
+        el.textContent = (name || "?").trim().charAt(0).toUpperCase() || "?";
+    }
+}
+
+function renderHomeHeader() {
+    const now = new Date();
+    const days = { en: ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"], id: ["MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"] };
+    const lang = getLang();
+    document.getElementById("homeDate").textContent = (days[lang] || days.en)[now.getDay()] + " · " + dayMonthLabel(now).toUpperCase();
+    const g = document.getElementById("homeGreeting");
+    g.setAttribute("data-i18n", homeGreetingKey());
+    g.textContent = homeT(homeGreetingKey());
+}
+
+function renderHomeStatus(todayRecord, schedule, holidayToday) {
+    const title = document.getElementById("homeTitle");
+    const chips = document.getElementById("homeChips");
+    const cta = document.getElementById("homeCta");
+    const ctaLabel = document.getElementById("homeCtaLabel");
+    let titleKey = "home_not_checked_in";
+    let html = "";
+
+    if (todayRecord) {
+        titleKey = "home_checked_in";
+        const statusKey = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[todayRecord.status];
+        html += homeChip(homeT(statusKey || "status_present") + (todayRecord.time ? " · " + homeTime(todayRecord.time) : ""), "lime");
+        cta.href = "my-attendance.html";
+        ctaLabel.setAttribute("data-i18n", "btn_view_my_attendance");
+    } else if (holidayToday) {
+        titleKey = "home_day_off";
+        html += homeChip(holidayToday.label || homeT("type_holiday"), "");
+        cta.href = "calendar.html";
+        ctaLabel.setAttribute("data-i18n", "link_view_academic_calendar");
+    } else if (schedule) {
+        const now = new Date();
+        const isoDay = now.getDay() === 0 ? 7 : now.getDay();
+        const nowTime = now.toTimeString().slice(0, 5);
+        const activeDays = schedule.active_days || [];
+        const start = (schedule.start_time || "").slice(0, 5);
+        const end = (schedule.end_time || "").slice(0, 5);
+        const lateEnd = schedule.late_mode === "late" ? (schedule.late_end_time || "").slice(0, 5) : "";
+
+        if (activeDays.length && activeDays.indexOf(isoDay) === -1) {
+            titleKey = "home_day_off";
+            cta.href = "calendar.html";
+            ctaLabel.setAttribute("data-i18n", "link_view_academic_calendar");
+        } else if (start && nowTime < start) {
+            html += homeChip(homeT("home_opens_at") + " " + homeTime(start), "outline");
+        } else if (end && nowTime <= end) {
+            const parts = end.split(":");
+            const closeAt = new Date(); closeAt.setHours(+parts[0], +parts[1], 0, 0);
+            const mins = Math.max(0, Math.round((closeAt - now) / 60000));
+            html += homeChip(homeT("home_closes_at") + " " + homeTime(end), "outline");
+            html += homeChip(mins >= 60 ? homeT("home_hours_left").replace("{n}", Math.floor(mins / 60)) : homeT("home_minutes_left").replace("{n}", mins), "lime");
+        } else if (lateEnd && nowTime <= lateEnd) {
+            html += homeChip(homeT("home_late_until") + " " + homeTime(lateEnd), "outline");
+        } else if (end) {
+            titleKey = "home_closed";
+            cta.href = "leave.html";
+            ctaLabel.setAttribute("data-i18n", "home_menu_leave");
+        }
+    }
+
+    title.setAttribute("data-i18n", titleKey);
+    title.textContent = homeT(titleKey);
+    chips.innerHTML = html;
+    ctaLabel.textContent = homeT(ctaLabel.getAttribute("data-i18n"));
+}
+
+function renderHomeStats(data, autoAlpa) {
+    const total = data.length + autoAlpa;
+    const hadir = data.filter(function (i) { return i.status === "Hadir"; }).length;
+    const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
+    document.getElementById("homePercent").textContent = pct + "%";
+    document.getElementById("homeRing").setAttribute("stroke-dasharray", (226.2 * pct / 100).toFixed(1) + " 226.2");
+    document.getElementById("homePercentSub").textContent = homeT("tile_days_of").replace("{a}", hadir).replace("{b}", total);
+
+    const sorted = data.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+    let streak = 0;
+    for (let i = 0; i < sorted.length; i++) {
+        if (sorted[i].status === "Hadir") streak++;
+        else break;
+    }
+    document.getElementById("homeStreak").textContent = streak;
+    document.getElementById("homeStreakUnit").textContent = homeT("unit_days").toLowerCase();
+}
+
+function renderHomeSpp(record) {
+    const now = new Date();
+    document.getElementById("homeSppLabel").textContent = "SPP " + monthNameOf(now.getMonth());
+    const status = record ? record.status : "unpaid";
+    const el = document.getElementById("homeSppStatus");
+    el.textContent = homeT("tile_spp_" + status);
+    el.className = "v2-tile-status " + status;
+}
+
+function renderHomeAgenda(events) {
+    const box = document.getElementById("homeAgenda");
+    if (!events.length) return;
+    box.innerHTML = events.slice(0, 2).map(function (e) {
+        const d = new Date(e.date + "T00:00:00");
+        const typeKey = { holiday: "type_holiday", spp: "type_spp", exam: "type_exam", event: "type_event" }[e.type] || "type_holiday";
+        const mon = monthNameOf(d.getMonth()).slice(0, 3).toUpperCase();
+        return '<a href="calendar.html" class="v2-agenda-item">' +
+            '<span class="v2-agenda-date"><b>' + d.getDate() + '</b><small>' + mon + '</small></span>' +
+            '<span class="v2-agenda-text"><strong></strong><small>' + homeT(typeKey) + '</small></span></a>';
+    }).join("");
+    box.querySelectorAll(".v2-agenda-text strong").forEach(function (el, i) { el.textContent = events[i].label || homeT("type_holiday"); });
+}
+
+async function loadHome() {
+    renderHomeHeader();
+    const user = await requireLogin();
+    if (!user) return;
+
+    const today = localDateStr();
+    const period = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, "0");
+
+    const results = await Promise.all([
+        supabaseClient.from("profiles").select("name, class, avatar_url").eq("id", user.id).maybeSingle(),
+        getMyAttendance(),
+        supabaseClient.from("holidays").select("date,label,type").gte("date", today).order("date", { ascending: true }).limit(5),
+        supabaseClient.from("spp_payments").select("status, period").eq("user_id", user.id).eq("period", period).maybeSingle(),
+        getAttendancePeriod()
+    ]);
+
+    const profile = results[0].data || {};
+    document.getElementById("homeName").textContent = profile.name || user.email || "";
+    renderHomeAvatar(profile.name || user.email, profile.avatar_url);
+
+    const attendance = results[1].data || [];
+    const events = results[2].data || [];
+    renderHomeSpp(results[3].data);
+    renderHomeAgenda(events);
+
+    let schedule = null;
+    if (profile.class) {
+        const res = await supabaseClient.from("attendance_schedules").select("*").eq("class", profile.class).maybeSingle();
+        schedule = res.data || null;
+    }
+    const todayRecord = attendance.find(function (r) { return r.date === today; }) || null;
+    const holidayToday = events.find(function (e) { return e.date === today && (e.type || "holiday") === "holiday"; }) || null;
+    renderHomeStatus(todayRecord, schedule, holidayToday);
+
+    const autoAlpa = await getAutoAlpaCount(user, attendance, results[4]);
+    renderHomeStats(attendance, autoAlpa);
+}
+
+loadHome();
+</script>
 
     <script>
 let touchStartX = 0;

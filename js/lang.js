@@ -757,4 +757,33 @@ function applyLang() {
     });
 }
 
+Object.assign(translations, {
+    greet_morning: { en: "Good morning", id: "Selamat pagi" },
+    greet_afternoon: { en: "Good afternoon", id: "Selamat siang" },
+    greet_evening: { en: "Good afternoon", id: "Selamat sore" },
+    greet_night: { en: "Good evening", id: "Selamat malam" },
+    home_not_checked_in: { en: "You haven't checked in today", id: "Kamu belum absen hari ini" },
+    home_checked_in: { en: "You're checked in for today", id: "Kamu sudah absen hari ini" },
+    home_day_off: { en: "No check-in today", id: "Hari ini tidak ada absen" },
+    home_closed: { en: "Check-in is closed", id: "Absen hari ini sudah ditutup" },
+    home_opens_at: { en: "Opens", id: "Buka" },
+    home_closes_at: { en: "Closes", id: "Tutup" },
+    home_late_until: { en: "Late until", id: "Telat s/d" },
+    home_minutes_left: { en: "{n} min left", id: "{n} menit lagi" },
+    home_hours_left: { en: "{n}h left", id: "{n} jam lagi" },
+    tile_spp_unpaid: { en: "Not paid yet", id: "Belum bayar" },
+    tile_spp_pending: { en: "Being checked", id: "Sedang diperiksa" },
+    tile_spp_approved: { en: "Paid", id: "Lunas" },
+    tile_spp_rejected: { en: "Rejected", id: "Ditolak" },
+    btn_view_my_attendance: { en: "View my attendance", id: "Lihat absensi saya" },
+    tile_attendance: { en: "Attendance", id: "Kehadiran" },
+    tile_days_of: { en: "{a} of {b} days", id: "{a} dari {b} hari" },
+    tile_streak: { en: "Streak", id: "Rentetan" },
+    home_agenda: { en: "Agenda", id: "Agenda" },
+    link_calendar: { en: "Calendar", id: "Kalender" },
+    home_more_menu: { en: "More", id: "Menu lainnya" },
+    home_menu_leave: { en: "Leave", id: "Ajukan izin" },
+    home_menu_goals: { en: "Goals", id: "Target belajar" }
+});
+
 document.addEventListener("DOMContentLoaded", applyLang);

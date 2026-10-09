@@ -172,7 +172,7 @@ function showEventInfo(dateKey) {
 function renderUpcomingEvents() {
     const lang = getLang();
     const container = document.getElementById("upcomingEventsList");
-    const todayKey = new Date().toISOString().slice(0, 10);
+    const todayKey = localDateStr();
 
     const upcoming = allEvents.filter(function (e) { return e.date >= todayKey; }).slice(0, 15);
 

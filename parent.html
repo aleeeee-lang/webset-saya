@@ -303,7 +303,7 @@ async function renderPDevelopment(childId) {
                     <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
                     <div class="activity-content">
                         <strong>${item.title}</strong>
-                        <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date))}</span>
+                        <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
                     </div>
                 </div>
             `;

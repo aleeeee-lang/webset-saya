@@ -181,7 +181,7 @@ async function loadClassStudents() {
         });
     });
 
-    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("activityDate").value = localDateStr();
 }
 
 async function loadTodaysAttendance() {
@@ -193,7 +193,7 @@ async function loadTodaysAttendance() {
         return;
     }
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateStr();
 
     const { data } = await supabaseClient
         .from("attendance")
@@ -236,7 +236,7 @@ async function saveTeacherAttendance(studentId, studentName) {
         return;
     }
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateStr();
     const student = classStudents.find(function (s) { return s.id === studentId; });
 
     const { data: existing } = await supabaseClient
@@ -326,7 +326,7 @@ async function addTeacherActivity() {
     const type = document.getElementById("activityType").value;
     const title = document.getElementById("activityTitle").value.trim();
     const description = document.getElementById("activityDesc").value.trim();
-    const date = document.getElementById("activityDate").value || new Date().toISOString().slice(0, 10);
+    const date = document.getElementById("activityDate").value || localDateStr();
     const btn = document.getElementById("addActivityBtn");
 
     if (!studentId) {
@@ -361,7 +361,7 @@ async function addTeacherActivity() {
 
     document.getElementById("activityTitle").value = "";
     document.getElementById("activityDesc").value = "";
-    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("activityDate").value = localDateStr();
 
     showToast(translations.toast_activity_added[lang], "success");
 }

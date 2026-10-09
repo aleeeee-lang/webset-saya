@@ -120,7 +120,7 @@ async function checkAdmin() {
     }
 
     await loadStudents();
-    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("activityDate").value = localDateStr();
 }
 
 async function loadStudents() {
@@ -185,7 +185,7 @@ function renderActivities() {
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${item.title}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${typeLabel} · ${dayMonthYearLabel(new Date(item.date))}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${typeLabel} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
                     ${item.description ? `<span style="display:block;margin-top:2px;font-size:12px;color:#aaa">${item.description}</span>` : ""}
                 </div>
                 <button type="button" onclick="deleteActivity('${item.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px">${translations.btn_delete[lang]}</button>
@@ -308,7 +308,7 @@ async function addActivity() {
     const type = document.getElementById("activityType").value;
     const title = document.getElementById("activityTitle").value.trim();
     const description = document.getElementById("activityDesc").value.trim();
-    const date = document.getElementById("activityDate").value || new Date().toISOString().slice(0, 10);
+    const date = document.getElementById("activityDate").value || localDateStr();
     const btn = document.getElementById("addActivityBtn");
 
     if (!title) {
@@ -341,7 +341,7 @@ async function addActivity() {
 
     document.getElementById("activityTitle").value = "";
     document.getElementById("activityDesc").value = "";
-    document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("activityDate").value = localDateStr();
 
     showToast(translations.toast_activity_added[lang], "success");
     await loadStudentDevelopment(selectedStudentId);

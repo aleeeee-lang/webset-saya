@@ -287,7 +287,7 @@ function renderQuickStats(data) {
 
     const now = new Date();
     const activeDays = data.filter(function (item) {
-        const d = new Date(item.date);
+        const d = new Date(item.date + "T00:00:00");
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     }).length;
 
@@ -327,7 +327,7 @@ function renderCalendar() {
 
     const statusByDay = {};
     data.forEach(function (item) {
-        const d = new Date(item.date);
+        const d = new Date(item.date + "T00:00:00");
         if (d.getFullYear() === year && d.getMonth() === month) {
             statusByDay[d.getDate()] = item.status;
         }
@@ -549,7 +549,7 @@ function renderDevActivities() {
                 <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
                 <div class="activity-content">
                     <strong>${item.title}</strong>
-                    <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date))}</span>
+                    <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
                     ${item.description ? `<span style="display:block;margin-top:2px;color:#999;font-size:11px">${item.description}</span>` : ""}
                 </div>
             </div>

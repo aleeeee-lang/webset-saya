@@ -12,7 +12,11 @@ create policy "feedback_delete_own" on feedback
 
 -- Students can delete their own leave request:
 --   - pending or rejected: any time
---   - approved: only after the leave period has ended (Jakarta date),
+--   - approved: only after the leave period has ended. The app shows
+--     the trash icon based on the device's own local date; the check
+--     here uses Asia/Jayapura (WIT, Indonesia's earliest time zone) so
+--     students in WIB, WITA or WIT are never blocked after their own
+--     local midnight,
 --     so the list doesn't pile up. The attendance rows the approval
 --     created are NOT touched and stay in the calendar/records.
 drop policy if exists "leave_requests_delete_own_pending" on leave_requests;
@@ -24,7 +28,7 @@ create policy "leave_requests_delete_own" on leave_requests
         and (
             status in ('pending', 'rejected')
             or (status = 'approved'
-                and coalesce(end_date, start_date) < (now() at time zone 'Asia/Jakarta')::date)
+                and coalesce(end_date, start_date) < (now() at time zone 'Asia/Jayapura')::date)
         )
     );
 

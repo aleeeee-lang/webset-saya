@@ -92,8 +92,8 @@ async function checkUser() {
 
     myProfile = profile;
 
-    document.getElementById("leaveStartDate").value = new Date().toISOString().slice(0, 10);
-    document.getElementById("leaveEndDate").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("leaveStartDate").value = localDateStr();
+    document.getElementById("leaveEndDate").value = localDateStr();
 
     await loadMyLeaveRequests();
 }

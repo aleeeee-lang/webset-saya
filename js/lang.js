@@ -702,6 +702,13 @@ function monthNameOf(monthIndex) {
     return entry ? entry[getLang()] : "";
 }
 
+// "YYYY-MM-DD" in the device's own local time zone (WIB/WITA/WIT/...).
+// Never use toISOString() for this: that is UTC and shifts the date.
+function localDateStr(d) {
+    d = d || new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+
 function dayMonthLabel(date) {
     return date.getDate() + " " + monthNameOf(date.getMonth());
 }

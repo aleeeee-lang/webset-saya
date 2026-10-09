@@ -58,7 +58,7 @@ function dateRangeArray(startStr, endStr) {
     let cur = new Date(startStr + "T00:00:00");
     const end = new Date(endStr + "T00:00:00");
     while (cur <= end) {
-        dates.push(cur.toISOString().slice(0, 10));
+        dates.push(localDateStr(cur));
         cur.setDate(cur.getDate() + 1);
     }
     return dates;

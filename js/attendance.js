@@ -281,14 +281,9 @@ async function saveAttendance() {
     });
 
 
-    document.getElementById(
-        "selectedStatus"
-    ).textContent = "Not selected";
-
-
-    document.getElementById(
-        "selectedStatusLight"
-    ).className = "status-light";
+    if (typeof window.resetStatusPicker === "function") {
+        window.resetStatusPicker();
+    }
 
 
     const photoPreview =

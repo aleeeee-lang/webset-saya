@@ -26,332 +26,75 @@
 </head>
 
 
-<body>
+<body class="v2-page">
 
+    <main class="v2-wrap">
 
-    <!-- =====================================
-         ATTENDANCE PAGE
-    ====================================== -->
-
-    <main class="attendance-page">
-
-
-        <!-- =====================================
-             INTRO
-        ====================================== -->
-
-        <section class="attendance-intro">
-
-           <h1 data-i18n="page_attendance">
-    Attendance
-</h1>
-
-        </section>
-
-
-
-        <!-- =====================================
-             DATE & TIME
-        ====================================== -->
-
-        <section class="attendance-date-time">
-
-
-            <!-- DATE -->
-
-            <div class="date-time-item">
-
-                <div class="date-time-icon calendar-icon">
-
-                    <span class="calendar-top"></span>
-
-                    <strong id="calendarDay">
-                        20
-                    </strong>
-
-                </div>
-
-
-                <div class="date-time-content">
-
-                   <span data-i18n="label_date">
-    Date
-</span>
-                    <strong id="attendanceDate">
-                        -
-                    </strong>
-
-                </div>
-
+        <header class="v2-head">
+            <a href="index.html" class="v2-back" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+            <div>
+                <h1 data-i18n="page_check_in">Check in</h1>
+                <p class="v2-head-sub"><span id="attendanceDate">-</span> · <span id="currentTime">--.--</span></p>
             </div>
+        </header>
 
-
-
-          <!-- TIME -->
-
-<div class="date-time-item">
-
-    <div class="date-time-icon clock-icon">
-
-        <div class="analog-clock">
-
-            <div class="clock-hand hour-hand"></div>
-            <div class="clock-hand minute-hand"></div>
-            <div class="clock-hand second-hand"></div>
-
-            <div class="clock-center"></div>
-
+        <div class="v2-window" id="attWindow" hidden>
+            <span class="v2-window-text"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="attWindowText"></span></span>
+            <span class="v2-window-count" id="attWindowCount"></span>
         </div>
 
-    </div>
-
-
-    <div class="date-time-content">
-
-       <span data-i18n="label_time">
-    Time
-</span>
-
-        <strong id="currentTime">
-            00:00:00
-        </strong>
-
-    </div>
-
-</div>
-
-        </section>
-
-
-
-        <!-- =====================================
-             STATUS
-        ====================================== -->
-
-        <section class="attendance-card status-card">
-
-
-           <div class="card-label" data-i18n="label_status">
-    Status
-</div>
-
-
-            <!-- STATUS SELECT -->
-
-            <button
-                type="button"
-                class="status-select"
-                id="statusSelect"
-            >
-
-                <span
-                    class="status-light"
-                    id="selectedStatusLight"
-                ></span>
-
-
-              <span id="selectedStatus" data-i18n="status_not_selected">
-    Not selected
-</span>
-
-                <span class="status-arrow">
-                    ⌄
-                </span>
-
+        <h2 class="v2-label" data-i18n="label_status_today">Today's status</h2>
+        <div class="v2-status-grid" role="radiogroup" aria-label="Status">
+            <button type="button" class="v2-status" role="radio" aria-checked="false" data-value="Hadir">
+                <span data-i18n="status_present">Present</span>
+                <span class="v2-status-ic hadir"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
             </button>
+            <button type="button" class="v2-status izin" role="radio" aria-checked="false" data-value="Izin">
+                <span data-i18n="status_permission">Permission</span>
+                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+            </button>
+            <button type="button" class="v2-status sakit" role="radio" aria-checked="false" data-value="Sakit">
+                <span data-i18n="status_sick">Sick</span>
+                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+            </button>
+            <button type="button" class="v2-status alpa" role="radio" aria-checked="false" data-value="Alpa">
+                <span data-i18n="status_absent">Absent</span>
+                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
+            </button>
+        </div>
 
+        <div class="hidden-status-inputs" hidden>
+            <input type="radio" name="status" value="Hadir">
+            <input type="radio" name="status" value="Izin">
+            <input type="radio" name="status" value="Sakit">
+            <input type="radio" name="status" value="Alpa">
+        </div>
 
+        <label class="v2-reason" id="reasonBox" hidden>
+            <span data-i18n="label_reason">Reason</span>
+            <textarea id="reason" rows="3" placeholder="Why are you absent?" data-i18n-placeholder="reason_placeholder"></textarea>
+        </label>
 
-            <!-- STATUS DROPDOWN -->
-
-            <div
-                class="status-dropdown"
-                id="statusDropdown"
-            >
-
-
-              <button
-    type="button"
-    class="status-option hadir"
-    data-status="Present"
->
-    <span class="status-light"></span>
-   <span data-i18n="status_present">Present</span>
-</button>
-
-<button
-    type="button"
-    class="status-option izin"
-    data-status="Permission"
->
-    <span class="status-light"></span>
-  <span data-i18n="status_permission">Permission</span>
-</button>
-
-<button
-    type="button"
-    class="status-option sakit"
-    data-status="Sick"
->
-    <span class="status-light"></span>
-   <span data-i18n="status_sick">Sick</span>
-</button>
-
-<button
-    type="button"
-    class="status-option alpa"
-    data-status="Absent"
->
-    <span class="status-light"></span>
-    <span data-i18n="status_absent">Absent</span>
-</button>
+        <section class="v2-cam">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="faceBoxCanvas"></canvas>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="photoPreview" alt="" style="display:none;">
+            <div class="v2-cam-frame" aria-hidden="true"><i></i><i></i><i></i><i></i>
+                <svg viewBox="0 0 150 186"><circle cx="75" cy="78" r="30"/><path d="M30 166c6-30 24-44 45-44s39 14 45 44"/></svg>
             </div>
-
-
-
-            <!-- HIDDEN STATUS INPUT -->
-
-            <div class="hidden-status-inputs">
-
-                <input
-                    type="radio"
-                    name="status"
-                    value="Hadir"
-                >
-
-                <input
-                    type="radio"
-                    name="status"
-                    value="Izin"
-                >
-
-                <input
-                    type="radio"
-                    name="status"
-                    value="Sakit"
-                >
-
-                <input
-                    type="radio"
-                    name="status"
-                    value="Alpa"
-                >
-
-            </div>
-
-
+            <p id="faceStatus"></p>
         </section>
 
+        <div class="v2-cam-buttons">
+            <button type="button" class="v2-btn-soft" onclick="startCamera()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span data-i18n="btn_open_camera">Open Camera</span></button>
+            <button type="button" class="v2-btn-soft" id="takePhotoBtn" onclick="takePhoto()" disabled><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="btn_take_photo">Take Photo</span></button>
+        </div>
 
-
-        <!-- =====================================
-             REASON
-        ====================================== -->
-
-        <section class="attendance-card reason-card">
-
-
-           <div class="card-label" data-i18n="label_reason">
-    Reason
-</div>
-
-
-          <textarea
-    id="reason"
-    rows="4"
-    placeholder="Why are you absent?"
-    data-i18n-placeholder="reason_placeholder"
-></textarea>
-
-        </section>
-
-
-
-        <!-- =====================================
-             PHOTO VERIFICATION
-        ====================================== -->
-
-        <section class="attendance-card camera-card">
-
-
-            <div class="camera-header">
-
-               <span class="camera-label" data-i18n="label_verification">
-    VERIFICATION
-</span>
-
-            </div>
-
-
-
-            <!-- CAMERA -->
-
-            <div class="camera-box">
-
-               <video id="video" autoplay playsinline muted></video>
-
-<canvas id="faceBoxCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
-
-<canvas id="canvas" style="display:none;"></canvas>
-
-<img id="photoPreview" style="display:none;">
-
-            </div>
-
-
-
-            <!-- CAMERA BUTTONS -->
-
-            <div class="camera-buttons">
-
-
-              <button
-    type="button"
-    class="camera-button secondary"
-    onclick="startCamera()"
-    data-i18n="btn_open_camera"
->
-    Open Camera
-</button>
-
-
-           <button
-    type="button"
-    id="takePhotoBtn"
-    class="camera-button primary"
-    onclick="takePhoto()"
-    data-i18n="btn_take_photo"
-    disabled
->
-   Take Photo
-</button>
-
-            </div>
-
-
-
-            <!-- FACE STATUS -->
-
-            <p id="faceStatus">
-            </p>
-
-
-        </section>
-
-
-
-        <!-- =====================================
-             SUBMIT
-        ====================================== -->
-
-       <button
-    type="button"
-    class="submit-button"
-    onclick="saveAttendance()"
-    data-i18n="btn_submit_attendance"
->
-    Submit Attendance
-</button>
+        <button type="button" class="v2-submit" onclick="saveAttendance()">
+            <span data-i18n="btn_submit_attendance">Submit Attendance</span>
+            <span class="v2-submit-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </button>
 
     </main>
 
@@ -586,250 +329,104 @@
     <script src="js/camera.js"></script>
 
     <script src="js/attendance.js"></script>
-    <script>requireLogin();</script>
 
 
-
-    <!-- =====================================
-         DATE & TIME
-    ====================================== -->
 
     <script>
+        function attT(key) {
+            const e = translations[key];
+            return (e && e[getLang()]) || key;
+        }
+
+        function tzLabel() {
+            const off = -new Date().getTimezoneOffset() / 60;
+            if (off === 7) return "WIB";
+            if (off === 8) return "WITA";
+            if (off === 9) return "WIT";
+            return "GMT" + (off >= 0 ? "+" : "") + off;
+        }
 
         function updateDateTime() {
-
             const now = new Date();
-
-
-            const date =
-                now.toLocaleDateString(
-                    "en-GB",
-                    {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric"
-                    }
-                );
-
-
-            const time =
-                now.toLocaleTimeString(
-                    "en-GB",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                    }
-                );
-
-
-            document.getElementById(
-                "calendarDay"
-            ).textContent = now.getDate();
-
-
-            document.getElementById(
-                "attendanceDate"
-            ).textContent = date;
-
-
-            document.getElementById(
-                "currentTime"
-            ).textContent = time;
-
+            const days = { en: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], id: ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"] };
+            const lang = getLang();
+            document.getElementById("attendanceDate").textContent = (days[lang] || days.en)[now.getDay()] + ", " + now.getDate() + " " + monthNameOf(now.getMonth()).slice(0, 3);
+            document.getElementById("currentTime").textContent = String(now.getHours()).padStart(2, "0") + "." + String(now.getMinutes()).padStart(2, "0") + " " + tzLabel();
+            updateWindow(now);
         }
 
+        let attSchedule = null;
+
+        function updateWindow(now) {
+            const box = document.getElementById("attWindow");
+            if (!attSchedule) { box.hidden = true; return; }
+            const isoDay = now.getDay() === 0 ? 7 : now.getDay();
+            const active = attSchedule.active_days || [];
+            const nowTime = now.toTimeString().slice(0, 5);
+            const start = (attSchedule.start_time || "").slice(0, 5);
+            const end = (attSchedule.end_time || "").slice(0, 5);
+            const lateEnd = attSchedule.late_mode === "late" ? (attSchedule.late_end_time || "").slice(0, 5) : "";
+            const text = document.getElementById("attWindowText");
+            const count = document.getElementById("attWindowCount");
+            box.hidden = false;
+            box.classList.remove("closed");
+            count.hidden = false;
+
+            if (active.length && active.indexOf(isoDay) === -1) {
+                text.textContent = attT("toast_schedule_day_inactive");
+                count.hidden = true;
+                box.classList.add("closed");
+                return;
+            }
+
+            let target = "";
+            if (start && nowTime < start) { text.textContent = attT("att_opens_at") + " " + start.replace(":", "."); target = start; }
+            else if (end && nowTime <= end) { text.textContent = attT("att_closes_at") + " " + end.replace(":", "."); target = end; }
+            else if (lateEnd && nowTime <= lateEnd) { text.textContent = attT("att_late_until") + " " + lateEnd.replace(":", "."); target = lateEnd; }
+            else if (end) { text.textContent = attT("att_closed"); count.hidden = true; box.classList.add("closed"); return; }
+            else { box.hidden = true; return; }
+
+            const p = target.split(":");
+            const t = new Date(now); t.setHours(+p[0], +p[1], 0, 0);
+            let sec = Math.max(0, Math.floor((t - now) / 1000));
+            const h = Math.floor(sec / 3600); sec -= h * 3600;
+            const m = Math.floor(sec / 60); const ss = sec - m * 60;
+            count.textContent = (h > 0 ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
+        }
+
+        async function loadSchedule() {
+            const user = await requireLogin();
+            if (!user) return;
+            const { data: profile } = await supabaseClient.from("profiles").select("class").eq("id", user.id).maybeSingle();
+            if (!profile || !profile.class) return;
+            const { data } = await supabaseClient.from("attendance_schedules").select("*").eq("class", profile.class).maybeSingle();
+            attSchedule = data || null;
+            updateDateTime();
+        }
 
         updateDateTime();
+        setInterval(updateDateTime, 1000);
+        loadSchedule();
 
-        setInterval(
-            updateDateTime,
-            1000
-        );
+        // STATUS PICKER
+        const statusButtons = document.querySelectorAll(".v2-status");
+        const statusInputs = document.querySelectorAll('input[name="status"]');
 
-    </script>
-
-
-
-    <!-- =====================================
-         ANALOG CLOCK
-    ====================================== -->
-
-    <script>
-
-        function updateAnalogClock() {
-
-            const now = new Date();
-
-            const hours = now.getHours();
-
-            const minutes = now.getMinutes();
-
-            const seconds = now.getSeconds();
-
-
-            const hourDegree =
-                (hours % 12) * 30 +
-                minutes * 0.5;
-
-
-            const minuteDegree =
-                minutes * 6 +
-                seconds * 0.1;
-
-
-            const secondDegree =
-                seconds * 6;
-
-
-            document.querySelector(
-                ".hour-hand"
-            ).style.transform =
-                `translateX(-50%) rotate(${hourDegree}deg)`;
-
-
-            document.querySelector(
-                ".minute-hand"
-            ).style.transform =
-                `translateX(-50%) rotate(${minuteDegree}deg)`;
-
-
-            document.querySelector(
-                ".second-hand"
-            ).style.transform =
-                `translateX(-50%) rotate(${secondDegree}deg)`;
-
+        function selectStatus(value) {
+            statusButtons.forEach(function (btn) {
+                const on = btn.dataset.value === value;
+                btn.classList.toggle("selected", on);
+                btn.setAttribute("aria-checked", on ? "true" : "false");
+            });
+            statusInputs.forEach(function (input) { input.checked = input.value === value; });
+            document.getElementById("reasonBox").hidden = !value || value === "Hadir";
         }
 
-
-        updateAnalogClock();
-
-        setInterval(
-            updateAnalogClock,
-            1000
-        );
-
-    </script>
-
-
-
-    <!-- =====================================
-         STATUS SELECTOR
-    ====================================== -->
-
-    <script>
-
-        const statusSelect =
-            document.getElementById(
-                "statusSelect"
-            );
-
-
-        const statusDropdown =
-            document.getElementById(
-                "statusDropdown"
-            );
-
-
-        const selectedStatus =
-            document.getElementById(
-                "selectedStatus"
-            );
-
-
-        const selectedStatusLight =
-            document.getElementById(
-                "selectedStatusLight"
-            );
-
-
-        const statusInputs =
-            document.querySelectorAll(
-                'input[name="status"]'
-            );
-
-
-        /*
-         * OPEN / CLOSE DROPDOWN
-         */
-
-        statusSelect.addEventListener(
-            "click",
-            function () {
-
-                statusDropdown.classList.toggle(
-                    "show"
-                );
-
-            }
-        );
-
-
-
-        /*
-         * SELECT STATUS
-         */
-
-        /*
-         * SELECT STATUS
-         */
-
-        const statusMap = {
-            Present: "Hadir",
-            Permission: "Izin",
-            Sick: "Sakit",
-            Absent: "Alpa"
-        };
-
-        document.querySelectorAll(".status-option").forEach(function (option) {
-
-            option.addEventListener("click", function () {
-
-                const label = this.dataset.status;
-                const dbValue = statusMap[label];
-
-                selectedStatus.textContent = label;
-
-                selectedStatusLight.className = "status-light";
-                selectedStatusLight.classList.add(
-                    this.classList.contains("hadir") ? "hadir"
-                    : this.classList.contains("izin") ? "izin"
-                    : this.classList.contains("sakit") ? "sakit"
-                    : "alpa"
-                );
-
-                statusInputs.forEach(function (input) {
-                    input.checked = input.value === dbValue;
-                });
-
-                statusDropdown.classList.remove("show");
-
-            });
-
+        statusButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () { selectStatus(btn.dataset.value); });
         });
 
-        /*
-         * CLICK OUTSIDE
-         */
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    !statusSelect.contains(event.target) &&
-                    !statusDropdown.contains(event.target)
-                ) {
-
-                    statusDropdown.classList.remove(
-                        "show"
-                    );
-
-                }
-
-            }
-        );
-
+        window.resetStatusPicker = function () { selectStatus(""); };
     </script>
 
     <script>

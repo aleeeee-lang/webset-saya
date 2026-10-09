@@ -2157,3 +2157,15 @@ html[data-theme="dark"] .v2-par-today span{color:#4ADE80}
 html[data-theme="dark"] .v2-par-today small{color:#9A9EBD}
 html[data-theme="dark"] .v2-par-tile{color:#ECEDF5}
 html[data-theme="dark"] .v2-par-tile.lime{background:rgba(198,244,50,.12)}html[data-theme="dark"] .v2-par-tile.sand{background:rgba(251,191,36,.13)}
+
+/* ===== V2 admin bits ===== */
+html[data-theme="dark"] .attendance-page .v2-approve{background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .attendance-page .v2-reject{background:rgba(248,113,113,.13)!important;color:#FCA5A5!important}
+#adminSettingsSection[style*="block"]{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px!important}
+#adminSettingsSection>a{flex-direction:column;align-items:flex-start!important;justify-content:space-between;gap:10px!important;padding:12px!important;min-height:86px;box-sizing:border-box;border-radius:18px;background:#F3F3F7;border:0!important}
+#adminSettingsSection>a>svg{width:20px;height:20px;padding:8px;border-radius:12px;background:#EEF7D4;color:#3F6212;box-sizing:content-box}
+#adminSettingsSection>a>span:first-of-type{flex:0 0 auto!important;font-size:12px!important;font-weight:700;line-height:1.25}
+#adminSettingsSection>a>span:last-child:not(:first-of-type){display:none}
+html[data-theme="dark"] #adminSettingsSection>a{background:#23263F}
+html[data-theme="dark"] .attendance-page #adminSettingsSection>a>svg{background:rgba(198,244,50,.12)}
+html[data-theme="dark"] .attendance-page #adminSettingsSection>a>svg,html[data-theme="dark"] .attendance-page #adminSettingsSection>a>svg *{color:#C6F432!important}

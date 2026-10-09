@@ -117,8 +117,8 @@ function renderLeaveLists() {
                         <span style="display:block;margin-top:2px;font-size:12px;color:#888">${typeLabel} · ${dateRange}${r.reason ? " · " + r.reason : ""}</span>
                     </div>
                     <div style="display:flex;gap:8px">
-                        <button type="button" onclick="reviewLeaveRequest('${r.id}', 'approved')" style="flex:1;border:none;background:#16a34a;border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;color:#fff" data-i18n="btn_approve">Approve</button>
-                        <button type="button" onclick="reviewLeaveRequest('${r.id}', 'rejected')" style="flex:1;border:1px solid #fecaca;background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;color:#dc2626" data-i18n="btn_reject">Reject</button>
+                        <button type="button" class="v2-approve" onclick="reviewLeaveRequest('${r.id}', 'approved')" style="flex:1;border:none;background:#14162B;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff" data-i18n="btn_approve">Approve</button>
+                        <button type="button" class="v2-reject" onclick="reviewLeaveRequest('${r.id}', 'rejected')" style="flex:1;border:none;background:#ECEDF2;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;color:#B91C1C" data-i18n="btn_reject">Reject</button>
                     </div>
                 </div>
             `;

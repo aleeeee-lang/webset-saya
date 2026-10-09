@@ -60,7 +60,7 @@
                 <input type="number" id="sppStudentAmountInput" class="am-field" min="0" data-i18n-placeholder="placeholder_spp_student_amount" placeholder="Leave empty to use default" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 <div style="display:flex;gap:8px;margin-top:10px">
                     <button type="button" class="submit-button" id="saveSppStudentAmountBtn" onclick="saveSppStudentAmount()" style="flex:1;margin-top:0" data-i18n="btn_save_spp_student_amount">Save for This Student</button>
-                    <button type="button" class="am-btn" onclick="resetSppStudentAmount()" style="border:1px solid #fecaca;background:#fff;border-radius:12px;padding:0 16px;font-size:13px;cursor:pointer;color:#dc2626" data-i18n="btn_reset_spp_student_amount">Use Default</button>
+                    <button type="button" class="am-btn am-btn-danger" onclick="resetSppStudentAmount()" style="border:1px solid #fecaca;background:#fff;border-radius:12px;padding:0 16px;font-size:13px;cursor:pointer;color:#dc2626" data-i18n="btn_reset_spp_student_amount">Use Default</button>
                 </div>
             </div>
 
@@ -78,7 +78,7 @@
 
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
             <div class="card-label" data-i18n="label_spp_pending_review" style="margin:0">Pending SPP Verification</div>
-            <button type="button" id="remindSppBtn" onclick="sendSppReminder()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#1309f5;display:flex;align-items:center;gap:6px;white-space:nowrap">
+            <button type="button" id="remindSppBtn" class="am-btn" onclick="sendSppReminder()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#1309f5;display:flex;align-items:center;gap:6px;white-space:nowrap">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" fill="currentColor"/><path d="M18 16V11C18 7.9 16.4 5.3 13.5 4.6V4C13.5 3.2 12.8 2.5 12 2.5C11.2 2.5 10.5 3.2 10.5 4V4.6C7.6 5.3 6 7.9 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
                 <span data-i18n="btn_remind_missing_spp">Remind Who Hasn't Paid</span>
             </button>
@@ -342,7 +342,7 @@ function renderSppOverrideList() {
                     <strong style="display:block;font-size:13px;color:#20243a">${s.name}${s.class ? " · " + s.class : ""}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${formatRupiah(s.spp_custom_amount)}</span>
                 </div>
-                <button type="button" class="am-btn" onclick="resetSppStudentAmount('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reset[lang]}</button>
+                <button type="button" class="am-btn am-btn-danger" onclick="resetSppStudentAmount('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reset[lang]}</button>
             </div>
         `;
     }).join("");
@@ -472,8 +472,8 @@ function renderSppPending() {
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0">
                     <button type="button" class="am-btn" onclick="viewSppProof('${p.proof_url}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_view_proof[lang]}</button>
-                    <button type="button" class="am-btn" onclick="approveSpp('${p.id}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${translations.btn_approve[lang]}</button>
-                    <button type="button" class="am-btn" onclick="rejectSpp('${p.id}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reject[lang]}</button>
+                    <button type="button" class="am-btn am-btn-success" onclick="approveSpp('${p.id}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${translations.btn_approve[lang]}</button>
+                    <button type="button" class="am-btn am-btn-danger" onclick="rejectSpp('${p.id}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reject[lang]}</button>
                 </div>
             </div>
         `;

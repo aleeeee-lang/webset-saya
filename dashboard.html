@@ -32,313 +32,67 @@
 </head>
 
 
-<body>
+<body class="v2-page">
 
-    <!-- =========================
-         DASHBOARD
-    ========================== -->
+    <main class="v2-wrap v2-dash">
 
-    <main class="dashboard-main">
+        <header class="v2-head v2-head-split">
+            <h1 data-i18n="page_dashboard">Dashboard</h1>
+            <span class="v2-pill" id="dashMonth">&nbsp;</span>
+        </header>
 
-
-        <!-- HEADER -->
-
-        <section class="dashboard-header">
-
-            <div>
-
-                <p class="dashboard-label">
-                </p>
-
-               
-            <h1 data-i18n="page_dashboard">
-   Dashboard
-</h1>
-
-                <p class="dashboard-welcome">
-                </p>
-
+        <section class="v2-dash-rate">
+            <div class="v2-dash-rate-top">
+                <div>
+                    <div class="v2-dash-rate-label" data-i18n="attendance_rate">Attendance Rate</div>
+                    <div class="v2-dash-rate-num" id="attendancePercentage">0%</div>
+                </div>
+                <span class="v2-dash-badge" id="attendanceInsightTitle">&nbsp;</span>
             </div>
-
+            <div class="v2-dash-rate-sub" id="dashHadirSub">&nbsp;</div>
+            <span id="attendanceInsightText" hidden></span>
+            <span id="totalAttendance" hidden>0</span>
+            <div class="v2-seg" aria-hidden="true">
+                <div id="segHadir" class="hadir" style="width:0"></div>
+                <div id="segIzin" class="izin" style="width:0"></div>
+                <div id="segSakit" class="sakit" style="width:0"></div>
+                <div id="segAlpa" class="alpa" style="width:0"></div>
+            </div>
+            <div class="v2-dash-counts">
+                <div><span class="hadir" data-i18n="status_present">Present</span><strong id="totalHadir">0</strong></div>
+                <div><span class="izin" data-i18n="status_permission">Permission</span><strong id="totalIzin">0</strong></div>
+                <div><span class="sakit" data-i18n="status_sick">Sick</span><strong id="totalSakit">0</strong></div>
+                <div><span class="alpa" data-i18n="status_absent">Absent</span><strong id="totalAlpa">0</strong></div>
+            </div>
         </section>
 
-
-
-        <!-- ATTENDANCE OVERVIEW -->
-
-        <section class="dashboard-overview">
-
-            <div class="overview-text">
-
-              <p data-i18n="overview_label">
-    Attendance Overview
-</p>
-
-<h2 data-i18n="overview_title">
-    Your attendance summary
-</h2>
-
-<span data-i18n="overview_text">
-    Keep your attendance consistent and stay on track.
-</span>
-            </div>
-
-
-            <div class="overview-total">
-
-                <strong id="totalAttendance">
-                    0
-                </strong>
-<span data-i18n="total_attendance">
-    Total Attendance
-</span>
-
-            </div>
-
+        <section class="v2-dash-week">
+            <h2 data-i18n="dash_weekly">Attendance per week</h2>
+            <div class="v2-week-bars" id="dashWeekBars"></div>
         </section>
 
-        <!-- SAVINGS TOTAL -->
-        <a href="history.html" class="dashboard-savings-card">
-            <div class="dashboard-savings-icon">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="M12 7V17M9.5 9.3C9.5 8 10.6 7 12 7C13.5 7 14.6 7.9 14.6 9.1C14.6 11.3 9.5 10.6 9.5 12.9C9.5 14.1 10.6 15 12 15C13.4 15 14.5 14 14.5 12.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="dashboard-savings-text">
+        <div class="v2-dash-tiles">
+            <a href="history.html" class="v2-dash-tile savings">
                 <span data-i18n="label_total_savings">Total Savings</span>
                 <strong id="dashboardTotalSavings">Rp0</strong>
+            </a>
+            <a href="my-attendance.html" class="v2-dash-tile grade">
+                <span data-i18n="dash_avg_grade">Average grade</span>
+                <strong id="dashAvgGrade">-</strong>
+            </a>
+        </div>
+
+        <section class="v2-card">
+            <div class="v2-section-head">
+                <h2 data-i18n="recent_attendance">Recent Attendance</h2>
+                <button type="button" class="v2-link-btn" id="viewAllBtn" onclick="toggleViewAll()" data-i18n="view_all">View All</button>
             </div>
-            <span class="dashboard-savings-arrow">›</span>
-        </a>
-
-
-
-        <!-- ATTENDANCE STATISTICS -->
-
-        <section class="dashboard-card">
-
-            <div class="dashboard-section-title">
-
-                <div>
-
-                   <p data-i18n="statistics_label">
-    STATISTICS
-</p>
-
-<h2 data-i18n="attendance_statistics">
-    Attendance Statistics
-</h2>
-
-                </div>
-
+            <div id="recentAttendance" class="recent-attendance" style="visibility:hidden">
+                <div class="empty-attendance"><p data-i18n="no_attendance_yet">No attendance data yet.</p></div>
             </div>
-
-
-            <div class="attendance-progress">
-
-                <div class="progress-header">
-
-                   <span data-i18n="attendance_rate">
-    Attendance Rate
-</span>
-                    <strong id="attendancePercentage">
-                        0%
-                    </strong>
-
-                </div>
-
-
-                <div class="progress-bar progress-bar-segmented">
-                    <div id="segHadir" class="progress-segment hadir" style="width:0"></div>
-                    <div id="segIzin" class="progress-segment izin" style="width:0"></div>
-                    <div id="segSakit" class="progress-segment sakit" style="width:0"></div>
-                    <div id="segAlpa" class="progress-segment alpa" style="width:0"></div>
-                </div>
-
-            </div>
-
-
-            <!-- STATUS CARDS -->
-
-            <div class="dashboard-status-grid">
-
-
-            <div class="dashboard-status-card hadir">
-
-                <div class="dashboard-status-icon">
-                    ✓
-                </div>
-
-                <div>
-
-                  <span data-i18n="status_present">
-    Hadir
-</span>
-
-                    <strong id="totalHadir">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="dashboard-status-card izin">
-
-                <div class="dashboard-status-icon">
-                    !
-                </div>
-
-                <div>
-
-                   <span data-i18n="status_permission">
-   Izin
-</span>
-
-                    <strong id="totalIzin">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="dashboard-status-card sakit">
-
-                <div class="dashboard-status-icon">
-                    +
-                </div>
-
-                <div>
-
-                   <span data-i18n="status_sick">
-   Sakit
-</span>
-
-                    <strong id="totalSakit">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="dashboard-status-card alpa">
-
-                <div class="dashboard-status-icon">
-                    ×
-                </div>
-
-                <div>
-
-                    <span data-i18n="status_absent">
-   Alpa
-</span>
-
-                    <strong id="totalAlpa">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            </div>
-
         </section>
-
-
-
-        <!-- RECENT ATTENDANCE -->
-
-        <section class="dashboard-card">
-
-            <div class="dashboard-section-title">
-
-                <div>
-
-                   <p data-i18n="activity_label">
-    ACTIVITY
-</p>
-
-<h2 data-i18n="recent_attendance">
-    Recent Attendance
-</h2>
-                </div>
-
-              <button type="button" class="link-btn" id="viewAllBtn" onclick="toggleViewAll()" data-i18n="view_all">
-    View All
-</button>
-            </div>
-
-
-            <div
-                id="recentAttendance"
-                class="recent-attendance"
-                style="visibility:hidden"
-            >
-
-                <div class="empty-attendance">
-
-                    <span>
-                        📋
-                    </span>
-
-                    <p data-i18n="no_attendance_yet">
-    No attendance data yet.
-</p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ATTENDANCE INSIGHT -->
-
-        <section class="dashboard-insight">
-
-            <div class="insight-icon">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3C8.5 3 6 5.6 6 9C6 11.2 7.1 12.6 8.1 13.7C8.8 14.5 9 15.2 9 16H15C15 15.2 15.2 14.5 15.9 13.7C16.9 12.6 18 11.2 18 9C18 5.6 15.5 3 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-                    <path d="M9 18H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                    <path d="M10 21H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                </svg>
-            </div>
-
-
-            <div>
-
-               <p data-i18n="insight_label">
-    ATTENDANCE INSIGHT
-</p>
-
-                <h2 id="attendanceInsightTitle">
-                    Keep going!
-                </h2>
-
-                <span id="attendanceInsightText">
-                    Your attendance information will appear here.
-                </span>
-
-            </div>
-
-        </section>
-
 
     </main>
-
-
 
     <!-- =========================
          BOTTOM NAVIGATION
@@ -520,7 +274,6 @@
     <script src="js/supabase.js"></script>
 
     <script src="js/auth.js"></script>
-        <script>requireLogin();</script>
 
 
 
@@ -648,6 +401,8 @@
                     : 0;
 
             document.getElementById("attendancePercentage").textContent = percentage + "%";
+            document.getElementById("dashHadirSub").textContent = (translations.dash_present_of[getLang()] || "").replace("{a}", hadir).replace("{b}", total);
+            renderWeekly(data);
 
             const pct = function (n) {
                 return total > 0 ? (n / total) * 100 : 0;
@@ -708,30 +463,9 @@ const recent =
                             <div class="recent-attendance-item">
 
                                 <div class="recent-date">
-
-                                    <strong>
-                                        ${item.date}
-                                    </strong>
-
-                                    <span>
-                                        ${item.time || "-"}
-                                    </span>
-
+                                    <strong>${dayNameOf(item.date)}, ${dayMonthLabel(new Date(item.date + "T00:00:00"))}</strong>
+                                    <span>${(item.time || "-").slice(0, 5).replace(":", ".")}</span>
                                 </div>
-
-
-                                <div class="recent-name">
-
-                                    <strong>
-                                        ${item.name || "Student"}
-                                    </strong>
-
-                                    <span>
-                                        ${dayNameOf(item.date)}
-                                    </span>
-
-                                </div>
-
 
                                 <div class="recent-status ${item.status.toLowerCase()}">
 
@@ -752,59 +486,45 @@ const recent =
 
             /* INSIGHT */
 
-            const insightTitle =
-                document.getElementById(
-                    "attendanceInsightTitle"
-                );
-
-
-            const insightText =
-                document.getElementById(
-                    "attendanceInsightText"
-                );
-
-
-            if (total === 0) {
-
-                insightTitle.textContent =
-                    "No attendance yet";
-
-                insightText.textContent =
-                    "Start recording your attendance to see your statistics.";
-
-            }
-
-            else if (percentage >= 90) {
-
-                insightTitle.textContent =
-                    "Excellent attendance!";
-
-                insightText.textContent =
-                    "Keep maintaining your attendance consistently.";
-
-            }
-
-            else if (percentage >= 75) {
-
-                insightTitle.textContent =
-                    "Good attendance";
-
-                insightText.textContent =
-                    "Your attendance is going well. Keep improving it.";
-
-            }
-
-            else {
-
-                insightTitle.textContent =
-                    "Keep improving";
-
-                insightText.textContent =
-                    "Try to maintain a more consistent attendance record.";
-
-            }
+            const badgeKey = total === 0 ? "dash_badge_none" : percentage >= 90 ? "dash_badge_excellent" : percentage >= 75 ? "dash_badge_good" : "dash_badge_improve";
+            const badge = document.getElementById("attendanceInsightTitle");
+            badge.textContent = translations[badgeKey][getLang()];
+            badge.className = "v2-dash-badge " + badgeKey;
 
         }
+
+        function renderWeekly(data) {
+            const box = document.getElementById("dashWeekBars");
+            const lang = getLang();
+            const monday = new Date();
+            monday.setHours(0, 0, 0, 0);
+            monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+            let html = "";
+            for (let w = 5; w >= 0; w--) {
+                const start = new Date(monday); start.setDate(start.getDate() - w * 7);
+                const end = new Date(start); end.setDate(end.getDate() + 6);
+                const a = localDateStr(start), b = localDateStr(end);
+                const rows = data.filter(function (r) { return r.date >= a && r.date <= b; });
+                const hadir = rows.filter(function (r) { return r.status === "Hadir"; }).length;
+                const pct = rows.length ? Math.round(hadir / rows.length * 100) : 0;
+                const label = w === 0 ? translations.dash_this_week[lang] : dayMonthLabel(start).replace(/ (\S{3})\S*$/, " $1");
+                html += '<div class="v2-week' + (w === 0 ? ' now' : '') + '" title="' + pct + '%">' +
+                    '<div class="v2-week-track"><div class="v2-week-fill" style="height:' + Math.max(pct, rows.length ? 6 : 0) + '%"></div></div>' +
+                    '<small>' + label + '</small></div>';
+            }
+            box.innerHTML = html;
+        }
+
+        async function loadDashGrade() {
+            const user = await requireLogin();
+            if (!user) return;
+            const { data } = await supabaseClient.from("student_grades").select("score").eq("user_id", user.id);
+            const scores = (data || []).map(function (g) { return Number(g.score); }).filter(function (n) { return !isNaN(n); });
+            document.getElementById("dashAvgGrade").textContent = scores.length ? (scores.reduce(function (s, n) { return s + n; }, 0) / scores.length).toFixed(1).replace(".", ",") : "-";
+        }
+
+        document.getElementById("dashMonth").textContent = monthYearLabel(new Date());
+        loadDashGrade();
 
         function toggleViewAll() {
 

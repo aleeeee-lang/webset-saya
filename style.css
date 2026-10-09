@@ -1266,10 +1266,33 @@ html[data-theme="dark"] #settingsGearBtn {
 
 html[data-theme="dark"] .am-row:not(.piket-duty-row),
 html[data-theme="dark"] .am-field,
-html[data-theme="dark"] .am-btn:not(.piket-day-btn):not(.holiday-type-btn):not(.feedback-category-btn):not(.feedback-filter-btn):not(.info-category-btn):not(.info-filter-btn) {
+html[data-theme="dark"] .am-btn:not(.piket-day-btn):not(.holiday-type-btn):not(.feedback-category-btn):not(.feedback-filter-btn):not(.info-category-btn):not(.info-filter-btn):not(.am-btn-danger):not(.am-btn-warning):not(.am-btn-success) {
     background: #1f1f1f !important;
     border-color: #262626 !important;
     color: #e5e7f5 !important;
+}
+
+html[data-theme="dark"] .am-btn.am-btn-danger {
+    background: #2a1414 !important;
+    border-color: #5c1f1f !important;
+    color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .am-btn.am-btn-warning {
+    background: #2a2314 !important;
+    border-color: #6b4a14 !important;
+    color: #fcd34d !important;
+}
+
+html[data-theme="dark"] .am-btn.am-btn-success {
+    background: #132a1c !important;
+    border-color: #1f5c38 !important;
+    color: #86efac !important;
+}
+
+html[data-theme="dark"] .attendance-page .am-row .status-badge-inactive {
+    background: #3a1414 !important;
+    color: #fca5a5 !important;
 }
 
 html[data-theme="dark"] .am-field::placeholder {

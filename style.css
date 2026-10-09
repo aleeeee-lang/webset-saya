@@ -1701,3 +1701,7 @@ html[data-theme="dark"] .savings-balance-card.spp {
     box-shadow: 0 10px 30px rgba(0, 0, 0, .4) !important;
 }
 .app-toast-info { background: #334155; }
+
+html[data-theme="dark"] .goal-progress-track {
+    background: #2e2e3a !important;
+}

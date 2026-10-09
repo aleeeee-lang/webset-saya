@@ -798,6 +798,8 @@ Object.assign(translations, {
     teach_leave_sick: { en: "Leave / sick", id: "Izin / sakit" },
     teach_not_yet: { en: "Not checked in", id: "Belum absen" },
     teach_spp_class: { en: "Class SPP status", id: "Status SPP kelas" },
+    par_semester_attendance: { en: "Attendance", id: "Kehadiran" },
+    par_today: { en: "Today", id: "Hari ini" },
     teach_quick: { en: "Quick actions", id: "Aksi cepat" },
     home_agenda: { en: "Agenda", id: "Agenda" },
     link_calendar: { en: "Calendar", id: "Kalender" },

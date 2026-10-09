@@ -12,30 +12,25 @@
 <script src="js/toast.js"></script>
 </head>
 
-<body>
+<body class="v2-page">
 
-<main class="my-attendance-main">
+<main class="my-attendance-main v2-wrap v2-par">
 
-    <!-- TITLE + SETTINGS -->
-    <section class="attendance-intro" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <h1 style="margin:0" data-i18n="page_parent_portal">Parent Portal</h1>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <a href="calendar.html" aria-label="Academic Calendar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#20243a">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M4 10H20" stroke="currentColor" stroke-width="1.7"/><path d="M8 3V7M16 3V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-            </a>
-            <a href="settings.html" id="settingsGearBtn" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#20243a">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-                    <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-            </a>
+    <header class="v2-par-head">
+        <div>
+            <span data-i18n="page_parent_portal">Parent Portal</span>
+            <h1><span data-i18n="teach_hello">Hello</span>, <span id="parentName">&nbsp;</span></h1>
         </div>
-    </section>
+        <a href="calendar.html" class="v2-back" aria-label="Academic Calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></a>
+        <a href="settings.html" id="settingsGearBtn" class="v2-back" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
+    </header>
 
     <!-- CHILD SELECTOR -->
-    <section class="attendance-card" id="childSelectCard" style="display:none;margin-bottom:18px">
-        <div class="card-label" data-i18n="label_select_child" style="margin:0 0 10px">Viewing</div>
-        <select id="childSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px"></select>
-    </section>
+    <label class="v2-par-child" id="childSelectCard" style="display:none">
+        <span class="v2-par-child-av" id="childInitial">?</span>
+        <select id="childSelect" aria-label="Child"></select>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </label>
 
     <!-- NO CHILDREN LINKED -->
     <section class="history-empty" id="noChildrenCard" style="display:none">
@@ -51,40 +46,31 @@
 
     <div id="childDataWrap" style="display:none">
 
-        <!-- ATTENDANCE -->
-        <section class="attendance-score-card compact">
-            <p class="score-label" data-i18n="score_label">ATTENDANCE SCORE</p>
-            <h2 id="pScorePercent">0%</h2>
-            <p class="score-description" id="pScoreDesc">-</p>
-            <div class="score-progress">
-                <div class="score-progress-fill" id="pScoreProgressFill"></div>
+        <section class="v2-par-rate">
+            <div class="v2-par-rate-main">
+                <div class="v2-par-rate-label" data-i18n="par_semester_attendance">Attendance</div>
+                <div class="v2-par-rate-num" id="pScorePercent">0%</div>
+                <div class="v2-par-rate-sub"><span data-i18n="status_present">Present</span> <b id="pHadir">0</b> · <span data-i18n="status_permission">Permission</span> <b id="pIzin">0</b> · <span data-i18n="status_sick">Sick</span> <b id="pSakit">0</b> · <span data-i18n="status_absent">Absent</span> <b id="pAlpa">0</b></div>
             </div>
-            <div class="score-summary">
-                <div><strong id="pHadir">0</strong><span data-i18n="status_present">Present</span></div>
-                <div><strong id="pIzin">0</strong><span data-i18n="status_permission">Permission</span></div>
-                <div><strong id="pSakit">0</strong><span data-i18n="status_sick">Sick</span></div>
-                <div><strong id="pAlpa">0</strong><span data-i18n="status_absent">Absent</span></div>
+            <div class="v2-par-today">
+                <span data-i18n="par_today">Today</span>
+                <strong id="pTodayStatus">-</strong>
+                <small id="pTodayTime">&nbsp;</small>
             </div>
+            <div hidden><span id="pScoreDesc"></span><div id="pScoreProgressFill"></div><span id="pDevAverageDesc"></span></div>
         </section>
 
-        <!-- SPP -->
-        <div class="my-attendance-section-header" style="margin-top:28px">
-            <div><span data-i18n="label_spp_status">SPP STATUS</span><h2 id="pSppMonthLabel">-</h2></div>
-            <span class="spp-status-badge" id="pSppStatusBadge">-</span>
+        <div class="v2-par-tiles">
+            <div class="v2-par-tile lime">
+                <span id="pSppMonthLabel">SPP</span>
+                <strong id="pSppAmount">Rp0</strong>
+                <span class="spp-status-badge" id="pSppStatusBadge">-</span>
+            </div>
+            <div class="v2-par-tile sand">
+                <span data-i18n="dash_avg_grade">Average grade</span>
+                <strong id="pDevAverageScore">-</strong>
+            </div>
         </div>
-        <section class="attendance-card">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:12px;color:#888" data-i18n="label_spp_amount">Amount</span>
-                <strong id="pSppAmount" style="font-size:16px;color:#20243a">Rp0</strong>
-            </div>
-        </section>
-
-        <!-- GRADE AVERAGE -->
-        <section class="attendance-score-card dev compact" style="margin-top:18px">
-            <p class="score-label" data-i18n="label_grade_average">GRADE AVERAGE</p>
-            <h2 id="pDevAverageScore">-</h2>
-            <p class="score-description" id="pDevAverageDesc">-</p>
-        </section>
 
         <!-- RECENT GRADES -->
         <div class="my-attendance-section-header" style="margin-top:28px">
@@ -133,7 +119,7 @@ async function checkParent() {
 
     const { data: profile, error } = await supabaseClient
         .from("profiles")
-        .select("role")
+        .select("role, name")
         .eq("id", user.id)
         .single();
 
@@ -141,6 +127,8 @@ async function checkParent() {
         window.location.href = "index.html";
         return;
     }
+
+    document.getElementById("parentName").textContent = profile.name || "";
 
     const { data: links } = await supabaseClient
         .from("parent_links")
@@ -171,12 +159,16 @@ async function checkParent() {
         return `<option value="${c.id}">${c.name}${c.class ? " · " + c.class : ""}</option>`;
     }).join("");
 
-    if (myChildren.length > 1) {
-        document.getElementById("childSelectCard").style.display = "block";
-    }
+    document.getElementById("childSelectCard").style.display = "flex";
+    const setInitial = function (id) {
+        const c = myChildren.find(function (x) { return x.id === id; });
+        document.getElementById("childInitial").textContent = c && c.name ? c.name.trim().charAt(0).toUpperCase() : "?";
+    };
+    setInitial(myChildren[0].id);
 
     select.addEventListener("change", function () {
         selectedChildId = this.value;
+        setInitial(this.value);
         loadChildData();
     });
 
@@ -199,6 +191,12 @@ function renderPAttendance(data) {
     document.getElementById("pIzin").textContent = izin;
     document.getElementById("pSakit").textContent = sakit;
     document.getElementById("pAlpa").textContent = alpa;
+
+    const today = localDateStr();
+    const rec = data.find(function (r) { return r.date === today; });
+    const statusKey = rec ? ({ Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[rec.status] || "") : "";
+    document.getElementById("pTodayStatus").textContent = statusKey ? tr(statusKey) : tr("teach_not_yet");
+    document.getElementById("pTodayTime").textContent = rec && rec.time ? rec.time.slice(0, 5).replace(":", ".") : "";
 
     const descEl = document.getElementById("pScoreDesc");
     if (total === 0) descEl.textContent = tr("score_no_data");
@@ -226,7 +224,7 @@ async function renderPSpp(childId) {
     const period = currentSppPeriod();
     const record = (paymentsRes.data || []).find(function (r) { return r.period === period; }) || null;
 
-    document.getElementById("pSppMonthLabel").textContent = new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long", year: "numeric" });
+    document.getElementById("pSppMonthLabel").textContent = "SPP " + new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long" });
     document.getElementById("pSppAmount").textContent = formatRupiah(amount);
 
     const badge = document.getElementById("pSppStatusBadge");

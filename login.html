@@ -104,6 +104,8 @@ html[data-theme="dark"] #forgotPanel { border-color: #242424; }
 
 <script>
 
+try { localStorage.removeItem("attendreem-profile"); } catch (e) {}
+
 if (new URLSearchParams(window.location.search).get("inactive") === "1") {
     showToast("This account is no longer active. Please contact your admin.", "error");
 }

@@ -16,13 +16,21 @@ async function requireLogin() {
 
     const { data: profile } = await supabaseClient
         .from("profiles")
-        .select("status")
+        .select("status, role, name, class, avatar_url")
         .eq("id", data.user.id)
         .maybeSingle();
+
+    if (profile) {
+        try {
+            localStorage.setItem("attendreem-profile", JSON.stringify({ role: profile.role, name: profile.name, class: profile.class, avatar_url: profile.avatar_url }));
+            window.dispatchEvent(new Event("attendreem-profile"));
+        } catch (e) {}
+    }
 
     if (profile && profile.status === "inactive") {
 
         await supabaseClient.auth.signOut();
+        try { localStorage.removeItem("attendreem-profile"); } catch (e) {}
         window.location.href = "login.html?inactive=1";
 
         return null;
@@ -56,6 +64,8 @@ async function logoutUser() {
 
     }
 
+
+    try { localStorage.removeItem("attendreem-profile"); } catch (e) {}
 
     window.location.href = "login.html";
 

@@ -8,3 +8,11 @@ function setTheme(theme) {
     localStorage.setItem("attendly-theme", theme);
     document.documentElement.setAttribute("data-theme", theme);
 }
+
+// Desktop sidebar (loaded on every page that includes theme.js)
+(function () {
+    var s = document.createElement("script");
+    s.src = "js/sidebar.js";
+    s.defer = true;
+    document.head.appendChild(s);
+})();

@@ -484,7 +484,8 @@ function renderHomeSpp(record) {
 function renderHomeAgenda(events) {
     const box = document.getElementById("homeAgenda");
     if (!events.length) return;
-    box.innerHTML = events.slice(0, 2).map(function (e) {
+    const shown = events.slice(0, window.innerWidth >= 1024 ? 4 : 2);
+    box.innerHTML = shown.map(function (e) {
         const d = new Date(e.date + "T00:00:00");
         const typeKey = { holiday: "type_holiday", spp: "type_spp", exam: "type_exam", event: "type_event" }[e.type] || "type_holiday";
         const mon = monthNameOf(d.getMonth()).slice(0, 3).toUpperCase();
@@ -492,7 +493,7 @@ function renderHomeAgenda(events) {
             '<span class="v2-agenda-date"><b>' + d.getDate() + '</b><small>' + mon + '</small></span>' +
             '<span class="v2-agenda-text"><strong></strong><small>' + homeT(typeKey) + '</small></span></a>';
     }).join("");
-    box.querySelectorAll(".v2-agenda-text strong").forEach(function (el, i) { el.textContent = events[i].label || homeT("type_holiday"); });
+    box.querySelectorAll(".v2-agenda-text strong").forEach(function (el, i) { el.textContent = shown[i].label || homeT("type_holiday"); });
 }
 
 async function loadHome() {

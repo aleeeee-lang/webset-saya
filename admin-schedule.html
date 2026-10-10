@@ -83,11 +83,11 @@
             <div style="display:flex;gap:10px">
                 <div style="flex:1">
                     <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_start_time">Opens At</div>
-                    <input type="time" id="scheduleStartTime" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <input type="text" id="scheduleStartTime" class="am-field v2-time" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="07:15" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 </div>
                 <div style="flex:1">
                     <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_end_time">Closes At</div>
-                    <input type="time" id="scheduleEndTime" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                    <input type="text" id="scheduleEndTime" class="am-field v2-time" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="07:15" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
 
             <div id="lateUntilGroup" style="display:none">
                 <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_late_until">Late Until (optional)</div>
-                <input type="time" id="scheduleLateUntil" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                <input type="text" id="scheduleLateUntil" class="am-field v2-time" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="07:15" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 <div style="font-size:11px;color:#999;margin-top:6px" data-i18n="hint_late_until">After this time, attendance is fully closed. Leave empty to close right after Closes At.</div>
             </div>
 
@@ -579,7 +579,76 @@ async function deleteSchedule(cls) {
     await loadSchedules();
 }
 
+// Typed time fields: "0715" -> "07:15". Keeps .value as "HH:MM" for the rest of the page.
+function normalizeTime(raw) {
+    const v = String(raw || "").trim().replace(/[.,]/g, ":");
+    if (!v) return "";
+    let h, m;
+    if (v.indexOf(":") >= 0) {
+        const parts = v.split(":");
+        if (!/^\d{1,2}$/.test(parts[0]) || !/^\d{0,2}$/.test(parts[1] || "")) return null;
+        h = Number(parts[0]);
+        m = parts[1] ? Number(parts[1].length === 1 ? parts[1] + "0" : parts[1]) : 0;
+    } else {
+        const d = v.replace(/\D/g, "");
+        if (!d || d.length > 4 || d.length !== v.length) return null;
+        if (d.length <= 2) { h = Number(d); m = 0; }
+        else if (d.length === 3) { h = Number(d.slice(0, 1)); m = Number(d.slice(1)); }
+        else { h = Number(d.slice(0, 2)); m = Number(d.slice(2)); }
+    }
+    if (h > 23 || m > 59) return null;
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+}
+
+document.querySelectorAll(".v2-time").forEach(function (el) {
+    // Clock icon on the right opens the native time picker; the rest of the field is typed.
+    const wrap = document.createElement("div");
+    wrap.className = "v2-time-wrap";
+    el.parentNode.insertBefore(wrap, el);
+    wrap.appendChild(el);
+    const btn = document.createElement("span");
+    btn.className = "v2-time-btn";
+    btn.setAttribute("aria-hidden", "true");
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+    const picker = document.createElement("input");
+    picker.type = "time";
+    picker.className = "v2-time-picker";
+    picker.tabIndex = -1;
+    picker.setAttribute("aria-label", getLang() === "id" ? "Pilih jam" : "Pick a time");
+    wrap.appendChild(btn);
+    wrap.appendChild(picker);
+    picker.addEventListener("click", function () {
+        const t = normalizeTime(el.value);
+        if (t) picker.value = t;
+        if (typeof picker.showPicker === "function") { try { picker.showPicker(); } catch (e) {} }
+    });
+    picker.addEventListener("change", function () {
+        if (picker.value) { el.value = picker.value.slice(0, 5); el.classList.remove("invalid"); }
+    });
+
+    el.addEventListener("input", function () {
+        const clean = el.value.replace(/[^0-9:.]/g, "").slice(0, 5);
+        if (clean !== el.value) el.value = clean;
+        el.classList.remove("invalid");
+    });
+    el.addEventListener("blur", function () {
+        const t = normalizeTime(el.value);
+        if (t === null) { el.classList.add("invalid"); return; }
+        el.value = t;
+    });
+});
+
 async function saveSchedule() {
+    let badTime = false;
+    document.querySelectorAll(".v2-time").forEach(function (el) {
+        const t = normalizeTime(el.value);
+        if (t === null) { el.classList.add("invalid"); badTime = true; } else { el.value = t; }
+    });
+    if (badTime) {
+        showToast(getLang() === "id" ? "Format jam tidak valid. Contoh: 07:15" : "Invalid time. Example: 07:15", "error");
+        return;
+    }
+
 
     const lang = getLang();
     const cls = document.getElementById("scheduleClassSelect").value;

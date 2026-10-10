@@ -2378,3 +2378,18 @@ html[data-theme="dark"] .v2-cam #faceStatus{background:rgba(255,255,255,.9)}
 /* Smaller camera hint; hide the guide frame and face box once the camera is live */
 .v2-cam #faceStatus{top:10px;padding:3px 9px;font-size:10px;font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.15)}
 .v2-cam video[style*="block"]~.v2-cam-frame,.v2-cam video[style*="block"]~#faceBoxCanvas{display:none!important}
+
+/* Native controls follow dark mode (light clock/calendar icons, dark pickers); lime checkboxes */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="light"]{color-scheme:light}
+input[type="checkbox"],input[type="radio"]{accent-color:#14162B}
+html[data-theme="dark"] input[type="checkbox"],html[data-theme="dark"] input[type="radio"]{accent-color:#C6F432}
+.v2-time{font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.v2-time.invalid,.attendance-page .v2-time.invalid{border-color:#DC2626!important;box-shadow:0 0 0 3px rgba(220,38,38,.15)}
+.schedule-day-pill:has(input:checked){background:#EEF7D4!important;border-color:#14162B!important;color:#14162B!important}
+html[data-theme="dark"] .schedule-day-pill:has(input:checked){background:rgba(198,244,50,.12)!important;border-color:#C6F432!important;color:#fff!important}
+.v2-time-wrap{position:relative}
+.v2-time-wrap .v2-time{padding-right:48px!important}
+.v2-time-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#3F6212;background:#EEF7D4;pointer-events:none}
+.v2-time-picker{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;opacity:0;cursor:pointer;border:0;padding:0;margin:0}
+html[data-theme="dark"] .v2-time-btn{color:#C6F432;background:rgba(198,244,50,.12)}

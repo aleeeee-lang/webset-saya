@@ -730,6 +730,22 @@ function formatRupiah(amount) {
     return "Rp" + n.toLocaleString("id-ID");
 }
 
+// Short money label for small tiles: Rp99,9 jt / Rp1,2 M (id), Rp99.9M / Rp1.2B (en).
+function formatRupiahCompact(amount) {
+    const n = Number(amount) || 0;
+    const abs = Math.abs(n);
+    const id = getLang() === "id";
+    const fmt = function (v) {
+        const s = (Math.floor(v * 10) / 10).toFixed(v >= 100 ? 0 : 1).replace(/\.0$/, "");
+        return id ? s.replace(".", ",") : s;
+    };
+    const sign = n < 0 ? "-" : "";
+    if (abs >= 1e12) return sign + "Rp" + fmt(abs / 1e12) + (id ? " T" : "T");
+    if (abs >= 1e9) return sign + "Rp" + fmt(abs / 1e9) + (id ? " M" : "B");
+    if (abs >= 1e6) return sign + "Rp" + fmt(abs / 1e6) + (id ? " jt" : "M");
+    return formatRupiah(n);
+}
+
 function getLang() {
     return localStorage.getItem("attendly-lang") || "en";
 }

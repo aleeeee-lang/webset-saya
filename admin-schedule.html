@@ -601,11 +601,34 @@ function normalizeTime(raw) {
 }
 
 document.querySelectorAll(".v2-time").forEach(function (el) {
-    // Clock icon on the right opens the native time picker; the rest of the field is typed.
+    // Two boxes: hour then minute. Typing two hour digits jumps to minutes.
+    // The original input stays (hidden) and always holds "HH:MM" for the rest of the page.
     const wrap = document.createElement("div");
     wrap.className = "v2-time-wrap";
     el.parentNode.insertBefore(wrap, el);
     wrap.appendChild(el);
+    el.style.display = "none";
+
+    const box = document.createElement("div");
+    box.className = "v2-time-box am-field";
+    const hh = document.createElement("input");
+    const mm = document.createElement("input");
+    [hh, mm].forEach(function (inp, k) {
+        inp.type = "text";
+        inp.inputMode = "numeric";
+        inp.maxLength = 2;
+        inp.autocomplete = "off";
+        inp.className = "v2-time-seg";
+        inp.placeholder = k === 0 ? "--" : "--";
+        inp.setAttribute("aria-label", k === 0 ? (getLang() === "id" ? "Jam" : "Hour") : (getLang() === "id" ? "Menit" : "Minute"));
+    });
+    const colon = document.createElement("span");
+    colon.className = "v2-time-colon";
+    colon.textContent = ":";
+    box.appendChild(hh); box.appendChild(colon); box.appendChild(mm);
+    box.addEventListener("click", function (e) { if (e.target === box) (hh.value.length < 2 ? hh : mm).focus(); });
+    wrap.appendChild(box);
+
     const btn = document.createElement("span");
     btn.className = "v2-time-btn";
     btn.setAttribute("aria-hidden", "true");
@@ -617,40 +640,64 @@ document.querySelectorAll(".v2-time").forEach(function (el) {
     picker.setAttribute("aria-label", getLang() === "id" ? "Pilih jam" : "Pick a time");
     wrap.appendChild(btn);
     wrap.appendChild(picker);
+
+    const nativeValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
+    function sync() {
+        const h = hh.value, m = mm.value;
+        const v = (h || m) ? (h.padStart(2, "0") + ":" + (m || "0").padStart(2, "0")) : "";
+        nativeValue.set.call(el, v);
+        const bad = (h.length === 2 && Number(h) > 23) || (m.length === 2 && Number(m) > 59);
+        box.classList.toggle("invalid", bad);
+        el.classList.toggle("invalid", bad);
+    }
+    function show(v) {
+        const t = normalizeTime(v);
+        hh.value = t ? t.slice(0, 2) : "";
+        mm.value = t ? t.slice(3, 5) : "";
+        box.classList.remove("invalid");
+    }
+    // Code elsewhere sets el.value = "07:15" when loading a saved schedule: mirror it into the boxes.
+    Object.defineProperty(el, "value", {
+        get: function () { return nativeValue.get.call(el); },
+        set: function (v) { nativeValue.set.call(el, v); show(v); }
+    });
+
+    hh.addEventListener("input", function () {
+        let d = hh.value.replace(/\D/g, "").slice(0, 2);
+        if (d.length === 1 && Number(d) > 2) d = "0" + d;
+        hh.value = d;
+        sync();
+        if (d.length === 2 && Number(d) <= 23) { mm.focus(); mm.select(); }
+    });
+    mm.addEventListener("input", function () {
+        let d = mm.value.replace(/\D/g, "").slice(0, 2);
+        if (d.length === 1 && Number(d) > 5) d = "0" + d;
+        mm.value = d;
+        sync();
+    });
+    mm.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace" && mm.value === "") { e.preventDefault(); hh.focus(); hh.value = hh.value.slice(0, -1); sync(); }
+    });
+    hh.addEventListener("keydown", function (e) {
+        if ((e.key === ":" || e.key === ".") && hh.value) { e.preventDefault(); if (hh.value.length === 1) hh.value = "0" + hh.value; sync(); mm.focus(); }
+    });
+    [hh, mm].forEach(function (inp) {
+        inp.addEventListener("focus", function () { inp.select(); });
+        inp.addEventListener("click", function () { inp.select(); });
+        inp.addEventListener("blur", function () {
+            if (inp.value.length === 1) inp.value = "0" + inp.value;
+            if (inp === mm && hh.value && !mm.value) mm.value = "00";
+            sync();
+        });
+    });
+
     picker.addEventListener("click", function () {
-        const t = normalizeTime(el.value);
+        const t = normalizeTime(nativeValue.get.call(el));
         if (t) picker.value = t;
         if (typeof picker.showPicker === "function") { try { picker.showPicker(); } catch (e) {} }
     });
     picker.addEventListener("change", function () {
-        if (picker.value) { el.value = picker.value.slice(0, 5); el.classList.remove("invalid"); }
-    });
-
-    el.addEventListener("input", function (e) {
-        const deleting = e && e.inputType && e.inputType.indexOf("delete") === 0;
-        const raw = el.value.replace(/[.,]/g, ":").replace(/[^0-9:]/g, "");
-        let hh = "", mm = "";
-        if (raw.indexOf(":") >= 0) {
-            const parts = raw.split(":");
-            hh = parts[0].slice(0, 2);
-            if (hh.length === 1) hh = "0" + hh;
-            mm = parts.slice(1).join("").slice(0, 2);
-        } else {
-            let d = raw.slice(0, 4);
-            if (d.length && Number(d[0]) > 2) d = ("0" + d).slice(0, 4);
-            hh = d.slice(0, 2);
-            mm = d.slice(2);
-        }
-        let out = hh;
-        if (mm.length || (hh.length === 2 && !deleting)) out = hh + ":" + mm;
-        if (out !== el.value) el.value = out;
-        const bad = (hh.length === 2 && Number(hh) > 23) || (mm.length === 2 && Number(mm) > 59) || (mm.length === 1 && Number(mm) > 5);
-        el.classList.toggle("invalid", bad);
-    });
-    el.addEventListener("blur", function () {
-        const t = normalizeTime(el.value);
-        if (t === null) { el.classList.add("invalid"); return; }
-        el.value = t;
+        if (picker.value) { el.value = picker.value.slice(0, 5); sync(); }
     });
 });
 
@@ -658,7 +705,8 @@ async function saveSchedule() {
     let badTime = false;
     document.querySelectorAll(".v2-time").forEach(function (el) {
         const t = normalizeTime(el.value);
-        if (t === null) { el.classList.add("invalid"); badTime = true; } else { el.value = t; }
+        const box = el.parentNode.querySelector(".v2-time-box");
+        if (t === null) { badTime = true; if (box) box.classList.add("invalid"); } else { el.value = t; }
     });
     if (badTime) {
         showToast(getLang() === "id" ? "Format jam tidak valid. Contoh: 07:15" : "Invalid time. Example: 07:15", "error");

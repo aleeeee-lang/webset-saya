@@ -2393,3 +2393,12 @@ html[data-theme="dark"] .schedule-day-pill:has(input:checked){background:rgba(19
 .v2-time-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#3F6212;background:#EEF7D4;pointer-events:none}
 .v2-time-picker{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;opacity:0;cursor:pointer;border:0;padding:0;margin:0}
 html[data-theme="dark"] .v2-time-btn{color:#C6F432;background:rgba(198,244,50,.12)}
+.v2-time-box{display:flex!important;align-items:center;gap:2px;width:100%;box-sizing:border-box;padding:0 52px 0 12px!important;min-height:46px;cursor:text}
+.v2-time-seg{width:2.4em;border:0!important;background:transparent!important;outline:none;padding:6px 4px!important;margin:0;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:inherit;font-variant-numeric:tabular-nums;border-radius:8px;box-shadow:none!important}
+.v2-time-seg:focus{background:#EEF7D4!important}
+.v2-time-seg::placeholder{color:#A9ACC6}
+.v2-time-colon{font-weight:800;font-size:16px;color:#8A8FA8}
+.v2-time-box.invalid{border-color:#DC2626!important;box-shadow:0 0 0 3px rgba(220,38,38,.15)!important}
+html[data-theme="dark"] .v2-time-seg{color:#EDEDED!important}
+html[data-theme="dark"] .v2-time-seg:focus{background:rgba(198,244,50,.14)!important}
+html[data-theme="dark"] .v2-time-seg::placeholder{color:#636366}

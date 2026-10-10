@@ -2346,3 +2346,28 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
 .calendar-days span.has-event{position:relative}
 .calendar-days span.has-event::after{content:"";position:absolute;bottom:3px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#0891B2;box-shadow:0 0 0 1.5px #fff}
 html[data-theme="dark"] .calendar-days span.has-event::after{background:#22D3EE;box-shadow:0 0 0 1.5px #121212}
+
+/* ===== V2 grade card ===== */
+.v2-grade{display:flex;align-items:center;gap:14px;background:#fff;border-radius:22px;padding:14px 16px}
+.v2-grade-ic{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;background:#DAF3F7;color:#0E7490}
+.v2-grade-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.v2-grade-main strong{font-size:15px;font-weight:700;color:#14162B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:capitalize}
+.v2-grade-main>span{font-size:12px;color:#4A4F6A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v2-grade-bar{height:6px;border-radius:999px;background:#EEEEF3;margin-top:5px;overflow:hidden}
+.v2-grade-bar i{display:block;height:100%;border-radius:999px;background:#0891B2}
+.v2-grade-score{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;line-height:1}
+.v2-grade-score b{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;color:#14162B}
+.v2-grade-score small{font-size:11px;font-weight:600;color:#8A8FA8;margin-top:3px}
+.v2-trend{font-style:normal;font-size:11px;font-weight:800;margin-top:6px;padding:2px 7px;border-radius:999px}
+.v2-trend.up{background:#DDF5E4;color:#166534}.v2-trend.down{background:#ECEDF2;color:#B91C1C}
+.v2-grade.good .v2-grade-ic{background:#EEF7D4;color:#3F6212}.v2-grade.good .v2-grade-bar i{background:#14162B}
+.v2-grade.ok .v2-grade-ic{background:#F4EED9;color:#92400E}.v2-grade.ok .v2-grade-bar i{background:#F59E0B}
+.v2-grade.low .v2-grade-ic{background:#ECEDF2;color:#B91C1C}.v2-grade.low .v2-grade-bar i{background:#DC2626}
+html[data-theme="dark"] .v2-grade{background:#121212}
+html[data-theme="dark"] .v2-grade-main strong,html[data-theme="dark"] .v2-grade-score b{color:#EDEDED}
+html[data-theme="dark"] .v2-grade-main>span{color:#9A9A9F}
+html[data-theme="dark"] .v2-grade-bar{background:#242424}
+html[data-theme="dark"] .v2-grade.good .v2-grade-ic{background:rgba(198,244,50,.12);color:#C6F432}html[data-theme="dark"] .v2-grade.good .v2-grade-bar i{background:#C6F432}
+html[data-theme="dark"] .v2-grade.ok .v2-grade-ic{background:rgba(251,191,36,.13);color:#FCD34D}html[data-theme="dark"] .v2-grade.ok .v2-grade-bar i{background:#FBBF24}
+html[data-theme="dark"] .v2-grade.low .v2-grade-ic{background:rgba(248,113,113,.13);color:#FCA5A5}html[data-theme="dark"] .v2-grade.low .v2-grade-bar i{background:#F87171}
+html[data-theme="dark"] .v2-trend.up{background:rgba(74,222,128,.13);color:#86EFAC}html[data-theme="dark"] .v2-trend.down{background:rgba(248,113,113,.13);color:#FCA5A5}

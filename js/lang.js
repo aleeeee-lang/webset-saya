@@ -828,4 +828,20 @@ Object.assign(translations, {
     home_menu_goals: { en: "Goals", id: "Target belajar" }
 });
 
+// Shared grade card used on Absensi Saya and the parent portal.
+function gradeCardHTML(g, trendHtml) {
+    const esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+    const score = Number(g.score) || 0;
+    const tier = score >= 85 ? "good" : score >= 70 ? "ok" : "low";
+    const shown = Number.isInteger(score) ? String(score) : score.toFixed(1);
+    const subject = (g.subject || "-").trim();
+    return '<div class="v2-grade ' + tier + '">' +
+        '<span class="v2-grade-ic">' + esc(subject.charAt(0).toUpperCase()) + '</span>' +
+        '<div class="v2-grade-main"><strong>' + esc(subject) + '</strong>' +
+        '<span>' + esc(g.period || "") + (g.note ? " · " + esc(g.note) : "") + '</span>' +
+        '<div class="v2-grade-bar"><i style="width:' + Math.max(0, Math.min(score, 100)) + '%"></i></div></div>' +
+        '<div class="v2-grade-score"><b>' + esc(shown) + '</b><small>/100</small>' + (trendHtml || "") + '</div>' +
+        '</div>';
+}
+
 document.addEventListener("DOMContentLoaded", applyLang);

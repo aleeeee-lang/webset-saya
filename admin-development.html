@@ -245,7 +245,7 @@ async function addGrade() {
     const note = document.getElementById("gradeNote").value.trim();
     const btn = document.getElementById("addGradeBtn");
 
-    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score)) {
+    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score) || score < 0 || score > 100) {
         showToast(translations.toast_enter_valid_score[lang], "error");
         return;
     }

@@ -299,7 +299,7 @@ async function addTeacherGrade() {
         return;
     }
 
-    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score)) {
+    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score) || score < 0 || score > 100) {
         showToast(translations.toast_enter_valid_score[lang], "error");
         return;
     }

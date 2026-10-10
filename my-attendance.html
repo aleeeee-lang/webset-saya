@@ -466,23 +466,11 @@ function renderDevGrades() {
         let trendHtml = "";
         if (prev) {
             const delta = Number(g.score) - Number(prev.score);
-            if (delta > 0) trendHtml = `<span style="color:#22a866;font-size:11px;font-weight:700">▲ +${delta.toFixed(1)}</span>`;
-            else if (delta < 0) trendHtml = `<span style="color:#ef4444;font-size:11px;font-weight:700">▼ ${delta.toFixed(1)}</span>`;
+            if (delta > 0) trendHtml = `<em class="v2-trend up">▲ ${delta.toFixed(0)}</em>`;
+            else if (delta < 0) trendHtml = `<em class="v2-trend down">▼ ${Math.abs(delta).toFixed(0)}</em>`;
         }
 
-        return `
-            <div class="activity-card">
-                <div class="activity-status-icon dev-grade">${Number(g.score).toFixed(0)}</div>
-                <div class="activity-content">
-                    <strong>${g.subject}</strong>
-                    <span>${g.period}${g.note ? " · " + g.note : ""}</span>
-                </div>
-                <div style="text-align:right;flex-shrink:0">
-                    <div style="font-weight:700;color:#20243a">${Number(g.score)}</div>
-                    ${trendHtml}
-                </div>
-            </div>
-        `;
+        return gradeCardHTML(g, trendHtml);
     }).join("");
 }
 

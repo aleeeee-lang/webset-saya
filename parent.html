@@ -272,17 +272,7 @@ async function renderPDevelopment(childId) {
 
         const sorted = grades.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5);
 
-        gradesListEl.innerHTML = sorted.map(function (g) {
-            return `
-                <div class="activity-card">
-                    <div class="activity-status-icon dev-grade">${Number(g.score).toFixed(0)}</div>
-                    <div class="activity-content">
-                        <strong>${g.subject}</strong>
-                        <span>${g.period}${g.note ? " · " + g.note : ""}</span>
-                    </div>
-                </div>
-            `;
-        }).join("");
+        gradesListEl.innerHTML = sorted.map(function (g) { return gradeCardHTML(g, ""); }).join("");
     }
 
     const actListEl = document.getElementById("pActivitiesList");

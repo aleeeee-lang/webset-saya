@@ -35,7 +35,7 @@ const translations = {
     btn_take_photo: { en: "Take Photo", id: "Ambil Foto" },
     face_loading: { en: "Loading face detector...", id: "Memuat pendeteksi wajah..." },
     face_detected: { en: "Face detected. You can take the photo.", id: "Wajah terdeteksi. Kamu bisa ambil foto." },
-    face_not_detected: { en: "Align your face in the frame.", id: "Posisikan wajahmu di dalam bingkai." },
+    face_not_detected: { en: "Face the camera.", id: "Hadapkan wajahmu ke kamera." },
     face_unavailable: { en: "Face detection unavailable, you can still take a photo.", id: "Pendeteksi wajah tidak tersedia, kamu tetap bisa ambil foto." },
     face_liveness_wait: { en: "Face detected. You must blink to verify it's really you.", id: "Wajah terdeteksi. Wajib kedipkan mata dulu untuk verifikasi." },
     face_liveness_passed: { en: "Blink verified! You can take the photo.", id: "Berhasil berkedip! Kamu bisa ambil foto." },

@@ -2375,3 +2375,6 @@ html[data-theme="dark"] .v2-trend.up{background:rgba(74,222,128,.13);color:#86EF
 /* Camera hint: small one-line pill at the top so it doesn't cover the face */
 .v2-cam #faceStatus{top:12px;bottom:auto;left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);padding:5px 12px;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(0,0,0,.18)}
 html[data-theme="dark"] .v2-cam #faceStatus{background:rgba(255,255,255,.9)}
+/* Smaller camera hint; hide the guide frame and face box once the camera is live */
+.v2-cam #faceStatus{top:10px;padding:3px 9px;font-size:10px;font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.v2-cam video[style*="block"]~.v2-cam-frame,.v2-cam video[style*="block"]~#faceBoxCanvas{display:none!important}

@@ -2295,3 +2295,17 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   .v2-side-nav a.on{height:38px}
   .v2-side-sep{margin:5px 6px}
 }
+
+/* Sidebar scrollbar like WhatsApp: always visible, slim rounded thumb, no track */
+@media (min-width:1024px){
+  .v2-side-nav{scrollbar-width:thin;scrollbar-color:#C5CBD3 transparent}
+  .v2-side-nav:hover{scrollbar-color:#A9ACC6 transparent}
+  .v2-side-nav::-webkit-scrollbar{width:8px}
+  .v2-side-nav::-webkit-scrollbar-track{background:transparent;margin:4px 0}
+  .v2-side-nav::-webkit-scrollbar-thumb{background:#C5CBD3;border-radius:999px;border:2px solid transparent;background-clip:padding-box;min-height:40px}
+  .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#A9ACC6;background-clip:padding-box}
+  html[data-theme="dark"] .v2-side-nav{scrollbar-color:#48484A transparent}
+  html[data-theme="dark"] .v2-side-nav:hover{scrollbar-color:#636366 transparent}
+  html[data-theme="dark"] .v2-side-nav::-webkit-scrollbar-thumb{background:#48484A;background-clip:padding-box}
+  html[data-theme="dark"] .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#636366;background-clip:padding-box}
+}

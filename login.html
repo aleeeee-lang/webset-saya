@@ -53,6 +53,24 @@ html[data-theme="dark"] .login-btn { background: #262628; }
 html[data-theme="dark"] .login-btn.plain { background: transparent; color: #EDEDED; border-color: #2C2C2E; }
 html[data-theme="dark"] .lg-forgot { color: #C6F432; }
 html[data-theme="dark"] #forgotPanel { border-color: #242424; }
+
+/* Intro animation for the login headline */
+.lg-word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.lg-word > span { display: inline-block; transform: translateY(105%); opacity: 0; }
+.lg-anim .lg-word > span { animation: lgUp .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--i) * 90ms + 150ms); }
+.lg-hl { position: relative; display: inline-block; }
+.lg-hl::after { content: ""; position: absolute; left: 0; right: 0; bottom: -.06em; height: .13em; border-radius: 999px; background: #C6F432; transform: scaleX(0); transform-origin: left; z-index: -1; }
+.lg-anim .lg-hl::after { animation: lgSweep .6s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--hl, 700ms); }
+#lgTitle { position: relative; z-index: 0; }
+.lg-fade { opacity: 0; transform: translateY(10px); }
+.lg-anim .lg-fade { animation: lgFade .6s ease forwards; animation-delay: var(--d, 0ms); }
+@keyframes lgUp { to { transform: translateY(0); opacity: 1; } }
+@keyframes lgSweep { to { transform: scaleX(1); } }
+@keyframes lgFade { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .lg-word > span, .lg-fade { transform: none !important; opacity: 1 !important; animation: none !important; }
+  .lg-hl::after { transform: scaleX(1) !important; animation: none !important; }
+}
 </style>
 </head>
 
@@ -60,15 +78,15 @@ html[data-theme="dark"] #forgotPanel { border-color: #242424; }
 
 <div class="lg">
     <section class="lg-top">
-        <div class="lg-brand-row"><div class="lg-brand"><span class="lg-logo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>Attendreem</div><div class="lg-lang" role="group" aria-label="Language"><button type="button" data-lang="id" onclick="setLang('id');lgLangUI()">ID</button><button type="button" data-lang="en" onclick="setLang('en');lgLangUI()">EN</button></div></div>
-        <div class="lg-tiles" aria-hidden="true">
+        <div class="lg-brand-row"><div class="lg-brand"><span class="lg-logo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>Attendreem</div><div class="lg-lang" role="group" aria-label="Language"><button type="button" data-lang="id" onclick="setLang('id');lgLangUI();lgIntro()">ID</button><button type="button" data-lang="en" onclick="setLang('en');lgLangUI();lgIntro()">EN</button></div></div>
+        <div class="lg-tiles" aria-hidden="true" id="lgTiles">
             <div class="lg-tile"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span data-i18n="login_tile_checkin">Absen</span></div>
             <div class="lg-tile"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg><span data-i18n="login_tile_savings">Tabungan</span></div>
             <div class="lg-tile lime"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span data-i18n="login_tile_goals">Target</span></div>
         </div>
         <div>
-            <h1><span data-i18n="login_title_1">Absensi sekolah,</span><br><span data-i18n="login_title_2">tanpa kertas.</span></h1>
-            <p class="lg-sub" data-i18n="login_sub">Masuk dengan akun dari sekolahmu.</p>
+            <h1 id="lgTitle"><span data-i18n="login_title_1">Absensi sekolah,</span><br><span data-i18n="login_title_2" class="lg-hl">tanpa kertas.</span></h1>
+            <p class="lg-sub lg-fade" data-i18n="login_sub">Masuk dengan akun dari sekolahmu.</p>
         </div>
     </section>
 
@@ -123,6 +141,42 @@ function lgLangUI() {
     document.querySelectorAll(".lg-lang button").forEach(function (b) { b.classList.toggle("on", b.dataset.lang === lang); });
 }
 lgLangUI();
+
+function lgIntro() {
+    const title = document.getElementById("lgTitle");
+    if (!title) return;
+    title.classList.remove("lg-anim");
+    let i = 0;
+    title.querySelectorAll("[data-i18n]").forEach(function (line) {
+        const words = (line.textContent || "").trim().split(/\s+/);
+        line.innerHTML = "";
+        words.forEach(function (w, k) {
+            const outer = document.createElement("span");
+            outer.className = "lg-word";
+            const inner = document.createElement("span");
+            inner.textContent = w;
+            inner.style.setProperty("--i", i++);
+            outer.appendChild(inner);
+            line.appendChild(outer);
+            if (k < words.length - 1) line.appendChild(document.createTextNode(" "));
+        });
+    });
+    title.style.setProperty("--hl", (i * 90 + 450) + "ms");
+    const sub = document.querySelector(".lg-sub");
+    if (sub) sub.style.setProperty("--d", (i * 90 + 500) + "ms");
+    document.querySelectorAll("#lgTiles .lg-tile").forEach(function (t, k) {
+        t.classList.add("lg-fade");
+        t.style.setProperty("--d", (k * 90) + "ms");
+        t.parentNode.classList.remove("lg-anim");
+    });
+    void title.offsetWidth;
+    title.classList.add("lg-anim");
+    if (sub) { sub.parentNode.classList.remove("lg-anim"); void sub.offsetWidth; sub.parentNode.classList.add("lg-anim"); }
+    const tiles = document.getElementById("lgTiles");
+    if (tiles) { void tiles.offsetWidth; tiles.classList.add("lg-anim"); }
+}
+
+document.addEventListener("DOMContentLoaded", function () { setTimeout(lgIntro, 0); });
 
 if (new URLSearchParams(window.location.search).get("inactive") === "1") {
     showToast(lgT("login_inactive"), "error");

@@ -6,10 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Schedule - Attendreem</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="style.css?v=20261010c">
-<script src="js/theme.js?v=20261010c"></script>
-<script src="js/lang.js?v=20261010c"></script>
-<script src="js/toast.js?v=20261010c"></script>
+<link rel="stylesheet" href="style.css?v=20261010d">
+<script src="js/theme.js?v=20261010d"></script>
+<script src="js/lang.js?v=20261010d"></script>
+    <script src="js/timepicker.js?v=20261010d"></script>
+<script src="js/toast.js?v=20261010d"></script>
 </head>
 
 <body>
@@ -158,8 +159,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261010c"></script>
-<script src="js/auth.js?v=20261010c"></script>
+<script src="js/supabase.js?v=20261010d"></script>
+<script src="js/auth.js?v=20261010d"></script>
 
 <script>
 
@@ -629,17 +630,12 @@ document.querySelectorAll(".v2-time").forEach(function (el) {
     box.addEventListener("click", function (e) { if (e.target === box) (hh.value.length < 2 ? hh : mm).focus(); });
     wrap.appendChild(box);
 
-    const btn = document.createElement("span");
+    const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "v2-time-btn";
-    btn.setAttribute("aria-hidden", "true");
+    btn.setAttribute("aria-label", getLang() === "id" ? "Pilih jam" : "Pick a time");
     btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
-    const picker = document.createElement("input");
-    picker.type = "time";
-    picker.className = "v2-time-picker";
-    picker.tabIndex = -1;
-    picker.setAttribute("aria-label", getLang() === "id" ? "Pilih jam" : "Pick a time");
     wrap.appendChild(btn);
-    wrap.appendChild(picker);
 
     const nativeValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
     function sync() {
@@ -691,13 +687,8 @@ document.querySelectorAll(".v2-time").forEach(function (el) {
         });
     });
 
-    picker.addEventListener("click", function () {
-        const t = normalizeTime(nativeValue.get.call(el));
-        if (t) picker.value = t;
-        if (typeof picker.showPicker === "function") { try { picker.showPicker(); } catch (e) {} }
-    });
-    picker.addEventListener("change", function () {
-        if (picker.value) { el.value = picker.value.slice(0, 5); sync(); }
+    btn.addEventListener("click", function () {
+        openClockPicker(normalizeTime(nativeValue.get.call(el)) || "", function (v) { el.value = v; sync(); });
     });
 });
 

@@ -626,10 +626,26 @@ document.querySelectorAll(".v2-time").forEach(function (el) {
         if (picker.value) { el.value = picker.value.slice(0, 5); el.classList.remove("invalid"); }
     });
 
-    el.addEventListener("input", function () {
-        const clean = el.value.replace(/[^0-9:.]/g, "").slice(0, 5);
-        if (clean !== el.value) el.value = clean;
-        el.classList.remove("invalid");
+    el.addEventListener("input", function (e) {
+        const deleting = e && e.inputType && e.inputType.indexOf("delete") === 0;
+        const raw = el.value.replace(/[.,]/g, ":").replace(/[^0-9:]/g, "");
+        let hh = "", mm = "";
+        if (raw.indexOf(":") >= 0) {
+            const parts = raw.split(":");
+            hh = parts[0].slice(0, 2);
+            if (hh.length === 1) hh = "0" + hh;
+            mm = parts.slice(1).join("").slice(0, 2);
+        } else {
+            let d = raw.slice(0, 4);
+            if (d.length && Number(d[0]) > 2) d = ("0" + d).slice(0, 4);
+            hh = d.slice(0, 2);
+            mm = d.slice(2);
+        }
+        let out = hh;
+        if (mm.length || (hh.length === 2 && !deleting)) out = hh + ":" + mm;
+        if (out !== el.value) el.value = out;
+        const bad = (hh.length === 2 && Number(hh) > 23) || (mm.length === 2 && Number(mm) > 59) || (mm.length === 1 && Number(mm) > 5);
+        el.classList.toggle("invalid", bad);
     });
     el.addEventListener("blur", function () {
         const t = normalizeTime(el.value);

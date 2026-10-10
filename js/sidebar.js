@@ -22,7 +22,8 @@
         log: '<path d="M12 8v5l3 2"/><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 4v4.5H8"/>',
         grad: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
         menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
-        check: '<path d="M5 13l4 4L19 7"/>'
+        check: '<path d="M5 13l4 4L19 7"/>',
+        grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
     };
     function ic(n, w) {
         return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="' + (w || 1.9) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>';
@@ -54,14 +55,21 @@
             ["information.html", "info", "Information", "Informasi"]
         ],
         admin: [
-            ["settings.html", "home", "Admin Panel", "Panel admin"],
+            { label: ["General", "Menu umum"] },
+            ["index.html", "home", "Home", "Beranda"],
+            ["attendance.html", "cam", "Check in", "Absensi"],
+            ["dashboard.html", "bar", "Dashboard", "Dasbor"],
+            ["history.html", "wallet", "Savings", "Tabungan"],
+            ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
+            { label: ["Manage", "Kelola"] },
+            ["settings.html", "grid", "Admin Panel", "Panel admin"],
             ["admin-students.html", "users", "Students", "Kelola siswa"],
             ["admin-teachers.html", "user", "Teachers", "Kelola guru"],
             ["admin-parents.html", "users", "Parents", "Akun orang tua"],
             ["admin-attendance.html", "cam", "Attendance", "Kelola absensi"],
             ["admin-schedule.html", "clock", "Schedule", "Jadwal absen"],
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],
-            ["admin-savings.html", "wallet", "Savings", "Tabungan"],
+            ["admin-savings.html", "wallet", "Manage Savings", "Kelola tabungan"],
             ["admin-leave.html", "doc", "Leave Requests", "Persetujuan izin"],
             ["admin-development.html", "grad", "Development", "Perkembangan siswa"],
             null,
@@ -89,6 +97,7 @@
         var html = '<div class="v2-side-brand"><span>' + ic("check", 3) + '</span>Attendreem</div><nav class="v2-side-nav" aria-label="Menu">';
         MENUS[role].forEach(function (m) {
             if (!m) { html += '<div class="v2-side-sep"></div>'; return; }
+            if (m.label) { html += '<div class="v2-side-label">' + (id ? m.label[1] : m.label[0]) + '</div>'; return; }
             var on = m[0] === page;
             html += '<a href="' + m[0] + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + ic(m[1]) + '<span>' + (id ? m[3] : m[2]) + '</span></a>';
         });

@@ -94,7 +94,7 @@
         var p = profile();
         var role = MENUS[p.role] ? p.role : guessRole();
         var id = lang() === "id";
-        var html = '<div class="v2-side-brand"><span>' + ic("check", 3) + '</span>Attendreem</div><nav class="v2-side-nav" aria-label="Menu">';
+        var html = '<div class="v2-side-brand"><img src="favicon.svg?v=2" alt="" width="38" height="38">Attendreem</div><nav class="v2-side-nav" aria-label="Menu">';
         MENUS[role].forEach(function (m) {
             if (!m) { html += '<div class="v2-side-sep"></div>'; return; }
             if (m.label) { html += '<div class="v2-side-label">' + (id ? m.label[1] : m.label[0]) + '</div>'; return; }

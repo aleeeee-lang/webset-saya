@@ -67,6 +67,9 @@ html[data-theme="dark"] #forgotPanel { border-color: #242424; }
 @keyframes lgUp { to { transform: translateY(0); opacity: 1; } }
 @keyframes lgSweep { to { transform: scaleX(1); } }
 @keyframes lgFade { to { opacity: 1; transform: none; } }
+.lg-anim .lg-tile.lg-fade.lg-tile-in { animation: lgTile 1.4s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d, 0ms); }
+.lg-tile.lg-fade.lg-tile-in { transform: translateY(18px) scale(.96); }
+@keyframes lgTile { to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .lg-word > span, .lg-fade { transform: none !important; opacity: 1 !important; animation: none !important; }
   .lg-hl::after { transform: scaleX(1) !important; animation: none !important; }
@@ -166,7 +169,8 @@ function lgIntro() {
     if (sub) sub.style.setProperty("--d", (i * 220 + 1500) + "ms");
     document.querySelectorAll("#lgTiles .lg-tile").forEach(function (t, k) {
         t.classList.add("lg-fade");
-        t.style.setProperty("--d", (k * 200) + "ms");
+        t.style.setProperty("--d", (k * 450) + "ms");
+        t.classList.add("lg-tile-in");
         t.parentNode.classList.remove("lg-anim");
     });
     void title.offsetWidth;

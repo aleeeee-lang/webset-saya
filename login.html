@@ -57,13 +57,13 @@ html[data-theme="dark"] #forgotPanel { border-color: #242424; }
 /* Intro animation for the login headline */
 .lg-word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
 .lg-word > span { display: inline-block; transform: translateY(105%); opacity: 0; }
-.lg-anim .lg-word > span { animation: lgUp .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--i) * 90ms + 150ms); }
+.lg-anim .lg-word > span { animation: lgUp 1.1s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--i) * 220ms + 500ms); }
 .lg-hl { position: relative; display: inline-block; }
 .lg-hl::after { content: ""; position: absolute; left: 0; right: 0; bottom: -.06em; height: .13em; border-radius: 999px; background: #C6F432; transform: scaleX(0); transform-origin: left; z-index: -1; }
-.lg-anim .lg-hl::after { animation: lgSweep .6s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--hl, 700ms); }
+.lg-anim .lg-hl::after { animation: lgSweep 1s cubic-bezier(.4,0,.2,1) forwards; animation-delay: var(--hl, 700ms); }
 #lgTitle { position: relative; z-index: 0; }
 .lg-fade { opacity: 0; transform: translateY(10px); }
-.lg-anim .lg-fade { animation: lgFade .6s ease forwards; animation-delay: var(--d, 0ms); }
+.lg-anim .lg-fade { animation: lgFade .9s ease forwards; animation-delay: var(--d, 0ms); }
 @keyframes lgUp { to { transform: translateY(0); opacity: 1; } }
 @keyframes lgSweep { to { transform: scaleX(1); } }
 @keyframes lgFade { to { opacity: 1; transform: none; } }
@@ -161,12 +161,12 @@ function lgIntro() {
             if (k < words.length - 1) line.appendChild(document.createTextNode(" "));
         });
     });
-    title.style.setProperty("--hl", (i * 90 + 450) + "ms");
+    title.style.setProperty("--hl", (i * 220 + 1100) + "ms");
     const sub = document.querySelector(".lg-sub");
-    if (sub) sub.style.setProperty("--d", (i * 90 + 500) + "ms");
+    if (sub) sub.style.setProperty("--d", (i * 220 + 1500) + "ms");
     document.querySelectorAll("#lgTiles .lg-tile").forEach(function (t, k) {
         t.classList.add("lg-fade");
-        t.style.setProperty("--d", (k * 90) + "ms");
+        t.style.setProperty("--d", (k * 200) + "ms");
         t.parentNode.classList.remove("lg-anim");
     });
     void title.offsetWidth;

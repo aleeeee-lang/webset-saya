@@ -2309,3 +2309,30 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   html[data-theme="dark"] .v2-side-nav::-webkit-scrollbar-thumb{background:#48484A;background-clip:padding-box}
   html[data-theme="dark"] .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#636366;background-clip:padding-box}
 }
+
+/* Sidebar scrollbar v3: WhatsApp-like pill, no arrow buttons.
+   Chrome/Edge ignore ::-webkit-scrollbar when scrollbar-width/color are set,
+   so the standard properties are only applied in Firefox. */
+@media (min-width:1024px){
+  .v2-side-nav,.v2-side-nav:hover,html[data-theme="dark"] .v2-side-nav,html[data-theme="dark"] .v2-side-nav:hover{scrollbar-width:auto;scrollbar-color:auto}
+  .v2-side-nav::-webkit-scrollbar{width:6px}
+  .v2-side-nav::-webkit-scrollbar-button{display:none;width:0;height:0}
+  .v2-side-nav::-webkit-scrollbar-track{background:transparent;margin:6px 0}
+  .v2-side-nav::-webkit-scrollbar-thumb{background:#C5CBD3;border:0;border-radius:999px;min-height:32px}
+  .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#A9ACC6}
+  html[data-theme="dark"] .v2-side-nav::-webkit-scrollbar-thumb{background:#48484A}
+  html[data-theme="dark"] .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#636366}
+  .v2-side{padding:20px 14px}
+  .v2-side-brand{padding-bottom:14px}
+  .v2-side-nav{gap:1px}
+  .v2-side-nav a{height:36px}
+  .v2-side-nav a.on{height:40px}
+  .v2-side-sep{margin:6px}
+  .v2-side-user{margin-top:10px;padding:10px}
+}
+@supports (-moz-appearance:none){
+  @media (min-width:1024px){
+    .v2-side-nav{scrollbar-width:thin!important;scrollbar-color:#C5CBD3 transparent!important}
+    html[data-theme="dark"] .v2-side-nav{scrollbar-color:#48484A transparent!important}
+  }
+}

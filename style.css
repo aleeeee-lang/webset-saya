@@ -2343,3 +2343,6 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   html[data-theme="dark"] .v2-side-label{color:#636366}
   html[data-theme="dark"] .v2-side-label:not(:first-child){border-color:#242424}
 }
+.calendar-days span.has-event{position:relative}
+.calendar-days span.has-event::after{content:"";position:absolute;bottom:3px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#0891B2;box-shadow:0 0 0 1.5px #fff}
+html[data-theme="dark"] .calendar-days span.has-event::after{background:#22D3EE;box-shadow:0 0 0 1.5px #121212}

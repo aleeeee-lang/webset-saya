@@ -306,12 +306,12 @@ function renderCalendar() {
         const isHoliday = holidaySet.has(key);
         const eventType = holidayTypeByDate[key] || "holiday";
 
+        // The student's own attendance status always wins; an event on the
+        // same date is then shown as a small dot instead of hiding the status.
+        const statusCls = { Izin: "izin-day", Sakit: "sakit-day", Alpa: "alpa-day", Hadir: "hadir-day" }[status] || "";
         let cls = "";
-        if (isHoliday) cls = eventType + "-day";
-        else if (status === "Izin") cls = "izin-day";
-        else if (status === "Sakit") cls = "sakit-day";
-        else if (status === "Alpa") cls = "alpa-day";
-        else if (status === "Hadir") cls = "hadir-day";
+        if (statusCls) cls = statusCls + (isHoliday ? " has-event" : "");
+        else if (isHoliday) cls = eventType + "-day";
 
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 

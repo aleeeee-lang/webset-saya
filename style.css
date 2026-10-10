@@ -2272,3 +2272,26 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   /* Tabungan & other wide cards */
   body.has-side .notification-panel{right:0}
 }
+
+/* Sidebar: slim, quiet scrollbar; scroll only the menu list, keep the user card pinned */
+@media (min-width:1024px){
+  .v2-side{overflow:hidden}
+  .v2-side-nav{flex:1;min-height:0;overflow-y:auto;margin:0 -8px;padding:0 8px;scrollbar-width:thin;scrollbar-color:transparent transparent}
+  .v2-side-nav:hover{scrollbar-color:#D5D7E6 transparent}
+  .v2-side-nav::-webkit-scrollbar{width:6px}
+  .v2-side-nav::-webkit-scrollbar-track{background:transparent}
+  .v2-side-nav::-webkit-scrollbar-thumb{background:transparent;border-radius:999px}
+  .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#D5D7E6}
+  html[data-theme="dark"] .v2-side-nav:hover{scrollbar-color:#3A3A3C transparent}
+  html[data-theme="dark"] .v2-side-nav:hover::-webkit-scrollbar-thumb{background:#3A3A3C}
+  .v2-side-nav a{height:38px}
+  .v2-side-nav a.on{height:42px}
+  .v2-side-user{margin-top:12px}
+}
+@media (min-width:1024px) and (max-height:820px){
+  .v2-side{padding:18px 14px}
+  .v2-side-brand{padding-bottom:12px}
+  .v2-side-nav a{height:34px;font-size:13px}
+  .v2-side-nav a.on{height:38px}
+  .v2-side-sep{margin:5px 6px}
+}

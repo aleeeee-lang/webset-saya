@@ -365,6 +365,7 @@
     ];
     function mountMobileButton() {
         if (document.querySelector(".v2-msearch")) return;
+        if (!/^(index|teacher|parent)\.html$/.test(page)) return;   // phone: only on each role's home
         if (document.querySelector(".v2-teach-top")) {
             var f = document.createElement("button");
             f.type = "button";

@@ -860,4 +860,14 @@ function gradeCardHTML(g, trendHtml) {
         '</div>';
 }
 
+Object.assign(translations, {
+    btn_delete_photo: { en: "Remove current photo", id: "Hapus foto saat ini" },
+    confirm_delete_photo_title: { en: "Remove profile photo?", id: "Hapus foto profil?" },
+    confirm_delete_photo_text: { en: "Your initial will be shown instead.", id: "Nanti yang tampil inisial namamu." },
+    toast_photo_removed: { en: "Profile photo removed.", id: "Foto profil dihapus." },
+    photo_menu_title: { en: "Profile photo", id: "Foto profil" },
+    photo_from_gallery: { en: "Choose from gallery", id: "Pilih dari galeri" },
+    photo_take: { en: "Take photo", id: "Ambil foto" }
+});
+
 document.addEventListener("DOMContentLoaded", applyLang);

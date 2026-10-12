@@ -40,7 +40,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261012e";
+    s.src = "js/sidebar.js?v=20261012f";
     s.defer = true;
     document.head.appendChild(s);
 })();

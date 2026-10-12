@@ -2716,3 +2716,9 @@ html[data-theme="dark"] .ac-sheet-list button,html[data-theme="dark"] .ac-sheet-
 html[data-theme="dark"] .ac-sheet-list button.danger{color:#F87171}
 html[data-theme="dark"] .ac-sheet-list button:active,html[data-theme="dark"] .ac-sheet-cancel:active{background:#242426}
 html[data-theme="dark"] .ac-bar .ac-cancel{background:none;color:#fff}
+
+/* Calendar "today": ring only (no fill) so it never looks like a check-in */
+.v2-my .calendar-days span.today-day:not(.hadir-day):not(.izin-day):not(.sakit-day):not(.alpa-day){background:transparent!important;color:#14162B!important;font-weight:800;box-shadow:inset 0 0 0 2px #14162B!important;outline:none!important}
+.v2-my .calendar-days span.today-day.hadir-day,.v2-my .calendar-days span.today-day.izin-day,.v2-my .calendar-days span.today-day.sakit-day,.v2-my .calendar-days span.today-day.alpa-day{box-shadow:none!important;outline:2px solid #14162B!important;outline-offset:2px}
+html[data-theme="dark"] .v2-my .calendar-days span.today-day:not(.hadir-day):not(.izin-day):not(.sakit-day):not(.alpa-day){background:transparent!important;color:#C6F432!important;box-shadow:inset 0 0 0 2px #C6F432!important}
+html[data-theme="dark"] .v2-my .calendar-days span.today-day.hadir-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.izin-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.sakit-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.alpa-day{box-shadow:none!important;outline:2px solid #fff!important;outline-offset:2px}

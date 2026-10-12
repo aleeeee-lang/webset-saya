@@ -867,7 +867,15 @@ Object.assign(translations, {
     toast_photo_removed: { en: "Profile photo removed.", id: "Foto profil dihapus." },
     photo_menu_title: { en: "Profile photo", id: "Foto profil" },
     photo_from_gallery: { en: "Choose from gallery", id: "Pilih dari galeri" },
-    photo_take: { en: "Take photo", id: "Ambil foto" }
+    photo_take: { en: "Take photo", id: "Ambil foto" },
+    bio_add: { en: "Add bio", id: "Tulis bio" },
+    bio_edit: { en: "Edit bio", id: "Ubah bio" },
+    bio_title: { en: "Bio", id: "Bio" },
+    bio_hint: { en: "A short line about you: a motto, a goal, anything.", id: "Kalimat singkat tentang kamu: motto, cita-cita, atau apa aja." },
+    bio_placeholder: { en: "e.g. Future engineer 🚀", id: "cth. Calon insinyur 🚀" },
+    bio_saved: { en: "Bio saved.", id: "Bio disimpan." },
+    btn_cancel_plain: { en: "Cancel", id: "Batal" },
+    btn_save_plain: { en: "Save", id: "Simpan" }
 });
 
 document.addEventListener("DOMContentLoaded", applyLang);

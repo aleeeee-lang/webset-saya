@@ -9,12 +9,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=2">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
-<link rel="stylesheet" href="style.css?v=20261012f">
-<script src="js/theme.js?v=20261012f"></script>
-<script src="js/lang.js?v=20261012f"></script>
-<script src="js/toast.js?v=20261012f"></script>
-<script src="js/transition.js?v=20261012f"></script>
-<script src="js/scroll-pop.js?v=20261012f"></script>
+<link rel="stylesheet" href="style.css?v=20261012g">
+<script src="js/theme.js?v=20261012g"></script>
+<script src="js/lang.js?v=20261012g"></script>
+<script src="js/toast.js?v=20261012g"></script>
+<script src="js/transition.js?v=20261012g"></script>
+<script src="js/scroll-pop.js?v=20261012g"></script>
 </head>
 
 <body class="v2-page">
@@ -26,7 +26,8 @@
             <a href="settings.html" class="v2-avatar v2-avatar-lg" id="myAvatar" aria-label="Settings">?</a>
             <div class="v2-my-name">
                 <h1 id="myName">&nbsp;</h1>
-                <p id="myMeta">&nbsp;</p>
+                <button type="button" class="v2-my-bio empty" id="myBio"></button>
+                <p id="myMeta" class="v2-my-meta"></p>
             </div>
             <a href="settings.html" id="settingsGearBtn" class="v2-my-gear" aria-label="Settings">
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -191,8 +192,8 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261012f"></script>
-<script src="js/auth.js?v=20261012f"></script>
+<script src="js/supabase.js?v=20261012g"></script>
+<script src="js/auth.js?v=20261012g"></script>
 
 <script>
 function tr(key) {
@@ -200,18 +201,87 @@ function tr(key) {
     return (translations[key] && translations[key][lang]) || key;
 }
 
+const BIO_MAX = 80;
+let myUser = null, myBioText = "";
+
+function renderBio() {
+    const b = document.getElementById("myBio");
+    if (myBioText) {
+        b.textContent = myBioText;
+        b.classList.remove("empty");
+    } else {
+        b.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span></span>';
+        b.querySelector("span").textContent = tr("bio_add");
+        b.classList.add("empty");
+    }
+    b.setAttribute("aria-label", tr("bio_edit"));
+}
+
 async function loadMyProfile() {
     const user = await requireLogin();
     if (!user) return;
+    myUser = user;
     const { data: p } = await supabaseClient.from("profiles").select("*").eq("id", user.id).maybeSingle();
     const prof = p || {};
     const name = prof.name || user.email || "";
     document.getElementById("myName").textContent = name;
-    document.getElementById("myMeta").textContent = [prof.class, prof.nis ? "NIS " + prof.nis : ""].filter(Boolean).join(" · ") || user.email || "";
+    document.getElementById("myMeta").textContent = [prof.class, prof.nis ? "NIS " + prof.nis : ""].filter(Boolean).join(" · ");
+    myBioText = (prof.bio != null ? prof.bio : (user.user_metadata && user.user_metadata.bio)) || "";
+    renderBio();
     const av = document.getElementById("myAvatar");
     if (prof.avatar_url) av.innerHTML = '<img src="' + prof.avatar_url + '" alt="">';
     else av.textContent = (name.trim().charAt(0) || "?").toUpperCase();
 }
+
+async function saveBio(text) {
+    // Prefer the shared profiles.bio column; fall back to the user's own account data
+    // if that column hasn't been added yet (see profile_bio.sql).
+    const { error } = await supabaseClient.from("profiles").update({ bio: text || null }).eq("id", myUser.id);
+    if (!error) return null;
+    if (!/bio/i.test(error.message || "")) return error;
+    const r = await supabaseClient.auth.updateUser({ data: { bio: text || null } });
+    return r.error || null;
+}
+
+function openBioEditor() {
+    if (!myUser) return;
+    const w = document.createElement("div");
+    w.className = "ac-wrap ac-confirm v2-bio-sheet";
+    w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' +
+        '<div class="v2-bio-field"><textarea rows="3" maxlength="' + BIO_MAX + '"></textarea><span class="v2-bio-count"></span></div>' +
+        '<div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+    w.querySelector("b").textContent = tr("bio_title");
+    w.querySelector("small").textContent = tr("bio_hint");
+    w.querySelector(".ac-cancel").textContent = tr("btn_cancel_plain");
+    w.querySelector(".ac-ok").textContent = tr("btn_save_plain");
+    const ta = w.querySelector("textarea"), cnt = w.querySelector(".v2-bio-count"), ok = w.querySelector(".ac-ok");
+    ta.placeholder = tr("bio_placeholder");
+    ta.value = myBioText;
+    function upd() {
+        ta.value = ta.value.replace(/\n+/g, " ");
+        cnt.textContent = ta.value.length + "/" + BIO_MAX;
+        cnt.classList.toggle("near", ta.value.length >= BIO_MAX - 10);
+    }
+    ta.addEventListener("input", upd); upd();
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.classList.add("in"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); });
+    function close() { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); }
+    w.addEventListener("click", function (e) { if (e.target === w) close(); });
+    w.querySelector(".ac-cancel").addEventListener("click", close);
+    ta.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); if (e.key === "Enter") { e.preventDefault(); ok.click(); } });
+    ok.addEventListener("click", async function () {
+        const text = ta.value.trim().slice(0, BIO_MAX);
+        ok.disabled = true;
+        const err = await saveBio(text);
+        ok.disabled = false;
+        if (err) { showToast(tr("toast_save_failed") + err.message, "error"); return; }
+        myBioText = text;
+        renderBio();
+        close();
+        showToast(tr("bio_saved"), "success");
+    });
+}
+document.getElementById("myBio").addEventListener("click", openBioEditor);
 loadMyProfile();
 
 function renderScore(data) {

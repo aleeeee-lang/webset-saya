@@ -2722,3 +2722,22 @@ html[data-theme="dark"] .ac-bar .ac-cancel{background:none;color:#fff}
 .v2-my .calendar-days span.today-day.hadir-day,.v2-my .calendar-days span.today-day.izin-day,.v2-my .calendar-days span.today-day.sakit-day,.v2-my .calendar-days span.today-day.alpa-day{box-shadow:none!important;outline:2px solid #14162B!important;outline-offset:2px}
 html[data-theme="dark"] .v2-my .calendar-days span.today-day:not(.hadir-day):not(.izin-day):not(.sakit-day):not(.alpa-day){background:transparent!important;color:#C6F432!important;box-shadow:inset 0 0 0 2px #C6F432!important}
 html[data-theme="dark"] .v2-my .calendar-days span.today-day.hadir-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.izin-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.sakit-day,html[data-theme="dark"] .v2-my .calendar-days span.today-day.alpa-day{box-shadow:none!important;outline:2px solid #fff!important;outline-offset:2px}
+
+/* Profile bio (My Attendance hero) */
+.v2-my-bio{display:block;max-width:100%;margin:3px 0 0;padding:0;border:none;background:none;text-align:left;font-family:inherit;font-size:13px;line-height:1.35;font-weight:500;color:#DADCEE;cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.v2-my-bio:hover{color:#fff}
+.v2-my-bio.empty{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;margin-top:5px;border-radius:999px;background:rgba(198,244,50,.14);color:#C6F432;font-size:12px;font-weight:700}
+.v2-my-bio.empty:hover{background:rgba(198,244,50,.22);color:#C6F432}
+.v2-my-meta{margin:3px 0 0!important;font-size:11.5px!important;color:#8E92B0!important}
+.v2-my-meta:empty{display:none}
+html[data-theme="dark"] .v2-my-bio{color:#D1D1D6}
+html[data-theme="dark"] .v2-my-bio.empty{color:#C6F432}
+.v2-bio-field{position:relative}
+.v2-bio-field textarea{width:100%;box-sizing:border-box;resize:none;border:none;outline:none;border-radius:16px;background:#F3F3F7;padding:14px 14px 28px;font-family:inherit;font-size:15px;line-height:1.45;color:#14162B;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .15s}
+.v2-bio-field textarea:focus{box-shadow:inset 0 0 0 2px #14162B}
+.v2-bio-count{position:absolute;right:12px;bottom:9px;font-size:11.5px;font-weight:700;color:#8A8FA8}
+.v2-bio-count.near{color:#B45309}
+.v2-bio-sheet .ac-actions{grid-template-columns:1fr 1.4fr}
+html[data-theme="dark"] .v2-bio-field textarea{background:#242426;color:#EDEDED}
+html[data-theme="dark"] .v2-bio-field textarea:focus{box-shadow:inset 0 0 0 2px #C6F432}
+html[data-theme="dark"] .v2-bio-count.near{color:#FBBF24}

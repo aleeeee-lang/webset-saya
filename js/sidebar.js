@@ -1,6 +1,6 @@
 // Desktop sidebar (shown at >= 1024px via CSS). Phones keep the bottom nav.
 (function () {
-    if (window.self !== window.top) return;
+    var inFrame = window.self !== window.top;
     var page = (location.pathname.split("/").pop() || "index.html").replace(/\?.*$/, "");
     if (/^(login|reset-password)\.html$/.test(page)) return;
 
@@ -128,7 +128,7 @@
     }
 
 
-    /* ===== Sidebar search ===== */
+    /* ===== Search (desktop sidebar + phone sheet) ===== */
     var EXTRA = {
         all: [
             ["settings.html", "gear", "Settings", "Pengaturan", "profile profil foto avatar theme tema dark gelap terang language bahasa akun account"],
@@ -157,21 +157,18 @@
         "admin-attendance.html": "absen rekap kehadiran",
         "admin-broadcast.html": "notifikasi pesan kirim pengumuman"
     };
+    var SHORTCUTS = {
+        murid: [["attendance.html", "Absen", "Check in", "lime", "cam"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],
+        guru: [["teacher.html", "Absen kelas", "Class check-in", "lime", "cam"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
+        orangtua: [["parent.html", "Portal anak", "Child portal", "lime", "home"], ["calendar.html", "Kalender", "Calendar", "", "cal"], ["information.html", "Informasi", "Information", "cyan", "info"]],
+        admin: [["admin-students.html", "Kelola siswa", "Students", "lime", "users"], ["admin-schedule.html", "Jadwal absen", "Schedule", "", "clock"], ["admin-spp.html", "Kelola SPP", "SPP", "amber", "wallet"], ["admin-leave.html", "Persetujuan izin", "Leave", "red", "doc"], ["admin-broadcast.html", "Kirim notifikasi", "Notify", "cyan", "bell"]]
+    };
     function norm(t) { return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
     function esc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
     function hl(text, q) {
         var t = String(text || ""), i = norm(t).indexOf(norm(q));
         if (!q || i < 0) return esc(t);
         return esc(t.slice(0, i)) + "<mark>" + esc(t.slice(i, i + q.length)) + "</mark>" + esc(t.slice(i + q.length));
-    }
-    function featureList(role) {
-        var out = [];
-        (MENUS[role] || []).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
-            if (!m || m.label) return;
-            if (out.some(function (o) { return o[0] === m[0]; })) return;
-            out.push(m);
-        });
-        return out;
     }
     function db() { try { return typeof supabaseClient !== "undefined" ? supabaseClient : null; } catch (e) { return null; } }
     var uidCache = null;
@@ -182,62 +179,25 @@
         return c.auth.getSession().then(function (r) { uidCache = r && r.data && r.data.session ? r.data.session.user.id : null; return uidCache; }).catch(function () { return null; });
     }
     function likeSafe(q) { return q.replace(/[%_,()\\]/g, " ").trim(); }
+    function currentRole() { var p = profile(); return MENUS[p.role] ? p.role : guessRole(); }
 
-    function setupSearch(side, role, initial) {
-        var input = side.querySelector("#v2SearchInput");
-        if (!input) return;
+    function engine(role) {
         var id = lang() === "id";
-        var panel = document.getElementById("v2SearchPanel");
-        if (!panel) {
-            panel = document.createElement("div");
-            panel.id = "v2SearchPanel";
-            panel.className = "v2-search-panel";
-            panel.setAttribute("role", "listbox");
-            document.body.appendChild(panel);
-        }
-        var timer = null, seq = 0, active = 0, items = [];
-        function place() {
-            var r = input.closest("label").getBoundingClientRect();
-            panel.style.left = r.left + "px";
-            panel.style.top = (r.bottom + 8) + "px";
-        }
-        function close() { panel.classList.remove("open"); }
-        function setActive(i) {
-            var els = panel.querySelectorAll(".v2-sr-item");
-            if (!els.length) return;
-            active = (i + els.length) % els.length;
-            els.forEach(function (e, k) { e.classList.toggle("on", k === active); });
-            els[active].scrollIntoView({ block: "nearest" });
-        }
-        function row(it, q) {
-            return '<a class="v2-sr-item" href="' + esc(it.href) + '"><span class="v2-sr-ic ' + (it.tone || "") + '">' + (it.letter ? esc(it.letter) : ic(it.icon || "search")) + '</span>' +
-                '<span class="v2-sr-txt"><b>' + hl(it.title, q) + '</b>' + (it.sub ? '<small>' + esc(it.sub) + '</small>' : '') + '</span>' +
-                (it.badge != null ? '<em class="v2-sr-badge ' + (it.badgeTone || "") + '">' + esc(it.badge) + '</em>' : '') + '</a>';
-        }
-        function draw(q, groups, loading) {
-            var html = "";
-            items = [];
-            groups.forEach(function (g) {
-                if (!g.items.length) return;
-                html += '<div class="v2-sr-head">' + esc(g.title) + '</div>';
-                g.items.forEach(function (it) { items.push(it); html += row(it, q); });
+        function featureList() {
+            var out = [];
+            (MENUS[role] || []).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
+                if (!m || m.label) return;
+                if (out.some(function (o) { return o[0] === m[0]; })) return;
+                out.push(m);
             });
-            if (loading) html += '<div class="v2-sr-note"><span class="v2-sr-spin"></span>' + (id ? "Mencari…" : "Searching…") + '</div>';
-            if (!items.length && !loading) html = '<div class="v2-sr-empty">' + ic("search", 2) + '<b>' + (id ? "Nggak ketemu" : "No results") + '</b><small>' + (id ? "Coba kata lain untuk “" : "Try another word for “") + esc(q) + '”</small></div>';
-            html += '<div class="v2-sr-foot"><span><kbd>↑</kbd><kbd>↓</kbd> ' + (id ? "pilih" : "move") + '</span><span><kbd>Enter</kbd> ' + (id ? "buka" : "open") + '</span><span><kbd>Esc</kbd> ' + (id ? "tutup" : "close") + '</span></div>';
-            panel.innerHTML = html;
-            place();
-            panel.classList.add("open");
-            active = 0;
-            setActive(0);
+            return out;
         }
         function features(q) {
             var n = norm(q).split(/\s+/).filter(Boolean);
-            return featureList(role).filter(function (m) {
-                var label = norm(m[2] + " " + m[3]);
-                var words = norm((m[4] || "") + " " + (KEYS[m[0]] || "")).split(/\s+/);
+            return featureList().filter(function (m) {
+                var words = norm(m[2] + " " + m[3] + " " + (m[4] || "") + " " + (KEYS[m[0]] || "")).split(/\s+/);
                 return n.every(function (w) {
-                    return label.indexOf(w) >= 0 || words.some(function (k) { return k.indexOf(w) === 0; });
+                    return words.some(function (k) { return k.indexOf(w) === 0; });
                 });
             }).slice(0, 6).map(function (m) {
                 return { href: m[0], icon: m[1], title: id ? m[3] : m[2], sub: id ? "Fitur" : "Feature" };
@@ -283,19 +243,85 @@
             }
             return Promise.all(tasks.map(function (t) { return Promise.resolve(t).catch(function () { return { title: "", items: [] }; }); }));
         }
+        return { features: features, remote: remote, id: id };
+    }
+
+    function rowHTML(it, q) {
+        return '<a class="v2-sr-item" href="' + esc(it.href) + '" data-title="' + esc(it.title) + '"><span class="v2-sr-ic ' + (it.tone || "") + '">' + (it.letter ? esc(it.letter) : ic(it.icon || "search")) + '</span>' +
+            '<span class="v2-sr-txt"><b>' + hl(it.title, q) + '</b>' + (it.sub ? '<small>' + esc(it.sub) + '</small>' : '') + '</span>' +
+            (it.badge != null ? '<em class="v2-sr-badge ' + (it.badgeTone || "") + '">' + esc(it.badge) + '</em>' : '') + '</a>';
+    }
+    function groupsHTML(q, groups, loading, id, wrap) {
+        var html = "", items = [];
+        groups.forEach(function (g) {
+            if (!g.items.length) return;
+            var rows = g.items.map(function (it) { items.push(it); return rowHTML(it, q); }).join("");
+            html += '<div class="v2-sr-head">' + esc(g.title) + '</div>' + (wrap ? '<div class="v2-sr-group">' + rows + '</div>' : rows);
+        });
+        if (loading) html += '<div class="v2-sr-note"><span class="v2-sr-spin"></span>' + (id ? "Mencari…" : "Searching…") + '</div>';
+        if (!items.length && !loading) html = '<div class="v2-sr-empty">' + ic("search", 2) + '<b>' + (id ? "Nggak ketemu" : "No results") + '</b><small>' + (id ? "Coba kata lain untuk “" : "Try another word for “") + esc(q) + '”</small></div>';
+        return { html: html, items: items };
+    }
+    function runQuery(q, eng, onDraw) {
+        var base = [{ title: eng.id ? "Fitur" : "Features", items: eng.features(q) }];
+        var willFetch = likeSafe(q).length >= 2 && db();
+        onDraw(base, !!willFetch);
+        if (!willFetch) return null;
+        return setTimeout(function () { eng.remote(q).then(function (gs) { onDraw(base.concat(gs), false, true); }); }, 220);
+    }
+
+    /* recent picks (per viewer, phone sheet) */
+    function getRecent() { try { return JSON.parse(localStorage.getItem("attendreem-recent") || "[]").slice(0, 5); } catch (e) { return []; } }
+    function addRecent(title, href) {
+        if (!title || !href) return;
+        try {
+            var r = getRecent().filter(function (x) { return x.h !== href || x.t !== title; });
+            r.unshift({ t: title, h: href });
+            localStorage.setItem("attendreem-recent", JSON.stringify(r.slice(0, 5)));
+        } catch (e) {}
+    }
+
+    function setupSearch(side, role, initial) {
+        var input = side.querySelector("#v2SearchInput");
+        if (!input) return;
+        var eng = engine(role), id = eng.id;
+        var panel = document.getElementById("v2SearchPanel");
+        if (!panel) {
+            panel = document.createElement("div");
+            panel.id = "v2SearchPanel";
+            panel.className = "v2-search-panel";
+            panel.setAttribute("role", "listbox");
+            document.body.appendChild(panel);
+        }
+        var timer = null, seq = 0, active = 0, items = [];
+        function place() {
+            var r = input.closest("label").getBoundingClientRect();
+            panel.style.left = r.left + "px";
+            panel.style.top = (r.bottom + 8) + "px";
+        }
+        function close() { panel.classList.remove("open"); }
+        function setActive(i) {
+            var els = panel.querySelectorAll(".v2-sr-item");
+            if (!els.length) return;
+            active = (i + els.length) % els.length;
+            els.forEach(function (e, k) { e.classList.toggle("on", k === active); });
+            els[active].scrollIntoView({ block: "nearest" });
+        }
         function run() {
             var q = input.value.trim();
             side.classList.toggle("searching", !!q);
+            clearTimeout(timer);
             if (!q) { close(); return; }
             var my = ++seq;
-            var base = [{ title: id ? "Fitur" : "Features", items: features(q) }];
-            var willFetch = likeSafe(q).length >= 2 && db();
-            draw(q, base, !!willFetch);
-            if (!willFetch) return;
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-                remote(q).then(function (gs) { if (my === seq) draw(q, base.concat(gs), false); });
-            }, 220);
+            timer = runQuery(q, eng, function (groups, loading) {
+                if (my !== seq) return;
+                var r = groupsHTML(q, groups, loading, id, false);
+                items = r.items;
+                panel.innerHTML = r.html + '<div class="v2-sr-foot"><span><kbd>↑</kbd><kbd>↓</kbd> ' + (id ? "pilih" : "move") + '</span><span><kbd>Enter</kbd> ' + (id ? "buka" : "open") + '</span><span><kbd>Esc</kbd> ' + (id ? "tutup" : "close") + '</span></div>';
+                place();
+                panel.classList.add("open");
+                setActive(0);
+            });
         }
         input.addEventListener("input", run);
         input.addEventListener("focus", function () { if (input.value.trim()) run(); });
@@ -308,8 +334,8 @@
         panel.onmousemove = function (e) {
             var a = e.target.closest(".v2-sr-item");
             if (!a) return;
-            var els = Array.prototype.indexOf.call(panel.querySelectorAll(".v2-sr-item"), a);
-            if (els !== active) setActive(els);
+            var k = Array.prototype.indexOf.call(panel.querySelectorAll(".v2-sr-item"), a);
+            if (k !== active) setActive(k);
         };
         if (!window.__v2SearchBound) {
             window.__v2SearchBound = true;
@@ -328,7 +354,105 @@
         if (initial) { input.value = initial; }
     }
 
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render);
-    else render();
-    window.addEventListener("attendreem-profile", render);
+    /* ===== Phone: search button in the page header + full-screen sheet ===== */
+    var SLOTS = [
+        [".v2-hero-top .top-actions", "prepend", "dark"],
+        [".v2-par-head", "beforeIcon", "light"],
+        [".v2-my-who", "beforeLast", "dark"],
+        [".v2-head-split", "append", "light"],
+        ["main.v2-wrap > .v2-head", "append", "light"],
+        ["main.attendance-page > .attendance-intro", "append", "light"]
+    ];
+    function mountMobileButton() {
+        if (document.querySelector(".v2-msearch")) return;
+        if (document.querySelector(".v2-teach-top")) {
+            var f = document.createElement("button");
+            f.type = "button";
+            f.className = "v2-msearch v2-msearch-fab";
+            f.setAttribute("aria-label", lang() === "id" ? "Cari" : "Search");
+            f.innerHTML = ic("search", 2.4);
+            f.addEventListener("click", openSheet);
+            document.body.appendChild(f);
+            return;
+        }
+        for (var i = 0; i < SLOTS.length; i++) {
+            var host = document.querySelector(SLOTS[i][0]);
+            if (!host) continue;
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "v2-msearch " + SLOTS[i][2];
+            b.setAttribute("aria-label", lang() === "id" ? "Cari" : "Search");
+            b.innerHTML = ic("search", 2.2);
+            b.addEventListener("click", openSheet);
+            if (SLOTS[i][1] === "prepend") host.insertBefore(b, host.firstChild);
+            else if (SLOTS[i][1] === "beforeIcon") host.insertBefore(b, host.querySelector("a,button") || null);
+            else if (SLOTS[i][1] === "beforeLast" && host.lastElementChild && host.lastElementChild.tagName === "A") host.insertBefore(b, host.lastElementChild);
+            else host.appendChild(b);
+            return;
+        }
+    }
+
+    var sheet = null;
+    function openSheet() {
+        var role = currentRole(), eng = engine(role), id = eng.id;
+        if (!sheet) {
+            sheet = document.createElement("div");
+            sheet.className = "v2-msheet";
+            sheet.setAttribute("role", "dialog");
+            sheet.setAttribute("aria-modal", "true");
+            document.body.appendChild(sheet);
+        }
+        sheet.innerHTML = '<div class="v2-msheet-top"><label class="v2-msheet-in">' + ic("search", 2.2) +
+            '<input type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="' + (id ? (role === "admin" || role === "guru" ? "Cari fitur, nama siswa…" : "Cari fitur, nilai, target…") : (role === "admin" || role === "guru" ? "Search features, students…" : "Search features, scores, goals…")) + '"></label>' +
+            '<button type="button" class="v2-msheet-cancel">' + (id ? "Batal" : "Cancel") + '</button></div><div class="v2-msheet-body"></div>';
+        var input = sheet.querySelector("input"), body = sheet.querySelector(".v2-msheet-body");
+        var timer = null, seq = 0;
+        function idle() {
+            var sc = (SHORTCUTS[role] || []).map(function (s) {
+                return '<a class="v2-mchip" href="' + s[0] + '" data-title="' + esc(id ? s[1] : s[2]) + '"><b class="' + s[3] + '">' + ic(s[4], 2) + '</b>' + esc(id ? s[1] : s[2]) + '</a>';
+            }).join("");
+            var rec = getRecent();
+            var rh = rec.length ? '<div class="v2-sr-head">' + (id ? "Terakhir dibuka" : "Recently opened") + '</div><div class="v2-sr-group">' + rec.map(function (r) {
+                return '<a class="v2-mrec" href="' + esc(r.h) + '" data-title="' + esc(r.t) + '">' + ic("clock", 2) + '<span>' + esc(r.t) + '</span></a>';
+            }).join("") + '</div>' : "";
+            body.innerHTML = '<div class="v2-sr-head">' + (id ? "Pintasan" : "Shortcuts") + '</div><div class="v2-mchips">' + sc + '</div>' + rh;
+        }
+        function run() {
+            var q = input.value.trim();
+            clearTimeout(timer);
+            if (!q) { seq++; idle(); return; }
+            var my = ++seq;
+            timer = runQuery(q, eng, function (groups, loading) {
+                if (my !== seq) return;
+                body.innerHTML = groupsHTML(q, groups, loading, id, true).html;
+            });
+        }
+        input.addEventListener("input", run);
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") { var a = body.querySelector(".v2-sr-item"); if (a) { e.preventDefault(); a.click(); } }
+            else if (e.key === "Escape") closeSheet();
+        });
+        body.addEventListener("click", function (e) {
+            var a = e.target.closest("a");
+            if (a) addRecent(a.getAttribute("data-title"), a.getAttribute("href"));
+        });
+        sheet.querySelector(".v2-msheet-cancel").addEventListener("click", function () { closeSheet(); });
+        idle();
+        document.documentElement.classList.add("v2-msheet-lock");
+        sheet.classList.add("open");
+        try { history.pushState({ v2search: 1 }, ""); } catch (e) {}
+        setTimeout(function () { input.focus(); }, 30);
+    }
+    function closeSheet(fromPop) {
+        if (!sheet || !sheet.classList.contains("open")) return;
+        sheet.classList.remove("open");
+        document.documentElement.classList.remove("v2-msheet-lock");
+        if (!fromPop) { try { if (history.state && history.state.v2search) history.back(); } catch (e) {} }
+    }
+    window.addEventListener("popstate", function () { closeSheet(true); });
+    window.addEventListener("pageshow", function () { if (sheet) { sheet.classList.remove("open"); document.documentElement.classList.remove("v2-msheet-lock"); } });
+    function boot() { if (!inFrame) render(); mountMobileButton(); }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+    else boot();
+    if (!inFrame) window.addEventListener("attendreem-profile", render);
 })();

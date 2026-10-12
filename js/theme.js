@@ -9,10 +9,38 @@ function setTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
 }
 
+// Splash screen: shown once per browser session, on the first page opened.
+(function () {
+    if (window.self !== window.top) return;
+    try { if (sessionStorage.getItem("attendreem-splash")) return; sessionStorage.setItem("attendreem-splash", "1"); } catch (e) { return; }
+    var root = document.documentElement;
+    var css = document.createElement("style");
+    css.id = "attSplashCss";
+    css.textContent =
+        "html.att-splash,html.att-splash body{overflow:hidden}" +
+        "html.att-splash::after{content:'';position:fixed;inset:0;z-index:2147483646;background:#07080F url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%228%206%2046%2054%22%3E%3Cpath%20d%3D%22M37.2%209.2c1.3-1.4%203.6-1.6%205.2-.6c1%20.6%201.6%201.7%201.7%202.9l3.1%2040.8c.2%202.6-2.2%204.6-4.7%204l-12.1-3c-1.3-.3-2.2-1.4-2.3-2.7l-.3-4.2h-7.4l-2.3%202.2c-1%20.9-2.4%201.1-3.6.6l-1.2-.5c-1.6-.7-2.1-2.7-1-4.1L37.2%209.2z%22%20fill%3D%22%23C6F432%22%20stroke%3D%22%23C6F432%22%20stroke-width%3D%225.5%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M27.6%2031.2l-6.1%209.3h6.8l-.7-9.3z%22%20fill%3D%22%2307080F%22%20stroke%3D%22%2307080F%22%20stroke-width%3D%222.4%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E\") center calc(50% - 12px)/104px auto no-repeat;transition:opacity .38s ease;animation:attSpIn .6s cubic-bezier(.22,.8,.3,1) both}" +
+        "html.att-splash::before{content:'Attendreem';position:fixed;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom));z-index:2147483647;text-align:center;font:800 19px/1 'Bricolage Grotesque','Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.01em;color:#C6F432;transition:opacity .3s ease;animation:attSpTxt .7s ease .15s both}" +
+        "html.att-splash.att-splash-out::after,html.att-splash.att-splash-out::before{opacity:0}" +
+        "@keyframes attSpIn{from{background-size:92px auto}to{background-size:104px auto}}" +
+        "@keyframes attSpTxt{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}" +
+        "@media (prefers-reduced-motion:reduce){html.att-splash::after,html.att-splash::before{animation:none}}";
+    document.head.appendChild(css);
+    root.classList.add("att-splash");
+    var start = Date.now(), MIN = 800, MAX = 2600, gone = false;
+    function hide() {
+        if (gone) return; gone = true;
+        root.classList.add("att-splash-out");
+        setTimeout(function () { root.classList.remove("att-splash", "att-splash-out"); css.remove(); }, 420);
+    }
+    function ready() { setTimeout(hide, Math.max(0, MIN - (Date.now() - start))); }
+    if (document.readyState === "complete") ready(); else window.addEventListener("load", ready);
+    setTimeout(hide, MAX);
+})();
+
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261012d";
+    s.src = "js/sidebar.js?v=20261012e";
     s.defer = true;
     document.head.appendChild(s);
 })();

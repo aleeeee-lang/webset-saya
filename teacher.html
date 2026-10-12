@@ -9,10 +9,10 @@
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=2">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
-<link rel="stylesheet" href="style.css?v=20261010f">
-<script src="js/theme.js?v=20261010f"></script>
-<script src="js/lang.js?v=20261010f"></script>
-<script src="js/toast.js?v=20261010f"></script>
+<link rel="stylesheet" href="style.css?v=20261012a">
+<script src="js/theme.js?v=20261012a"></script>
+<script src="js/lang.js?v=20261012a"></script>
+<script src="js/toast.js?v=20261012a"></script>
 </head>
 
 <body>
@@ -124,8 +124,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261010f"></script>
-<script src="js/auth.js?v=20261010f"></script>
+<script src="js/supabase.js?v=20261012a"></script>
+<script src="js/auth.js?v=20261012a"></script>
 
 <script>
 
@@ -191,6 +191,13 @@ async function loadClassStudents() {
     });
 
     document.getElementById("activityDate").value = localDateStr();
+
+    const pre = new URLSearchParams(location.search).get("student");
+    if (pre && classStudents.some(function (s) { return s.id === pre; })) {
+        [gradeSelect, activitySelect, goalSelect].forEach(function (sel) { sel.value = pre; sel.dispatchEvent(new Event("change")); });
+        const target = document.getElementById("secGrade");
+        if (target) setTimeout(function () { target.scrollIntoView({ behavior: "smooth", block: "start" }); }, 300);
+    }
 }
 
 async function loadTodaysAttendance() {

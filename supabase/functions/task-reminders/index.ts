@@ -6,7 +6,8 @@
 //            soon - deadline within the next hour
 //   lessons: about 10-15 minutes before a lesson starts (students of the class + its teacher),
 //            skipped on days marked as a holiday in the academic calendar.
-//   queue:   announcements and attendance changes queued by database triggers (push_events.sql)
+//   queue:   announcements and attendance changes queued by database triggers (push_events.sql);
+//            the database also calls this right away with {"queue_only": true} (push_instant.sql)
 // Each person can turn tasks / lessons / general off in Settings (table notif_prefs).
 // Secrets needed (Edge Functions -> Secrets): VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, CRON_SECRET.
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by Supabase automatically.
@@ -36,6 +37,8 @@ Deno.serve(async (req) => {
   if (req.headers.get("x-cron-secret") !== Deno.env.get("CRON_SECRET")) {
     return new Response("forbidden", { status: 403 });
   }
+  let queueOnly = false;
+  try { queueOnly = !!(await req.json()).queue_only; } catch (_) { /* empty body from cron */ }
   webpush.setVapidDetails("mailto:admin@attendreem.app", Deno.env.get("VAPID_PUBLIC_KEY")!, Deno.env.get("VAPID_PRIVATE_KEY")!);
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
@@ -59,11 +62,14 @@ Deno.serve(async (req) => {
   const lessonLog: { schedule_id: string; user_id: string; day: string }[] = [];
 
   // ---------- queued: announcements + attendance ----------
-  const { data: queued, error: qErr } = await db.from("push_queue").select("id,user_id,title,body,url,tag")
-    .is("sent_at", null).gt("created_at", new Date(now.getTime() - 6 * H).toISOString()).order("id").limit(2000);
+  // claim_push_queue marks the rows as sent and returns them in one step, so two runs at once never double-send
+  let { data: queued, error: qErr } = await db.rpc("claim_push_queue", { max_rows: 2000 });
+  if (qErr) {   // older database without the function: fall back to select + mark
+    ({ data: queued, error: qErr } = await db.from("push_queue").select("id,user_id,title,body,url,tag")
+      .is("sent_at", null).gt("created_at", new Date(now.getTime() - 6 * H).toISOString()).order("id").limit(2000));
+    if (!qErr && queued?.length) await db.from("push_queue").update({ sent_at: nowIso }).in("id", queued.map((q: { id: number }) => q.id));
+  }
   if (!qErr && queued?.length) {
-    // mark first, so a slow run never sends them twice
-    await db.from("push_queue").update({ sent_at: nowIso }).in("id", queued.map((q: { id: number }) => q.id));
     for (const q of queued as { user_id: string; title: string; body: string; url: string; tag: string | null }[]) {
       if (noGeneral.has(q.user_id)) continue;
       msgs.push({ user: q.user_id, title: q.title, body: q.body, url: q.url, tag: q.tag ?? "attendreem", ttl: 24 * 3600 });
@@ -71,93 +77,95 @@ Deno.serve(async (req) => {
   }
   if (!qErr && Math.random() < 0.02) await db.from("push_queue").delete().lt("created_at", new Date(now.getTime() - 7 * 24 * H).toISOString());
 
-  // ---------- lessons ----------
-  const local = new Date(now.getTime() + TZ * H);
-  const isoDay = local.getUTCDay() === 0 ? 7 : local.getUTCDay();
-  const todayStr = local.toISOString().slice(0, 10);
-  const nowMin = local.getUTCHours() * 60 + local.getUTCMinutes();
-  const { data: hol } = await db.from("holidays").select("type").eq("date", todayStr);
-  const isHoliday = (hol ?? []).some((h: { type: string | null }) => !h.type || h.type === "holiday");
-  if (!isHoliday) {
-    const { data: lessons } = await db.from("class_schedules").select("id,class,start_time,subject,room,teacher_id,teacher_name").eq("day", isoDay);
-    const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-    const soonLessons = (lessons ?? []).filter((l: { start_time: string }) => { const d = toMin(l.start_time) - nowMin; return d > 0 && d <= 15; });
-    if (soonLessons.length) {
-      const lc = [...new Set(soonLessons.map((l: { class: string }) => l.class))];
-      const ids = soonLessons.map((l: { id: string }) => l.id);
-      const [{ data: studs }, { data: sent, error: logErr }] = await Promise.all([
-        db.from("profiles").select("id,class").eq("role", "murid").in("class", lc),
-        db.from("lesson_push_log").select("schedule_id,user_id").eq("day", todayStr).in("schedule_id", ids),
-      ]);
-      if (logErr) soonLessons.length = 0;   // log table missing -> never risk repeating every 5 minutes
-      const sentSet = new Set((sent ?? []).map((r: { schedule_id: string; user_id: string }) => r.schedule_id + ":" + r.user_id));
-      for (const l of soonLessons as { id: string; class: string; start_time: string; subject: string; room: string | null; teacher_id: string | null; teacher_name: string | null }[]) {
-        const mins = toMin(l.start_time) - nowMin;
-        const at = l.start_time.slice(0, 5).replace(":", ".");
-        const where = l.room ? " · " + l.room : "";
-        const people: { id: string; teacher: boolean }[] = (studs ?? []).filter((s: { class: string }) => s.class === l.class).map((s: { id: string }) => ({ id: s.id, teacher: false }));
-        if (l.teacher_id) people.push({ id: l.teacher_id, teacher: true });
-        for (const p of people) {
-          if (noLessons.has(p.id) || sentSet.has(l.id + ":" + p.id)) continue;
-          msgs.push({
-            user: p.id,
-            title: "📚 " + at + " · " + l.subject,
-            body: p.teacher
-              ? "Kamu mengajar " + l.class + where + " — mulai " + mins + " menit lagi"
-              : "Mulai " + mins + " menit lagi" + where + (l.teacher_name ? " · " + l.teacher_name : ""),
-            url: "schedule.html", tag: "lesson-" + l.id, ttl: 15 * 60,   // no use arriving after the lesson started
-          });
-          lessonLog.push({ schedule_id: l.id, user_id: p.id, day: todayStr });
+  if (!queueOnly) {
+    // ---------- lessons ----------
+    const local = new Date(now.getTime() + TZ * H);
+    const isoDay = local.getUTCDay() === 0 ? 7 : local.getUTCDay();
+    const todayStr = local.toISOString().slice(0, 10);
+    const nowMin = local.getUTCHours() * 60 + local.getUTCMinutes();
+    const { data: hol } = await db.from("holidays").select("type").eq("date", todayStr);
+    const isHoliday = (hol ?? []).some((h: { type: string | null }) => !h.type || h.type === "holiday");
+    if (!isHoliday) {
+      const { data: lessons } = await db.from("class_schedules").select("id,class,start_time,subject,room,teacher_id,teacher_name").eq("day", isoDay);
+      const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+      const soonLessons = (lessons ?? []).filter((l: { start_time: string }) => { const d = toMin(l.start_time) - nowMin; return d > 0 && d <= 15; });
+      if (soonLessons.length) {
+        const lc = [...new Set(soonLessons.map((l: { class: string }) => l.class))];
+        const ids = soonLessons.map((l: { id: string }) => l.id);
+        const [{ data: studs }, { data: sent, error: logErr }] = await Promise.all([
+          db.from("profiles").select("id,class").eq("role", "murid").in("class", lc),
+          db.from("lesson_push_log").select("schedule_id,user_id").eq("day", todayStr).in("schedule_id", ids),
+        ]);
+        if (logErr) soonLessons.length = 0;   // log table missing -> never risk repeating every 5 minutes
+        const sentSet = new Set((sent ?? []).map((r: { schedule_id: string; user_id: string }) => r.schedule_id + ":" + r.user_id));
+        for (const l of soonLessons as { id: string; class: string; start_time: string; subject: string; room: string | null; teacher_id: string | null; teacher_name: string | null }[]) {
+          const mins = toMin(l.start_time) - nowMin;
+          const at = l.start_time.slice(0, 5).replace(":", ".");
+          const where = l.room ? " · " + l.room : "";
+          const people: { id: string; teacher: boolean }[] = (studs ?? []).filter((s: { class: string }) => s.class === l.class).map((s: { id: string }) => ({ id: s.id, teacher: false }));
+          if (l.teacher_id) people.push({ id: l.teacher_id, teacher: true });
+          for (const p of people) {
+            if (noLessons.has(p.id) || sentSet.has(l.id + ":" + p.id)) continue;
+            msgs.push({
+              user: p.id,
+              title: "📚 " + at + " · " + l.subject,
+              body: p.teacher
+                ? "Kamu mengajar " + l.class + where + " — mulai " + mins + " menit lagi"
+                : "Mulai " + mins + " menit lagi" + where + (l.teacher_name ? " · " + l.teacher_name : ""),
+              url: "schedule.html", tag: "lesson-" + l.id, ttl: 15 * 60,   // no use arriving after the lesson started
+            });
+            lessonLog.push({ schedule_id: l.id, user_id: p.id, day: todayStr });
+          }
         }
       }
     }
-  }
 
-  // ---------- tasks ----------
-  const { data: tasks, error } = await db.from("tasks").select("id,title,subject,due_at,user_id,class,created_at")
-    .gt("due_at", nowIso)
-    .or(`due_at.lt.${soonIso},created_at.gt.${recentIso}`);
-  if (error) console.error("tasks", error.message);   // keep going: queued + lesson reminders still go out
-  if (!error && tasks?.length) {
-    // who should hear about each task
-    const classes = [...new Set(tasks.filter((t: Task) => t.class).map((t: Task) => t.class as string))];
-    const byClass: Record<string, string[]> = {};
-    if (classes.length) {
-      const { data: studs } = await db.from("profiles").select("id,class").eq("role", "murid").in("class", classes);
-      (studs ?? []).forEach((s: { id: string; class: string }) => { (byClass[s.class] ||= []).push(s.id); });
-    }
-    const ids = tasks.map((t: Task) => t.id);
-    const [{ data: done }, { data: logged }] = await Promise.all([
-      db.from("task_done").select("task_id,user_id").in("task_id", ids),
-      db.from("task_push_log").select("task_id,user_id,stage").in("task_id", ids),
-    ]);
-    const doneSet = new Set((done ?? []).map((r: { task_id: string; user_id: string }) => r.task_id + ":" + r.user_id));
-    const logSet = new Set((logged ?? []).map((r: { task_id: string; user_id: string; stage: string }) => r.task_id + ":" + r.user_id + ":" + r.stage));
+    // ---------- tasks ----------
+    const { data: tasks, error } = await db.from("tasks").select("id,title,subject,due_at,user_id,class,created_at")
+      .gt("due_at", nowIso)
+      .or(`due_at.lt.${soonIso},created_at.gt.${recentIso}`);
+    if (error) console.error("tasks", error.message);   // keep going: queued + lesson reminders still go out
+    if (!error && tasks?.length) {
+      // who should hear about each task
+      const classes = [...new Set(tasks.filter((t: Task) => t.class).map((t: Task) => t.class as string))];
+      const byClass: Record<string, string[]> = {};
+      if (classes.length) {
+        const { data: studs } = await db.from("profiles").select("id,class").eq("role", "murid").in("class", classes);
+        (studs ?? []).forEach((s: { id: string; class: string }) => { (byClass[s.class] ||= []).push(s.id); });
+      }
+      const ids = tasks.map((t: Task) => t.id);
+      const [{ data: done }, { data: logged }] = await Promise.all([
+        db.from("task_done").select("task_id,user_id").in("task_id", ids),
+        db.from("task_push_log").select("task_id,user_id,stage").in("task_id", ids),
+      ]);
+      const doneSet = new Set((done ?? []).map((r: { task_id: string; user_id: string }) => r.task_id + ":" + r.user_id));
+      const logSet = new Set((logged ?? []).map((r: { task_id: string; user_id: string; stage: string }) => r.task_id + ":" + r.user_id + ":" + r.stage));
 
-    for (const t of tasks as Task[]) {
-      const due = new Date(t.due_at);
-      const left = due.getTime() - now.getTime();
-      const dd = localDay(due) - today;
-      const subj = t.subject ? t.subject + " · " : "";
-      let stage = "", title = "", body = "";
-      if (t.class && new Date(t.created_at).getTime() > now.getTime() - 30 * 60_000) {
-        stage = "new"; title = "Tugas baru" + (t.subject ? " · " + t.subject : ""); body = t.title + " — deadline " + whenLabel(due, now);
-      } else if (left <= H) {
-        stage = "soon"; title = "⏰ 1 jam lagi deadline!"; body = subj + t.title;
-      } else if (dd === 0 && hour >= 6) {
-        stage = "h0"; title = "Hari ini deadline: " + t.title; body = subj + "jam " + hhmm(due);
-      } else if (dd === 1 && hour >= 17) {
-        stage = "h1"; title = "Besok deadline: " + t.title; body = subj + "jam " + hhmm(due) + ". Jangan lupa dikerjain ya!";
-      }
-      if (!stage) continue;
-      const people = t.user_id ? [t.user_id] : (byClass[t.class as string] ?? []);
-      for (const u of people) {
-        if (noTasks.has(u) || doneSet.has(t.id + ":" + u) || logSet.has(t.id + ":" + u + ":" + stage)) continue;
-        msgs.push({ user: u, title, body, url: "tasks.html", tag: "task-" + t.id, ttl: 6 * 3600 });
-        taskLog.push({ task_id: t.id, user_id: u, stage });
+      for (const t of tasks as Task[]) {
+        const due = new Date(t.due_at);
+        const left = due.getTime() - now.getTime();
+        const dd = localDay(due) - today;
+        const subj = t.subject ? t.subject + " · " : "";
+        let stage = "", title = "", body = "";
+        if (t.class && new Date(t.created_at).getTime() > now.getTime() - 30 * 60_000) {
+          stage = "new"; title = "Tugas baru" + (t.subject ? " · " + t.subject : ""); body = t.title + " — deadline " + whenLabel(due, now);
+        } else if (left <= H) {
+          stage = "soon"; title = "⏰ 1 jam lagi deadline!"; body = subj + t.title;
+        } else if (dd === 0 && hour >= 6) {
+          stage = "h0"; title = "Hari ini deadline: " + t.title; body = subj + "jam " + hhmm(due);
+        } else if (dd === 1 && hour >= 17) {
+          stage = "h1"; title = "Besok deadline: " + t.title; body = subj + "jam " + hhmm(due) + ". Jangan lupa dikerjain ya!";
+        }
+        if (!stage) continue;
+        const people = t.user_id ? [t.user_id] : (byClass[t.class as string] ?? []);
+        for (const u of people) {
+          if (noTasks.has(u) || doneSet.has(t.id + ":" + u) || logSet.has(t.id + ":" + u + ":" + stage)) continue;
+          msgs.push({ user: u, title, body, url: "tasks.html", tag: "task-" + t.id, ttl: 6 * 3600 });
+          taskLog.push({ task_id: t.id, user_id: u, stage });
+        }
       }
     }
-  }
+  }   // end of !queueOnly
   if (!msgs.length) return Response.json({ sent: 0 });
 
   // log first so a slow run never sends the same reminder twice

@@ -1051,4 +1051,15 @@ Object.assign(translations, {
     notif_kind_saved: { en: "Saved.", id: "Tersimpan." },
     notif_kind_failed: { en: "Couldn't save. Try again.", id: "Gagal menyimpan. Coba lagi." }
 });
+
+Object.assign(translations, {
+    bc_next: { en: "Next", id: "Lanjut" },
+    bc_review_title: { en: "Check before sending", id: "Cek dulu sebelum dikirim" },
+    bc_now: { en: "now", id: "sekarang" },
+    bc_announcement: { en: "Announcement", id: "Pengumuman" },
+    bc_edit: { en: "Edit", id: "Ubah" },
+    bc_to: { en: "To:", id: "Ke:" },
+    bc_class: { en: "Class", id: "Kelas" },
+    bc_people: { en: "people", id: "orang" }
+});
 document.addEventListener("DOMContentLoaded", applyLang);

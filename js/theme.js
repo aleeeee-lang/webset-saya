@@ -81,15 +81,23 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261013r";
+    p.src = "js/push.js?v=20261013t";
     p.defer = true;
     document.head.appendChild(p);
+})();
+
+// Form buttons: dim until the needed fields are filled (loaded on every page)
+(function () {
+    var f = document.createElement("script");
+    f.src = "js/formready.js?v=20261013t";
+    f.defer = true;
+    document.head.appendChild(f);
 })();
 
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013r";
+    s.src = "js/sidebar.js?v=20261013t";
     s.defer = true;
     document.head.appendChild(s);
 })();

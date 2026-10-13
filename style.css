@@ -3142,3 +3142,42 @@ html[data-theme="dark"] .v2-hero-top .top-actions .v2-msearch{background:transpa
 .v2-hero .top-notification-icon,.v2-hero .top-notification-icon svg{width:24px!important;height:24px!important}
 .v2-hero-top .top-actions .v2-msearch svg *{stroke-width:1.9}
 .v2-hero .top-notification-icon svg path{stroke-width:1.9}
+
+/* ===== Send notification: Next -> check -> Send ===== */
+.attendance-page .submit-button.bc-next{background:#E9EAF0!important;color:#9A9DB0!important;box-shadow:none!important;transition:background .2s,color .2s}
+.attendance-page .submit-button.bc-next.is-ready{background:#14162B!important;color:#fff!important}
+.attendance-page .submit-button.bc-next[hidden],.bc-review[hidden]{display:none!important}
+.bc-review{margin-top:16px;padding-top:16px;border-top:1px dashed #E2E4EE;display:flex;flex-direction:column;gap:12px;animation:bcIn .25s ease}
+@keyframes bcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bc-review-label{font-size:12.5px;font-weight:700;color:#8A8FA8;text-transform:uppercase;letter-spacing:.04em}
+.bc-preview{background:#F3F4F8;border-radius:18px;padding:14px 16px;color:#14162B}
+.bc-preview-head{display:flex;align-items:center;gap:8px;font-size:12px;color:#6B7088;margin-bottom:6px}
+.bc-preview-head img{border-radius:5px}
+.bc-preview-now::before{content:"· "}
+.bc-preview b{font-size:14.5px}
+.bc-preview p{margin:3px 0 0;font-size:13.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:#30344A}
+.bc-to{display:flex;align-items:center;gap:8px;font-size:13px;color:#4A4F66}
+.bc-actions{display:flex;gap:10px}
+.bc-edit{flex:0 0 auto;min-height:52px;padding:0 22px;border-radius:14px;border:1px solid #E2E4EE;background:transparent;color:#20243a;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.attendance-page .submit-button.bc-send{flex:1;margin-top:0;background:#C6F432!important;color:#14162B!important;box-shadow:0 10px 24px rgba(198,244,50,.28)!important}
+.bc-locked .am-field{opacity:.6}
+html[data-theme="dark"] .attendance-page .submit-button.bc-next{background:#1C1C1E!important;color:#5E5E63!important}
+html[data-theme="dark"] .attendance-page .submit-button.bc-next.is-ready{background:#F2F2F2!important;color:#111!important}
+html[data-theme="dark"] .bc-review{border-top-color:#2A2A2D}
+html[data-theme="dark"] .bc-preview{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .bc-preview p{color:#C9C9CE}
+html[data-theme="dark"] .bc-preview-head,html[data-theme="dark"] .bc-to,html[data-theme="dark"] .bc-review-label{color:#8E8E93}
+html[data-theme="dark"] .bc-edit{border-color:#3A3A3C;color:#EDEDED}
+html[data-theme="dark"] .attendance-page .submit-button.bc-send{background:#C6F432!important;color:#111!important;box-shadow:none!important}
+
+/* ===== Form buttons: dim until ready (js/formready.js) ===== */
+.attendance-page .submit-button[data-needs]{transition:background .2s,color .2s,box-shadow .2s}
+.attendance-page .submit-button[data-needs].is-waiting{background:#E9EAF0!important;color:#9A9DB0!important;box-shadow:none!important;transform:none!important}
+.attendance-page .submit-button[data-needs].is-ready{background:#14162B!important;color:#fff!important}
+html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-waiting{background:#1C1C1E!important;color:#5E5E63!important}
+html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-ready{background:#F2F2F2!important;color:#111!important}
+/* buttons that are always usable: no "disabled" look in dark mode */
+html[data-theme="dark"] .attendance-page .submit-button:not([data-needs]):not(.bc-next):not(.bc-send){background:#F2F2F2!important;color:#111!important}
+.savings-submit-btn[data-needs],.login-btn[data-needs]{transition:background .2s,color .2s,box-shadow .2s}
+.savings-submit-btn[data-needs].is-waiting,.login-btn[data-needs].is-waiting{background:#E9EAF0!important;color:#9A9DB0!important;box-shadow:none!important;transform:none!important}
+html[data-theme="dark"] .savings-submit-btn[data-needs].is-waiting{background:#1C1C1E!important;color:#5E5E63!important}

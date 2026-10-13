@@ -2932,3 +2932,11 @@ html[data-theme="dark"] .v2-par-link svg{color:#C6F432}
 .lsn-manage[hidden],.lsn-class-select[hidden]{display:none!important}
 .lsn-days button{flex:1 1 0;min-width:48px}
 .v2-lsn .v2-head h1{font-size:26px}
+
+/* Laptop: no sliding page transition. Sidebar stays put, the content fades in quickly. */
+@media (min-width:1024px){
+  @view-transition{navigation:none}
+  body.has-side>:not(.v2-side):not(script):not(.bottom-nav){animation:sideContentIn .18s ease-out both}
+}
+@keyframes sideContentIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){body.has-side>*{animation:none!important}}

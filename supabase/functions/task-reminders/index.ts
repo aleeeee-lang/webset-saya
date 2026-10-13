@@ -6,6 +6,8 @@
 //            soon - deadline within the next hour
 //   lessons: about 10-15 minutes before a lesson starts (students of the class + its teacher),
 //            skipped on days marked as a holiday in the academic calendar.
+//   exams:   academic-calendar days of type "exam": 3 days before and the day before (17:00), and on the day (06:00);
+//            for a multi-day exam only the first day gets the early reminders. Everyone with notifications on.
 //   queue:   announcements and attendance changes queued by database triggers (push_events.sql);
 //            the database also calls this right away with {"queue_only": true} (push_instant.sql)
 // Each person can turn tasks / lessons / general off in Settings (table notif_prefs).
@@ -54,12 +56,14 @@ Deno.serve(async (req) => {
   const noTasks = new Set((prefRows ?? []).filter((r: { tasks: boolean }) => r.tasks === false).map((r: { user_id: string }) => r.user_id));
   const noLessons = new Set((prefRows ?? []).filter((r: { lessons: boolean }) => r.lessons === false).map((r: { user_id: string }) => r.user_id));
 
+  const noExams = new Set((prefRows ?? []).filter((r: { exams?: boolean }) => r.exams === false).map((r: { user_id: string }) => r.user_id));
   const noGeneral = new Set((prefRows ?? []).filter((r: { general?: boolean }) => r.general === false).map((r: { user_id: string }) => r.user_id));
 
   type Msg = { user: string; title: string; body: string; url: string; tag: string; ttl: number };
   const msgs: Msg[] = [];
   const taskLog: { task_id: string; user_id: string; stage: string }[] = [];
   const lessonLog: { schedule_id: string; user_id: string; day: string }[] = [];
+  const examLog: { holiday_id: string; user_id: string; stage: string }[] = [];
 
   // ---------- queued: announcements + attendance ----------
   // claim_push_queue marks the rows as sent and returns them in one step, so two runs at once never double-send
@@ -120,6 +124,43 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ---------- exams ----------
+    {
+      const dayStr = (off: number) => new Date(local.getTime() + off * 86400_000).toISOString().slice(0, 10);
+      const { data: exams, error: exErr } = await db.from("holidays").select("id,date,label,type").eq("type", "exam").gte("date", dayStr(-1)).lte("date", dayStr(3));
+      if (!exErr && exams?.length) {
+        const keys = new Set(exams.map((e: { date: string; label: string | null }) => e.date + "|" + (e.label ?? "")));
+        const DAYN = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const due: { e: { id: string; date: string; label: string | null }; stage: string; title: string; body: string }[] = [];
+        for (const e of exams as { id: string; date: string; label: string | null }[]) {
+          const dd = Math.round((Date.parse(e.date + "T00:00:00Z") - Date.parse(todayStr + "T00:00:00Z")) / 86400_000);
+          const prev = new Date(Date.parse(e.date + "T00:00:00Z") - 86400_000).toISOString().slice(0, 10);
+          const firstDay = !keys.has(prev + "|" + (e.label ?? ""));
+          const name = e.label || "Ujian";
+          const wd = DAYN[new Date(e.date + "T00:00:00Z").getUTCDay()];
+          if (dd === 0 && hour >= 6) due.push({ e, stage: "h0", title: "📝 Hari ini ujian: " + name, body: "Semangat! Cek lagi alat tulis dan jadwalnya ya." });
+          else if (firstDay && dd === 1 && hour >= 17) due.push({ e, stage: "h1", title: "📝 Besok ujian: " + name, body: "Jangan lupa siapin alat tulis dan istirahat yang cukup." });
+          else if (firstDay && dd === 3 && hour >= 17) due.push({ e, stage: "h3", title: "📝 3 hari lagi: " + name, body: "Mulai " + wd + ". Yuk mulai belajar dari sekarang!" });
+        }
+        if (due.length) {
+          const ids = due.map((d) => d.e.id);
+          const [{ data: subsAll }, { data: got, error: gotErr }] = await Promise.all([
+            db.from("push_subscriptions").select("user_id"),
+            db.from("exam_push_log").select("holiday_id,user_id,stage").in("holiday_id", ids),
+          ]);
+          if (!gotErr) {   // log table missing -> skip rather than repeat every 5 minutes
+            const gotSet = new Set((got ?? []).map((r: { holiday_id: string; user_id: string; stage: string }) => r.holiday_id + ":" + r.user_id + ":" + r.stage));
+            const people = [...new Set((subsAll ?? []).map((r: { user_id: string }) => r.user_id))];
+            for (const d of due) for (const u of people) {
+              if (noExams.has(u) || gotSet.has(d.e.id + ":" + u + ":" + d.stage)) continue;
+              msgs.push({ user: u, title: d.title, body: d.body, url: "calendar.html", tag: "exam-" + d.e.id, ttl: 12 * 3600 });
+              examLog.push({ holiday_id: d.e.id, user_id: u, stage: d.stage });
+            }
+          }
+        }
+      }
+    }
+
     // ---------- tasks ----------
     const { data: tasks, error } = await db.from("tasks").select("id,title,subject,due_at,user_id,class,created_at")
       .gt("due_at", nowIso)
@@ -171,6 +212,7 @@ Deno.serve(async (req) => {
   // log first so a slow run never sends the same reminder twice
   if (taskLog.length) await db.from("task_push_log").upsert(taskLog, { onConflict: "task_id,user_id,stage", ignoreDuplicates: true });
   if (lessonLog.length) await db.from("lesson_push_log").upsert(lessonLog, { onConflict: "schedule_id,user_id,day", ignoreDuplicates: true });
+  if (examLog.length) await db.from("exam_push_log").upsert(examLog, { onConflict: "holiday_id,user_id,stage", ignoreDuplicates: true });
 
   const users = [...new Set(msgs.map((m) => m.user))];
   const { data: subs } = await db.from("push_subscriptions").select("endpoint,user_id,p256dh,auth").in("user_id", users);
@@ -194,5 +236,5 @@ Deno.serve(async (req) => {
   })));
   if (gone.length) await db.from("push_subscriptions").delete().in("endpoint", gone);
 
-  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, queued: queued?.length ?? 0, removed: gone.length });
+  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, exams: examLog.length, queued: queued?.length ?? 0, removed: gone.length });
 });

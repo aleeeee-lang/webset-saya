@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013u">
-<script src="js/theme.js?v=20261013u"></script>
-<script src="js/avatarcrop.js?v=20261013u"></script>
-<script src="js/lang.js?v=20261013u"></script>
-<script src="js/toast.js?v=20261013u"></script>
+<link rel="stylesheet" href="style.css?v=20261013v">
+<script src="js/theme.js?v=20261013v"></script>
+<script src="js/avatarcrop.js?v=20261013v"></script>
+<script src="js/lang.js?v=20261013v"></script>
+<script src="js/toast.js?v=20261013v"></script>
 </head>
 
 <body>
@@ -106,6 +106,11 @@
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
                 <div class="att-app-text"><span data-i18n="notif_kind_general">Announcements &amp; attendance</span><small data-i18n="notif_kind_general_hint">New announcements, and when a teacher records your attendance.</small></div>
                 <label class="att-switch"><input type="checkbox" id="prefGeneral" checked><span></span></label>
+            </div>
+            <div class="att-app-row att-app-sub" id="prefExamsRow">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+                <div class="att-app-text"><span data-i18n="notif_kind_exams">Exams</span><small data-i18n="notif_kind_exams_hint">3 days before, the day before and on the day (academic calendar).</small></div>
+                <label class="att-switch"><input type="checkbox" id="prefExams" checked><span></span></label>
             </div>
             <div class="att-app-row att-app-sub" id="prefLessonsRow">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>
@@ -225,8 +230,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013u"></script>
-<script src="js/auth.js?v=20261013u"></script>
+<script src="js/supabase.js?v=20261013v"></script>
+<script src="js/auth.js?v=20261013v"></script>
 
 <script>
 
@@ -441,19 +446,24 @@ async function syncPushKinds(on) {
     document.getElementById("prefLessons").checked = !data || data.lessons !== false;
     document.getElementById("prefTasks").checked = !data || data.tasks !== false;
     document.getElementById("prefGeneral").checked = !data || data.general !== false;
+    document.getElementById("prefExams").checked = !data || data.exams !== false;
+    document.getElementById("prefExamsRow").hidden = role === "admin";
     box.dataset.uid = uid;
+    box._prefCols = data || { exams: true };   // only send "exams" once the column exists
     box.hidden = false;
 }
 async function savePushKinds() {
     const box = document.getElementById("pushKinds");
     if (!box.dataset.uid) return;
     const row = { user_id: box.dataset.uid, lessons: document.getElementById("prefLessons").checked, tasks: document.getElementById("prefTasks").checked, general: document.getElementById("prefGeneral").checked, updated_at: new Date().toISOString() };
+    if ("exams" in (box._prefCols || {})) row.exams = document.getElementById("prefExams").checked;
     const { error } = await supabaseClient.from("notif_prefs").upsert(row, { onConflict: "user_id" });
     showToast(pushT(error ? "notif_kind_failed" : "notif_kind_saved"), error ? "error" : "success");
 }
 document.getElementById("prefLessons").addEventListener("change", savePushKinds);
 document.getElementById("prefTasks").addEventListener("change", savePushKinds);
 document.getElementById("prefGeneral").addEventListener("change", savePushKinds);
+document.getElementById("prefExams").addEventListener("change", savePushKinds);
 document.getElementById("installBtn").addEventListener("click", async function () { await window.AttPush.install(); syncAppCard(); });
 document.getElementById("pushToggle").addEventListener("change", async function () {
     const tg = this, ph = document.getElementById("pushHint");

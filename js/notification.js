@@ -338,6 +338,39 @@ async function fetchTaskReminders(userId, userClass) {
     } catch (e) { /* tasks table may not exist yet */ }
 }
 
+// ===== Exam reminders (academic calendar, type "exam"): 3 days before, the day before, on the day =====
+async function fetchExamReminders(userId) {
+    if (typeof supabaseClient === "undefined") return;
+    try {
+        const now = new Date();
+        const iso = function (d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+        const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const from = new Date(today0); from.setDate(from.getDate() - 1);
+        const to = new Date(today0); to.setDate(to.getDate() + 3);
+        const { data, error } = await supabaseClient.from("holidays").select("id,date,label,type").eq("type", "exam").gte("date", iso(from)).lte("date", iso(to)).order("date");
+        if (error || !data || !data.length) return;
+        const dates = data.map(function (h) { return h.date + "|" + (h.label || ""); });
+        const seen = loadTaskReminded(userId), lang = getLang();
+        data.forEach(function (h) {
+            const d = new Date(h.date + "T00:00:00");
+            const dd = Math.round((d - today0) / 86400000);
+            const prev = new Date(d); prev.setDate(prev.getDate() - 1);
+            const firstDay = dates.indexOf(iso(prev) + "|" + (h.label || "")) === -1;   // not a continuation of yesterday's exam
+            let stage = "";
+            if (dd === 0) stage = "h0";
+            else if (firstDay && dd === 1) stage = "h1";
+            else if (firstDay && dd >= 2 && dd <= 3) stage = "h3";
+            if (!stage) return;
+            const key = "exam:" + h.id + ":" + stage;
+            if (seen.indexOf(key) !== -1) return;
+            const label = translations[stage === "h0" ? "notif_exam_today" : stage === "h1" ? "notif_exam_tomorrow" : "notif_exam_soon"][lang].replace("{n}", dd);
+            addNotification(userId, "📝 " + label + " " + (h.label || ""));
+            seen.unshift(key);
+        });
+        saveTaskReminded(userId, seen);
+    } catch (e) { /* calendar not available */ }
+}
+
 function subscribeTaskNotifications(userId, userClass) {
     if (typeof supabaseClient === "undefined" || !userClass) return;
     supabaseClient
@@ -395,6 +428,7 @@ document.addEventListener("DOMContentLoaded", function () {
         await fetchRecentBroadcasts(user.id, userClass);
         subscribeBroadcastNotifications(user.id, userClass);
         await fetchTaskReminders(user.id, userClass);
+        await fetchExamReminders(user.id);
         subscribeTaskNotifications(user.id, userClass);
 
         if (hasUnreadNotifications(user.id)) {

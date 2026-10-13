@@ -1009,9 +1009,9 @@ Object.assign(translations, {
     push_install_done: { en: "Installed on this device.", id: "Sudah terpasang di perangkat ini." },
     push_install_ios: { en: "Tap Share, then “Add to Home Screen”.", id: "Ketuk tombol Bagikan, lalu “Tambah ke Layar Utama”." },
     push_install_menu: { en: "Open the browser menu (⋮) and choose “Install app” / “Add to Home screen”.", id: "Buka menu browser (⋮) lalu pilih “Instal aplikasi” / “Tambahkan ke layar utama”." },
-    push_title: { en: "Task reminders on this device", id: "Pengingat tugas ke perangkat ini" },
+    push_title: { en: "Notifications on this device", id: "Notifikasi di perangkat ini" },
     push_on_hint: { en: "On: reminders arrive even when Attendreem is closed.", id: "Aktif: pengingat tetap masuk walau Attendreem ditutup." },
-    push_off_hint: { en: "Get a notification the day before, on the day and 1 hour before a deadline.", id: "Dapat notifikasi H-1, hari H, dan 1 jam sebelum deadline." },
+    push_off_hint: { en: "Get lesson and deadline reminders even when the app is closed.", id: "Dapat pengingat jadwal pelajaran dan deadline tugas walau app ditutup." },
     push_working: { en: "Turning on…", id: "Mengaktifkan…" },
     push_blocked: { en: "Notifications are blocked. Allow them in your browser/phone settings for this site.", id: "Notifikasi diblokir. Izinkan dulu di pengaturan browser/HP untuk situs ini." },
     push_ios_first: { en: "On iPhone, install the app to your home screen first, then turn this on from there.", id: "Di iPhone, pasang aplikasi ke layar utama dulu, lalu aktifkan dari sana." },
@@ -1019,7 +1019,7 @@ Object.assign(translations, {
     push_failed: { en: "Couldn't turn on notifications.", id: "Gagal mengaktifkan notifikasi." },
     push_enabled_toast: { en: "Reminders are on for this device.", id: "Pengingat aktif di perangkat ini." },
     push_disabled_toast: { en: "Reminders turned off for this device.", id: "Pengingat dimatikan di perangkat ini." },
-    push_test_body: { en: "Notifications work! Task reminders will show up like this.", id: "Notifikasi berhasil! Pengingat tugas akan muncul seperti ini." },
+    push_test_body: { en: "Notifications work! Reminders will show up like this.", id: "Notifikasi berhasil! Pengingat akan muncul seperti ini." },
     push_banner: { en: "Get task reminders on your phone, even when the app is closed.", id: "Dapatkan pengingat tugas di HP, walau aplikasi ditutup." },
     push_banner_btn: { en: "Turn on", id: "Aktifkan" },
     tsk_add_title_class: { en: "Give a task to a class", id: "Beri tugas ke kelas" },
@@ -1040,4 +1040,13 @@ Object.assign(translations, {
     tsk_t_empty_past_text: { en: "Tasks whose deadline has passed move here.", id: "Tugas yang deadline-nya sudah lewat pindah ke sini." }
 });
 
+
+Object.assign(translations, {
+    notif_kind_lessons: { en: "Lesson schedule", id: "Jadwal pelajaran" },
+    notif_kind_lessons_hint: { en: "About 10 minutes before each lesson starts.", id: "Sekitar 10 menit sebelum pelajaran dimulai." },
+    notif_kind_tasks: { en: "Tasks & deadlines", id: "Tugas & deadline" },
+    notif_kind_tasks_hint: { en: "New tasks, the day before, on the day and 1 hour before.", id: "Tugas baru, H-1, hari H, dan 1 jam sebelum deadline." },
+    notif_kind_saved: { en: "Saved.", id: "Tersimpan." },
+    notif_kind_failed: { en: "Couldn't save. Try again.", id: "Gagal menyimpan. Coba lagi." }
+});
 document.addEventListener("DOMContentLoaded", applyLang);

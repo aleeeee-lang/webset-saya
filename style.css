@@ -3122,3 +3122,10 @@ html[data-theme="dark"] .att-weakpw-txt b{color:#FBE7BF!important}
 html[data-theme="dark"] .att-weakpw-ic{background:#3B2E14!important;color:#F2C46B!important}
 html[data-theme="dark"] .att-weakpw-act a{background:#D9F35B!important;color:#0F172A!important}
 html[data-theme="dark"] .att-weakpw-act button{border-color:#5A4520!important;color:#E9D6AE!important}
+
+/* ===== Notification kinds (Settings) ===== */
+#pushKinds[hidden],.att-app-sub[hidden]{display:none!important}
+.att-app-row.att-app-sub{padding-left:28px;border-top:1px solid #F0F0F4}
+.att-app-sub svg{color:#8A8FA8}
+html[data-theme="dark"] .att-app-row.att-app-sub{border-top-color:#2A2A2D}
+html[data-theme="dark"] .att-switch input:checked+span{background:#C6F432}

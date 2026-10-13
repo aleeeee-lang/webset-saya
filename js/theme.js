@@ -20,7 +20,7 @@ function setTheme(theme) {
         return m;
     }
     function topColor() {
-        if (document.documentElement.classList.contains("att-splash")) return "#07080F";
+        if (document.documentElement.classList.contains("att-splash")) return "#000000";
         var el = document.elementFromPoint(Math.round(window.innerWidth / 2), 1);
         while (el && el.nodeType === 1) {
             var c = getComputedStyle(el).backgroundColor;
@@ -57,7 +57,7 @@ function setTheme(theme) {
     css.id = "attSplashCss";
     css.textContent =
         "html.att-splash,html.att-splash body{overflow:hidden}" +
-        "html.att-splash::after{content:'';position:fixed;inset:0;z-index:2147483646;background:#07080F url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%228%205%2046%2055%22%3E%3Cpath%20d%3D%22M37.2%209.2c1.3-1.4%203.6-1.6%205.2-.6c1%20.6%201.6%201.7%201.7%202.9l3.1%2040.8c.2%202.6-2.2%204.6-4.7%204l-12.1-3c-1.3-.3-2.2-1.4-2.3-2.7l-.3-4.2h-7.4l-2.3%202.2c-1%20.9-2.4%201.1-3.6.6l-1.2-.5c-1.6-.7-2.1-2.7-1-4.1L37.2%209.2z%22%20fill%3D%22%23C6F432%22%20stroke%3D%22%23C6F432%22%20stroke-width%3D%225.5%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M27.6%2031.2l-6.1%209.3h6.8l-.7-9.3z%22%20fill%3D%22%2307080F%22%20stroke%3D%22%2307080F%22%20stroke-width%3D%222.4%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E\") center calc(50% - 18px)/104px auto no-repeat;transition:opacity .38s ease;animation:attSpIn .6s cubic-bezier(.22,.8,.3,1) both}" +
+        "html.att-splash::after{content:'';position:fixed;inset:0;z-index:2147483646;background:#000000 url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%228%205%2046%2055%22%3E%3Cpath%20d%3D%22M37.2%209.2c1.3-1.4%203.6-1.6%205.2-.6c1%20.6%201.6%201.7%201.7%202.9l3.1%2040.8c.2%202.6-2.2%204.6-4.7%204l-12.1-3c-1.3-.3-2.2-1.4-2.3-2.7l-.3-4.2h-7.4l-2.3%202.2c-1%20.9-2.4%201.1-3.6.6l-1.2-.5c-1.6-.7-2.1-2.7-1-4.1L37.2%209.2z%22%20fill%3D%22%23C6F432%22%20stroke%3D%22%23C6F432%22%20stroke-width%3D%225.5%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M27.6%2031.2l-6.1%209.3h6.8l-.7-9.3z%22%20fill%3D%22%23000000%22%20stroke%3D%22%23000000%22%20stroke-width%3D%222.4%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E\") center calc(50% - 18px)/104px auto no-repeat;transition:opacity .38s ease;animation:attSpIn .6s cubic-bezier(.22,.8,.3,1) both}" +
         "html.att-splash::before{content:'Attendreem';position:fixed;left:0;right:0;top:calc(50% + 55px);z-index:2147483647;text-align:center;font:800 19px/1 'Bricolage Grotesque','Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.01em;color:#C6F432;transition:opacity .3s ease;animation:attSpTxt .7s ease .15s both}" +
         "html.att-splash.att-splash-out::after{opacity:0}" +
         "html.att-splash.att-splash-out::before{animation:attSpOut .18s ease forwards}" +
@@ -81,7 +81,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261013o";
+    p.src = "js/push.js?v=20261013p";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -89,7 +89,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013o";
+    s.src = "js/sidebar.js?v=20261013p";
     s.defer = true;
     document.head.appendChild(s);
 })();

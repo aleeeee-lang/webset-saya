@@ -117,8 +117,8 @@ Deno.serve(async (req) => {
   const { data: tasks, error } = await db.from("tasks").select("id,title,subject,due_at,user_id,class,created_at")
     .gt("due_at", nowIso)
     .or(`due_at.lt.${soonIso},created_at.gt.${recentIso}`);
-  if (error) return Response.json({ error: error.message }, { status: 500 });
-  if (tasks?.length) {
+  if (error) console.error("tasks", error.message);   // keep going: queued + lesson reminders still go out
+  if (!error && tasks?.length) {
     // who should hear about each task
     const classes = [...new Set(tasks.filter((t: Task) => t.class).map((t: Task) => t.class as string))];
     const byClass: Record<string, string[]> = {};

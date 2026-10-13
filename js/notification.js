@@ -303,6 +303,56 @@ async function subscribeAttendanceNotifications(userId) {
         .subscribe();
 }
 
+// ===== Task reminders: once per task for "due tomorrow", "due today" and "new class task" =====
+const TASK_REMIND_PREFIX = "attendreem-task-remind-";
+function loadTaskReminded(userId) { try { return JSON.parse(localStorage.getItem(TASK_REMIND_PREFIX + userId) || "[]"); } catch (e) { return []; } }
+function saveTaskReminded(userId, list) { try { localStorage.setItem(TASK_REMIND_PREFIX + userId, JSON.stringify(list.slice(0, 200))); } catch (e) {} }
+
+async function fetchTaskReminders(userId, userClass) {
+    if (typeof supabaseClient === "undefined") return;
+    try {
+        const now = new Date();
+        const horizon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2).toISOString();
+        let q = supabaseClient.from("tasks").select("id,title,subject,due_at,class,created_at").gte("due_at", now.toISOString()).lt("due_at", horizon);
+        q = userClass ? q.or("user_id.eq." + userId + ",class.eq." + JSON.stringify(userClass)) : q.eq("user_id", userId);
+        const { data, error } = await q.order("due_at", { ascending: true });
+        if (error || !data || !data.length) return;
+        const { data: done } = await supabaseClient.from("task_done").select("task_id").eq("user_id", userId).in("task_id", data.map(function (t) { return t.id; }));
+        const doneIds = (done || []).map(function (d) { return d.task_id; });
+        const seen = loadTaskReminded(userId), lang = getLang();
+        const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        data.forEach(function (t) {
+            if (doneIds.indexOf(t.id) !== -1) return;
+            const due = new Date(t.due_at);
+            const dd = Math.round((new Date(due.getFullYear(), due.getMonth(), due.getDate()) - today0) / 86400000);
+            if (due < now || dd > 1) return;
+            const stage = dd <= 0 ? "h0" : "h1";
+            const key = t.id + ":" + stage;
+            if (seen.indexOf(key) !== -1) return;
+            const label = translations[stage === "h0" ? "notif_task_today" : "notif_task_tomorrow"][lang];
+            const time = String(due.getHours()).padStart(2, "0") + "." + String(due.getMinutes()).padStart(2, "0");
+            addNotification(userId, label + " " + (t.subject ? t.subject + " · " : "") + t.title + " (" + time + ")");
+            seen.unshift(key);
+        });
+        saveTaskReminded(userId, seen);
+    } catch (e) { /* tasks table may not exist yet */ }
+}
+
+function subscribeTaskNotifications(userId, userClass) {
+    if (typeof supabaseClient === "undefined" || !userClass) return;
+    supabaseClient
+        .channel("task-notifications-" + userId)
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "tasks", filter: "class=eq." + userClass }, function (payload) {
+            const t = payload.new;
+            if (!t || t.created_by === userId) return;
+            const seen = loadTaskReminded(userId), key = t.id + ":new";
+            if (seen.indexOf(key) !== -1) return;
+            addNotification(userId, translations.notif_task_new[getLang()] + " " + (t.subject ? t.subject + " · " : "") + t.title);
+            seen.unshift(key); saveTaskReminded(userId, seen);
+        })
+        .subscribe();
+}
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const notificationButton = document.getElementById("notificationButton");
@@ -344,6 +394,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         await fetchRecentBroadcasts(user.id, userClass);
         subscribeBroadcastNotifications(user.id, userClass);
+        await fetchTaskReminders(user.id, userClass);
+        subscribeTaskNotifications(user.id, userClass);
 
         if (hasUnreadNotifications(user.id)) {
             showNotificationDot();

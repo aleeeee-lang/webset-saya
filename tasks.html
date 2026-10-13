@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#14162B">
+<link rel="stylesheet" href="style.css?v=20261013d">
+<script src="js/theme.js?v=20261013d"></script>
+<script src="js/lang.js?v=20261013d"></script>
+<script src="js/toast.js?v=20261013d"></script>
+<script src="js/lessons.js?v=20261013d"></script>
+<script src="js/tasks-core.js?v=20261013d"></script>
+<script src="js/timepicker.js?v=20261013d"></script>
+<script src="js/timefield.js?v=20261013d"></script>
+<script src="js/avatarcrop.js?v=20261013d"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v2-tsk">
+
+    <header class="v2-head">
+        <button type="button" class="v2-back" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="lsn-head-text">
+            <h1 data-i18n="page_tasks">Tasks</h1>
+            <p class="v2-head-sub" id="tskSub">&nbsp;</p>
+        </div>
+        <button type="button" class="tsk-add-btn" id="tskAddBtn" aria-label="Add task"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+    </header>
+
+    <div class="tsk-filters" id="tskFilters" role="tablist">
+        <button type="button" data-f="open" class="on" data-i18n="tsk_f_open">To do</button>
+        <button type="button" data-f="done" data-i18n="tsk_f_done">Done</button>
+        <button type="button" data-f="all" data-i18n="tsk_f_all">All</button>
+    </div>
+
+    <section id="tskList" class="tsk-list"></section>
+
+    <datalist id="tskSubjects"></datalist>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261013d"></script>
+<script src="js/auth.js?v=20261013d"></script>
+
+<script>
+const esc = Lessons.esc;
+function tr(key) { const t = translations[key]; return t ? t[getLang()] : key; }
+const IC = {
+    check: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    person: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+    note: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6"/></svg>',
+    empty: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg>'
+};
+
+let me = null, myClass = "", tasks = [], lessons = [], teacherNames = {}, filter = "open";
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = "index.html";
+}
+
+async function load() {
+    const res = await Tasks.fetchMine(supabaseClient, me.id, myClass);
+    if (res.error) {
+        document.getElementById("tskList").innerHTML = '<div class="lsn-empty big">' + IC.empty + '<b>' + tr("tsk_setup_title") + '</b><small>' + tr("tsk_setup_text") + '</small></div>';
+        document.getElementById("tskAddBtn").hidden = true;
+        return;
+    }
+    tasks = res.tasks;
+    const creators = Array.from(new Set(tasks.filter(function (t) { return t.class; }).map(function (t) { return t.created_by; }))).filter(function (id) { return !(id in teacherNames); });
+    if (creators.length) {
+        const r = await supabaseClient.from("profiles").select("id,name").in("id", creators);
+        (r.data || []).forEach(function (p) { teacherNames[p.id] = p.name; });
+    }
+    render();
+}
+
+function groupOf(t) { return t.done ? "done" : Tasks.bucket(t); }
+
+function cardHTML(t) {
+    const d = Tasks.dueLabel(t), g = groupOf(t);
+    const from = t.class ? '<span class="tsk-from">' + IC.person + esc(teacherNames[t.created_by] || tr("tsk_from_teacher")) + '</span>' : '';
+    const subj = t.subject ? '<span class="tsk-subj t-' + Lessons.tone(t.subject) + '">' + esc(t.subject) + '</span>' : '';
+    return '<article class="tsk-item g-' + g + (t.done ? ' done' : '') + '" data-id="' + t.id + '">' +
+        '<button type="button" class="tsk-check" data-act="toggle" aria-pressed="' + t.done + '" aria-label="' + tr(t.done ? "tsk_mark_undone" : "tsk_mark_done") + '">' + IC.check + '</button>' +
+        '<div class="tsk-body"><div class="tsk-top">' + subj + from + '</div>' +
+        '<strong class="tsk-title">' + esc(t.title) + '</strong>' +
+        '<div class="tsk-due">' + IC.clock + '<span>' + esc(d.when) + '</span>' + (t.done ? '' : '<em>' + esc(d.rel) + '</em>') + (t.description ? '<i class="tsk-has-note">' + IC.note + '</i>' : '') + '</div></div></article>';
+}
+
+function render() {
+    const open = tasks.filter(function (t) { return !t.done; });
+    const late = open.filter(function (t) { return Tasks.bucket(t) === "late"; }).length;
+    document.getElementById("tskSub").textContent = open.length
+        ? tr("tsk_sub_open").replace("{n}", open.length) + (late ? " · " + tr("tsk_sub_late").replace("{n}", late) : "")
+        : tr("tsk_sub_clear");
+    document.querySelectorAll("#tskFilters [data-f]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-f") === filter); });
+
+    let list = tasks.slice();
+    if (filter === "open") list = open;
+    else if (filter === "done") list = tasks.filter(function (t) { return t.done; }).sort(function (a, b) { return new Date(b.done_at) - new Date(a.done_at); });
+    const box = document.getElementById("tskList");
+    if (!list.length) {
+        box.innerHTML = '<div class="lsn-empty big">' + IC.empty + '<b>' + tr(filter === "done" ? "tsk_empty_done" : "tsk_empty_title") + '</b><small>' + tr(filter === "done" ? "tsk_empty_done_text" : "tsk_empty_text") + '</small></div>';
+        return;
+    }
+    if (filter === "done") { box.innerHTML = list.map(cardHTML).join(""); return; }
+    const order = ["late", "today", "tomorrow", "week", "later", "done"];
+    let html = "";
+    order.forEach(function (g) {
+        const items = list.filter(function (t) { return groupOf(t) === g; });
+        if (!items.length) return;
+        html += '<h2 class="tsk-group g-' + g + '">' + tr("tsk_g_" + g) + ' <span>' + items.length + '</span></h2>' + items.map(cardHTML).join("");
+    });
+    box.innerHTML = html;
+}
+
+document.getElementById("tskFilters").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-f]");
+    if (b) { filter = b.getAttribute("data-f"); render(); }
+});
+
+document.getElementById("tskList").addEventListener("click", function (e) {
+    const card = e.target.closest(".tsk-item");
+    if (!card) return;
+    const t = tasks.find(function (x) { return x.id === card.getAttribute("data-id"); });
+    if (!t) return;
+    if (e.target.closest('[data-act="toggle"]')) toggleDone(t, card);
+    else openSheet(t);
+});
+
+async function toggleDone(t, card) {
+    const was = t.done;
+    t.done = !was; t.done_at = t.done ? new Date().toISOString() : null;
+    if (card) { card.classList.toggle("done", t.done); card.classList.add("pop"); }
+    const res = t.done
+        ? await supabaseClient.from("task_done").insert({ task_id: t.id, user_id: me.id })
+        : await supabaseClient.from("task_done").delete().eq("task_id", t.id).eq("user_id", me.id);
+    if (res.error && !/duplicate/i.test(res.error.message)) {
+        t.done = was; showToast(tr("toast_save_failed") + res.error.message, "error");
+    } else if (t.done) showToast(tr("tsk_done_toast"), "success");
+    setTimeout(render, t.done ? 380 : 0);
+}
+
+function nextLessonDate(subject) {
+    const list = lessons.filter(function (x) { return String(x.subject).trim().toLowerCase() === String(subject).trim().toLowerCase(); });
+    if (!list.length) return null;
+    const now = new Date();
+    for (let k = 1; k <= 14; k++) {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k);
+        const dow = Lessons.isoDay(d);
+        const l = Lessons.sort(list.filter(function (x) { return Number(x.day) === dow; }))[0];
+        if (l) { const p = l.start_time.split(":"); d.setHours(Number(p[0]), Number(p[1])); return { date: d, lesson: l }; }
+    }
+    return null;
+}
+
+function openSheet(t) {
+    const editing = !!t, readOnly = editing && !!t.class && t.created_by !== me.id;
+    const due = editing ? new Date(t.due_at) : (function () { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(23, 59, 0, 0); return d; })();
+    const w = document.createElement("div");
+    w.className = "ac-wrap ac-confirm lsn-sheet tsk-sheet";
+    if (readOnly) {
+        const dl = Tasks.dueLabel(t);
+        w.innerHTML = '<div class="ac-card">' +
+            '<div class="tsk-view-top">' + (t.subject ? '<span class="tsk-subj t-' + Lessons.tone(t.subject) + '">' + esc(t.subject) + '</span>' : '') + '<span class="tsk-from">' + IC.person + esc(teacherNames[t.created_by] || tr("tsk_from_teacher")) + '</span></div>' +
+            '<b class="tsk-view-title">' + esc(t.title) + '</b>' +
+            '<div class="tsk-view-due g-' + groupOf(t) + '">' + IC.clock + '<span>' + esc(dl.when) + '</span><em>' + (t.done ? tr("tsk_f_done") : esc(dl.rel)) + '</em></div>' +
+            (t.description ? '<p class="tsk-view-desc">' + esc(t.description).replace(/\n/g, "<br>") + '</p>' : '') +
+            '<div class="ac-actions"><button type="button" class="ac-cancel">' + tr("btn_close_plain") + '</button><button type="button" class="ac-ok">' + tr(t.done ? "tsk_mark_undone" : "tsk_mark_done") + '</button></div></div>';
+        document.body.appendChild(w);
+        requestAnimationFrame(function () { w.classList.add("in"); });
+        const close = function () { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); };
+        w.addEventListener("click", function (e) { if (e.target === w) close(); });
+        w.querySelector(".ac-cancel").addEventListener("click", close);
+        w.querySelector(".ac-ok").addEventListener("click", function () { close(); toggleDone(t, document.querySelector('.tsk-item[data-id="' + t.id + '"]')); });
+        return;
+    }
+    const today = new Date(), quick = [
+        ["today", 0], ["tomorrow", 1], ["in2", 2], ["nextweek", 7]
+    ];
+    w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b></div><div class="lsn-form">' +
+        '<label class="lsn-f"><span>' + tr("tsk_f_title") + '</span><input type="text" id="tTitle" maxlength="120" autocomplete="off"></label>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_subject") + ' <i>' + tr("lsn_optional") + '</i></span><input type="text" id="tSubject" list="tskSubjects" maxlength="60" autocomplete="off"></label>' +
+        '<div class="lsn-f"><span>' + tr("tsk_f_due") + '</span><div class="tsk-quick" id="tQuick">' +
+        quick.map(function (q) { return '<button type="button" data-add="' + q[1] + '">' + tr("tsk_q_" + q[0]) + '</button>'; }).join("") +
+        '<button type="button" data-next hidden></button></div>' +
+        '<div class="lsn-f-row"><input type="date" id="tDate"><input type="text" class="v2-time" id="tTime"></div></div>' +
+        '<label class="lsn-f"><span>' + tr("tsk_f_note") + ' <i>' + tr("lsn_optional") + '</i></span><textarea id="tNote" rows="3" maxlength="1000"></textarea></label>' +
+        '<p class="lsn-f-warn" id="tWarn" hidden></p></div>' +
+        '<div class="ac-actions">' + (editing ? '<button type="button" class="ac-cancel lsn-del-btn">' + tr("btn_delete") + '</button>' : '<button type="button" class="ac-cancel">' + tr("btn_cancel_plain") + '</button>') +
+        '<button type="button" class="ac-ok">' + tr("btn_save_plain") + '</button></div></div>';
+    w.querySelector(".ac-top b").textContent = tr(editing ? "tsk_edit_title" : "tsk_add_title");
+    document.body.appendChild(w);
+    const fTitle = w.querySelector("#tTitle"), fSubject = w.querySelector("#tSubject"), fDate = w.querySelector("#tDate"), fTime = w.querySelector("#tTime"), fNote = w.querySelector("#tNote"), warn = w.querySelector("#tWarn"), nextBtn = w.querySelector("[data-next]");
+    fDate.value = Tasks.toDateInput(due); fTime.value = Tasks.toTimeInput(due);
+    attTimeField(fTime);
+    if (editing) { fTitle.value = t.title; fSubject.value = t.subject || ""; fNote.value = t.description || ""; }
+    function paintQuick() {
+        w.querySelectorAll("[data-add]").forEach(function (b) {
+            const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + Number(b.getAttribute("data-add")));
+            b.classList.toggle("on", Tasks.toDateInput(d) === fDate.value);
+        });
+        nextBtn.classList.toggle("on", !!nextBtn._date && Tasks.toDateInput(nextBtn._date) === fDate.value && Tasks.toTimeInput(nextBtn._date) === normalizeTime(fTime.value));
+    }
+    function updateNext() {
+        const n = fSubject.value.trim() ? nextLessonDate(fSubject.value) : null;
+        nextBtn.hidden = !n;
+        if (n) { nextBtn._date = n.date; nextBtn.textContent = tr("tsk_q_nextlesson").replace("{d}", Lessons.dayShort(Lessons.isoDay(n.date))).replace("{t}", Lessons.fmt(n.lesson.start_time)); }
+        paintQuick();
+    }
+    w.querySelector("#tQuick").addEventListener("click", function (e) {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.hasAttribute("data-next")) { fDate.value = Tasks.toDateInput(b._date); fTime.value = Tasks.toTimeInput(b._date); }
+        else { const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + Number(b.getAttribute("data-add"))); fDate.value = Tasks.toDateInput(d); }
+        paintQuick();
+    });
+    fSubject.addEventListener("input", updateNext);
+    fDate.addEventListener("change", paintQuick); fTime.addEventListener("change", paintQuick);
+    updateNext();
+
+    requestAnimationFrame(function () { w.classList.add("in"); if (!editing) fTitle.focus(); });
+    const close = function () { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); };
+    w.addEventListener("click", function (e) { if (e.target === w) close(); });
+    w.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    w.querySelector(".ac-cancel").addEventListener("click", function () { close(); if (editing) removeTask(t); });
+    w.querySelector(".ac-ok").addEventListener("click", async function () {
+        warn.hidden = true;
+        const title = fTitle.value.trim(), time = normalizeTime(fTime.value);
+        if (!title) { fTitle.focus(); warn.textContent = tr("tsk_err_title"); warn.hidden = false; return; }
+        if (!fDate.value || !time) { warn.textContent = tr("tsk_err_due"); warn.hidden = false; return; }
+        const row = { title: title, subject: fSubject.value.trim() || null, description: fNote.value.trim() || null, due_at: Tasks.localISO(fDate.value, time), updated_at: new Date().toISOString() };
+        this.disabled = true;
+        const res = editing
+            ? await supabaseClient.from("tasks").update(row).eq("id", t.id)
+            : await supabaseClient.from("tasks").insert(Object.assign({ user_id: me.id, created_by: me.id }, row));
+        this.disabled = false;
+        if (res.error) { warn.textContent = tr("toast_save_failed") + res.error.message; warn.hidden = false; return; }
+        close();
+        await load();
+        showToast(tr(editing ? "tsk_saved" : "tsk_added"), "success");
+    });
+}
+
+async function removeTask(t) {
+    const ok = await attConfirm({ title: tr("tsk_del_title"), text: tr("tsk_del_text").replace("{s}", t.title), ok: tr("btn_delete") });
+    if (!ok) return;
+    const { error } = await supabaseClient.from("tasks").delete().eq("id", t.id);
+    if (error) { showToast(tr("toast_save_failed") + error.message, "error"); return; }
+    tasks = tasks.filter(function (x) { return x.id !== t.id; });
+    render();
+    showToast(tr("tsk_deleted"), "success");
+}
+
+document.getElementById("tskAddBtn").addEventListener("click", function () { openSheet(null); });
+
+async function init() {
+    const user = await requireLogin();
+    if (!user) return;
+    me = user;
+    const { data: prof } = await supabaseClient.from("profiles").select("class").eq("id", user.id).maybeSingle();
+    myClass = (prof && prof.class) || "";
+    if (myClass) {
+        const r = await supabaseClient.from("class_schedules").select("subject,day,start_time").eq("class", myClass);
+        lessons = r.error ? [] : (r.data || []);
+        const subj = Array.from(new Set(lessons.map(function (x) { return x.subject; }))).sort();
+        document.getElementById("tskSubjects").innerHTML = subj.map(function (s) { return '<option value="' + esc(s) + '">'; }).join("");
+    }
+    await load();
+    setInterval(render, 60000);
+    if (new URLSearchParams(location.search).get("new") === "1") openSheet(null);
+}
+init();
+</script>
+</body>
+</html>

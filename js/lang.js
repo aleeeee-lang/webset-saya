@@ -1046,6 +1046,8 @@ Object.assign(translations, {
     notif_kind_lessons_hint: { en: "About 10 minutes before each lesson starts.", id: "Sekitar 10 menit sebelum pelajaran dimulai." },
     notif_kind_tasks: { en: "Tasks & deadlines", id: "Tugas & deadline" },
     notif_kind_tasks_hint: { en: "New tasks, the day before, on the day and 1 hour before.", id: "Tugas baru, H-1, hari H, dan 1 jam sebelum deadline." },
+    notif_kind_general: { en: "Announcements & attendance", id: "Pengumuman & absensi" },
+    notif_kind_general_hint: { en: "New announcements, and when a teacher records your attendance.", id: "Pengumuman baru, dan saat guru mencatat absensimu." },
     notif_kind_saved: { en: "Saved.", id: "Tersimpan." },
     notif_kind_failed: { en: "Couldn't save. Try again.", id: "Gagal menyimpan. Coba lagi." }
 });

@@ -6,7 +6,8 @@
 //            soon - deadline within the next hour
 //   lessons: about 10-15 minutes before a lesson starts (students of the class + its teacher),
 //            skipped on days marked as a holiday in the academic calendar.
-// Each person can turn tasks / lessons off in Settings (table notif_prefs).
+//   queue:   announcements and attendance changes queued by database triggers (push_events.sql)
+// Each person can turn tasks / lessons / general off in Settings (table notif_prefs).
 // Secrets needed (Edge Functions -> Secrets): VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, CRON_SECRET.
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by Supabase automatically.
 
@@ -46,14 +47,29 @@ Deno.serve(async (req) => {
   const recentIso = new Date(now.getTime() - 30 * 60_000).toISOString();
 
   // who turned which reminders off
-  const { data: prefRows } = await db.from("notif_prefs").select("user_id,tasks,lessons");
+  const { data: prefRows } = await db.from("notif_prefs").select("*");
   const noTasks = new Set((prefRows ?? []).filter((r: { tasks: boolean }) => r.tasks === false).map((r: { user_id: string }) => r.user_id));
   const noLessons = new Set((prefRows ?? []).filter((r: { lessons: boolean }) => r.lessons === false).map((r: { user_id: string }) => r.user_id));
+
+  const noGeneral = new Set((prefRows ?? []).filter((r: { general?: boolean }) => r.general === false).map((r: { user_id: string }) => r.user_id));
 
   type Msg = { user: string; title: string; body: string; url: string; tag: string; ttl: number };
   const msgs: Msg[] = [];
   const taskLog: { task_id: string; user_id: string; stage: string }[] = [];
   const lessonLog: { schedule_id: string; user_id: string; day: string }[] = [];
+
+  // ---------- queued: announcements + attendance ----------
+  const { data: queued, error: qErr } = await db.from("push_queue").select("id,user_id,title,body,url,tag")
+    .is("sent_at", null).gt("created_at", new Date(now.getTime() - 6 * H).toISOString()).order("id").limit(2000);
+  if (!qErr && queued?.length) {
+    // mark first, so a slow run never sends them twice
+    await db.from("push_queue").update({ sent_at: nowIso }).in("id", queued.map((q: { id: number }) => q.id));
+    for (const q of queued as { user_id: string; title: string; body: string; url: string; tag: string | null }[]) {
+      if (noGeneral.has(q.user_id)) continue;
+      msgs.push({ user: q.user_id, title: q.title, body: q.body, url: q.url, tag: q.tag ?? "attendreem", ttl: 24 * 3600 });
+    }
+  }
+  if (!qErr && Math.random() < 0.02) await db.from("push_queue").delete().lt("created_at", new Date(now.getTime() - 7 * 24 * H).toISOString());
 
   // ---------- lessons ----------
   const local = new Date(now.getTime() + TZ * H);
@@ -170,5 +186,5 @@ Deno.serve(async (req) => {
   })));
   if (gone.length) await db.from("push_subscriptions").delete().in("endpoint", gone);
 
-  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, removed: gone.length });
+  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, queued: queued?.length ?? 0, removed: gone.length });
 });

@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013n">
-<script src="js/theme.js?v=20261013n"></script>
-<script src="js/avatarcrop.js?v=20261013n"></script>
-<script src="js/lang.js?v=20261013n"></script>
-<script src="js/toast.js?v=20261013n"></script>
+<link rel="stylesheet" href="style.css?v=20261013o">
+<script src="js/theme.js?v=20261013o"></script>
+<script src="js/avatarcrop.js?v=20261013o"></script>
+<script src="js/lang.js?v=20261013o"></script>
+<script src="js/toast.js?v=20261013o"></script>
 </head>
 
 <body>
@@ -102,6 +102,11 @@
             <label class="att-switch"><input type="checkbox" id="pushToggle"><span></span></label>
         </div>
         <div id="pushKinds" hidden>
+            <div class="att-app-row att-app-sub" id="prefGeneralRow">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+                <div class="att-app-text"><span data-i18n="notif_kind_general">Announcements &amp; attendance</span><small data-i18n="notif_kind_general_hint">New announcements, and when a teacher records your attendance.</small></div>
+                <label class="att-switch"><input type="checkbox" id="prefGeneral" checked><span></span></label>
+            </div>
             <div class="att-app-row att-app-sub" id="prefLessonsRow">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>
                 <div class="att-app-text"><span data-i18n="notif_kind_lessons">Lesson schedule</span><small data-i18n="notif_kind_lessons_hint">About 10 minutes before each lesson starts.</small></div>
@@ -220,8 +225,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013n"></script>
-<script src="js/auth.js?v=20261013n"></script>
+<script src="js/supabase.js?v=20261013o"></script>
+<script src="js/auth.js?v=20261013o"></script>
 
 <script>
 
@@ -425,28 +430,30 @@ async function syncPushKinds(on) {
     let role = "";
     try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}").role) || ""; } catch (e) {}
     const showL = role === "murid" || role === "guru", showT = role === "murid";
-    if (!on || (!showL && !showT)) { box.hidden = true; return; }
+    if (!on) { box.hidden = true; return; }
     const s = await supabaseClient.auth.getSession();
     const uid = s && s.data && s.data.session ? s.data.session.user.id : null;
     if (!uid) { box.hidden = true; return; }
-    const { data, error } = await supabaseClient.from("notif_prefs").select("tasks, lessons").eq("user_id", uid).maybeSingle();
+    const { data, error } = await supabaseClient.from("notif_prefs").select("*").eq("user_id", uid).maybeSingle();
     if (error) { box.hidden = true; return; }       // table not created yet
     document.getElementById("prefLessonsRow").hidden = !showL;
     document.getElementById("prefTasksRow").hidden = !showT;
     document.getElementById("prefLessons").checked = !data || data.lessons !== false;
     document.getElementById("prefTasks").checked = !data || data.tasks !== false;
+    document.getElementById("prefGeneral").checked = !data || data.general !== false;
     box.dataset.uid = uid;
     box.hidden = false;
 }
 async function savePushKinds() {
     const box = document.getElementById("pushKinds");
     if (!box.dataset.uid) return;
-    const row = { user_id: box.dataset.uid, lessons: document.getElementById("prefLessons").checked, tasks: document.getElementById("prefTasks").checked, updated_at: new Date().toISOString() };
+    const row = { user_id: box.dataset.uid, lessons: document.getElementById("prefLessons").checked, tasks: document.getElementById("prefTasks").checked, general: document.getElementById("prefGeneral").checked, updated_at: new Date().toISOString() };
     const { error } = await supabaseClient.from("notif_prefs").upsert(row, { onConflict: "user_id" });
     showToast(pushT(error ? "notif_kind_failed" : "notif_kind_saved"), error ? "error" : "success");
 }
 document.getElementById("prefLessons").addEventListener("change", savePushKinds);
 document.getElementById("prefTasks").addEventListener("change", savePushKinds);
+document.getElementById("prefGeneral").addEventListener("change", savePushKinds);
 document.getElementById("installBtn").addEventListener("click", async function () { await window.AttPush.install(); syncAppCard(); });
 document.getElementById("pushToggle").addEventListener("change", async function () {
     const tg = this, ph = document.getElementById("pushHint");

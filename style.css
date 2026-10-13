@@ -3036,3 +3036,42 @@ html[data-theme="dark"] .tsk-sheet textarea:focus{border-color:#C6F432;box-shado
 html[data-theme="dark"] .tsk-view-desc{background:#242426;color:#D1D1D6}
 html[data-theme="dark"] .tsk-add-btn{color:#14162B}
 button.v2-back{border:none;cursor:pointer;padding:0}
+
+/* Tasks: teacher mode */
+.tsk-item.tsk-t{cursor:pointer}
+.tsk-item.tsk-t.g-past{opacity:.75}
+.tsk-cls{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:#14162B;color:#fff}
+.tsk-due em.past{background:#EEEEF3;color:#6B7090}
+.tsk-prog{display:flex;align-items:center;gap:10px;margin-top:4px}
+.tsk-prog-bar{flex:1;height:8px;border-radius:999px;background:#EEEEF3;overflow:hidden}
+.tsk-prog-bar i{display:block;height:100%;border-radius:999px;background:#22C55E;transition:width .3s}
+.tsk-prog span{font-size:12px;font-weight:600;color:#4A4F6A;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tsk-prog span b{color:#14162B;font-size:13px}
+.tsk-prog.big .tsk-prog-bar{height:10px}
+.tsk-item.all-done .tsk-prog span b{color:#16A34A}
+.tsk-class-pick button{height:38px}
+.tsk-people{display:flex;flex-direction:column;gap:6px;max-height:38vh;overflow-y:auto;margin:0 -4px;padding:0 4px}
+.tsk-people h3{margin:6px 0 2px;font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px;color:#14162B}
+.tsk-people h3 span{font-size:11px;padding:1px 8px;border-radius:999px;background:#EEEEF3;color:#4A4F6A}
+.tsk-people ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.tsk-people li{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:12px;background:#F3F3F7}
+.tsk-people li.none{background:none;font-size:13px;color:#8A8FA8;padding:4px 8px}
+.tsk-av{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:800 13px 'Bricolage Grotesque',sans-serif;background:#E4E6F3;color:#14162B;flex-shrink:0}
+.tsk-people li.yes .tsk-av{background:#DCFCE7;color:#166534}
+.tsk-nm{flex:1;min-width:0;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsk-people li small{font-size:11.5px;color:#6B7090;white-space:nowrap}
+html[data-theme="dark"] .tsk-cls{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .tsk-prog-bar{background:#2A2A2D}
+html[data-theme="dark"] .tsk-prog span{color:#A1A1A6}
+html[data-theme="dark"] .tsk-prog span b{color:#EDEDED}
+html[data-theme="dark"] .tsk-due em.past{background:#2A2A2D;color:#A1A1A6}
+html[data-theme="dark"] .tsk-people h3{color:#EDEDED}
+html[data-theme="dark"] .tsk-people h3 span{background:#2A2A2D;color:#C7C7CC}
+html[data-theme="dark"] .tsk-people li{background:#242426}
+html[data-theme="dark"] .tsk-av{background:#2E3150;color:#EDEDED}
+html[data-theme="dark"] .tsk-people li.yes .tsk-av{background:#12321F;color:#86EFAC}
+html[data-theme="dark"] .tsk-people li small{color:#8E8E93}
+.v2-tsk .lsn-head-text{flex:1;min-width:0}
+.tsk-class-pick button{background:#F3F3F7}
+html[data-theme="dark"] .tsk-class-pick button{background:#242426}
+html[data-theme="dark"] .tsk-class-pick button.on{background:#C6F432;color:#14162B}

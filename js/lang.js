@@ -987,7 +987,24 @@ Object.assign(translations, {
     home_tasks_next: { en: "Next:", id: "Terdekat:" },
     notif_task_today: { en: "Task due today:", id: "Tugas deadline hari ini:" },
     notif_task_tomorrow: { en: "Task due tomorrow:", id: "Tugas deadline besok:" },
-    notif_task_new: { en: "New task from your teacher:", id: "Tugas baru dari guru:" }
+    notif_task_new: { en: "New task from your teacher:", id: "Tugas baru dari guru:" },
+    page_tasks_teacher: { en: "Class tasks", id: "Tugas kelas" },
+    tsk_add_title_class: { en: "Give a task to a class", id: "Beri tugas ke kelas" },
+    tsk_f_class: { en: "Class", id: "Kelas" },
+    tsk_err_class: { en: "Pick the class first.", id: "Pilih kelasnya dulu." },
+    tsk_t_f_active: { en: "Active", id: "Aktif" },
+    tsk_t_f_past: { en: "Past deadline", id: "Lewat deadline" },
+    tsk_t_sub: { en: "{n} active tasks", id: "{n} tugas aktif" },
+    tsk_t_done_short: { en: "done", id: "selesai" },
+    tsk_t_closed: { en: "Deadline passed", id: "Deadline lewat" },
+    tsk_t_not_yet: { en: "Not done yet", id: "Belum selesai" },
+    tsk_t_everyone: { en: "Everyone has finished 🎉", id: "Semua siswa sudah selesai 🎉" },
+    tsk_t_nobody: { en: "No one yet", id: "Belum ada" },
+    tsk_t_late_submit: { en: "late", id: "telat" },
+    tsk_t_empty: { en: "No active tasks", id: "Belum ada tugas aktif" },
+    tsk_t_empty_text: { en: "Tap + to give a task to one of your classes. Students get a reminder the day before and on the day.", id: "Tekan + untuk memberi tugas ke kelas. Siswa dapat pengingat H-1 dan di hari deadline." },
+    tsk_t_empty_past: { en: "Nothing here yet", id: "Belum ada" },
+    tsk_t_empty_past_text: { en: "Tasks whose deadline has passed move here.", id: "Tugas yang deadline-nya sudah lewat pindah ke sini." }
 });
 
 document.addEventListener("DOMContentLoaded", applyLang);

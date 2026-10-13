@@ -53,6 +53,7 @@
         guru: [
             ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
             ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
+            ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
             ["goals.html", "target", "My Goals", "Target saya"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
@@ -169,7 +170,7 @@
     };
     var SHORTCUTS = {
         murid: [["attendance.html", "Absen", "Check in", "lime", "cam"], ["schedule.html", "Jadwal", "Lessons", "", "book"], ["tasks.html", "Tugas", "Tasks", "amber", "task"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],
-        guru: [["teacher.html", "Absen kelas", "Class check-in", "lime", "cam"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
+        guru: [["teacher.html", "Absen kelas", "Class check-in", "lime", "cam"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["tasks.html", "Beri tugas", "Give a task", "amber", "task"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
         orangtua: [["parent.html", "Portal anak", "Child portal", "lime", "home"], ["calendar.html", "Kalender", "Calendar", "", "cal"], ["information.html", "Informasi", "Information", "cyan", "info"]],
         admin: [["admin-students.html", "Kelola siswa", "Students", "lime", "users"], ["admin-lessons.html", "Jadwal pelajaran", "Lessons", "cyan", "book"], ["admin-schedule.html", "Jadwal absen", "Schedule", "", "clock"], ["admin-spp.html", "Kelola SPP", "SPP", "amber", "wallet"], ["admin-leave.html", "Persetujuan izin", "Leave", "red", "doc"], ["admin-broadcast.html", "Kirim notifikasi", "Notify", "cyan", "bell"]]
     };

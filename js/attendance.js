@@ -162,8 +162,9 @@ async function saveAttendance() {
 
     if (typeof capturedPhoto !== "undefined" && capturedPhoto) {
 
+        // one folder per student, so the student (and admins) can open it later
         const filePath =
-            Date.now() + ".jpg";
+            user.id + "/" + Date.now() + ".jpg";
 
 
         const {

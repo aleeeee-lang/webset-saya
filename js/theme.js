@@ -7,7 +7,44 @@
 function setTheme(theme) {
     localStorage.setItem("attendly-theme", theme);
     document.documentElement.setAttribute("data-theme", theme);
+    if (window.attSyncBar) setTimeout(window.attSyncBar, 30);
 }
+
+// Phone status bar: same colour as whatever is at the very top of the page
+// (dark hero in dark mode, navy hero in light mode, page background elsewhere).
+(function () {
+    if (window.self !== window.top) return;
+    function meta() {
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); }
+        return m;
+    }
+    function topColor() {
+        if (document.documentElement.classList.contains("att-splash")) return "#07080F";
+        var el = document.elementFromPoint(Math.round(window.innerWidth / 2), 1);
+        while (el && el.nodeType === 1) {
+            var c = getComputedStyle(el).backgroundColor;
+            if (c && c !== "transparent" && !/rgba\([^)]*,\s*0\)$/.test(c)) return c;
+            el = el.parentElement;
+        }
+        return getComputedStyle(document.body || document.documentElement).backgroundColor ||
+            (document.documentElement.getAttribute("data-theme") === "dark" ? "#000000" : "#ffffff");
+    }
+    var last = "", queued = false;
+    function sync() {
+        queued = false;
+        var c = topColor();
+        if (c && c !== last) { last = c; meta().setAttribute("content", c); }
+    }
+    window.attSyncBar = sync;
+    function later() { if (!queued) { queued = true; requestAnimationFrame(sync); } }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { sync(); setTimeout(sync, 400); });
+    else sync();
+    window.addEventListener("load", sync);
+    window.addEventListener("scroll", later, { passive: true });
+    window.addEventListener("pageshow", sync);
+    new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+})();
 
 // Splash screen: shown once per browser session, on the first page opened.
 (function () {
@@ -42,7 +79,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261013h";
+    p.src = "js/push.js?v=20261013i";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -50,7 +87,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013h";
+    s.src = "js/sidebar.js?v=20261013i";
     s.defer = true;
     document.head.appendChild(s);
 })();

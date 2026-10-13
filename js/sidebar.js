@@ -463,7 +463,28 @@
     }
     window.addEventListener("popstate", function () { closeSheet(true); });
     window.addEventListener("pageshow", function () { if (sheet) { sheet.classList.remove("open"); document.documentElement.classList.remove("v2-msheet-lock"); } });
-    function boot() { if (!inFrame) render(); mountMobileButton(); }
+
+    // gentle reminder for accounts that still use a short/weak password
+    function mountWeakPw() {
+        if (inFrame || !/^(index|teacher|parent)\.html$/.test(location.pathname.split("/").pop() || "index.html")) return;
+        try { if (localStorage.getItem("attendreem-weakpw") !== "1" || sessionStorage.getItem("attendreem-weakpw-later")) return; } catch (e) { return; }
+        if (document.querySelector(".att-weakpw")) return;
+        var id = (localStorage.getItem("attendly-lang") || "en") === "id";
+        var box = document.createElement("div");
+        box.className = "att-weakpw";
+        box.innerHTML = '<span class="att-weakpw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>' +
+            '<div class="att-weakpw-txt"><b>' + (id ? "Kata sandimu masih lemah" : "Your password is weak") + '</b><span>' +
+            (id ? "Yuk ganti ke minimal 8 karakter dengan huruf dan angka biar akunmu lebih aman." : "Change it to at least 8 characters with letters and numbers to keep your account safe.") +
+            '</span><div class="att-weakpw-act"><a href="change-password.html">' + (id ? "Ganti sekarang" : "Change now") + '</a><button type="button">' + (id ? "Nanti" : "Later") + '</button></div></div>';
+        box.querySelector("button").addEventListener("click", function () {
+            try { sessionStorage.setItem("attendreem-weakpw-later", "1"); } catch (e) {}
+            box.remove();
+        });
+        var home = document.querySelector(".v2-home-main"), hero = document.querySelector(".v2-teach-hero, .v2-par-head");
+        if (home) home.insertBefore(box, home.firstChild);
+        else if (hero) hero.parentNode.insertBefore(box, hero.nextSibling);
+    }
+    function boot() { if (!inFrame) render(); mountMobileButton(); mountWeakPw(); }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
     else boot();
     if (!inFrame) window.addEventListener("attendreem-profile", render);

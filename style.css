@@ -3075,3 +3075,35 @@ html[data-theme="dark"] .tsk-people li small{color:#8E8E93}
 .tsk-class-pick button{background:#F3F3F7}
 html[data-theme="dark"] .tsk-class-pick button{background:#242426}
 html[data-theme="dark"] .tsk-class-pick button.on{background:#C6F432;color:#14162B}
+
+/* Settings: install app + push */
+.att-app-row{display:flex;align-items:center;gap:12px;padding:12px 0;color:#20243a}
+.att-app-row+.att-app-row{border-top:1px solid #F0F0F4}
+.att-app-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.att-app-text span{font-size:13px}
+.att-app-text small{font-size:11.5px;color:#8A8FA8;line-height:1.4}
+.att-app-btn{height:34px;padding:0 14px;border-radius:10px;border:none;background:#C6F432;color:#14162B;font:700 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer;flex-shrink:0}
+.att-app-btn[hidden],.att-app-ok[hidden]{display:none}
+.att-app-ok{width:26px;height:26px;border-radius:50%;background:#DCFCE7;color:#166534;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.att-switch{position:relative;width:44px;height:26px;flex-shrink:0}
+.att-switch input{opacity:0;width:0;height:0;position:absolute}
+.att-switch span{position:absolute;inset:0;background:#e2e8f0;border-radius:20px;transition:.2s;cursor:pointer}
+.att-switch span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}
+.att-switch input:checked+span{background:#C6F432}
+.att-switch input:checked+span::after{transform:translateX(18px)}
+.att-switch input:disabled+span{opacity:.45;cursor:not-allowed}
+html[data-theme="dark"] .att-app-row+.att-app-row{border-top-color:#2A2A2D}
+html[data-theme="dark"] .attendance-page .att-app-text small{color:#8E8E93!important}
+html[data-theme="dark"] .att-switch span{background:#3A3A3C}
+html[data-theme="dark"] .attendance-page .att-app-btn{color:#14162B!important}
+html[data-theme="dark"] .attendance-page .att-app-ok{color:#166534!important}
+
+/* Tasks: push banner */
+.tsk-push{display:flex;align-items:center;gap:12px;background:#14162B;color:#fff;border-radius:20px;padding:12px 12px 12px 14px}
+.tsk-push[hidden]{display:none}
+.tsk-push svg{flex-shrink:0;color:#C6F432}
+.tsk-push p{flex:1;margin:0;font-size:13px;line-height:1.35;color:#E4E6F5}
+.tsk-push button{border:none;cursor:pointer;font-family:inherit}
+.tsk-push .go{height:36px;padding:0 14px;border-radius:12px;background:#C6F432;color:#14162B;font-weight:800;font-size:13px;flex-shrink:0}
+.tsk-push .x{width:30px;height:30px;border-radius:10px;background:transparent;color:#A9ACC6;font-size:18px;line-height:1;flex-shrink:0}
+html[data-theme="dark"] .tsk-push{background:#121212;box-shadow:inset 0 0 0 1px #2A2A2D}

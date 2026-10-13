@@ -39,10 +39,18 @@ function setTheme(theme) {
     setTimeout(hide, MAX);
 })();
 
+// Install-as-app + push notifications (loaded on every page)
+(function () {
+    var p = document.createElement("script");
+    p.src = "js/push.js?v=20261013f";
+    p.defer = true;
+    document.head.appendChild(p);
+})();
+
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013e";
+    s.src = "js/sidebar.js?v=20261013f";
     s.defer = true;
     document.head.appendChild(s);
 })();

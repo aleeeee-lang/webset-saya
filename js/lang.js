@@ -1072,4 +1072,32 @@ Object.assign(translations, {
     bc_deleted: { en: "Announcement deleted.", id: "Pengumuman dihapus." },
     bc_delete_failed: { en: "Couldn't delete.", id: "Gagal menghapus." }
 });
+
+Object.assign(translations, {
+    kas_title: { en: "Class Cash", id: "Kas Kelas" },
+    kas_balance: { en: "Cash balance", id: "Saldo kas" },
+    kas_in_month: { en: "In this month", id: "Masuk bulan ini" },
+    kas_out_month: { en: "Out this month", id: "Keluar bulan ini" },
+    kas_tab_dues: { en: "Dues", id: "Iuran" },
+    kas_tab_add: { en: "Record", id: "Catat" },
+    kas_tab_setup: { en: "Settings", id: "Pengaturan" },
+    kas_kind_in: { en: "Money in", id: "Pemasukan" },
+    kas_kind_out: { en: "Money out", id: "Pengeluaran" },
+    kas_amount: { en: "Amount", id: "Jumlah" },
+    kas_note: { en: "For what", id: "Untuk apa" },
+    kas_note_ph: { en: "e.g. Markers and tape", id: "mis. Beli spidol dan lakban" },
+    kas_date: { en: "Date", id: "Tanggal" },
+    kas_receipt: { en: "Receipt photo (optional)", id: "Foto nota (opsional)" },
+    kas_receipt_pick: { en: "Add photo", id: "Tambah foto" },
+    kas_save: { en: "Save", id: "Simpan" },
+    kas_treasurer: { en: "Treasurer", id: "Bendahara" },
+    kas_dues_amount: { en: "Dues per student", id: "Iuran per siswa" },
+    kas_dues_period: { en: "Paid every", id: "Dibayar setiap" },
+    kas_weekly: { en: "Week", id: "Minggu" },
+    kas_monthly: { en: "Month", id: "Bulan" },
+    kas_save_setup: { en: "Save settings", id: "Simpan pengaturan" },
+    kas_history: { en: "History", id: "Riwayat" },
+    kas_link_title: { en: "Class cash", id: "Kas kelas" },
+    kas_link_sub: { en: "Balance, dues and spending of your class", id: "Saldo, iuran, dan pengeluaran kelasmu" }
+});
 document.addEventListener("DOMContentLoaded", applyLang);

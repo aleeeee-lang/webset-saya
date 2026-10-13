@@ -9,6 +9,7 @@
         cam: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
         bar: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
         wallet: '<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/>',
+        cash: '<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>',
         user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
         users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.3-5 6.5-5s5.7 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.6 5"/>',
         target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
@@ -44,6 +45,7 @@
             null,
             ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
             ["tasks.html", "task", "Tasks", "Tugas"],
+            ["kas.html", "cash", "Class Cash", "Kas kelas"],
             ["goals.html", "target", "Learning Goals", "Target belajar"],
             ["leave.html", "doc", "Leave Request", "Ajukan izin"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
@@ -54,6 +56,7 @@
             ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
             ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
             ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
+            ["kas.html", "cash", "Class Cash", "Kas kelas"],
             ["goals.html", "target", "My Goals", "Target saya"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
@@ -81,6 +84,7 @@
             ["admin-lessons.html", "book", "Lesson Schedule", "Jadwal pelajaran"],
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],
             ["admin-savings.html", "wallet", "Manage Savings", "Kelola tabungan"],
+            ["kas.html", "cash", "Class Cash", "Kas kelas"],
             ["admin-leave.html", "doc", "Leave Requests", "Persetujuan izin"],
             ["admin-development.html", "grad", "Development", "Perkembangan siswa"],
             null,
@@ -166,7 +170,8 @@
         "admin-lessons.html": "jadwal pelajaran mapel mata ruangan ruang guru kelas timetable lesson",
         "admin-spp.html": "spp bayar pembayaran iuran",
         "admin-attendance.html": "absen rekap kehadiran",
-        "admin-broadcast.html": "notifikasi pesan kirim pengumuman"
+        "admin-broadcast.html": "notifikasi pesan kirim pengumuman",
+        "kas.html": "kas uang kas iuran bendahara keuangan kelas pemasukan pengeluaran saldo cash treasurer"
     };
     var SHORTCUTS = {
         murid: [["attendance.html", "Absen", "Check in", "lime", "cam"], ["schedule.html", "Jadwal", "Lessons", "", "book"], ["tasks.html", "Tugas", "Tasks", "amber", "task"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],

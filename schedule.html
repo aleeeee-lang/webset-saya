@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Schedule - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#14162B">
+<link rel="stylesheet" href="style.css?v=20261013a">
+<script src="js/theme.js?v=20261013a"></script>
+<script src="js/lang.js?v=20261013a"></script>
+<script src="js/toast.js?v=20261013a"></script>
+<script src="js/lessons.js?v=20261013a"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v2-lsn">
+
+    <header class="v2-head">
+        <button type="button" class="v2-back" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="lsn-head-text">
+            <h1 id="lsnTitle" data-i18n="page_lessons">Lesson schedule</h1>
+            <p class="v2-head-sub" id="lsnSub">&nbsp;</p>
+        </div>
+        <select id="lsnClassSelect" class="lsn-class-select" hidden aria-label="Class"></select>
+        <a href="admin-lessons.html" id="lsnManageBtn" class="lsn-manage" hidden data-i18n="lsn_manage">Manage</a>
+    </header>
+
+    <section class="lsn-now" id="lsnNow" aria-live="polite"></section>
+
+    <nav class="lsn-days" id="lsnDays" role="tablist" aria-label="Days"></nav>
+
+    <section class="lsn-list" id="lsnList"></section>
+
+    <section class="lsn-week" id="lsnWeek"></section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261013a"></script>
+<script src="js/auth.js?v=20261013a"></script>
+
+<script>
+const IC = {
+    room: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16"/><path d="M2 21h20M14 12h.01"/></svg>',
+    person: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+    users: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.3-5 6.5-5s5.7 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.6 5"/></svg>',
+    coffee: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg>',
+    cal: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+};
+const esc = Lessons.esc;
+function tr(key) { const t = translations[key]; return t ? t[getLang()] : key; }
+
+let role = "murid", lessons = [], selectedDay = Lessons.isoDay(), tick = null, homePage = "index.html";
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = homePage;
+}
+
+function metaHTML(x) {
+    const parts = [];
+    if (x.room) parts.push('<span>' + IC.room + esc(x.room) + '</span>');
+    if (role === "guru") parts.push('<span>' + IC.users + esc(x.class) + '</span>');
+    else if (x.teacher_name) parts.push('<span>' + IC.person + esc(x.teacher_name) + '</span>');
+    return parts.join("");
+}
+
+function renderNow() {
+    const box = document.getElementById("lsnNow");
+    if (!lessons.length) { box.hidden = true; return; }
+    box.hidden = false;
+    const st = Lessons.status(lessons);
+    let html = "";
+    if (st.current) {
+        const s = Lessons.toMin(st.current.start_time), e = Lessons.toMin(st.current.end_time);
+        const pct = Math.max(0, Math.min(100, Math.round((st.minute - s) / (e - s) * 100)));
+        html = '<span class="lsn-now-tag live"><i></i>' + tr("lsn_now") + '</span>' +
+            '<h2>' + esc(st.current.subject) + '</h2>' +
+            '<div class="lsn-now-meta">' + metaHTML(st.current) + '</div>' +
+            '<div class="lsn-now-bar"><i style="width:' + pct + '%"></i></div>' +
+            '<div class="lsn-now-foot"><span>' + Lessons.fmt(st.current.start_time) + '–' + Lessons.fmt(st.current.end_time) + '</span><span>' + tr("lsn_left").replace("{t}", Lessons.minutesLabel(e - st.minute)) + '</span></div>';
+        if (st.next && st.nextDay === st.day) html += '<div class="lsn-now-after">' + tr("lsn_after") + ' <b>' + esc(st.next.subject) + '</b> · ' + Lessons.fmt(st.next.start_time) + '</div>';
+    } else if (st.next && st.nextDay === st.day) {
+        const wait = Lessons.toMin(st.next.start_time) - st.minute;
+        html = '<span class="lsn-now-tag">' + tr("lsn_next") + ' · ' + tr("lsn_in").replace("{t}", Lessons.minutesLabel(wait)) + '</span>' +
+            '<h2>' + esc(st.next.subject) + '</h2>' +
+            '<div class="lsn-now-meta">' + metaHTML(st.next) + '</div>' +
+            '<div class="lsn-now-foot"><span>' + Lessons.fmt(st.next.start_time) + '–' + Lessons.fmt(st.next.end_time) + '</span></div>';
+    } else if (st.next) {
+        const todayHad = Lessons.forDay(lessons, st.day).length > 0;
+        html = '<span class="lsn-now-tag">' + (todayHad ? tr("lsn_done_today") : tr("lsn_free_today")) + '</span>' +
+            '<h2 class="sm">' + tr("lsn_next_on").replace("{d}", Lessons.dayName(st.nextDay)) + '</h2>' +
+            '<div class="lsn-now-meta"><span><b>' + esc(st.next.subject) + '</b></span>' + metaHTML(st.next) + '</div>' +
+            '<div class="lsn-now-foot"><span>' + Lessons.fmt(st.next.start_time) + '–' + Lessons.fmt(st.next.end_time) + '</span></div>';
+    }
+    box.innerHTML = html;
+}
+
+function availableDays() {
+    const days = [1, 2, 3, 4, 5, 6];
+    if (lessons.some(function (x) { return Number(x.day) === 7; })) days.push(7);
+    return days;
+}
+
+function renderDays() {
+    const nav = document.getElementById("lsnDays"), today = Lessons.isoDay();
+    nav.innerHTML = availableDays().map(function (d) {
+        const n = Lessons.forDay(lessons, d).length;
+        return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === selectedDay) + '" class="' + (d === selectedDay ? "on" : "") + (d === today ? " today" : "") + '">' +
+            '<span>' + Lessons.dayShort(d) + '</span><small>' + (n ? n + " " + tr("lsn_count") : "–") + '</small></button>';
+    }).join("");
+}
+
+function itemHTML(x, isToday, nowM, compact) {
+    const s = Lessons.toMin(x.start_time), e = Lessons.toMin(x.end_time);
+    const state = !isToday ? "" : (s <= nowM && nowM < e ? " now" : (e <= nowM ? " past" : ""));
+    return '<article class="lsn-item t-' + Lessons.tone(x.subject) + state + (compact ? " compact" : "") + '">' +
+        '<div class="lsn-time"><b>' + Lessons.fmt(x.start_time) + '</b><small>' + Lessons.fmt(x.end_time) + '</small></div>' +
+        '<div class="lsn-body"><div class="lsn-subject"><strong>' + esc(x.subject) + '</strong>' + (state === " now" ? '<em>' + tr("lsn_now_short") + '</em>' : '') + '</div>' +
+        '<div class="lsn-meta">' + metaHTML(x) + '</div></div></article>';
+}
+
+function dayListHTML(day, compact) {
+    const list = Lessons.forDay(lessons, day), isToday = day === Lessons.isoDay(), nowM = Lessons.nowMin();
+    if (!list.length) return '<div class="lsn-empty">' + IC.cal + '<b>' + tr("lsn_empty_day") + '</b></div>';
+    let html = "", prevEnd = null;
+    list.forEach(function (x) {
+        const s = Lessons.toMin(x.start_time);
+        if (!compact && prevEnd != null && s - prevEnd >= 10) html += '<div class="lsn-break">' + IC.coffee + tr("lsn_break").replace("{t}", Lessons.minutesLabel(s - prevEnd)) + '</div>';
+        html += itemHTML(x, isToday, nowM, compact);
+        prevEnd = Lessons.toMin(x.end_time);
+    });
+    return html;
+}
+
+function renderList() {
+    document.getElementById("lsnList").innerHTML = dayListHTML(selectedDay, false);
+    const today = Lessons.isoDay();
+    document.getElementById("lsnWeek").innerHTML = availableDays().map(function (d) {
+        return '<div class="lsn-col' + (d === today ? " today" : "") + '"><h3>' + Lessons.dayName(d) + (d === today ? ' <span>' + tr("lsn_today") + '</span>' : '') + '</h3>' + dayListHTML(d, true) + '</div>';
+    }).join("");
+}
+
+function renderAll() {
+    const empty = !lessons.length;
+    document.getElementById("lsnDays").hidden = empty;
+    document.getElementById("lsnWeek").hidden = empty;
+    if (empty) {
+        document.getElementById("lsnNow").hidden = true;
+        document.getElementById("lsnList").innerHTML = '<div class="lsn-empty big">' + IC.cal + '<b>' + tr("lsn_empty_title") + '</b><small>' + tr(role === "admin" ? "lsn_empty_admin" : "lsn_empty_text") + '</small></div>';
+        return;
+    }
+    renderNow(); renderDays(); renderList();
+}
+
+document.getElementById("lsnDays").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-day]");
+    if (!b) return;
+    selectedDay = Number(b.getAttribute("data-day"));
+    renderDays(); renderList();
+});
+
+async function fetchLessons(filter) {
+    let q = supabaseClient.from("class_schedules").select("*");
+    if (filter.cls) q = q.eq("class", filter.cls);
+    if (filter.teacher) q = q.eq("teacher_id", filter.teacher);
+    const { data, error } = await q.order("day", { ascending: true }).order("start_time", { ascending: true });
+    if (error) { console.warn(error.message); return []; }
+    return data || [];
+}
+
+async function init() {
+    const user = await requireLogin();
+    if (!user) return;
+    const { data: me } = await supabaseClient.from("profiles").select("role,class,name").eq("id", user.id).maybeSingle();
+    role = (me && me.role) || "murid";
+    const sub = document.getElementById("lsnSub");
+    homePage = role === "guru" ? "teacher.html" : role === "orangtua" ? "parent.html" : role === "admin" ? "settings.html" : "index.html";
+
+    if (role === "guru") {
+        const t = document.getElementById("lsnTitle");
+        t.setAttribute("data-i18n", "page_teaching");
+        t.textContent = tr("page_teaching");
+        sub.textContent = (me && me.name) || "";
+        lessons = await fetchLessons({ teacher: user.id });
+    } else if (role === "orangtua") {
+        const { data: links } = await supabaseClient.from("parent_links").select("student_id").eq("parent_id", user.id);
+        const ids = (links || []).map(function (l) { return l.student_id; });
+        let kids = [];
+        if (ids.length) { const r = await supabaseClient.from("profiles").select("id,name,class").in("id", ids); kids = r.data || []; }
+        const want = new URLSearchParams(location.search).get("child");
+        const kid = kids.find(function (k) { return k.id === want; }) || kids[0];
+        sub.textContent = kid ? [kid.name, kid.class].filter(Boolean).join(" · ") : "-";
+        lessons = kid && kid.class ? await fetchLessons({ cls: kid.class }) : [];
+    } else if (role === "admin") {
+        const all = await fetchLessons({});
+        const classes = Array.from(new Set(all.map(function (x) { return x.class; }))).sort();
+        const sel = document.getElementById("lsnClassSelect");
+        document.getElementById("lsnManageBtn").hidden = false;
+        if (classes.length) {
+            sel.hidden = false;
+            sel.innerHTML = classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join("");
+            const pick = function () { lessons = all.filter(function (x) { return x.class === sel.value; }); sub.textContent = sel.value; renderAll(); };
+            sel.addEventListener("change", pick);
+            pick();
+            startTick();
+            return;
+        }
+        lessons = [];
+    } else {
+        sub.textContent = (me && me.class) || "-";
+        lessons = me && me.class ? await fetchLessons({ cls: me.class }) : [];
+    }
+    if (!availableDays().includes(selectedDay)) selectedDay = 1;
+    renderAll();
+    startTick();
+}
+
+function startTick() {
+    clearInterval(tick);
+    tick = setInterval(function () { if (lessons.length) { renderNow(); renderList(); } }, 30000);
+}
+
+if (!availableDays().includes(selectedDay)) selectedDay = 1;
+init();
+</script>
+</body>
+</html>

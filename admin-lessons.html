@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Lesson Schedule - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#14162B">
+<link rel="stylesheet" href="style.css?v=20261013a">
+<script src="js/theme.js?v=20261013a"></script>
+<script src="js/lang.js?v=20261013a"></script>
+<script src="js/toast.js?v=20261013a"></script>
+<script src="js/lessons.js?v=20261013a"></script>
+<script src="js/timepicker.js?v=20261013a"></script>
+<script src="js/timefield.js?v=20261013a"></script>
+<script src="js/avatarcrop.js?v=20261013a"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v2-lsn v2-lsn-admin">
+
+    <header class="v2-head">
+        <a href="settings.html" class="v2-back" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+        <div class="lsn-head-text">
+            <h1 data-i18n="page_manage_lessons">Lesson schedule</h1>
+            <p class="v2-head-sub" data-i18n="lsn_admin_sub">Weekly lessons for each class</p>
+        </div>
+        <a href="schedule.html" class="lsn-manage" data-i18n="lsn_view">View</a>
+    </header>
+
+    <div class="v2-label" data-i18n="label_schedule_class">Class</div>
+    <div class="lsn-classes" id="lsnClasses"></div>
+
+    <nav class="lsn-days" id="lsnDays" role="tablist" aria-label="Days"></nav>
+
+    <section class="lsn-list" id="lsnList"></section>
+
+    <button type="button" class="lsn-add" id="lsnAddBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="lsn_add">Add lesson</span>
+    </button>
+
+    <datalist id="lsnSubjects"></datalist>
+    <datalist id="lsnRooms"></datalist>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261013a"></script>
+<script src="js/auth.js?v=20261013a"></script>
+
+<script>
+const esc = Lessons.esc;
+function tr(key) { const t = translations[key]; return t ? t[getLang()] : key; }
+const IC = {
+    room: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16"/><path d="M2 21h20M14 12h.01"/></svg>',
+    person: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
+    del: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+    cal: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+};
+
+let me = null, classes = [], teachers = [], all = [], selClass = "", selDay = Math.min(Lessons.isoDay(), 6);
+
+function pref(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+async function init() {
+    const user = await requireLogin();
+    if (!user) return;
+    me = user;
+    const { data: prof } = await supabaseClient.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (!prof || prof.role !== "admin") { location.href = "index.html"; return; }
+
+    const [studentsRes, teachersRes] = await Promise.all([
+        supabaseClient.from("profiles").select("class").eq("role", "murid"),
+        supabaseClient.from("profiles").select("id,name").eq("role", "guru").order("name", { ascending: true })
+    ]);
+    teachers = teachersRes.data || [];
+    await loadAll();
+    const set = new Set((studentsRes.data || []).map(function (s) { return s.class; }).filter(Boolean));
+    all.forEach(function (x) { set.add(x.class); });
+    classes = Array.from(set).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
+    selClass = classes.includes(pref("attendreem-lsn-class")) ? pref("attendreem-lsn-class") : (classes[0] || "");
+    render();
+}
+
+async function loadAll() {
+    const { data, error } = await supabaseClient.from("class_schedules").select("*").order("day").order("start_time");
+    if (error) {
+        all = [];
+        document.getElementById("lsnList").innerHTML = '<div class="lsn-empty big">' + IC.cal + '<b>' + tr("lsn_setup_title") + '</b><small>' + tr("lsn_setup_text") + '</small></div>';
+        document.getElementById("lsnAddBtn").hidden = true;
+        throw error;
+    }
+    all = data || [];
+    const subj = new Set(), rooms = new Set();
+    all.forEach(function (x) { if (x.subject) subj.add(x.subject); if (x.room) rooms.add(x.room); });
+    document.getElementById("lsnSubjects").innerHTML = Array.from(subj).sort().map(function (s) { return '<option value="' + esc(s) + '">'; }).join("");
+    document.getElementById("lsnRooms").innerHTML = Array.from(rooms).sort().map(function (s) { return '<option value="' + esc(s) + '">'; }).join("");
+}
+
+function classLessons() { return all.filter(function (x) { return x.class === selClass; }); }
+
+function render() {
+    const cBox = document.getElementById("lsnClasses");
+    cBox.innerHTML = classes.length ? classes.map(function (c) {
+        const n = all.filter(function (x) { return x.class === c; }).length;
+        return '<button type="button" data-class="' + esc(c) + '" class="' + (c === selClass ? "on" : "") + '">' + esc(c) + (n ? '<small>' + n + '</small>' : '') + '</button>';
+    }).join("") : '<p class="v2-empty">' + tr("lsn_no_classes") + '</p>';
+
+    const mine = classLessons(), days = [1, 2, 3, 4, 5, 6];
+    if (mine.some(function (x) { return Number(x.day) === 7; }) || selDay === 7) days.push(7);   // Sunday only when used
+    document.getElementById("lsnDays").innerHTML = days.map(function (d) {
+        const n = Lessons.forDay(mine, d).length;
+        return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === selDay) + '" class="' + (d === selDay ? "on" : "") + (d === 7 && !n ? " faint" : "") + '"><span>' + Lessons.dayShort(d) + '</span><small>' + (n ? n + " " + tr("lsn_count") : "–") + '</small></button>';
+    }).join("");
+
+    const list = Lessons.forDay(mine, selDay), box = document.getElementById("lsnList");
+    document.getElementById("lsnAddBtn").hidden = !selClass;
+    if (!selClass) { box.innerHTML = ""; return; }
+    box.innerHTML = list.length ? list.map(function (x) {
+        const meta = [x.room ? '<span>' + IC.room + esc(x.room) + '</span>' : '', x.teacher_name ? '<span>' + IC.person + esc(x.teacher_name) + '</span>' : ''].join("");
+        return '<article class="lsn-item t-' + Lessons.tone(x.subject) + ' editable" data-id="' + x.id + '">' +
+            '<div class="lsn-time"><b>' + Lessons.fmt(x.start_time) + '</b><small>' + Lessons.fmt(x.end_time) + '</small></div>' +
+            '<div class="lsn-body"><div class="lsn-subject"><strong>' + esc(x.subject) + '</strong></div><div class="lsn-meta">' + (meta || '<span class="muted">' + tr("lsn_no_details") + '</span>') + '</div></div>' +
+            '<div class="lsn-actions"><button type="button" data-act="edit" aria-label="' + tr("btn_edit_plain") + '">' + IC.edit + '</button><button type="button" data-act="del" class="del" aria-label="' + tr("btn_delete") + '">' + IC.del + '</button></div></article>';
+    }).join("") : '<div class="lsn-empty">' + IC.cal + '<b>' + tr("lsn_empty_day_admin").replace("{d}", Lessons.dayName(selDay)) + '</b></div>';
+}
+
+document.getElementById("lsnClasses").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-class]");
+    if (!b) return;
+    selClass = b.getAttribute("data-class"); pref("attendreem-lsn-class", selClass); render();
+});
+document.getElementById("lsnDays").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-day]");
+    if (!b) return;
+    selDay = Number(b.getAttribute("data-day")); render();
+});
+document.getElementById("lsnList").addEventListener("click", function (e) {
+    const card = e.target.closest(".lsn-item");
+    if (!card) return;
+    const x = all.find(function (r) { return r.id === card.getAttribute("data-id"); });
+    if (!x) return;
+    const act = e.target.closest("[data-act]");
+    if (act && act.getAttribute("data-act") === "del") removeLesson(x);
+    else openForm(x);
+});
+document.getElementById("lsnAddBtn").addEventListener("click", function () { openForm(null); });
+
+function addMinutes(t, mins) {
+    const m = Lessons.toMin(t) + mins, h = Math.min(23, Math.floor(m / 60)), mm = h === 23 && m >= 24 * 60 ? 59 : m % 60;
+    return String(h).padStart(2, "0") + ":" + String(mm).padStart(2, "0");
+}
+
+function openForm(x) {
+    const editing = !!x;
+    const dayList = Lessons.forDay(classLessons(), selDay);
+    const last = dayList[dayList.length - 1];
+    const start = editing ? x.start_time.slice(0, 5) : (last ? last.end_time.slice(0, 5) : "07:00");
+    const end = editing ? x.end_time.slice(0, 5) : addMinutes(start, 45);
+    let day = editing ? Number(x.day) : selDay;
+    const knownTeacher = editing && x.teacher_id && teachers.some(function (t) { return t.id === x.teacher_id; });
+
+    const w = document.createElement("div");
+    w.className = "ac-wrap ac-confirm lsn-sheet";
+    w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' +
+        '<div class="lsn-form">' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_day") + '</span><div class="lsn-daypick">' + [1, 2, 3, 4, 5, 6, 7].map(function (d) { return '<button type="button" data-d="' + d + '">' + Lessons.dayShort(d) + '</button>'; }).join("") + '</div></label>' +
+        '<div class="lsn-f-row"><label class="lsn-f"><span>' + tr("lsn_f_start") + '</span><input type="text" class="v2-time" id="fStart"></label>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_end") + '</span><input type="text" class="v2-time" id="fEnd"></label></div>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_subject") + '</span><input type="text" id="fSubject" list="lsnSubjects" maxlength="60" autocomplete="off"></label>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_room") + ' <i>' + tr("lsn_optional") + '</i></span><input type="text" id="fRoom" list="lsnRooms" maxlength="40" autocomplete="off"></label>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_teacher") + ' <i>' + tr("lsn_optional") + '</i></span><select id="fTeacher"><option value="">' + tr("lsn_f_teacher_none") + '</option>' +
+        teachers.map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join("") + '<option value="__other">' + tr("lsn_f_teacher_other") + '</option></select></label>' +
+        '<label class="lsn-f" id="fTeacherOtherWrap" hidden><span>' + tr("lsn_f_teacher_name") + '</span><input type="text" id="fTeacherOther" maxlength="60" autocomplete="off"></label>' +
+        '<p class="lsn-f-warn" id="fWarn" hidden></p>' +
+        '</div>' +
+        '<div class="ac-actions">' + (editing ? '<button type="button" class="ac-cancel lsn-del-btn">' + tr("btn_delete") + '</button>' : '<button type="button" class="ac-cancel">' + tr("btn_cancel_plain") + '</button>') + '<button type="button" class="ac-ok">' + tr("btn_save_plain") + '</button></div></div>';
+    w.querySelector(".ac-top b").textContent = editing ? tr("lsn_edit_title") : tr("lsn_add_title");
+    w.querySelector(".ac-top small").textContent = selClass;
+    document.body.appendChild(w);
+
+    const fStart = w.querySelector("#fStart"), fEnd = w.querySelector("#fEnd"), fSubject = w.querySelector("#fSubject"), fRoom = w.querySelector("#fRoom");
+    const fTeacher = w.querySelector("#fTeacher"), fOther = w.querySelector("#fTeacherOther"), fOtherWrap = w.querySelector("#fTeacherOtherWrap"), warn = w.querySelector("#fWarn");
+    fStart.value = start; fEnd.value = end;
+    attTimeField(fStart); attTimeField(fEnd);
+    if (editing) {
+        fSubject.value = x.subject || ""; fRoom.value = x.room || "";
+        if (knownTeacher) fTeacher.value = x.teacher_id;
+        else if (x.teacher_name) { fTeacher.value = "__other"; fOther.value = x.teacher_name; fOtherWrap.hidden = false; }
+    }
+    function paintDays() { w.querySelectorAll("[data-d]").forEach(function (b) { b.classList.toggle("on", Number(b.getAttribute("data-d")) === day); }); }
+    paintDays();
+    w.querySelector(".lsn-daypick").addEventListener("click", function (e) { const b = e.target.closest("[data-d]"); if (b) { day = Number(b.getAttribute("data-d")); paintDays(); } });
+    fTeacher.addEventListener("change", function () { fOtherWrap.hidden = fTeacher.value !== "__other"; if (!fOtherWrap.hidden) fOther.focus(); });
+    // keep the lesson length when the start time moves
+    let lastStart = start;
+    fStart.addEventListener("change", function () {
+        const s = normalizeTime(fStart.value), e = normalizeTime(fEnd.value), p = normalizeTime(lastStart);
+        if (s && e && p) { const len = Lessons.toMin(e) - Lessons.toMin(p); if (len > 0) fEnd.value = addMinutes(s, len); }
+        if (s) lastStart = s;
+    });
+
+    requestAnimationFrame(function () { w.classList.add("in"); if (!editing) fSubject.focus(); });
+    function close() { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); }
+    w.addEventListener("click", function (e) { if (e.target === w) close(); });
+    w.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    w.querySelector(".ac-cancel").addEventListener("click", function () { if (editing) { close(); removeLesson(x); } else close(); });
+
+    w.querySelector(".ac-ok").addEventListener("click", async function () {
+        const btn = this;
+        warn.hidden = true;
+        const s = normalizeTime(fStart.value), e = normalizeTime(fEnd.value), subject = fSubject.value.trim();
+        if (!s || !e) { if (!s) fStart.markInvalid(true); if (!e) fEnd.markInvalid(true); return showWarn(tr("lsn_err_time")); }
+        if (Lessons.toMin(e) <= Lessons.toMin(s)) { fEnd.markInvalid(true); return showWarn(tr("lsn_err_order")); }
+        if (!subject) { fSubject.focus(); return showWarn(tr("lsn_err_subject")); }
+        const teacherId = fTeacher.value && fTeacher.value !== "__other" ? fTeacher.value : null;
+        const teacherName = teacherId ? (teachers.find(function (t) { return t.id === teacherId; }) || {}).name : (fTeacher.value === "__other" ? fOther.value.trim() : "");
+        const sm = Lessons.toMin(s), em = Lessons.toMin(e);
+        const overlaps = function (r) { return Number(r.day) === day && (!editing || r.id !== x.id) && Lessons.toMin(r.start_time) < em && sm < Lessons.toMin(r.end_time); };
+        const clash = all.find(function (r) { return r.class === selClass && overlaps(r); });
+        if (clash) return showWarn(tr("lsn_err_clash").replace("{s}", clash.subject).replace("{t}", Lessons.fmt(clash.start_time) + "–" + Lessons.fmt(clash.end_time)));
+        const busy = teacherId && all.find(function (r) { return r.teacher_id === teacherId && r.class !== selClass && overlaps(r); });
+        if (busy && !(await attConfirm({ title: tr("lsn_busy_title"), text: tr("lsn_busy_text").replace("{n}", teacherName).replace("{c}", busy.class).replace("{t}", Lessons.fmt(busy.start_time) + "–" + Lessons.fmt(busy.end_time)), ok: tr("lsn_busy_ok") }))) return;
+
+        const row = { class: selClass, day: day, start_time: s, end_time: e, subject: subject, room: fRoom.value.trim() || null, teacher_id: teacherId, teacher_name: teacherName || null, updated_at: new Date().toISOString() };
+        btn.disabled = true;
+        const res = editing
+            ? await supabaseClient.from("class_schedules").update(row).eq("id", x.id)
+            : await supabaseClient.from("class_schedules").insert(Object.assign({ created_by: me.id }, row));
+        btn.disabled = false;
+        if (res.error) return showWarn(tr("toast_save_failed") + res.error.message);
+        close();
+        selDay = day;
+        await loadAll(); render();
+        showToast(tr(editing ? "lsn_saved" : "lsn_added"), "success");
+    });
+    function showWarn(t) { warn.textContent = t; warn.hidden = false; }
+}
+
+async function removeLesson(x) {
+    const ok = await attConfirm({ title: tr("lsn_del_title"), text: tr("lsn_del_text").replace("{s}", x.subject).replace("{d}", Lessons.dayName(x.day)).replace("{t}", Lessons.fmt(x.start_time)), ok: tr("btn_delete") });
+    if (!ok) return;
+    const { error } = await supabaseClient.from("class_schedules").delete().eq("id", x.id);
+    if (error) { showToast(tr("toast_save_failed") + error.message, "error"); return; }
+    await loadAll(); render();
+    showToast(tr("lsn_deleted"), "success");
+}
+
+init().catch(function (e) { console.warn(e && e.message); });
+</script>
+</body>
+</html>

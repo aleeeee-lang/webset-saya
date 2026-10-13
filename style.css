@@ -3129,3 +3129,16 @@ html[data-theme="dark"] .att-weakpw-act button{border-color:#5A4520!important;co
 .att-app-sub svg{color:#8A8FA8}
 html[data-theme="dark"] .att-app-row.att-app-sub{border-top-color:#2A2A2D}
 html[data-theme="dark"] .att-switch input:checked+span{background:#C6F432}
+
+/* ===== Home header: bell + search as plain icons (no box behind them) ===== */
+.v2-hero .top-action-button.v2-icon-btn,
+.v2-hero-top .top-actions .v2-msearch,
+html[data-theme="dark"] .v2-hero .top-action-button.v2-icon-btn,
+html[data-theme="dark"] .v2-hero-top .top-actions .v2-msearch{background:transparent!important;border:none!important;box-shadow:none!important;width:44px;height:44px;border-radius:50%;transition:background .15s,transform .15s}
+.v2-hero .top-action-button.v2-icon-btn:active,
+.v2-hero-top .top-actions .v2-msearch:active{background:rgba(255,255,255,.1)!important;transform:scale(.92)}
+.v2-hero .top-action-button.v2-icon-btn svg,.v2-hero-top .top-actions .v2-msearch svg{width:24px;height:24px}
+.v2-hero-top .top-actions{gap:2px}
+.v2-hero .top-notification-icon,.v2-hero .top-notification-icon svg{width:24px!important;height:24px!important}
+.v2-hero-top .top-actions .v2-msearch svg *{stroke-width:1.9}
+.v2-hero .top-notification-icon svg path{stroke-width:1.9}

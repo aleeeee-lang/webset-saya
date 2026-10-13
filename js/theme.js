@@ -81,7 +81,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261013q";
+    p.src = "js/push.js?v=20261013r";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -89,7 +89,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013q";
+    s.src = "js/sidebar.js?v=20261013r";
     s.defer = true;
     document.head.appendChild(s);
 })();

@@ -105,7 +105,7 @@
         var p = profile();
         var role = MENUS[p.role] ? p.role : guessRole();
         var id = lang() === "id";
-        var html = '<div class="v2-side-brand"><img src="favicon.svg?v=2" alt="" width="38" height="38">Attendreem</div>' +
+        var html = '<div class="v2-side-brand"><img src="favicon.svg?v=4" alt="" width="38" height="38">Attendreem</div>' +
             '<div class="v2-side-search"><label>' + ic("search", 2.2) + '<input id="v2SearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="' + (id ? "Cari fitur" + (role === "admin" || role === "guru" ? ", siswa…" : ", nilai…") : "Search features" + (role === "admin" || role === "guru" ? ", students…" : ", scores…")) + '" aria-label="' + (id ? "Cari" : "Search") + '"><kbd>Ctrl K</kbd></label></div>' +
             '<nav class="v2-side-nav" aria-label="Menu">';
         MENUS[role].forEach(function (m) {

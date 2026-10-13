@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013t">
-<script src="js/theme.js?v=20261013t"></script>
-<script src="js/lang.js?v=20261013t"></script>
-<script src="js/toast.js?v=20261013t"></script>
+<link rel="stylesheet" href="style.css?v=20261013u">
+<script src="js/theme.js?v=20261013u"></script>
+<script src="js/lang.js?v=20261013u"></script>
+<script src="js/toast.js?v=20261013u"></script>
 </head>
 
 <body>
@@ -76,14 +76,15 @@
     <!-- RECENTLY SENT -->
     <section class="attendance-card">
         <div class="card-label" data-i18n="label_recent_broadcasts">Recently Sent</div>
+        <p class="bc-keep-note" data-i18n="bc_keep_note">Announcements are removed automatically after 30 days.</p>
         <div id="recentBroadcastsList" style="display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013t"></script>
-<script src="js/auth.js?v=20261013t"></script>
+<script src="js/supabase.js?v=20261013u"></script>
+<script src="js/auth.js?v=20261013u"></script>
 
 <script>
 
@@ -176,9 +177,12 @@ async function loadRecentBroadcasts() {
         const timeStr = isNaN(date.getTime()) ? "" : dayMonthLabel(date) + ", " + String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
 
         return `
-            <div class="am-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;background:#f8f8ff;border-radius:12px">
-                <span style="font-size:14px;color:#20243a">${escapeHTML(b.message)}</span>
-                <span style="font-size:12px;color:#888">${escapeHTML(targetLabelOf(b))} · ${timeStr}</span>
+            <div class="am-row bc-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px">
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                    <span style="font-size:14px;color:#20243a;word-break:break-word">${escapeHTML(b.message)}</span>
+                    <span style="font-size:12px;color:#888">${escapeHTML(targetLabelOf(b))} · ${timeStr}</span>
+                </div>
+                <button type="button" class="bc-del" data-id="${escapeHTML(b.id)}" aria-label="${escapeHTML(bcT("bc_delete"))}" title="${escapeHTML(bcT("bc_delete"))}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
             </div>
         `;
     }).join("");
@@ -236,6 +240,24 @@ function bcEdit() {
     bcSyncNext();
     document.getElementById("broadcastMessage").focus();
 }
+
+// ----- delete one announcement (admin) -----
+document.getElementById("recentBroadcastsList").addEventListener("click", async function (e) {
+    const btn = e.target.closest(".bc-del");
+    if (!btn) return;
+    if (!confirm(bcT("bc_delete_confirm"))) return;
+    btn.disabled = true;
+    const { data, error } = await supabaseClient.from("broadcasts").delete().eq("id", btn.dataset.id).select("id");
+    if (error || !data || !data.length) {
+        btn.disabled = false;
+        showToast(bcT("bc_delete_failed") + (error ? " (" + error.message + ")" : ""), "error");
+        return;
+    }
+    const row = btn.closest(".bc-row");
+    row.style.transition = "opacity .2s, transform .2s"; row.style.opacity = "0"; row.style.transform = "translateX(12px)";
+    setTimeout(loadRecentBroadcasts, 200);
+    showToast(bcT("bc_deleted"), "success");
+});
 
 async function sendBroadcast() {
 

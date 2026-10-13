@@ -1060,6 +1060,11 @@ Object.assign(translations, {
     bc_edit: { en: "Edit", id: "Ubah" },
     bc_to: { en: "To:", id: "Ke:" },
     bc_class: { en: "Class", id: "Kelas" },
-    bc_people: { en: "people", id: "orang" }
+    bc_people: { en: "people", id: "orang" },
+    bc_keep_note: { en: "Announcements are removed automatically after 30 days.", id: "Pengumuman otomatis terhapus setelah 30 hari." },
+    bc_delete: { en: "Delete", id: "Hapus" },
+    bc_delete_confirm: { en: "Delete this announcement? Students won't see it on the notification page anymore.", id: "Hapus pengumuman ini? Pengumuman ini nggak akan muncul lagi di daftar." },
+    bc_deleted: { en: "Announcement deleted.", id: "Pengumuman dihapus." },
+    bc_delete_failed: { en: "Couldn't delete.", id: "Gagal menghapus." }
 });
 document.addEventListener("DOMContentLoaded", applyLang);

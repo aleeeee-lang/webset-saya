@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -72,8 +72,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -346,7 +346,7 @@ async function loadWeekly() {
             <div class="am-row${hasDuty ? " piket-duty-row" : ""}" style="display:flex;align-items:center;gap:12px;padding:12px;background:${hasDuty ? "#14162B" : "#f8f8ff"};border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:${hasDuty ? "#fff" : "#20243a"}">${translations[d.key][lang]}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#C6F432" : "#888"}">${names ? names.join(", ") : translations.label_piket_no_students_day[lang]}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:${hasDuty ? "#C6F432" : "#888"}">${names ? escapeHTML(names.join(", ")) : translations.label_piket_no_students_day[lang]}</span>
                 </div>
             </div>
         `;

@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-    <script src="js/timepicker.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+    <script src="js/timepicker.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -163,8 +163,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -407,10 +407,10 @@ async function loadHolidays() {
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${dayMonthYearLabel(new Date(h.date + "T00:00:00"))}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${h.label || "-"}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(h.label || "-")}</span>
                     ${badge}
                 </div>
-                <button type="button" onclick="deleteHoliday('${h.date}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                <button type="button" onclick="deleteHoliday('${escapeHTML(h.date)}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
             </div>
         `;
     }).join("");
@@ -540,11 +540,11 @@ async function loadSchedules() {
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:14px;color:#20243a">${s.class}</strong>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(s.class)}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayLabelsOf(s.active_days || [], lang)} · ${s.start_time ? s.start_time.slice(0,5) : "-"}-${s.end_time ? s.end_time.slice(0,5) : "-"} · ${modeLabel}</span>
                 </div>
-                <button type="button" onclick="editSchedule('${s.class}')" style="border:none;background:none;color:#0B0C1A;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
-                <button type="button" onclick="deleteSchedule('${s.class}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                <button type="button" onclick="editSchedule('${escapeHTML(s.class)}')" style="border:none;background:none;color:#0B0C1A;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_edit">Edit</button>
+                <button type="button" onclick="deleteSchedule('${escapeHTML(s.class)}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
             </div>
         `;
     }).join("");

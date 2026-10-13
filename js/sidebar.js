@@ -117,7 +117,7 @@
         html += '</nav>';
         var name = p.name || "";
         var sub = p.class || ({ guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent", admin: "Admin", murid: "" })[role] || "";
-        var av = p.avatar_url ? '<img src="' + p.avatar_url + '" alt="">' : (name.trim().charAt(0).toUpperCase() || "?");
+        var av = p.avatar_url ? '<img src="' + safeURL(p.avatar_url) + '" alt="">' : escapeHTML(name.trim().charAt(0).toUpperCase() || "?");
         html += '<a href="settings.html" class="v2-side-user' + (page === "settings.html" && role !== "admin" ? " on" : "") + '"><span class="v2-side-av">' + av + '</span><span class="v2-side-who"><b></b><small></small></span>' + ic("menu", 2) + '</a>';
         var el = document.getElementById("v2Side");
         if (!el) {

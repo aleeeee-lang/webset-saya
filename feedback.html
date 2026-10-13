@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -60,8 +60,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -119,12 +119,12 @@ async function loadMyFeedback() {
             <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1">
-                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${escapeHTML(catLabel)}</span>
                     <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${statusColor},0.14);color:rgb(${statusColor});font-size:11px;font-weight:600">${statusLabelOf(f.status, lang)}</span>
                     </div>
                     <button type="button" onclick="deleteMyFeedback('${f.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 </div>
-                <span style="font-size:14px;color:#20243a">${f.message}</span>
+                <span style="font-size:14px;color:#20243a">${escapeHTML(f.message)}</span>
                 <span style="font-size:11px;color:#aaa">${timeStr}</span>
             </div>
         `;

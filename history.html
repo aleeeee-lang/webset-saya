@@ -17,15 +17,15 @@
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
 
-   <link rel="stylesheet" href="style.css?v=20261013f">
+   <link rel="stylesheet" href="style.css?v=20261013g">
 
-    <script src="js/theme.js?v=20261013f"></script>
+    <script src="js/theme.js?v=20261013g"></script>
 
-    <script src="js/lang.js?v=20261013f"></script>
+    <script src="js/lang.js?v=20261013g"></script>
 
-    <script src="js/toast.js?v=20261013f"></script>
+    <script src="js/toast.js?v=20261013g"></script>
 
-    <script src="js/transition.js?v=20261013f"></script>
+    <script src="js/transition.js?v=20261013g"></script>
 
 </head>
 
@@ -599,9 +599,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261013f"></script>
+    <script src="js/supabase.js?v=20261013g"></script>
 
-    <script src="js/auth.js?v=20261013f"></script>
+    <script src="js/auth.js?v=20261013g"></script>
 
      <script>
 function tr(key) {
@@ -659,7 +659,7 @@ function renderHistory() {
                     <div class="history-content">
                         <strong>${typeLabel}</strong>
                         <span>${dayMonthYearLabel(d)}</span>
-                        <small>${item.note || "-"}</small>
+                        <small>${escapeHTML(item.note || "-")}</small>
                     </div>
                     <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
                 </div>
@@ -770,7 +770,7 @@ function renderPersonalHistory() {
                     <div class="history-content">
                         <strong>${typeLabel}</strong>
                         <span>${dayMonthYearLabel(d)}</span>
-                        <small>${item.note || "-"}</small>
+                        <small>${escapeHTML(item.note || "-")}</small>
                     </div>
                     <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
                     <button type="button" onclick="deletePersonalTransaction('${item.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
@@ -994,7 +994,7 @@ function renderSppHistory() {
                     <div class="history-content">
                         <strong>${tr(badgeKey)}</strong>
                         <span>${dayMonthYearLabel(new Date(item.submitted_at))}</span>
-                        <small>${item.note || "-"}</small>
+                        <small>${escapeHTML(item.note || "-")}</small>
                     </div>
                     <div class="history-time">${formatRupiah(item.amount)}</div>
                 </div>

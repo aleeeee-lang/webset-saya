@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -108,8 +108,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -343,7 +343,7 @@ function renderSppOverrideList() {
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
                 <div style="flex:1;min-width:140px">
-                    <strong style="display:block;font-size:13px;color:#20243a">${s.name}${s.class ? " · " + s.class : ""}</strong>
+                    <strong style="display:block;font-size:13px;color:#20243a">${escapeHTML(s.name)}${s.class ? " · " + escapeHTML(s.class) : ""}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${formatRupiah(s.spp_custom_amount)}</span>
                 </div>
                 <button type="button" class="am-btn am-btn-danger" onclick="resetSppStudentAmount('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reset[lang]}</button>
@@ -470,12 +470,12 @@ function renderSppPending() {
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
                 <div style="flex:1;min-width:140px">
-                    <strong style="display:block;font-size:14px;color:#20243a">${studentLabel(p.user_id)}</strong>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(studentLabel(p.user_id))}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)} · ${dayMonthYearLabel(d)}</span>
-                    ${p.note ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${p.note}</span>` : ""}
+                    ${p.note ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(p.note)}</span>` : ""}
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0">
-                    <button type="button" class="am-btn" onclick="viewSppProof('${p.proof_url}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_view_proof[lang]}</button>
+                    <button type="button" class="am-btn" onclick="viewSppProof('${safeURL(p.proof_url)}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_view_proof[lang]}</button>
                     <button type="button" class="am-btn am-btn-success" onclick="approveSpp('${p.id}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${translations.btn_approve[lang]}</button>
                     <button type="button" class="am-btn am-btn-danger" onclick="rejectSpp('${p.id}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reject[lang]}</button>
                 </div>
@@ -503,7 +503,7 @@ function renderSppReviewed() {
         const badgeLabel = translations["badge_spp_" + p.status][lang];
 
         const deleteBtn = p.status === "rejected"
-            ? `<button type="button" onclick="deleteSppPayment('${p.id}', '${p.proof_url || ""}')" aria-label="${translations.btn_delete_proof[lang]}" title="${translations.btn_delete_proof[lang]}" style="border:none;background:none;color:#dc2626;cursor:pointer;padding:6px;flex-shrink:0;display:flex">
+            ? `<button type="button" onclick="deleteSppPayment('${p.id}', '${safeURL(p.proof_url || "")}')" aria-label="${translations.btn_delete_proof[lang]}" title="${translations.btn_delete_proof[lang]}" style="border:none;background:none;color:#dc2626;cursor:pointer;padding:6px;flex-shrink:0;display:flex">
                 <svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M5 7H19M9 7V5C9 4.4 9.4 4 10 4H14C14.6 4 15 4.4 15 5V7M18 7L17.3 19C17.3 19.6 16.8 20 16.2 20H7.8C7.2 20 6.7 19.6 6.7 19L6 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11V16M14 11V16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
             </button>`
             : "";
@@ -511,9 +511,9 @@ function renderSppReviewed() {
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
                 <div style="flex:1;min-width:140px">
-                    <strong style="display:block;font-size:14px;color:#20243a">${studentLabel(p.user_id)}</strong>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(studentLabel(p.user_id))}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)}</span>
-                    ${p.reject_reason ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${p.reject_reason}</span>` : ""}
+                    ${p.reject_reason ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(p.reject_reason)}</span>` : ""}
                 </div>
                 <span style="font-size:12px;font-weight:700;color:${badgeColor}">${badgeLabel}</span>
                 ${deleteBtn}

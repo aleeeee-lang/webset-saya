@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
-<script src="js/transition.js?v=20261013f"></script>
-<script src="js/scroll-pop.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
+<script src="js/transition.js?v=20261013g"></script>
+<script src="js/scroll-pop.js?v=20261013g"></script>
 </head>
 
 <body class="v2-page">
@@ -193,8 +193,8 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 function tr(key) {
@@ -230,7 +230,7 @@ async function loadMyProfile() {
     myBioText = (prof.bio != null ? prof.bio : (user.user_metadata && user.user_metadata.bio)) || "";
     renderBio();
     const av = document.getElementById("myAvatar");
-    if (prof.avatar_url) av.innerHTML = '<img src="' + prof.avatar_url + '" alt="">';
+    if (prof.avatar_url) av.innerHTML = '<img src="' + safeURL(prof.avatar_url) + '" alt="">';
     else av.textContent = (name.trim().charAt(0) || "?").toUpperCase();
 }
 
@@ -567,9 +567,9 @@ function renderDevActivities() {
             <div class="activity-card">
                 <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
                 <div class="activity-content">
-                    <strong>${item.title}</strong>
+                    <strong>${escapeHTML(item.title)}</strong>
                     <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
-                    ${item.description ? `<span style="display:block;margin-top:2px;color:#999;font-size:11px">${item.description}</span>` : ""}
+                    ${item.description ? `<span style="display:block;margin-top:2px;color:#999;font-size:11px">${escapeHTML(item.description)}</span>` : ""}
                 </div>
             </div>
         `;

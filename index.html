@@ -19,14 +19,14 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261013f"
+        href="style.css?v=20261013g"
     >
-<script src="js/theme.js?v=20261013f"></script>
-    <script src="js/lang.js?v=20261013f"></script>
-<script src="js/lessons.js?v=20261013f"></script>
-<script src="js/tasks-core.js?v=20261013f"></script>
-    <script src="js/toast.js?v=20261013f"></script>
-    <script src="js/transition.js?v=20261013f"></script>
+<script src="js/theme.js?v=20261013g"></script>
+    <script src="js/lang.js?v=20261013g"></script>
+<script src="js/lessons.js?v=20261013g"></script>
+<script src="js/tasks-core.js?v=20261013g"></script>
+    <script src="js/toast.js?v=20261013g"></script>
+    <script src="js/transition.js?v=20261013g"></script>
 
 </head>
 
@@ -364,10 +364,10 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
-<script src="js/notification.js?v=20261013f"></script>
+<script src="js/notification.js?v=20261013g"></script>
 
 <script>
 function homeT(key) {
@@ -394,7 +394,7 @@ function homeGreetingKey() {
 function renderHomeAvatar(name, url) {
     const el = document.getElementById("homeAvatar");
     if (url) {
-        el.innerHTML = '<img src="' + url + '" alt="">';
+        el.innerHTML = '<img src="' + safeURL(url) + '" alt="">';
     } else {
         el.textContent = (name || "?").trim().charAt(0).toUpperCase() || "?";
     }

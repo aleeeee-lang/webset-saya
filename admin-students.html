@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -82,8 +82,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -223,25 +223,25 @@ async function loadStudents() {
             : "";
 
         const statusActionBtn = isInactive
-            ? `<button type="button" class="am-btn am-btn-success" onclick="reactivateStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${btnReactivateLabel}</button>`
+            ? `<button type="button" class="am-btn am-btn-success" onclick="reactivateStudent('${s.id}', ${escapeHTML(JSON.stringify(s.name || ""))})" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${btnReactivateLabel}</button>`
             : `<button type="button" class="am-btn am-btn-warning" onclick="startMarkLeft('${s.id}')" style="border:1px solid #fde68a;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#b45309">${btnMarkLeftLabel}</button>`;
 
         const avatarHtml = s.avatar_url
-            ? `<img src="${s.avatar_url}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+            ? `<img src="${safeURL(s.avatar_url)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0">`
             : `<div style="width:36px;height:36px;border-radius:50%;background:#9aa5b1;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg></div>`;
 
         return `
             <div class="student-row am-row" id="row-${s.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
                 ${avatarHtml}
                 <div class="student-view" id="view-${s.id}" style="flex:1;min-width:0;${nameRowStyle}">
-                    <strong style="display:block;font-size:14px;color:#20243a">${s.name || "-"}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${s.class || "-"} · NIS ${s.nis || "-"}</span>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(s.name || "-")}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(s.class || "-")} · NIS ${escapeHTML(s.nis || "-")}</span>
                     ${badge}
                 </div>
                 <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
                     <button type="button" class="am-btn" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
                     ${statusActionBtn}
-                    <button type="button" class="am-btn am-btn-danger" onclick="deleteStudent('${s.id}', '${(s.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
+                    <button type="button" class="am-btn am-btn-danger" onclick="deleteStudent('${s.id}', ${escapeHTML(JSON.stringify(s.name || ""))})" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${btnDeleteLabel}</button>
                 </div>
             </div>
         `;

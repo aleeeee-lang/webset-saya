@@ -116,7 +116,7 @@ function renderNotificationList(userId) {
                 '<div class="notification-item' + unreadClass + '">' +
                 dot +
                 '<div class="notification-item-body">' +
-                '<p class="notification-item-text">' + item.text + "</p>" +
+                '<p class="notification-item-text">' + escapeHTML(item.text) + "</p>" +
                 '<p class="notification-item-time">' + formatNotifTime(item.time) + "</p>" +
                 "</div>" +
                 '<button type="button" class="notification-item-delete" aria-label="' + deleteLabel + '" onclick="deleteNotification(\'' + userId + '\', ' + index + ', event)">' +

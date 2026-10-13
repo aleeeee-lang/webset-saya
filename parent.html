@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body class="v2-page">
@@ -103,8 +103,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -162,7 +162,7 @@ async function checkParent() {
 
     const select = document.getElementById("childSelect");
     select.innerHTML = myChildren.map(function (c) {
-        return `<option value="${c.id}">${c.name}${c.class ? " · " + c.class : ""}</option>`;
+        return `<option value="${c.id}">${escapeHTML(c.name)}${c.class ? " · " + c.class : ""}</option>`;
     }).join("");
 
     document.getElementById("childSelectCard").style.display = "flex";
@@ -296,7 +296,7 @@ async function renderPDevelopment(childId) {
                 <div class="activity-card">
                     <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
                     <div class="activity-content">
-                        <strong>${item.title}</strong>
+                        <strong>${escapeHTML(item.title)}</strong>
                         <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
                     </div>
                 </div>

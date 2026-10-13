@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -83,8 +83,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -192,7 +192,7 @@ function renderUpcomingEvents() {
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
                 <i class="legend ${e.type || "holiday"}" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></i>
                 <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:13px;color:#20243a">${e.label || "-"}</strong>
+                    <strong style="display:block;font-size:13px;color:#20243a">${escapeHTML(e.label || "-")}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(new Date(e.date + "T00:00:00"))} · ${typeLabel}</span>
                 </div>
             </div>
@@ -243,7 +243,7 @@ function renderFullSchedule() {
         const rows = groups[type].map(function (e) {
             return `
                 <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
-                    <span style="font-size:13px;color:#20243a">${e.label || "-"}</span>
+                    <span style="font-size:13px;color:#20243a">${escapeHTML(e.label || "-")}</span>
                     <span style="font-size:12px;color:#888;flex-shrink:0">${dayMonthYearLabel(new Date(e.date + "T00:00:00"))}</span>
                 </div>
             `;

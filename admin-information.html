@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -63,8 +63,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -146,11 +146,11 @@ function renderInfoList() {
         return `
             <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${catLabel}</span>
+                    <span style="display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(${meta.hue},0.14);color:rgb(${meta.hue});font-size:11px;font-weight:600">${escapeHTML(catLabel)}</span>
                     <span style="font-size:11px;color:#aaa">${timeStr}</span>
                 </div>
-                <strong style="font-size:14px;color:#20243a">${i.title}</strong>
-                <span style="font-size:13px;color:#555;white-space:pre-line;line-height:1.5">${i.body}</span>
+                <strong style="font-size:14px;color:#20243a">${escapeHTML(i.title)}</strong>
+                <span style="font-size:13px;color:#555;white-space:pre-line;line-height:1.5">${escapeHTML(i.body)}</span>
                 <div style="display:flex;justify-content:flex-end">
                     <button type="button" onclick="deleteInfo('${i.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
                 </div>

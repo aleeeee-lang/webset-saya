@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -65,8 +65,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -155,15 +155,15 @@ function renderTeacherList() {
         return `
             <div class="am-row" id="teacherRow-${t.id}" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
                 <div style="flex:1;min-width:120px">
-                    <strong style="display:block;font-size:14px;color:#20243a">${t.name || "-"}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${translations.label_class_assigned[lang]}: ${t.class || "-"}</span>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(t.name || "-")}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${translations.label_class_assigned[lang]}: ${escapeHTML(t.class || "-")}</span>
                 </div>
                 <select id="classSelect-${t.id}" class="am-field" style="padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px">
                     <option value="">${translations.option_choose_class[lang]}</option>
                     ${classOptions}
                 </select>
                 <button type="button" onclick="saveTeacherClass('${t.id}')" style="border:none;background:#14162B;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#fff">${translations.btn_save[lang]}</button>
-                <button type="button" onclick="deleteTeacher('${t.id}', '${(t.name || "").replace(/'/g, "\\'")}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_delete[lang]}</button>
+                <button type="button" onclick="deleteTeacher('${t.id}', ${escapeHTML(JSON.stringify(t.name || ""))})" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_delete[lang]}</button>
             </div>
         `;
     }).join("");

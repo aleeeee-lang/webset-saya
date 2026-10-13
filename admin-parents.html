@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -81,8 +81,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -197,8 +197,8 @@ function renderParentList() {
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;cursor:pointer" onclick="selectParent('${p.id}')">
                 <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:14px;color:#20243a">${p.name}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${names}</span>
+                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(p.name)}</strong>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(names)}</span>
                 </div>
                 <span style="color:#aaa;font-size:16px">›</span>
             </div>
@@ -236,7 +236,7 @@ function renderLinkedStudents() {
         container.innerHTML = links.map(function (l) {
             return `
                 <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
-                    <strong style="flex:1;min-width:0;font-size:13px;color:#20243a">${studentLabel(l.student_id)}</strong>
+                    <strong style="flex:1;min-width:0;font-size:13px;color:#20243a">${escapeHTML(studentLabel(l.student_id))}</strong>
                     <button type="button" onclick="unlinkStudent('${l.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_unlink">Unlink</button>
                 </div>
             `;

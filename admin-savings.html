@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013f">
-<script src="js/theme.js?v=20261013f"></script>
-<script src="js/lang.js?v=20261013f"></script>
-<script src="js/toast.js?v=20261013f"></script>
+<link rel="stylesheet" href="style.css?v=20261013g">
+<script src="js/theme.js?v=20261013g"></script>
+<script src="js/lang.js?v=20261013g"></script>
+<script src="js/toast.js?v=20261013g"></script>
 </head>
 
 <body>
@@ -90,8 +90,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013f"></script>
-<script src="js/auth.js?v=20261013f"></script>
+<script src="js/supabase.js?v=20261013g"></script>
+<script src="js/auth.js?v=20261013g"></script>
 
 <script>
 
@@ -164,7 +164,7 @@ function renderTransactionList() {
                 <div class="savings-type-icon ${t.type}" style="width:38px;height:38px;border-radius:10px;font-size:15px">${isSetor ? "+" : "−"}</div>
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:14px;color:#20243a">${typeLabel}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(d)}${t.note ? " · " + t.note : ""}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(d)}${t.note ? " · " + escapeHTML(t.note) : ""}</span>
                 </div>
                 <div class="savings-amount ${t.type}" style="font-size:13px;font-weight:700">${sign}${formatRupiah(t.amount)}</div>
                 <button type="button" onclick="deleteTransaction('${t.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>

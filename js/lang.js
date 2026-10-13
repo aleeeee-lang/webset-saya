@@ -704,6 +704,20 @@ function monthNameOf(monthIndex) {
 
 // "YYYY-MM-DD" in the device's own local time zone (WIB/WITA/WIT/...).
 // Never use toISOString() for this: that is UTC and shifts the date.
+// ===== Safety helpers: always use these before putting database text into HTML =====
+function escapeHTML(value) {
+    return String(value == null ? "" : value).replace(/[&<>"'`]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;", "`": "&#96;" }[c];
+    });
+}
+// Only allow web links (https/http) and same-site paths; anything else (javascript:, data:) becomes "#".
+function safeURL(value) {
+    const v = String(value == null ? "" : value).trim();
+    if (!v) return "";
+    if (/^https?:\/\//i.test(v) || /^(\.?\/|[\w-]+\.html)/i.test(v) || /^blob:/i.test(v)) return escapeHTML(v);
+    return "#";
+}
+
 function localDateStr(d) {
     d = d || new Date();
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");

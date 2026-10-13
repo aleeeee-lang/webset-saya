@@ -49,6 +49,8 @@ function setTheme(theme) {
 // Splash screen: shown once per browser session, on the first page opened.
 (function () {
     if (window.self !== window.top) return;
+    // installed app: the phone already shows its own launch screen, so don't show a second one
+    try { if (window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone) return; } catch (e) {}
     try { if (sessionStorage.getItem("attendreem-splash")) return; sessionStorage.setItem("attendreem-splash", "1"); } catch (e) { return; }
     var root = document.documentElement;
     var css = document.createElement("style");
@@ -79,7 +81,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261013i";
+    p.src = "js/push.js?v=20261013j";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -87,7 +89,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261013i";
+    s.src = "js/sidebar.js?v=20261013j";
     s.defer = true;
     document.head.appendChild(s);
 })();

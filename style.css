@@ -3314,3 +3314,4 @@ html[data-theme="dark"] .v2-kas .submit-button[data-needs].is-waiting{background
 .v2-dash-bar>div,#segHadir,#segIzin,#segSakit,#segAlpa{transition:width .9s cubic-bezier(.22,.8,.3,1)}
 #scoreProgressFill,#pScoreProgressFill,.kas-progress span{transition:width .9s cubic-bezier(.22,.8,.3,1)!important}
 @media (prefers-reduced-motion:reduce){.v2-ring-fill,.v2-week-fill,#segHadir,#segIzin,#segSakit,#segAlpa,#scoreProgressFill,#pScoreProgressFill{transition:none!important}}
+html.att-noanim .v2-ring-fill,html.att-noanim .v2-week-fill,html.att-noanim #segHadir,html.att-noanim #segIzin,html.att-noanim #segSakit,html.att-noanim #segAlpa,html.att-noanim .kas-progress span{transition:none!important}

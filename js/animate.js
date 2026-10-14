@@ -1,7 +1,20 @@
 // Numbers count up and charts grow when they get their value.
 // Works on its own: it watches the stat elements below, so pages need no changes.
+// Plays once per page each time the app is opened (per browser/app session):
+// coming back to a page later in the same session shows the values straight away.
 (function () {
     try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) {}
+    var KEY = "attendreem-anim:" + (location.pathname.split("/").pop() || "index.html");
+    var replay = false;
+    try { replay = !!sessionStorage.getItem(KEY); sessionStorage.setItem(KEY, "1"); } catch (e) {}
+    if (replay) {
+        // already seen in this session: no count-up and no chart growing for the first values
+        var root = document.documentElement;
+        root.classList.add("att-noanim");
+        var off = function () { root.classList.remove("att-noanim"); };
+        setTimeout(off, 4000);
+        ["pointerdown", "keydown"].forEach(function (ev) { window.addEventListener(ev, off, { once: true, capture: true }); });
+    }
 
     var COUNT = [
         "#homePercent",
@@ -35,8 +48,10 @@
     function run(el) {
         var txt = el.textContent, p = parse(txt);
         if (!p || el._attFrame === txt) return;
-        var from = typeof el._attVal === "number" ? el._attVal : 0;
+        var first = typeof el._attVal !== "number";
+        var from = first ? 0 : el._attVal;
         el._attVal = p.n;
+        if (first && replay) return;          // revisit: show the value as it is
         if (from === p.n) return;
         if (el._attRaf) cancelAnimationFrame(el._attRaf);
         var t0 = performance.now();
@@ -52,6 +67,7 @@
 
     // bars that are inserted with their final size: start them at zero, then let CSS grow them
     function growBars(root) {
+        if (replay) return;
         var bars = (root.querySelectorAll ? root.querySelectorAll(".v2-week-fill") : []);
         Array.prototype.forEach.call(bars, function (b) {
             if (b._attGrown) return;
@@ -75,6 +91,11 @@
             seen.forEach(run);
         }).observe(document.body, { subtree: true, childList: true, characterData: true });
         growBars(document);
+        // values that were already filled in before this script loaded
+        if (!replay) Array.prototype.forEach.call(document.querySelectorAll(COUNT), function (el) {
+            var p = parse(el.textContent);
+            if (p && p.n !== 0) run(el);
+        });
     }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

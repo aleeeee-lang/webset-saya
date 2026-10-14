@@ -14,6 +14,9 @@
     }
 
     window.addEventListener("pagereveal", function (event) {
+        var swiped = null;
+        try { swiped = sessionStorage.getItem("att-swiped"); sessionStorage.removeItem("att-swiped"); } catch (e) {}
+        if (swiped && event.viewTransition) { event.viewTransition.skipTransition(); return; }
         if (!event.viewTransition) return;
         if (!window.navigation || !navigation.activation) return;
 

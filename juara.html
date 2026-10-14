@@ -9,12 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261014f">
-<script src="js/theme.js?v=20261014f"></script>
-<script src="js/lang.js?v=20261014f"></script>
-<script src="js/toast.js?v=20261014f"></script>
-<script src="js/avatarcrop.js?v=20261014f"></script>
-<script src="js/champs.js?v=20261014f"></script>
+<link rel="stylesheet" href="style.css?v=20261014g">
+<script src="js/theme.js?v=20261014g"></script>
+<script src="js/lang.js?v=20261014g"></script>
+<script src="js/toast.js?v=20261014g"></script>
+<script src="js/avatarcrop.js?v=20261014g"></script>
+<script src="js/champs.js?v=20261014g"></script>
 </head>
 
 <body class="v2-page">
@@ -115,8 +115,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014f"></script>
-<script src="js/auth.js?v=20261014f"></script>
+<script src="js/supabase.js?v=20261014g"></script>
+<script src="js/auth.js?v=20261014g"></script>
 
 <script>
 const C = window.Champs, L = C.L, esc = C.esc;
@@ -171,6 +171,11 @@ function showTab(t) {
     document.querySelectorAll(".jr-pane").forEach(function (p) { p.hidden = p.getAttribute("data-pane") !== t; });
     try { history.replaceState(null, "", "#" + t); } catch (e) {}
     loadTab();
+    // have the neighbouring tabs ready, so swiping shows them filled in
+    const order = ["att", "grade", "award", "class"], i = order.indexOf(t);
+    setTimeout(function () {
+        [order[i - 1], order[i + 1]].forEach(function (k) { if (k && !loadedTabs[k + "|" + cls]) { loadedTabs[k + "|" + cls] = true; LOADERS[k](); } });
+    }, 900);
 }
 document.querySelector(".jr-tabs").addEventListener("click", function (e) {
     const b = e.target.closest("[data-tab]");
@@ -182,13 +187,24 @@ function setSub() {
     document.getElementById("jrSub").textContent = (cls && tab !== "award" && tab !== "class" ? L("Kelas ", "Class ") + cls + " · " : "") + map[tab];
 }
 
+const LOADERS = { att: function () { return loadAtt(); }, grade: function () { return loadGrades(); }, award: function () { return loadAwards(); }, class: function () { return loadClasses(); } };
+const loadedTabs = {};
 function loadTab() {
     setSub();
-    if (tab === "att") return loadAtt();
-    if (tab === "grade") return loadGrades();
-    if (tab === "award") return loadAwards();
-    return loadClasses();
+    loadedTabs[tab + "|" + cls] = true;
+    return LOADERS[tab]();
 }
+
+// swipe left/right between the tabs, like Instagram (js/swipe.js)
+(window.attSwipeQ = window.attSwipeQ || []).push({
+    area: document.querySelector(".v2-jr"),
+    listen: document.body,
+    keys: function () { return ["att", "grade", "award", "class"]; },
+    current: function () { return tab; },
+    pane: function (k) { return document.querySelector('.jr-pane[data-pane="' + k + '"]'); },
+    before: function (k) { if (!loadedTabs[k + "|" + cls]) { loadedTabs[k + "|" + cls] = true; LOADERS[k](); } },
+    go: function (k) { showTab(k); }
+});
 
 function emptyBox(t, s) { return '<div class="lsn-empty"><b>' + esc(t) + '</b><small>' + esc(s || "") + '</small></div>'; }
 

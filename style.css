@@ -3519,3 +3519,27 @@ html.att-noanim .jr-pod .jr-step,html.att-noanim .jr-pod .jr-av,html.att-noanim 
 .jr-face{position:relative;flex:none;display:block;width:44px;height:44px}
 .jr-face>i{position:absolute;right:-5px;bottom:-5px;font-style:normal;font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
 html[data-theme="dark"] .jr-av.md{background:#2A2410;color:#FDE68A}
+
+/* ===== Instagram-style swiping (js/swipe.js) ===== */
+html.att-swipe-page,html.att-swipe-page body{touch-action:pan-y pinch-zoom}
+.att-tabswipe{touch-action:pan-y pinch-zoom;position:relative;overflow-x:clip}
+html.att-swiping body{overflow-x:hidden}
+html.att-swiping body>*:not(.bottom-nav):not(.att-swipe-ghost):not(script):not(.att-side){transform:translate3d(var(--att-sw,0),0,0);will-change:transform}
+.att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7}
+.att-swipe-ghost *{animation:none!important;transition:none!important}
+.att-swipe-body{min-height:100%;box-sizing:border-box}
+.att-tabswipe-moving{will-change:transform}
+.att-tabswipe-on .jr-pod .jr-step,.att-tabswipe-on .jr-bar rect,.att-tabswipe-on .jr-meter i,.att-tabswipe-on .jr-hbar-track i,.att-tabswipe-on .jr-pod .jr-av,.att-tabswipe-on .jr-pod .jr-medal{animation:none!important}
+/* first visit: no snapshot yet */
+.att-swipe-skel{padding:22px 20px!important;display:flex;flex-direction:column;gap:14px}
+.att-swipe-skel .sk-head{display:flex;align-items:center;gap:12px}
+.att-swipe-skel .sk-head b{width:44px;height:44px;border-radius:14px;background:#E3E5EE}
+.att-swipe-skel .sk-head i{flex:1;height:14px;border-radius:8px;background:#E3E5EE;max-width:160px}
+.att-swipe-skel .sk-title{font:800 26px 'Plus Jakarta Sans',sans-serif;color:#14162B;margin:6px 2px}
+.att-swipe-skel .sk-card{height:86px;border-radius:22px;background:#fff}
+.att-swipe-skel .sk-card.big{height:180px;background:#E9EBF3}
+.att-swipe-skel .sk-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+html[data-theme="dark"] .att-swipe-ghost{background:#000}
+html[data-theme="dark"] .att-swipe-skel .sk-head b,html[data-theme="dark"] .att-swipe-skel .sk-head i,html[data-theme="dark"] .att-swipe-skel .sk-card.big{background:#1C1C1E}
+html[data-theme="dark"] .att-swipe-skel .sk-card{background:#161618}
+html[data-theme="dark"] .att-swipe-skel .sk-title{color:#EDEDED}

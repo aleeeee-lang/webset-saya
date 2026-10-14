@@ -9,11 +9,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261014f">
-<script src="js/theme.js?v=20261014f"></script>
-<script src="js/lang.js?v=20261014f"></script>
-<script src="js/toast.js?v=20261014f"></script>
-<script src="js/avatarcrop.js?v=20261014f"></script>
+<link rel="stylesheet" href="style.css?v=20261014g">
+<script src="js/theme.js?v=20261014g"></script>
+<script src="js/lang.js?v=20261014g"></script>
+<script src="js/toast.js?v=20261014g"></script>
+<script src="js/avatarcrop.js?v=20261014g"></script>
 </head>
 
 <body class="v2-page">
@@ -113,8 +113,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014f"></script>
-<script src="js/auth.js?v=20261014f"></script>
+<script src="js/supabase.js?v=20261014g"></script>
+<script src="js/auth.js?v=20261014g"></script>
 
 <script>
 // ---------- small helpers ----------
@@ -341,6 +341,14 @@ document.querySelector(".kas-seg").addEventListener("click", function (e) {
     document.querySelectorAll(".kas-seg [data-tab]").forEach(function (x) { x.classList.toggle("on", x === b); });
     document.querySelectorAll(".kas-pane").forEach(function (p) { p.hidden = p.getAttribute("data-pane") !== b.getAttribute("data-tab"); });
     if (window.attFormReady) window.attFormReady();
+});
+// swipe left/right between the tabs (js/swipe.js)
+(window.attSwipeQ = window.attSwipeQ || []).push({
+    area: document.getElementById("kasManage"),
+    keys: function () { return Array.prototype.filter.call(document.querySelectorAll(".kas-seg [data-tab]"), function (b) { return !b.hidden; }).map(function (b) { return b.getAttribute("data-tab"); }); },
+    current: function () { const b = document.querySelector(".kas-seg [data-tab].on"); return b ? b.getAttribute("data-tab") : "dues"; },
+    pane: function (k) { return document.querySelector('.kas-pane[data-pane="' + k + '"]'); },
+    go: function (k) { const b = document.querySelector('.kas-seg [data-tab="' + k + '"]'); if (b) b.click(); }
 });
 document.getElementById("kasPrev").addEventListener("click", function () { periodOffset--; renderDues(); });
 document.getElementById("kasNext").addEventListener("click", function () { if (periodOffset < 0) { periodOffset++; renderDues(); } });

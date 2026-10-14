@@ -30,7 +30,7 @@ async function requireLogin() {
     if (profile && profile.status === "inactive") {
 
         await supabaseClient.auth.signOut();
-        try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); } catch (e) {}
+        try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
         window.location.href = "login.html?inactive=1";
 
         return null;
@@ -65,7 +65,7 @@ async function logoutUser() {
     }
 
 
-    try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); } catch (e) {}
+    try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
 
     window.location.href = "login.html";
 

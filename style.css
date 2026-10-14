@@ -3307,3 +3307,10 @@ html[data-theme="dark"] .kas-link-go{color:#A3B86A}
 .v2-kas .submit-button:disabled{opacity:.7}
 html[data-theme="dark"] .v2-kas .submit-button{background:#F2F2F2;color:#111}
 html[data-theme="dark"] .v2-kas .submit-button[data-needs].is-waiting{background:#2C2C2E;color:#6E6E73}
+
+/* ===== Charts grow in (js/animate.js) ===== */
+.v2-ring-fill{transition:stroke-dasharray 1s cubic-bezier(.22,.8,.3,1)!important}
+.v2-week-fill{transition:height .9s cubic-bezier(.22,.8,.3,1)!important}
+.v2-dash-bar>div,#segHadir,#segIzin,#segSakit,#segAlpa{transition:width .9s cubic-bezier(.22,.8,.3,1)}
+#scoreProgressFill,#pScoreProgressFill,.kas-progress span{transition:width .9s cubic-bezier(.22,.8,.3,1)!important}
+@media (prefers-reduced-motion:reduce){.v2-ring-fill,.v2-week-fill,#segHadir,#segIzin,#segSakit,#segAlpa,#scoreProgressFill,#pScoreProgressFill{transition:none!important}}

@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261013w">
-<script src="js/theme.js?v=20261013w"></script>
-<script src="js/lang.js?v=20261013w"></script>
-<script src="js/toast.js?v=20261013w"></script>
+<link rel="stylesheet" href="style.css?v=20261014a">
+<script src="js/theme.js?v=20261014a"></script>
+<script src="js/lang.js?v=20261014a"></script>
+<script src="js/toast.js?v=20261014a"></script>
 </head>
 
 <body>
@@ -72,8 +72,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261013w"></script>
-<script src="js/auth.js?v=20261013w"></script>
+<script src="js/supabase.js?v=20261014a"></script>
+<script src="js/auth.js?v=20261014a"></script>
 
 <script>
 
@@ -156,7 +156,7 @@ async function loadToday() {
             const youBadge = isMe ? " <span style='color:#14162B;font-size:11px;font-weight:600'>(" + translations.label_you[lang] + ")</span>" : "";
             return `
                 <div class="piket-assignee-row${isMe ? " piket-assignee-me" : ""}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:${isMe ? "#EEF7D4" : "#f8f8ff"};font-size:13px;color:#20243a">
-                    ${a.student_name}${youBadge}
+                    ${escapeHTML(a.student_name || "-")}${youBadge}
                 </div>
             `;
         }).join("");
@@ -167,7 +167,7 @@ async function loadToday() {
         .select("*")
         .eq("class", myProfile.class)
         .eq("date", todayDateStr)
-        .order("created_at", { ascending: true });
+        .order("done_at", { ascending: true });
 
     todayLogs = logs || [];
     myLog = todayLogs.find(function (l) { return l.done_by === myUser.id; }) || null;

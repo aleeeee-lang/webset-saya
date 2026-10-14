@@ -3524,8 +3524,7 @@ html[data-theme="dark"] .jr-av.md{background:#2A2410;color:#FDE68A}
 html.att-swipe-page,html.att-swipe-page body{touch-action:pan-y pinch-zoom}
 .att-tabswipe{touch-action:pan-y pinch-zoom;position:relative;overflow-x:clip}
 html.att-swiping body{overflow-x:hidden}
-html.att-swiping body>*:not(.bottom-nav):not(.att-swipe-ghost):not(script):not(.att-side){transform:translate3d(var(--att-sw,0),0,0);will-change:transform}
-.att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7}
+.att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7;contain:layout paint style;transform:translate3d(100vw,0,0)}
 .att-swipe-ghost *{animation:none!important;transition:none!important}
 .att-swipe-body{min-height:100%;box-sizing:border-box}
 .att-tabswipe-moving{will-change:transform}

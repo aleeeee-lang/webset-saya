@@ -43,14 +43,14 @@
     }
 
     function gesture(el, h) {
-        var sx = 0, sy = 0, st = 0, dx = 0, mode = "", lastX = 0, lastT = 0, v = 0;
+        var sx = 0, sy = 0, dx = 0, mode = "", v = 0, hist = [];
         el.addEventListener("touchstart", function (e) {
             mode = "";
             if (e.touches.length !== 1 || !phone() || (h.enabled && !h.enabled())) { mode = "no"; return; }
             var t = e.touches[0], W = window.innerWidth;
             if (t.clientX < 22 || t.clientX > W - 22) { mode = "no"; return; }   // leave the screen edges to Android "back"
             if (blocked(e.target, el) || (h.skip && h.skip(e.target))) { mode = "no"; return; }
-            sx = lastX = t.clientX; sy = t.clientY; st = lastT = Date.now(); dx = 0; v = 0;
+            sx = t.clientX; sy = t.clientY; dx = 0; v = 0; hist = [{ x: t.clientX, t: e.timeStamp || performance.now() }];
         }, { passive: true });
         el.addEventListener("touchmove", function (e) {
             if (mode === "no" || e.touches.length !== 1) return;
@@ -62,8 +62,12 @@
                 if (h.start(mx < 0 ? 1 : -1) === false) { mode = "no"; return; }
             }
             if (e.cancelable) e.preventDefault();
-            var now = Date.now();
-            if (now > lastT) { v = (t.clientX - lastX) / (now - lastT); lastX = t.clientX; lastT = now; }
+            // finger speed over the last ~100 ms (px/ms), for flicks
+            var now = e.timeStamp || performance.now();
+            hist.push({ x: t.clientX, t: now });
+            while (hist.length > 2 && now - hist[0].t > 100) hist.shift();
+            var span = now - hist[0].t;
+            v = span > 0 ? (t.clientX - hist[0].x) / span : (t.clientX - hist[0].x) / 16;
             dx = mx;
             h.move(dx);
         }, { passive: false });
@@ -72,7 +76,7 @@
             mode = "";
             var W = window.innerWidth;
             var go = Math.abs(dx) > W * 0.32 || (Math.abs(v) > 0.45 && Math.abs(dx) > 30 && (v < 0) === (dx < 0));
-            h.end(go, dx);
+            h.end(go, dx, v);
         }
         el.addEventListener("touchend", end);
         el.addEventListener("touchcancel", function () { if (mode === "drag") { mode = ""; h.end(false, dx); } else mode = ""; });
@@ -102,103 +106,131 @@
         return idx < 0 ? null : { links: links, idx: idx };
     }
 
-    function clean(root) {
-        Array.prototype.forEach.call(root.querySelectorAll("script,iframe,object,embed,video,audio,.bottom-nav,.att-swipe-ghost,.att-side,#toastContainer,.toast-container,dialog,[role=dialog]"), function (n) { n.remove(); });
-        Array.prototype.forEach.call(root.querySelectorAll("*"), function (n) {
-            for (var i = n.attributes.length - 1; i >= 0; i--) {
-                var a = n.attributes[i].name;
-                if (/^on/i.test(a) || a === "id" || a === "data-count" || a === "data-needs" || a === "autofocus") n.removeAttribute(a);
-            }
-            if (n.tagName === "A") n.removeAttribute("href");
-        });
+    function clean(root) { window.attSnapClean(root); }
+
+    // drop everything below the first screens: the swipe only ever shows the top of a page
+    function trim(orig, copy, limit) {
+        var oc = orig.children, cc = copy.children;
+        if (oc.length !== cc.length) return;
+        for (var i = oc.length - 1; i >= 0; i--) {
+            var r = oc[i].getBoundingClientRect(), top = r.top + window.scrollY, bottom = r.bottom + window.scrollY;
+            if (r.width === 0 && r.height === 0) continue;
+            if (top > limit) cc[i].remove();
+            else if (bottom > limit && oc[i].children.length) trim(oc[i], cc[i], limit);
+        }
     }
 
     function saveSnapshot() {
         if (!navLinks()) return;
         try {
             var c = document.body.cloneNode(true);
+            trim(document.body, c, window.innerHeight * 1.3);
             clean(c);
             var html = c.innerHTML;
             if (html.length > 350000) return;
             var cs = getComputedStyle(document.body);
             localStorage.setItem(SNAP + page, JSON.stringify({
                 html: html, cls: document.body.className, bg: cs.backgroundColor,
-                pad: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(" "), t: Date.now()
+                pad: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(" "),
+                font: cs.fontFamily, color: cs.color, t: Date.now()
             }));
         } catch (e) {}
     }
 
-    function ghostFor(href, label) {
-        var g = document.createElement("div");
-        g.className = "att-swipe-ghost";
-        g.setAttribute("aria-hidden", "true");
-        var snap = null;
-        try { snap = JSON.parse(localStorage.getItem(SNAP + href) || "null"); } catch (e) {}
-        var inner = document.createElement("div");
-        inner.className = "att-swipe-body";
-        if (snap && snap.html) {
-            var tpl = document.createElement("template");
-            tpl.innerHTML = snap.html;
-            clean(tpl.content);
-            inner.appendChild(tpl.content);
-            if (snap.cls) inner.className += " " + snap.cls.replace(/\bhas-side\b/g, "");
-            inner.style.padding = snap.pad || "";
-            g.style.background = snap.bg || "";
-        } else {
-            inner.className += " att-swipe-skel";
-            inner.innerHTML = '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + (typeof escapeHTML === "function" ? escapeHTML(label || "") : "") + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
-            g.style.background = getComputedStyle(document.body).backgroundColor;
-        }
-        g.appendChild(inner);
-        return g;
+    var ready = {};   // href -> prepared ghost element (not in the page yet)
+    function prepare(href, label) {
+        if (!ready[href]) ready[href] = ghostFor(href, label);
+        return ready[href];
     }
+    function ghostFor(href, label) { return window.attSnapGhost(href, label); }
 
     function initPages() {
         var info = navLinks();
         if (!info) return;
         document.documentElement.classList.add("att-swipe-page");
-        var ghost = null, dir = 0, target = null;
+        var ghost = null, dir = 0, target = null, movers = [], pend = null, raf = 0;
         var root = document.documentElement;
-        function setX(x) {
-            root.style.setProperty("--att-sw", x + "px");
+        function apply(x) {
+            var t = "translate3d(" + x + "px,0,0)";
+            for (var i = 0; i < movers.length; i++) movers[i].style.transform = t;
             if (ghost) ghost.style.transform = "translate3d(" + (x + dir * window.innerWidth) + "px,0,0)";
         }
-        function reset() {
-            root.classList.remove("att-swiping");
-            root.style.removeProperty("--att-sw");
-            if (ghost) { ghost.remove(); ghost = null; }
-            target = null; dir = 0;
+        function setX(x) {            // during the drag: at most one paint per frame
+            pend = x;
+            if (!raf) raf = requestAnimationFrame(function () { raf = 0; if (pend != null) apply(pend); });
         }
+        function reset() {
+            if (raf) { cancelAnimationFrame(raf); raf = 0; }
+            movers.forEach(function (m) { m.style.transform = ""; m.style.willChange = ""; });
+            movers = [];
+            root.classList.remove("att-swiping");
+            if (ghost) { ghost.remove(); ready = {}; ghost = null; setTimeout(warm, 300); }
+            target = null; dir = 0; pend = null;
+        }
+        // open the neighbour in the background as soon as the finger heads there,
+        // so it is already loaded (with its data) when the finger lets go
+        var spec = {};
+        function prerender(href) {
+            if (spec[href]) return;
+            spec[href] = true;
+            try {
+                if (!(HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules"))) {
+                    var l = document.createElement("link"); l.rel = "prefetch"; l.href = href; document.head.appendChild(l); return;
+                }
+                var sc = document.createElement("script");
+                sc.type = "speculationrules";
+                sc.textContent = JSON.stringify({ prerender: [{ source: "list", urls: [href], eagerness: "immediate" }] });
+                document.head.appendChild(sc);
+            } catch (e) {}
+        }
+        // parse the neighbours' snapshots ahead of time
+        function warm() {
+            [info.links[info.idx - 1], info.links[info.idx + 1]].forEach(function (a) {
+                if (a) prepare(a.getAttribute("href").split(/[?#]/)[0], (a.textContent || "").trim());
+            });
+        }
+        (window.requestIdleCallback || function (f) { return setTimeout(f, 1200); })(warm);
         gesture(document.body, {
             enabled: function () { return !document.querySelector(".att-tabswipe-on"); },
             skip: function (t) { return !!(t.closest && t.closest("[data-swipe-tabs]")); },
             start: function (d) {
+                if (window.attArriveDone) window.attArriveDone();
                 var i = info.idx + d;
                 dir = d;
                 target = info.links[i] || null;
                 root.classList.add("att-swiping");
+                movers = Array.prototype.filter.call(document.body.children, function (n) {
+                    return !/^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(n.tagName) && !n.classList.contains("bottom-nav") && !n.classList.contains("att-swipe-ghost") && !n.classList.contains("v2-side") && !n.classList.contains("v2-search-panel");
+                });
+                movers.forEach(function (m) { m.style.willChange = "transform"; });
                 if (target) {
-                    ghost = ghostFor(target.getAttribute("href").split(/[?#]/)[0], (target.textContent || "").trim());
+                    var href = target.getAttribute("href").split(/[?#]/)[0];
+                    ghost = prepare(href, (target.textContent || "").trim());
+                    ghost.style.transform = "translate3d(" + (dir * window.innerWidth) + "px,0,0)";
                     document.body.appendChild(ghost);
+                    prerender(target.getAttribute("href"));
                 }
             },
             move: function (dx) {
                 if (!target || (dir === 1 && dx > 0) || (dir === -1 && dx < 0)) dx = rubber(dx);
                 setX(dx);
             },
-            end: function (go, dx) {
+            end: function (go, dx, v) {
                 var W = window.innerWidth;
+                if (raf) { cancelAnimationFrame(raf); raf = 0; }
                 if (go && target && (dx < 0) === (dir === 1)) {
                     var href = target.getAttribute("href");
                     info.links.forEach(function (a) { a.classList.toggle("active", a === target); });
-                    animate(dx, -dir * W, 200, setX, function () {
+                    // finish at the finger's speed (faster flick = shorter finish)
+                    var left = W - Math.abs(dx), ms = Math.max(120, Math.min(260, left / Math.max(1.4, Math.abs(v || 0))));
+                    animate(dx, -dir * W, ms, apply, function () {
+                        try { sessionStorage.setItem("att-swiped", "1"); sessionStorage.setItem("att-swiped-anim", "1"); } catch (e) {}
                         saveSnapshot();
-                        try { sessionStorage.setItem("att-swiped", "1"); } catch (e) {}
                         location.href = href;
                     });
                 } else {
                     var from = (!target || (dir === 1 && dx > 0) || (dir === -1 && dx < 0)) ? rubber(dx) : dx;
-                    animate(from, 0, 220, setX, reset);
+                    animate(from, 0, 240, apply, reset);
                 }
             }
         });
@@ -212,7 +244,7 @@
         window.addEventListener("pageshow", function (e) { if (e.persisted) reset(); });
         window.addEventListener("pagehide", saveSnapshot);
         document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") saveSnapshot(); });
-        setTimeout(saveSnapshot, 4000);
+        setTimeout(function () { (window.requestIdleCallback || function (f) { f(); })(saveSnapshot); }, 4000);
     }
 
     // ---------- 2) tabs inside a page ----------
@@ -223,9 +255,14 @@
         area.setAttribute("data-swipe-tabs", "");
         area.classList.add("att-tabswipe");
         var cur = null, nb = null, dir = 0, W = 0;
-        function setX(x) {
+        var pend = null, raf = 0;
+        function apply(x) {
             if (cur) cur.style.transform = "translate3d(" + x + "px,0,0)";
             if (nb) nb.style.transform = "translate3d(" + (x + dir * W) + "px,0,0)";
+        }
+        function setX(x) {
+            pend = x;
+            if (!raf) raf = requestAnimationFrame(function () { raf = 0; if (pend != null) apply(pend); });
         }
         function reset() {
             [cur, nb].forEach(function (p) { if (p) { p.style.transform = ""; p.style.position = ""; p.style.top = ""; p.style.left = ""; p.style.width = ""; p.classList.remove("att-tabswipe-moving"); } });
@@ -260,17 +297,19 @@
                 if (!nb || (dir === 1 && dx > 0) || (dir === -1 && dx < 0)) dx = rubber(dx);
                 setX(dx);
             },
-            end: function (go, dx) {
+            end: function (go, dx, v) {
+                if (raf) { cancelAnimationFrame(raf); raf = 0; }
                 if (go && nb && (dx < 0) === (dir === 1)) {
                     var k = nb._swipeKey;
-                    animate(dx, -dir * W, 200, setX, function () {
+                    var ms = Math.max(120, Math.min(260, (W - Math.abs(dx)) / Math.max(1.4, Math.abs(v || 0))));
+                    animate(dx, -dir * W, ms, apply, function () {
                         if (nb) nb.setAttribute("data-swipe-was-hidden", "0");
                         reset();
                         cfg.go(k);
                     });
                 } else {
                     var from = (!nb || (dir === 1 && dx > 0) || (dir === -1 && dx < 0)) ? rubber(dx) : dx;
-                    animate(from, 0, 220, setX, reset);
+                    animate(from, 0, 240, apply, reset);
                 }
             }
         });

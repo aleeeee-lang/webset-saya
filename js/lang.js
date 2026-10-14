@@ -1125,3 +1125,34 @@ Object.assign(translations, {
     jr_class_rank: { en: "Attendance rate per class", id: "Tingkat kehadiran per kelas" }
 });
 document.addEventListener("DOMContentLoaded", applyLang);
+
+// Translate while the page is still being read in, so it never shows in English first
+// (matters most right after a swipe, when the new page appears straight away).
+(function () {
+    if (document.readyState !== "loading") return;
+    var lang;
+    try { lang = getLang(); } catch (e) { return; }
+    if (lang === "en" || typeof MutationObserver === "undefined") return;
+    function tr(el) {
+        var k = el.getAttribute("data-i18n");
+        if (k && translations[k] && translations[k][lang]) el.textContent = translations[k][lang];
+        var p = el.getAttribute("data-i18n-placeholder");
+        if (p && translations[p] && translations[p][lang]) el.placeholder = translations[p][lang];
+    }
+    var mo = new MutationObserver(function (list) {
+        for (var i = 0; i < list.length; i++) {
+            var added = list[i].addedNodes;
+            for (var j = 0; j < added.length; j++) {
+                var n = added[j];
+                if (n.nodeType !== 1) continue;
+                if (n.hasAttribute("data-i18n") || n.hasAttribute("data-i18n-placeholder")) tr(n);
+                if (n.firstElementChild) {
+                    var all = n.querySelectorAll("[data-i18n],[data-i18n-placeholder]");
+                    for (var x = 0; x < all.length; x++) tr(all[x]);
+                }
+            }
+        }
+    });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+    document.addEventListener("DOMContentLoaded", function () { mo.disconnect(); });
+})();

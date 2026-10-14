@@ -4,6 +4,100 @@
     document.documentElement.setAttribute("data-theme", theme);
 })();
 
+// Snapshots of the bottom-menu pages (saved by js/swipe.js) drawn as a still picture:
+// used while swiping, and right after a swipe until the new page has its data.
+window.attSnapClean = function (root) {
+    Array.prototype.forEach.call(root.querySelectorAll("script,iframe,object,embed,video,audio,.bottom-nav,.att-swipe-ghost,.v2-side,.v2-search-panel,#toastContainer,.toast-container,dialog,[role=dialog]"), function (n) { n.remove(); });
+    // ids stay: the page styles hang on them (e.g. the camera box on Absensi)
+    Array.prototype.forEach.call(root.querySelectorAll("*"), function (n) {
+        for (var i = n.attributes.length - 1; i >= 0; i--) {
+            var a = n.attributes[i].name;
+            if (/^on/i.test(a) || a === "data-count" || a === "data-needs" || a === "autofocus") n.removeAttribute(a);
+        }
+        if (n.tagName === "A") n.removeAttribute("href");
+    });
+};
+window.attSnapGhost = function (href, label) {
+    var g = document.createElement("div");
+    g.className = "att-swipe-ghost";
+    g.setAttribute("aria-hidden", "true");
+    var snap = null;
+    try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
+    var inner = document.createElement("div");
+    inner.className = "att-swipe-body";
+    if (snap && snap.html) {
+        var tpl = document.createElement("template");
+        tpl.innerHTML = snap.html;
+        window.attSnapClean(tpl.content);
+        inner.appendChild(tpl.content);
+        if (snap.cls) inner.className += " " + snap.cls.replace(/\bhas-side\b/g, "");
+        inner.style.padding = snap.pad || "";
+        if (snap.font) inner.style.fontFamily = snap.font;
+        if (snap.color) inner.style.color = snap.color;
+        g.style.background = snap.bg || "";
+    } else {
+        inner.className += " att-swipe-skel";
+        var esc = String(label || "").replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
+        inner.innerHTML = '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + esc + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
+        if (document.body) g.style.background = getComputedStyle(document.body).backgroundColor;
+    }
+    g.appendChild(inner);
+    g._hasSnap = !!(snap && snap.html);
+    return g;
+};
+
+// Arriving here by a swipe: keep showing the page exactly as it looked during the swipe
+// until its data has loaded, then swap to the live page (no empty/jumping moment).
+(function () {
+    var swiped = null;
+    try { swiped = sessionStorage.getItem("att-swiped"); } catch (e) {}
+    if (!swiped || window.self !== window.top || document.prerendering) return;
+    var page = (location.pathname.split("/").pop() || "index.html");
+    var root = document.documentElement;
+    root.classList.add("att-swiped-in");
+    var ov = null, inflight = 0, ever = false, quietAt = 0, t0 = Date.now(), dcl = 0;
+    var of = window.fetch;
+    if (of) window.fetch = function () {
+        inflight++; ever = true;
+        var p = of.apply(this, arguments);
+        var d = function () { inflight--; if (!inflight) quietAt = Date.now(); };
+        p.then(d, d);
+        return p;
+    };
+    function mount() {
+        if (ov) return true;
+        if (!document.body) return false;
+        var g = window.attSnapGhost(page, "");
+        if (!g._hasSnap) return true;          // nothing saved: just show the page
+        g.classList.add("att-arrive");
+        g.style.transform = "none";
+        // after <body> (not inside it): the page's own elements stay first in the document,
+        // so the page's scripts find and fill those, never the picture
+        root.appendChild(g);
+        ov = g;
+        return true;
+    }
+    if (!mount()) {
+        var mo = new MutationObserver(function () { if (mount()) mo.disconnect(); });
+        mo.observe(root, { childList: true });
+    }
+    document.addEventListener("DOMContentLoaded", function () { dcl = Date.now(); });
+    window.attArriveDone = function () { done(); };
+    function done() {
+        root.classList.remove("att-swiped-in");
+        if (!ov) return;
+        var g = ov; ov = null;
+        requestAnimationFrame(function () { requestAnimationFrame(function () { g.remove(); }); });
+    }
+    (function check() {
+        var now = Date.now();
+        var settled = dcl && !inflight && (ever ? now - quietAt > 120 : now - dcl > 450);
+        if (settled || now - t0 > 1600) return done();
+        setTimeout(check, 40);
+    })();
+})();
+
+
 function setTheme(theme) {
     localStorage.setItem("attendly-theme", theme);
     document.documentElement.setAttribute("data-theme", theme);
@@ -81,7 +175,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014g";
+    p.src = "js/push.js?v=20261014j";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -89,7 +183,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014g";
+    f.src = "js/formready.js?v=20261014j";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -97,7 +191,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014g";
+    a.src = "js/animate.js?v=20261014j";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -105,7 +199,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014g";
+    w.src = "js/swipe.js?v=20261014j";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -113,7 +207,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014g";
+    s.src = "js/sidebar.js?v=20261014j";
     s.defer = true;
     document.head.appendChild(s);
 })();

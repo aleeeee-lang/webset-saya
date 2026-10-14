@@ -4,9 +4,19 @@
 // coming back to a page later in the same session shows the values straight away.
 (function () {
     try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) {}
+    // a page opened in the background (swipe prerender) waits until it is actually shown
+    if (document.prerendering) {
+        var me = document.currentScript && document.currentScript.src;
+        document.addEventListener("prerenderingchange", function () {
+            var s = document.createElement("script"); s.src = me || "js/animate.js"; document.head.appendChild(s);
+        }, { once: true });
+        return;
+    }
     var KEY = "attendreem-anim:" + (location.pathname.split("/").pop() || "index.html");
     var replay = false;
     try { replay = !!sessionStorage.getItem(KEY); sessionStorage.setItem(KEY, "1"); } catch (e) {}
+    // arrived by a swipe: the page was already shown complete under the finger, so no count-up
+    try { if (sessionStorage.getItem("att-swiped-anim")) { sessionStorage.removeItem("att-swiped-anim"); replay = true; } } catch (e) {}
     if (replay) {
         // already seen in this session: no count-up and no chart growing for the first values
         var root = document.documentElement;
@@ -84,10 +94,11 @@
             list.forEach(function (m) {
                 var n = m.target.nodeType === 3 ? m.target.parentElement : m.target;
                 if (!n || !n.closest) return;
+                if (n.closest(".att-swipe-ghost")) return;          // preview of another page while swiping
                 var el = n.matches(COUNT) ? n : n.closest(COUNT);
                 if (el && seen.indexOf(el) === -1) seen.push(el);
                 if (m.addedNodes && m.addedNodes.length) m.addedNodes.forEach(function (a) {
-                    if (a.nodeType !== 1) return;
+                    if (a.nodeType !== 1 || a.classList.contains("att-swipe-ghost")) return;
                     growBars(a.parentElement || a);
                     // counters that arrive inside freshly inserted HTML (cards, lists)
                     if (a.matches(COUNT) && seen.indexOf(a) === -1) seen.push(a);

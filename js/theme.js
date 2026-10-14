@@ -39,6 +39,9 @@ window.attSnapGhost = function (href, label) {
     var snap = null;
     try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
     if (snap && (!snap.t || new Date(snap.t).toDateString() !== new Date().toDateString())) snap = null;
+    // saved in the other colour mode (light <-> dark): charts and inline colours would be wrong
+    var theme = document.documentElement.getAttribute("data-theme") || "light";
+    if (snap && (snap.theme || "light") !== theme) snap = null;
     var inner = document.createElement("div");
     inner.className = "att-swipe-body";
     if (snap && snap.html) {
@@ -48,14 +51,10 @@ window.attSnapGhost = function (href, label) {
         inner.appendChild(tpl.content);
         if (snap.cls) inner.className += " " + snap.cls.replace(/\bhas-side\b/g, "");
         inner.style.padding = snap.pad || "";
-        if (snap.font) inner.style.fontFamily = snap.font;
-        if (snap.color) inner.style.color = snap.color;
-        g.style.background = snap.bg || "";
     } else {
         inner.className += " att-swipe-skel";
         var esc = String(label || "").replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
         inner.innerHTML = '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + esc + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
-        if (document.body) g.style.background = getComputedStyle(document.body).backgroundColor;
     }
     g.appendChild(inner);
     g._hasSnap = !!(snap && snap.html);
@@ -188,7 +187,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014q";
+    p.src = "js/push.js?v=20261014s";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -196,7 +195,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014q";
+    f.src = "js/formready.js?v=20261014s";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -204,7 +203,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014q";
+    a.src = "js/animate.js?v=20261014s";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -212,7 +211,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014q";
+    w.src = "js/swipe.js?v=20261014s";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -220,7 +219,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014q";
+    s.src = "js/sidebar.js?v=20261014s";
     s.defer = true;
     document.head.appendChild(s);
 })();

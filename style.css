@@ -3528,7 +3528,7 @@ html.att-swipe-page body{overflow-x:clip}
 html:has(.att-tabswipe){overflow-x:hidden}
 html:has(.att-tabswipe) body{overflow-x:clip}
 .att-tabswipe{touch-action:pan-y pinch-zoom;position:relative;overflow-x:clip}
-.att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7;contain:layout paint style;transform:translate3d(100vw,0,0)}
+.att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7;color:#14162B;font-family:'Plus Jakarta Sans',Arial,sans-serif;contain:layout paint style;transform:translate3d(100vw,0,0)}
 .att-swipe-ghost *{animation:none!important;transition:none!important}
 .att-swipe-body{min-height:100%;box-sizing:border-box}
 .att-tabswipe-moving{will-change:transform}
@@ -3542,7 +3542,7 @@ html:has(.att-tabswipe) body{overflow-x:clip}
 .att-swipe-skel .sk-card{height:86px;border-radius:22px;background:#fff}
 .att-swipe-skel .sk-card.big{height:180px;background:#E9EBF3}
 .att-swipe-skel .sk-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-html[data-theme="dark"] .att-swipe-ghost{background:#000}
+html[data-theme="dark"] .att-swipe-ghost{background:#000;color:#EDEDED}
 html[data-theme="dark"] .att-swipe-skel .sk-head b,html[data-theme="dark"] .att-swipe-skel .sk-head i,html[data-theme="dark"] .att-swipe-skel .sk-card.big{background:#1C1C1E}
 html[data-theme="dark"] .att-swipe-skel .sk-card{background:#161618}
 html[data-theme="dark"] .att-swipe-skel .sk-title{color:#EDEDED}
@@ -3564,3 +3564,8 @@ html[data-theme="dark"] .bottom-nav{background:#000!important;border-top-color:#
 .bottom-nav .nav-person-icon,.bottom-nav .nav-home-icon,.bottom-nav .nav-camera-icon,.bottom-nav .nav-dashboard-icon,.bottom-nav .nav-history-icon{width:24px;height:24px}
 .bottom-nav .nav-person-icon svg,.bottom-nav .nav-home-icon svg,.bottom-nav .nav-camera-icon svg,.bottom-nav .nav-dashboard-icon svg,.bottom-nav .nav-history-icon svg{width:24px;height:24px}
 body.v2-page{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+/* swiping pages behave like an app: holding a finger down doesn't start text selection */
+@media (pointer:coarse){
+  html.att-swipe-page body,.att-tabswipe{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  html.att-swipe-page input,html.att-swipe-page textarea,html.att-swipe-page [contenteditable],.att-tabswipe input,.att-tabswipe textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+}

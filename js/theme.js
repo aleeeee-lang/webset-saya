@@ -81,7 +81,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014c";
+    p.src = "js/push.js?v=20261014f";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -89,7 +89,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014c";
+    f.src = "js/formready.js?v=20261014f";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -97,7 +97,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014c";
+    a.src = "js/animate.js?v=20261014f";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -105,7 +105,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014c";
+    s.src = "js/sidebar.js?v=20261014f";
     s.defer = true;
     document.head.appendChild(s);
 })();

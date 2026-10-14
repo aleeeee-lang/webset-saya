@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Champions - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="js/theme.js?v=20261014f"></script>
+<script src="js/lang.js?v=20261014f"></script>
+<script src="js/toast.js?v=20261014f"></script>
+<script src="js/avatarcrop.js?v=20261014f"></script>
+<script src="js/champs.js?v=20261014f"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v2-jr">
+
+    <header class="v2-head">
+        <button type="button" class="v2-back" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="lsn-head-text">
+            <h1 data-i18n="jr_title">Champions</h1>
+            <p class="v2-head-sub" id="jrSub">&nbsp;</p>
+        </div>
+        <select id="jrClass" class="kas-class" hidden aria-label="Class"></select>
+    </header>
+
+    <div class="jr-tabs" role="tablist">
+        <button type="button" data-tab="att" class="on" data-i18n="jr_tab_att">Attendance</button>
+        <button type="button" data-tab="grade" data-i18n="jr_tab_grade">Grades</button>
+        <button type="button" data-tab="award" data-i18n="jr_tab_award">Awards</button>
+        <button type="button" data-tab="class" data-i18n="jr_tab_class">Classes</button>
+    </div>
+
+    <!-- attendance champions (every day) -->
+    <section class="jr-pane" data-pane="att">
+        <div class="jr-period">
+            <button type="button" data-step="-1" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <b id="jrAttMonth">&nbsp;</b>
+            <button type="button" data-step="1" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="jr-card jr-hero-card" id="jrAttPodium"></div>
+        <div class="jr-me" id="jrAttMe" hidden></div>
+        <div class="jr-card">
+            <h3 class="jr-h" data-i18n="jr_daily">Class attendance per day</h3>
+            <div id="jrAttChart"></div>
+        </div>
+        <div class="jr-card">
+            <h3 class="jr-h" data-i18n="jr_top10">Top 10</h3>
+            <div class="jr-list" id="jrAttList"></div>
+        </div>
+    </section>
+
+    <!-- grade ranking -->
+    <section class="jr-pane" data-pane="grade" hidden>
+        <div class="jr-period">
+            <select id="jrPeriod" class="kas-class jr-period-sel" aria-label="Period"></select>
+        </div>
+        <div class="jr-card jr-hero-card" id="jrGradePodium"></div>
+        <div class="jr-me" id="jrGradeMe" hidden></div>
+        <div class="jr-card" id="jrGradeAllCard" hidden>
+            <h3 class="jr-h" data-i18n="jr_all_students">All students</h3>
+            <div class="jr-list" id="jrGradeList"></div>
+            <button type="button" class="jr-btn" id="jrAnnounce"><span>🏆</span><span data-i18n="jr_announce">Announce the champions</span></button>
+            <small class="jr-hint" data-i18n="jr_announce_hint">Shown on everyone's home page for 7 days, then kept in Awards.</small>
+        </div>
+    </section>
+
+    <!-- awards (competitions + announced rankings) -->
+    <section class="jr-pane" data-pane="award" hidden>
+        <button type="button" class="jr-add" id="jrAddBtn" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="jr_add_award">Add an achievement</span></button>
+        <div class="jr-card jr-form" id="jrForm" hidden>
+            <label class="kas-field"><span data-i18n="jr_f_class">Class</span><select id="jrFClass" class="am-field"></select></label>
+            <label class="kas-field"><span data-i18n="jr_f_student">Student</span><select id="jrFStudent" class="am-field"></select></label>
+            <label class="kas-field"><span data-i18n="jr_f_rank">Result</span>
+                <select id="jrFRank" class="am-field">
+                    <option>Juara 1</option><option>Juara 2</option><option>Juara 3</option><option>Harapan 1</option><option>Harapan 2</option><option>Finalis</option><option>Peserta terbaik</option>
+                </select></label>
+            <label class="kas-field"><span data-i18n="jr_f_event">Competition name</span><input type="text" id="jrFEvent" class="am-field" maxlength="80" data-i18n-placeholder="jr_f_event_ph" placeholder="e.g. Math Olympiad"></label>
+            <label class="kas-field"><span data-i18n="jr_f_level">Level</span>
+                <select id="jrFLevel" class="am-field">
+                    <option value="Sekolah">Sekolah</option><option value="Kecamatan">Kecamatan</option><option value="Kabupaten/Kota">Kabupaten/Kota</option><option value="Provinsi">Provinsi</option><option value="Nasional">Nasional</option><option value="Internasional">Internasional</option>
+                </select></label>
+            <label class="kas-field"><span data-i18n="jr_f_date">Date</span><input type="date" id="jrFDate" class="am-field"></label>
+            <div class="kas-field"><span data-i18n="jr_f_photo">Certificate / photo (optional)</span>
+                <label class="kas-receipt" id="jrFPhotoPick"><input type="file" id="jrFPhoto" accept="image/*" hidden>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                    <span id="jrFPhotoName" data-i18n="kas_receipt_pick">Add photo</span></label></div>
+            <button type="button" class="submit-button" id="jrFSave" data-needs="jrFStudent,jrFEvent,jrFDate" data-i18n="jr_f_save">Publish</button>
+        </div>
+        <div id="jrAwardNow"></div>
+        <h3 class="jr-h jr-h-out" data-i18n="jr_all_awards">All achievements</h3>
+        <div class="jr-list" id="jrAwardList"></div>
+    </section>
+
+    <!-- most diligent class -->
+    <section class="jr-pane" data-pane="class" hidden>
+        <div class="jr-period">
+            <button type="button" data-step="-1" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <b id="jrClassMonth">&nbsp;</b>
+            <button type="button" data-step="1" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="jr-card jr-hero-card" id="jrClassTop"></div>
+        <div class="jr-card">
+            <h3 class="jr-h" data-i18n="jr_class_rank">Attendance rate per class</h3>
+            <div class="jr-hbars" id="jrClassBars"></div>
+        </div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261014f"></script>
+<script src="js/auth.js?v=20261014f"></script>
+
+<script>
+const C = window.Champs, L = C.L, esc = C.esc;
+function tr(k) { const t = translations[k]; return t ? t[getLang()] : k; }
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = "index.html";
+}
+
+let me = null, prof = {}, classes = [], cls = "", tab = "att", attOff = 0, classOff = 0, isStaff = false;
+let attRows = [], gradeRows = [], periods = [], awards = [], faces = {};
+
+async function init() {
+    const user = await requireLogin();
+    if (!user) return;
+    me = user;
+    const r = await supabaseClient.from("profiles").select("name,class,role").eq("id", user.id).maybeSingle();
+    prof = r.data || {};
+    isStaff = prof.role === "guru" || prof.role === "admin";
+    const set = new Set();
+    if (prof.class) set.add(prof.class);
+    if (prof.role === "guru") {
+        const s = await supabaseClient.from("class_schedules").select("class").eq("teacher_id", user.id);
+        (s.data || []).forEach(function (x) { if (x.class) set.add(x.class); });
+    }
+    if (prof.role === "admin") {
+        const s = await supabaseClient.from("profiles").select("class").eq("role", "murid");
+        (s.data || []).forEach(function (x) { if (x.class) set.add(x.class); });
+    }
+    classes = Array.from(set).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
+    const want = new URLSearchParams(location.search).get("class");
+    cls = classes.indexOf(want) !== -1 ? want : (prof.class && classes.indexOf(prof.class) !== -1 ? prof.class : (classes[0] || ""));
+    const sel = document.getElementById("jrClass");
+    if (classes.length > 1) {
+        sel.innerHTML = classes.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
+        sel.value = cls; sel.hidden = false;
+        sel.addEventListener("change", function () { cls = sel.value; loadTab(); });
+    }
+    const fc = document.getElementById("jrFClass");
+    fc.innerHTML = classes.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
+    document.getElementById("jrFDate").value = C.iso(new Date());
+    document.getElementById("jrAddBtn").hidden = !isStaff;
+    const t = (location.hash || "").replace("#", "");
+    if (["att", "grade", "award", "class"].indexOf(t) !== -1) tab = t;
+    else if (!cls) tab = "award";   // e.g. parents: no class of their own
+    showTab(tab);
+}
+
+function showTab(t) {
+    tab = t;
+    document.querySelectorAll(".jr-tabs [data-tab]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === t); });
+    document.querySelectorAll(".jr-pane").forEach(function (p) { p.hidden = p.getAttribute("data-pane") !== t; });
+    try { history.replaceState(null, "", "#" + t); } catch (e) {}
+    loadTab();
+}
+document.querySelector(".jr-tabs").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-tab]");
+    if (b) showTab(b.getAttribute("data-tab"));
+});
+
+function setSub() {
+    const map = { att: L("Paling rajin hadir", "Most present"), grade: L("Rata-rata nilai tertinggi", "Highest average grade"), award: L("Prestasi siswa", "Student achievements"), class: L("Kelas paling rajin", "Most diligent class") };
+    document.getElementById("jrSub").textContent = (cls && tab !== "award" && tab !== "class" ? L("Kelas ", "Class ") + cls + " · " : "") + map[tab];
+}
+
+function loadTab() {
+    setSub();
+    if (tab === "att") return loadAtt();
+    if (tab === "grade") return loadGrades();
+    if (tab === "award") return loadAwards();
+    return loadClasses();
+}
+
+function emptyBox(t, s) { return '<div class="lsn-empty"><b>' + esc(t) + '</b><small>' + esc(s || "") + '</small></div>'; }
+
+// ---------- attendance ----------
+async function loadAtt() {
+    const m = C.month(attOff);
+    document.getElementById("jrAttMonth").textContent = m.label;
+    document.querySelector('[data-pane="att"] [data-step="1"]').disabled = attOff >= 0;
+    if (!cls) { document.getElementById("jrAttPodium").innerHTML = emptyBox(L("Belum ada kelas", "No class yet")); return; }
+    const [a, d] = await Promise.all([
+        supabaseClient.rpc("champ_attendance", { target_class: cls, d_from: m.from, d_to: m.to }),
+        supabaseClient.rpc("champ_daily", { target_class: cls, d_from: m.from, d_to: m.to })
+    ]);
+    if (a.error) { document.getElementById("jrAttPodium").innerHTML = emptyBox(L("Fitur juara belum disiapkan", "Champions aren't set up yet"), L("Admin perlu menjalankan champions.sql di Supabase.", "An admin needs to run champions.sql in Supabase.")); return; }
+    attRows = C.rankAttendance(a.data || []);
+    const top = attRows.filter(function (r) { return r.rnk && r.rnk <= 3; }).slice(0, 3);
+    document.getElementById("jrAttPodium").innerHTML = top.length
+        ? '<div class="jr-hero-title">' + esc(L("Juara kehadiran ", "Attendance champions · ") + m.label) + '</div>' + C.podium(top.map(function (r) { return { name: r.name, avatar: r.avatar_url, value: r.hadir + L(" hari hadir", " days present") }; }))
+        : emptyBox(L("Belum ada juara", "No champions yet"), L("Juara muncul setelah ada yang absen bulan ini.", "Champions show up once people check in this month."));
+    const mine = attRows.find(function (r) { return r.user_id === me.id; });
+    const box = document.getElementById("jrAttMe");
+    if (mine) {
+        box.hidden = false;
+        box.innerHTML = '<span class="jr-me-rank">' + (mine.rnk ? '#<span data-count>' + mine.rnk + '</span>' : "–") + '</span><div><b>' + esc(L("Posisi kamu", "Your position")) + '</b><small>' +
+            esc(mine.hadir + L(" hari hadir", " days present") + (mine.avg_time ? L(" · rata-rata absen jam ", " · usually checks in at ") + mine.avg_time : "") + L(" · dari ", " · out of ") + attRows.length + L(" siswa", " students")) + '</small></div>';
+    } else box.hidden = true;
+    document.getElementById("jrAttChart").innerHTML = C.dailyChart(d.data || []);
+    const list = attRows.filter(function (r) { return r.rnk; }).slice(0, 10);
+    document.getElementById("jrAttList").innerHTML = list.length ? list.map(function (r) {
+        return row(r.rnk, r.name, r.hadir + L(" hari", " days"), (r.avg_time ? L("rata-rata ", "avg ") + r.avg_time : ""), r.user_id === me.id, r.total ? r.hadir / Math.max(1, r.total) : 0, r.avatar_url);
+    }).join("") : '<p class="jr-muted">' + esc(L("Belum ada data.", "No data yet.")) + '</p>';
+}
+function row(rank, name, value, sub, isMe, frac, avatar) {
+    return '<div class="jr-row' + (isMe ? " me" : "") + '"><span class="jr-rank r' + Math.min(rank, 4) + '">' + (rank <= 3 ? C.MEDAL[rank - 1] : rank) + '</span>' +
+        C.av(name, avatar, "sm") + '<div class="jr-row-text"><b>' + esc(name || "-") + (isMe ? ' <em>' + esc(L("Kamu", "You")) + '</em>' : '') + '</b>' +
+        (sub ? '<small>' + esc(sub) + '</small>' : '') + (frac != null ? '<span class="jr-meter"><i style="width:' + Math.round(frac * 100) + '%"></i></span>' : '') + '</div><strong>' + C.cnt(value) + '</strong></div>';
+}
+document.querySelectorAll('[data-pane="att"] [data-step]').forEach(function (b) {
+    b.addEventListener("click", function () { attOff = Math.min(0, attOff + Number(b.getAttribute("data-step"))); loadAtt(); });
+});
+
+// ---------- grades ----------
+async function loadGrades() {
+    if (!cls) return;
+    const p = await supabaseClient.rpc("champ_grade_periods", { target_class: cls });
+    periods = (p.data || []).map(function (x) { return x.period; });
+    const sel = document.getElementById("jrPeriod");
+    const keep = sel.value;
+    sel.innerHTML = periods.map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join("");
+    if (periods.indexOf(keep) !== -1) sel.value = keep;
+    if (!periods.length) {
+        document.getElementById("jrGradePodium").innerHTML = emptyBox(L("Belum ada nilai", "No grades yet"), L("Peringkat muncul setelah guru memasukkan nilai.", "Rankings show up once teachers add grades."));
+        document.getElementById("jrGradeMe").hidden = true; document.getElementById("jrGradeAllCard").hidden = true; sel.hidden = true;
+        return;
+    }
+    sel.hidden = false;
+    const g = await supabaseClient.rpc("champ_grades", { target_class: cls, p_period: sel.value });
+    gradeRows = g.data || [];
+    const top = gradeRows.filter(function (r) { return r.rnk <= 3; });
+    document.getElementById("jrGradePodium").innerHTML = '<div class="jr-hero-title">' + esc(L("Juara kelas · ", "Class champions · ") + sel.value) + '</div>' +
+        C.podium(top.map(function (r) { return { name: r.name, avatar: r.avatar_url, value: L("Rata-rata ", "Avg ") + String(r.avg_score).replace(".", ",") }; }));
+    const mine = gradeRows.find(function (r) { return r.user_id === me.id; });
+    const box = document.getElementById("jrGradeMe");
+    if (mine && prof.role === "murid") {
+        box.hidden = false;
+        box.innerHTML = '<span class="jr-me-rank">#<span data-count>' + mine.rnk + '</span></span><div><b>' + esc(L("Peringkat kamu", "Your rank")) + '</b><small>' + esc(L("Rata-rata ", "Average ") + String(mine.avg_score).replace(".", ",") + L(" dari ", " from ") + mine.subjects + L(" nilai", " grades")) + '</small></div>';
+    } else box.hidden = true;
+    const all = document.getElementById("jrGradeAllCard");
+    all.hidden = !isStaff;
+    if (isStaff) {
+        document.getElementById("jrGradeList").innerHTML = gradeRows.map(function (r) { return row(r.rnk, r.name, String(r.avg_score).replace(".", ","), r.subjects + L(" nilai", " grades"), false, Math.min(1, Number(r.avg_score) / 100), r.avatar_url); }).join("");
+        document.getElementById("jrAnnounce").disabled = !top.length;
+    }
+}
+document.getElementById("jrPeriod").addEventListener("change", loadGrades);
+document.getElementById("jrAnnounce").addEventListener("click", async function () {
+    const period = document.getElementById("jrPeriod").value;
+    const top = gradeRows.filter(function (r) { return r.rnk <= 3; });
+    if (!top.length) return;
+    const ok = await attConfirm({ title: L("Umumkan juara kelas?", "Announce the class champions?"), text: L("Kelas ", "Class ") + cls + " · " + period + "\n" + top.map(function (r) { return r.rnk + ". " + r.name; }).join(", "), ok: L("Umumkan", "Announce") });
+    if (!ok) return;
+    const names = top.map(function (r) { return C.MEDAL[r.rnk - 1] + " " + r.name; }).join("  ");
+    const res = await supabaseClient.from("achievements").insert({
+        kind: "rank", title: names, event_name: L("Peringkat kelas ", "Class ranking ") + period, class: cls, period: period,
+        details: top.map(function (r) { return { name: r.name, avg: r.avg_score, rank: r.rnk }; }),
+        rank_label: L("Juara kelas", "Class champions"), achieved_on: C.iso(new Date()), created_by: me.id, created_by_name: prof.name || null
+    });
+    if (res.error) { showToast(L("Gagal mengumumkan.", "Couldn't announce.") + " (" + res.error.message + ")", "error"); return; }
+    showToast(L("Juara diumumkan! Tampil di beranda selama 7 hari.", "Announced! Shown on home pages for 7 days."), "success");
+});
+
+// ---------- awards ----------
+async function loadAwards() {
+    const r = await supabaseClient.from("achievements").select("*").order("achieved_on", { ascending: false }).order("created_at", { ascending: false }).limit(200);
+    if (r.error) { document.getElementById("jrAwardList").innerHTML = emptyBox(L("Fitur juara belum disiapkan", "Champions aren't set up yet"), L("Admin perlu menjalankan champions.sql di Supabase.", "An admin needs to run champions.sql in Supabase.")); return; }
+    awards = r.data || [];
+    faces = await C.avatars(awards);
+    const now = Date.now();
+    const active = awards.filter(function (a) { return Date.parse(a.show_until) > now; });
+    const past = awards.filter(function (a) { return Date.parse(a.show_until) <= now; });
+    document.getElementById("jrAwardNow").innerHTML = active.length
+        ? '<h3 class="jr-h jr-h-out">' + esc(L("Lagi dirayakan", "Being celebrated")) + '</h3>' + active.map(function (a) { return awardCard(a, true); }).join("")
+        : "";
+    document.getElementById("jrAwardList").innerHTML = past.length ? past.map(function (a) { return awardCard(a, false); }).join("")
+        : (active.length ? '<p class="jr-muted">' + esc(L("Prestasi yang lewat 7 hari pindah ke sini.", "Achievements move here after 7 days.")) + '</p>' : emptyBox(L("Belum ada prestasi", "No achievements yet"), isStaff ? L("Tambahkan juara lomba siswa dengan tombol di atas.", "Add students' competition wins with the button above.") : ""));
+}
+function dayLabel(s) { const d = new Date(s + "T00:00:00"); return d.getDate() + " " + C.MON[C.lk()][d.getMonth()] + " " + d.getFullYear(); }
+function awardCard(a, live) {
+    const canDel = prof.role === "admin" || a.created_by === me.id;
+    const head = a.kind === "rank"
+        ? '<span class="jr-award-ic rank">🏆</span><div class="jr-award-text"><b>' + esc((a.rank_label || L("Juara kelas", "Class champions")) + " · " + (a.class || "")) + '</b><small>' + esc((a.event_name || "") + " · " + dayLabel(a.achieved_on)) + '</small>' +
+          '<div class="jr-award-names">' + (Array.isArray(a.details) ? a.details.map(function (d) { return '<span>' + C.MEDAL[(d.rank || 1) - 1] + " " + esc(d.name) + '</span>'; }).join("") : esc(a.title)) + '</div></div>'
+        : C.awardFace(a, faces) + '<div class="jr-award-text"><b>' + esc(a.student_name || "-") + (a.class ? ' <em>' + esc(a.class) + '</em>' : '') + '</b>' +
+          '<small>' + esc((a.rank_label ? a.rank_label + " " : "") + (a.event_name || a.title || "")) + '</small><small>' + esc((a.level ? a.level + " · " : "") + dayLabel(a.achieved_on)) + '</small></div>';
+    return '<div class="jr-award' + (live ? " live" : "") + '" data-id="' + esc(a.id) + '">' + head +
+        '<div class="jr-award-act">' + (a.photo_path ? '<button type="button" class="kas-mini" data-act="photo" data-path="' + esc(a.photo_path) + '" aria-label="' + esc(L("Lihat foto", "View photo")) + '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg></button>' : '') +
+        (canDel ? '<button type="button" class="kas-mini del" data-act="del" aria-label="' + esc(L("Hapus", "Delete")) + '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>' : '') + '</div></div>';
+}
+document.querySelector('[data-pane="award"]').addEventListener("click", async function (e) {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    if (b.getAttribute("data-act") === "photo") {
+        const r = await supabaseClient.storage.from("achievement-photos").createSignedUrl(b.getAttribute("data-path"), 600);
+        if (r.error || !r.data) { showToast(L("Foto nggak bisa dibuka.", "Couldn't open the photo."), "error"); return; }
+        window.open(r.data.signedUrl, "_blank", "noopener");
+        return;
+    }
+    const id = b.closest(".jr-award").getAttribute("data-id");
+    const ok = await attConfirm({ title: L("Hapus prestasi ini?", "Delete this achievement?"), ok: L("Hapus", "Delete") });
+    if (!ok) return;
+    const r = await supabaseClient.from("achievements").delete().eq("id", id).select("id");
+    if (r.error || !r.data || !r.data.length) { showToast(L("Gagal menghapus.", "Couldn't delete."), "error"); return; }
+    showToast(L("Prestasi dihapus.", "Achievement deleted."), "success");
+    loadAwards();
+});
+
+// add achievement form (teachers / admin)
+document.getElementById("jrAddBtn").addEventListener("click", function () {
+    const f = document.getElementById("jrForm");
+    f.hidden = !f.hidden;
+    if (!f.hidden) { document.getElementById("jrFClass").value = cls || classes[0] || ""; loadFormStudents(); }
+});
+async function loadFormStudents() {
+    const c = document.getElementById("jrFClass").value, sel = document.getElementById("jrFStudent");
+    sel.innerHTML = '<option value="">' + esc(L("Memuat…", "Loading…")) + '</option>';
+    const r = await supabaseClient.rpc("champ_attendance", { target_class: c, d_from: C.iso(new Date()), d_to: C.iso(new Date()) });
+    const list = (r.data || []).slice().sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+    sel.innerHTML = '<option value="">' + esc(L("— Pilih siswa —", "— Choose a student —")) + '</option>' + list.map(function (s) { return '<option value="' + esc(s.user_id) + '">' + esc(s.name) + '</option>'; }).join("");
+}
+document.getElementById("jrFClass").addEventListener("change", loadFormStudents);
+document.getElementById("jrFPhoto").addEventListener("change", function () {
+    const f = this.files && this.files[0];
+    document.getElementById("jrFPhotoName").textContent = f ? f.name : tr("kas_receipt_pick");
+    document.getElementById("jrFPhotoPick").classList.toggle("has", !!f);
+});
+async function shrink(file) {
+    try {
+        const img = await createImageBitmap(file), k = Math.min(1, 1800 / Math.max(img.width, img.height));
+        const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        return await new Promise(function (res) { c.toBlob(function (b) { res(b || file); }, "image/jpeg", 0.86); });
+    } catch (e) { return file; }
+}
+document.getElementById("jrFSave").addEventListener("click", async function () {
+    const btn = this, sSel = document.getElementById("jrFStudent");
+    const sid = sSel.value, sname = sSel.options[sSel.selectedIndex] ? sSel.options[sSel.selectedIndex].text : "";
+    const ev = document.getElementById("jrFEvent").value.trim(), date = document.getElementById("jrFDate").value;
+    if (!sid) { showToast(L("Pilih siswanya dulu.", "Choose the student first."), "error"); return; }
+    if (!ev) { showToast(L("Tulis nama lombanya.", "Write the competition name."), "error"); return; }
+    if (!date) { showToast(L("Pilih tanggalnya.", "Pick the date."), "error"); return; }
+    btn.disabled = true;
+    let path = null;
+    const f = document.getElementById("jrFPhoto").files[0];
+    if (f) {
+        path = me.id + "/" + Date.now() + ".jpg";
+        const up = await supabaseClient.storage.from("achievement-photos").upload(path, await shrink(f), { contentType: "image/jpeg" });
+        if (up.error) { path = null; showToast(L("Foto gagal diunggah, prestasi tetap disimpan.", "Photo upload failed; saving without it."), "error"); }
+    }
+    const rank = document.getElementById("jrFRank").value;
+    const res = await supabaseClient.from("achievements").insert({
+        kind: "competition", title: rank + " " + ev, event_name: ev, rank_label: rank, level: document.getElementById("jrFLevel").value,
+        student_id: sid, student_name: sname, class: document.getElementById("jrFClass").value, achieved_on: date, photo_path: path,
+        created_by: me.id, created_by_name: prof.name || null
+    });
+    btn.disabled = false;
+    if (res.error) { showToast(L("Gagal menyimpan.", "Couldn't save.") + " (" + res.error.message + ")", "error"); return; }
+    showToast(L("Prestasi dipublikasikan! Tampil di beranda selama 7 hari.", "Published! Shown on home pages for 7 days."), "success");
+    document.getElementById("jrFEvent").value = ""; document.getElementById("jrFPhoto").value = ""; document.getElementById("jrFPhotoName").textContent = tr("kas_receipt_pick"); document.getElementById("jrFPhotoPick").classList.remove("has");
+    document.getElementById("jrForm").hidden = true;
+    loadAwards();
+});
+
+// ---------- classes ----------
+async function loadClasses() {
+    const m = C.month(classOff);
+    document.getElementById("jrClassMonth").textContent = m.label;
+    document.querySelector('[data-pane="class"] [data-step="1"]').disabled = classOff >= 0;
+    const r = await supabaseClient.rpc("champ_classes", { d_from: m.from, d_to: m.to });
+    if (r.error) { document.getElementById("jrClassTop").innerHTML = emptyBox(L("Fitur juara belum disiapkan", "Champions aren't set up yet"), L("Admin perlu menjalankan champions.sql di Supabase.", "An admin needs to run champions.sql in Supabase.")); document.getElementById("jrClassBars").innerHTML = ""; return; }
+    const list = (r.data || []).map(function (x) { return Object.assign({ rate: x.total ? x.hadir / x.total : 0 }, x); })
+        .sort(function (a, b) { return b.rate - a.rate || b.hadir - a.hadir; });
+    if (!list.length) {
+        document.getElementById("jrClassTop").innerHTML = emptyBox(L("Belum ada data", "No data yet"), L("Muncul setelah ada absen bulan ini.", "Shows up once people check in this month."));
+        document.getElementById("jrClassBars").innerHTML = ""; return;
+    }
+    const best = list[0];
+    document.getElementById("jrClassTop").innerHTML = '<div class="jr-class-crown"><span>👑</span><div><small>' + esc(L("Kelas paling rajin · ", "Most diligent class · ") + m.label) + '</small><b>' + esc(best.class) + '</b><em><span data-count>' + Math.round(best.rate * 100) + "%</span> " + esc(L("kehadiran", "attendance")) + '</em></div></div>';
+    document.getElementById("jrClassBars").innerHTML = list.map(function (x, i) {
+        const mine = x.class === prof.class;
+        return '<div class="jr-hbar' + (i === 0 ? " first" : "") + (mine ? " me" : "") + '"><span class="jr-hbar-name">' + (i < 3 ? C.MEDAL[i] + " " : (i + 1) + ". ") + esc(x.class) + (mine ? ' <em title="' + esc(L("Kelasmu", "Your class")) + '"></em>' : '') + '</span>' +
+            '<span class="jr-hbar-track"><i style="width:' + Math.round(x.rate * 100) + '%"></i></span><b data-count>' + Math.round(x.rate * 100) + '%</b></div>';
+    }).join("");
+}
+document.querySelectorAll('[data-pane="class"] [data-step]').forEach(function (b) {
+    b.addEventListener("click", function () { classOff = Math.min(0, classOff + Number(b.getAttribute("data-step"))); loadClasses(); });
+});
+
+init();
+</script>
+</body>
+</html>

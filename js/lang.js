@@ -1100,4 +1100,28 @@ Object.assign(translations, {
     kas_link_title: { en: "Class cash", id: "Kas kelas" },
     kas_link_sub: { en: "Balance, dues and spending of your class", id: "Saldo, iuran, dan pengeluaran kelasmu" }
 });
+Object.assign(translations, {
+    jr_title: { en: "Champions", id: "Juara" },
+    jr_tab_att: { en: "Attendance", id: "Kehadiran" },
+    jr_tab_grade: { en: "Grades", id: "Nilai" },
+    jr_tab_award: { en: "Awards", id: "Prestasi" },
+    jr_tab_class: { en: "Classes", id: "Kelas" },
+    jr_daily: { en: "Class attendance per day", id: "Kehadiran kelas per hari" },
+    jr_top10: { en: "Top 10", id: "10 besar" },
+    jr_all_students: { en: "All students", id: "Semua siswa" },
+    jr_announce: { en: "Announce the champions", id: "Umumkan juara kelas" },
+    jr_announce_hint: { en: "Shown on everyone's home page for 7 days, then kept in Awards.", id: "Tampil di beranda selama 7 hari, lalu tersimpan di tab Prestasi." },
+    jr_add_award: { en: "Add an achievement", id: "Tambah prestasi" },
+    jr_f_class: { en: "Class", id: "Kelas" },
+    jr_f_student: { en: "Student", id: "Siswa" },
+    jr_f_rank: { en: "Result", id: "Hasil" },
+    jr_f_event: { en: "Competition name", id: "Nama lomba" },
+    jr_f_event_ph: { en: "e.g. Math Olympiad", id: "mis. Olimpiade Matematika" },
+    jr_f_level: { en: "Level", id: "Tingkat" },
+    jr_f_date: { en: "Date", id: "Tanggal" },
+    jr_f_photo: { en: "Certificate / photo (optional)", id: "Sertifikat / foto (opsional)" },
+    jr_f_save: { en: "Publish", id: "Publikasikan" },
+    jr_all_awards: { en: "All achievements", id: "Semua prestasi" },
+    jr_class_rank: { en: "Attendance rate per class", id: "Tingkat kehadiran per kelas" }
+});
 document.addEventListener("DOMContentLoaded", applyLang);

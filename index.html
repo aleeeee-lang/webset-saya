@@ -19,14 +19,15 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261014c"
+        href="style.css?v=20261014f"
     >
-<script src="js/theme.js?v=20261014c"></script>
-    <script src="js/lang.js?v=20261014c"></script>
-<script src="js/lessons.js?v=20261014c"></script>
-<script src="js/tasks-core.js?v=20261014c"></script>
-    <script src="js/toast.js?v=20261014c"></script>
-    <script src="js/transition.js?v=20261014c"></script>
+<script src="js/theme.js?v=20261014f"></script>
+    <script src="js/lang.js?v=20261014f"></script>
+<script src="js/lessons.js?v=20261014f"></script>
+<script src="js/tasks-core.js?v=20261014f"></script>
+<script src="js/champs.js?v=20261014f"></script>
+    <script src="js/toast.js?v=20261014f"></script>
+    <script src="js/transition.js?v=20261014f"></script>
 
 </head>
 
@@ -107,6 +108,7 @@
 
         <a href="schedule.html" class="v2-lesson" id="homeLesson" hidden></a>
         <a href="tasks.html" class="v2-taskcard" id="homeTasks" hidden></a>
+        <div class="jr-home-wrap" id="homeChamps" hidden></div>
 
         <div class="v2-section-head">
             <h2 data-i18n="home_agenda">Agenda</h2>
@@ -121,6 +123,7 @@
         </div>
         <div class="v2-more">
             <a href="tasks.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span data-i18n="menu_tasks">Tasks</span></a>
+            <a href="juara.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span data-i18n="jr_title">Champions</span></a>
             <a href="kas.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span data-i18n="kas_link_title">Class cash</span></a>
             <a href="schedule.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M7 14h4M7 17h7"/></svg><span data-i18n="menu_lessons">Lessons</span></a>
             <a href="information.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span data-i18n="menu_information">Information</span></a>
@@ -365,10 +368,10 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014c"></script>
-<script src="js/auth.js?v=20261014c"></script>
+<script src="js/supabase.js?v=20261014f"></script>
+<script src="js/auth.js?v=20261014f"></script>
 
-<script src="js/notification.js?v=20261014c"></script>
+<script src="js/notification.js?v=20261014f"></script>
 
 <script>
 function homeT(key) {
@@ -586,6 +589,7 @@ async function loadHome() {
 
     if (profile.class) loadHomeLesson(profile.class);
     loadHomeTasks(user.id, profile.class || "");
+    if (window.Champs) Champs.home(document.getElementById("homeChamps"), { userId: user.id, cls: profile.class || "", onlyClass: profile.class || "" });
 
     let schedule = null;
     if (profile.class) {

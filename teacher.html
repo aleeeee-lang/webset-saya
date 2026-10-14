@@ -10,10 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261014c">
-<script src="js/theme.js?v=20261014c"></script>
-<script src="js/lang.js?v=20261014c"></script>
-<script src="js/toast.js?v=20261014c"></script>
+<link rel="stylesheet" href="style.css?v=20261014f">
+<script src="js/theme.js?v=20261014f"></script>
+<script src="js/lang.js?v=20261014f"></script>
+<script src="js/toast.js?v=20261014f"></script>
+<script src="js/champs.js?v=20261014f"></script>
 </head>
 
 <body>
@@ -37,6 +38,8 @@
         </div>
     </section>
 
+    <div class="jr-home-wrap" id="teachChamps" hidden></div>
+
     <!-- TODAY'S ATTENDANCE -->
     <h2 class="v2-teach-h" data-i18n="label_todays_attendance">Today's Attendance</h2>
     <section class="v2-teach-list" id="teacherAttendanceList"></section>
@@ -48,6 +51,7 @@
         <a href="#secGoal" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span data-i18n="label_assign_goal">Assign a Goal</span></a>
         <a href="#secSpp" class="grey"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg><span data-i18n="teach_spp_class">Class SPP status</span></a>
         <a href="tasks.html" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span data-i18n="page_tasks_teacher">Class tasks</span></a>
+        <a href="juara.html" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span data-i18n="jr_title">Champions</span></a>
         <a href="kas.html" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span data-i18n="kas_link_title">Class cash</span></a>
         <a href="schedule.html" class="grey"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_teaching">Teaching schedule</span></a>
     </div>
@@ -128,8 +132,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014c"></script>
-<script src="js/auth.js?v=20261014c"></script>
+<script src="js/supabase.js?v=20261014f"></script>
+<script src="js/auth.js?v=20261014f"></script>
 
 <script>
 
@@ -167,6 +171,7 @@ async function checkTeacher() {
     document.getElementById("teacherClassLabel").textContent = myClass ? tr("teach_homeroom") + " " + myClass : "-";
     document.getElementById("teacherName").textContent = profile.name || "";
 
+    if (window.Champs) Champs.home(document.getElementById("teachChamps"), { userId: user.id, cls: myClass });
     await loadClassStudents();
     await Promise.all([loadTodaysAttendance(), loadSppStatus(), loadStudentGoals()]);
 }

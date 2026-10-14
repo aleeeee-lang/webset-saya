@@ -86,7 +86,13 @@
                 if (!n || !n.closest) return;
                 var el = n.matches(COUNT) ? n : n.closest(COUNT);
                 if (el && seen.indexOf(el) === -1) seen.push(el);
-                if (m.addedNodes && m.addedNodes.length) m.addedNodes.forEach(function (a) { if (a.nodeType === 1) growBars(a.parentElement || a); });
+                if (m.addedNodes && m.addedNodes.length) m.addedNodes.forEach(function (a) {
+                    if (a.nodeType !== 1) return;
+                    growBars(a.parentElement || a);
+                    // counters that arrive inside freshly inserted HTML (cards, lists)
+                    if (a.matches(COUNT) && seen.indexOf(a) === -1) seen.push(a);
+                    Array.prototype.forEach.call(a.querySelectorAll(COUNT), function (c) { if (seen.indexOf(c) === -1) seen.push(c); });
+                });
             });
             seen.forEach(run);
         }).observe(document.body, { subtree: true, childList: true, characterData: true });

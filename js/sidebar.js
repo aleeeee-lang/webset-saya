@@ -29,6 +29,7 @@
         gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
         task: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/>',
         book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/>',
+        trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/>',
         grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
     };
     function ic(n, w) {
@@ -46,6 +47,7 @@
             ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
             ["tasks.html", "task", "Tasks", "Tugas"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
+            ["juara.html", "trophy", "Champions", "Juara"],
             ["goals.html", "target", "Learning Goals", "Target belajar"],
             ["leave.html", "doc", "Leave Request", "Ajukan izin"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
@@ -57,12 +59,14 @@
             ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
             ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
+            ["juara.html", "trophy", "Champions", "Juara"],
             ["goals.html", "target", "My Goals", "Target saya"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
         ],
         orangtua: [
             ["parent.html", "home", "Parent Portal", "Portal orang tua"],
+            ["juara.html", "trophy", "Champions", "Juara"],
             ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
@@ -85,6 +89,7 @@
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],
             ["admin-savings.html", "wallet", "Manage Savings", "Kelola tabungan"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
+            ["juara.html", "trophy", "Champions", "Juara"],
             ["admin-leave.html", "doc", "Leave Requests", "Persetujuan izin"],
             ["admin-development.html", "grad", "Development", "Perkembangan siswa"],
             null,
@@ -171,6 +176,7 @@
         "admin-spp.html": "spp bayar pembayaran iuran",
         "admin-attendance.html": "absen rekap kehadiran",
         "admin-broadcast.html": "notifikasi pesan kirim pengumuman",
+        "juara.html": "juara champion prestasi lomba peringkat ranking rajin kehadiran nilai terbaik trophy piala award",
         "kas.html": "kas uang kas iuran bendahara keuangan kelas pemasukan pengeluaran saldo cash treasurer"
     };
     var SHORTCUTS = {

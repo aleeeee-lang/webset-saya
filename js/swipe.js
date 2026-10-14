@@ -190,6 +190,18 @@
             });
         }
         (window.requestIdleCallback || function (f) { return setTimeout(f, 1200); })(warm);
+        // Load the two neighbouring pages in the background (with their data) once this one has
+        // settled, so a swipe - or a tap on the bottom menu - shows them complete straight away.
+        // Skipped on data-saver connections; a page that is itself loading in the background waits.
+        function warmPages() {
+            var c = navigator.connection;
+            if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ""))) return;
+            [info.links[info.idx - 1], info.links[info.idx + 1]].forEach(function (a) { if (a) prerender(a.getAttribute("href")); });
+        }
+        function laterWarm() { setTimeout(function () { (window.requestIdleCallback || function (f) { f(); })(warmPages); }, 1500); }
+        if (document.prerendering) document.addEventListener("prerenderingchange", laterWarm, { once: true });
+        else if (document.readyState === "complete") laterWarm();
+        else window.addEventListener("load", laterWarm, { once: true });
         gesture(document.body, {
             enabled: function () { return !document.querySelector(".att-tabswipe-on"); },
             skip: function (t) { return !!(t.closest && t.closest("[data-swipe-tabs]")); },

@@ -4,7 +4,7 @@
     try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) {}
 
     var COUNT = [
-        "#homePercent", "#homeStreak",
+        "#homePercent",
         "#attendancePercentage", "#totalHadir", "#totalIzin", "#totalSakit", "#totalAlpa", "#dashboardTotalSavings", "#dashAvgGrade",
         "#scorePercent", "#myHadir", "#myIzin", "#mySakit", "#myAlpa",
         "#pScorePercent", "#pHadir", "#pIzin", "#pSakit", "#pAlpa", "#pSppAmount",

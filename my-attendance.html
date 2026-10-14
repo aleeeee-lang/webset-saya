@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261014s">
-<script src="js/theme.js?v=20261014s"></script>
-<script src="js/lang.js?v=20261014s"></script>
-<script src="js/toast.js?v=20261014s"></script>
-<script src="js/transition.js?v=20261014s"></script>
-<script src="js/scroll-pop.js?v=20261014s"></script>
+<link rel="stylesheet" href="style.css?v=20261014u">
+<script src="js/theme.js?v=20261014u"></script>
+<script src="js/lang.js?v=20261014u"></script>
+<script src="js/toast.js?v=20261014u"></script>
+<script src="js/transition.js?v=20261014u"></script>
+<script src="js/scroll-pop.js?v=20261014u"></script>
 </head>
 
 <body class="v2-page">
@@ -193,8 +193,8 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014s"></script>
-<script src="js/auth.js?v=20261014s"></script>
+<script src="js/supabase.js?v=20261014u"></script>
+<script src="js/auth.js?v=20261014u"></script>
 
 <script>
 function tr(key) {
@@ -477,7 +477,13 @@ window.addEventListener("tabshow", function () {
    DEVELOPMENT (GRADES + ACTIVITIES/NOTES)
 ========================== */
 
-const activityTypeIcon = { kegiatan: "📌", prestasi: "🏆", pelanggaran: "⚠", catatan: "📝" };
+const activityIconSvg = function (d) { return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
+const activityTypeIcon = {
+    kegiatan: activityIconSvg('<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>'),
+    prestasi: activityIconSvg('<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M9.5 17h5l.5 4h-6z"/>'),
+    pelanggaran: activityIconSvg('<path d="M10.3 4.2 2.6 17.6A2 2 0 0 0 4.3 20.6h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/>'),
+    catatan: activityIconSvg('<path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>')
+};
 const activityTypeKeyMap = { kegiatan: "type_kegiatan", prestasi: "type_prestasi", pelanggaran: "type_pelanggaran", catatan: "type_catatan" };
 
 let devGrades = [];

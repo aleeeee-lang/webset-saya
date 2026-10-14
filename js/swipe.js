@@ -42,6 +42,15 @@
         return false;
     }
 
+    function speed(hs) {
+        var n = hs.length;
+        if (n < 2) return 0;
+        if (n === 2) { var d = hs[1].t - hs[0].t; return d > 0 ? (hs[1].x - hs[0].x) / d : 0; }
+        var t0 = hs[0].t, st = 0, sx = 0, stt = 0, stx = 0;
+        for (var i = 0; i < n; i++) { var tt = hs[i].t - t0; st += tt; sx += hs[i].x; stt += tt * tt; stx += tt * hs[i].x; }
+        var den = n * stt - st * st;
+        return den ? (n * stx - st * sx) / den : 0;
+    }
     function gesture(el, h) {
         var sx = 0, sy = 0, dx = 0, mode = "", v = 0, hist = [];
         el.addEventListener("touchstart", function (e) {
@@ -56,8 +65,9 @@
             if (mode === "no" || e.touches.length !== 1) return;
             var t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
             if (!mode) {
-                if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { mode = "no"; return; }
-                if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my) * 1.3) return;
+                // like Android's ViewPager: a small "slop" first, then whichever direction clearly wins
+                if (Math.abs(my) > 12 && Math.abs(my) > Math.abs(mx)) { mode = "no"; return; }
+                if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.15) return;
                 // the browser already decided this is a scroll: leave it alone
                 if (!e.cancelable) { mode = "no"; return; }
                 mode = "drag";
@@ -66,12 +76,12 @@
                 mx = 0;
             }
             if (e.cancelable) e.preventDefault();
-            // finger speed over the last ~100 ms (px/ms), for flicks
+            // finger speed (px/ms) for flicks: least-squares over the last ~100 ms, like Android's
+            // VelocityTracker - steadier than "last two points" when the finger moves slowly or jitters
             var now = e.timeStamp || performance.now();
             hist.push({ x: t.clientX, t: now });
-            while (hist.length > 2 && now - hist[0].t > 100) hist.shift();
-            var span = now - hist[0].t;
-            v = span > 0 ? (t.clientX - hist[0].x) / span : (t.clientX - hist[0].x) / 16;
+            while (hist.length > 3 && now - hist[0].t > 100) hist.shift();
+            v = speed(hist);
             dx = t.clientX - sx;
             h.move(dx);
         }, { passive: false });
@@ -80,7 +90,7 @@
             mode = "";
             // a finger resting still for a moment before lifting means "no flick"
             var now = (e && e.timeStamp) || performance.now();
-            if (hist.length && now - hist[hist.length - 1].t > 90) v = 0;
+            if (hist.length && now - hist[hist.length - 1].t > 70) v = 0;
             h.end(v);
         }
         el.addEventListener("touchend", end);
@@ -93,7 +103,7 @@
         var t0 = performance.now(), id = 0, h = { x: from, stop: function () { if (id) cancelAnimationFrame(id); id = 0; h.stopped = true; } };
         (function f(now) {
             if (h.stopped) return;
-            var k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+            var k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 5);   // ease-out quint (ViewPager)
             h.x = from + (to - from) * e;
             step(h.x);
             if (k < 1) id = requestAnimationFrame(f); else { id = 0; if (done) done(); }
@@ -109,6 +119,27 @@
         if (fast && !same) return false;                 // flicked back: cancel, like IG
         if (fast && same && Math.abs(x) > 20) return true; // quick flick
         return Math.abs(x) > W * 0.4;                    // slow drag: needs to be past ~the middle
+    }
+    // After the finger lets go the page keeps the finger's exact speed and then eases into place
+    // (a critically damped spring, like iOS/Instagram). A slow release therefore glides on
+    // gently instead of suddenly shooting away; a flick carries straight through.
+    function spring(from, to, v, step, done, near) {
+        var w = 15;                                   // stiffness (rad/s): settles in ~0.4 s
+        var A = from - to, B = (v || 0) * 1000 + w * A, t0 = performance.now(), id = 0;
+        var h = { x: from, stop: function () { if (id) cancelAnimationFrame(id); id = 0; h.stopped = true; } };
+        if (reduce) { step(to); h.x = to; if (done) done(); return h; }
+        (function f(now) {
+            if (h.stopped) return;
+            var t = (now - t0) / 1000, e = Math.exp(-w * t), off = (A + B * t) * e;
+            var vel = (B - w * (A + B * t)) * e;          // px/s
+            // never fly past the target (a hard flick near the end)
+            if (A !== 0 && (off === 0 || (off < 0) !== (A < 0))) off = 0;
+            h.x = to + off;
+            step(h.x);
+            if (Math.abs(off) < (near || 0.6) && Math.abs(vel) < (near ? 400 : 40)) { id = 0; step(to); h.x = to; if (done) done(); return; }
+            id = requestAnimationFrame(f);
+        })(t0);
+        return h;
     }
     // no long-press text selection / menus while swiping (a slow drag often starts with a hold)
     if (coarse) document.addEventListener("contextmenu", function (e) {
@@ -253,14 +284,13 @@
                     var href = target.getAttribute("href");
                     info.links.forEach(function (a) { a.classList.toggle("active", a === target); });
                     // finish at the finger's speed (faster flick = shorter finish)
-                    var left = W - Math.abs(from), ms = Math.max(140, Math.min(300, left / Math.max(1.2, Math.abs(v || 0))));
-                    anim = animate(from, -dir * W, ms, apply, function () {
+                    anim = spring(from, -dir * W, v, apply, function () {
                         try { sessionStorage.setItem("att-swiped", "1"); sessionStorage.setItem("att-swiped-anim", "1"); } catch (e) {}
                         saveSnapshot();
                         location.href = href;
-                    });
+                    }, 2);
                 } else {
-                    anim = animate(from, 0, Math.max(160, Math.min(320, Math.abs(from) * 0.9)), apply, reset);
+                    anim = spring(from, 0, from !== x ? v * 0.28 : v, apply, reset);
                 }
             }
         });
@@ -361,15 +391,14 @@
                 if (!cancelled && nb && decide(x, v, W) && (x < 0) === (dir === 1)) {
                     committing = true;
                     var k = nb._swipeKey;
-                    var ms = Math.max(140, Math.min(300, (W - Math.abs(from)) / Math.max(1.2, Math.abs(v || 0))));
-                    anim = animate(from, -dir * W, ms, apply, function () {
+                    anim = spring(from, -dir * W, v, apply, function () {
                         if (nb) nb.setAttribute("data-swipe-was-hidden", "0");
                         reset();
                         committing = false;
                         cfg.go(k);
-                    });
+                    }, 2);
                 } else {
-                    anim = animate(from, 0, Math.max(160, Math.min(320, Math.abs(from) * 0.9)), apply, reset);
+                    anim = spring(from, 0, from !== x ? v * 0.28 : v, apply, reset);
                 }
             }
         });

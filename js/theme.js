@@ -92,6 +92,8 @@ window.attSnapGhost = function (href, label) {
     }
     document.addEventListener("DOMContentLoaded", function () { dcl = Date.now(); });
     window.attArriveDone = function () { done(); };
+    // the person starts scrolling or touching: show the live page straight away
+    ["touchstart", "wheel", "keydown"].forEach(function (ev) { window.addEventListener(ev, function () { done(); }, { once: true, passive: true, capture: true }); });
     function done() {
         root.classList.remove("att-swiped-in");
         if (!ov) return;
@@ -184,7 +186,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014l";
+    p.src = "js/push.js?v=20261014m";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -192,7 +194,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014l";
+    f.src = "js/formready.js?v=20261014m";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -200,7 +202,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014l";
+    a.src = "js/animate.js?v=20261014m";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -208,7 +210,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014l";
+    w.src = "js/swipe.js?v=20261014m";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -216,7 +218,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014l";
+    s.src = "js/sidebar.js?v=20261014m";
     s.defer = true;
     document.head.appendChild(s);
 })();

@@ -173,22 +173,6 @@
             if (ghost) { ghost.remove(); ready = {}; ghost = null; setTimeout(warm, 300); }
             target = null; dir = 0; pend = null;
         }
-        // open the neighbour in the background as soon as the finger heads there,
-        // so it is already loaded (with its data) when the finger lets go
-        var spec = {};
-        function prerender(href) {
-            if (spec[href]) return;
-            spec[href] = true;
-            try {
-                if (!(HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules"))) {
-                    var l = document.createElement("link"); l.rel = "prefetch"; l.href = href; document.head.appendChild(l); return;
-                }
-                var sc = document.createElement("script");
-                sc.type = "speculationrules";
-                sc.textContent = JSON.stringify({ prerender: [{ source: "list", urls: [href], eagerness: "immediate" }] });
-                document.head.appendChild(sc);
-            } catch (e) {}
-        }
         // parse the neighbours' snapshots ahead of time
         function warm() {
             [info.links[info.idx - 1], info.links[info.idx + 1]].forEach(function (a) {
@@ -196,18 +180,6 @@
             });
         }
         (window.requestIdleCallback || function (f) { return setTimeout(f, 1200); })(warm);
-        // Load the two neighbouring pages in the background (with their data) once this one has
-        // settled, so a swipe - or a tap on the bottom menu - shows them complete straight away.
-        // Skipped on data-saver connections; a page that is itself loading in the background waits.
-        function warmPages() {
-            var c = navigator.connection;
-            if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ""))) return;
-            [info.links[info.idx - 1], info.links[info.idx + 1]].forEach(function (a) { if (a) prerender(a.getAttribute("href")); });
-        }
-        function laterWarm() { setTimeout(function () { (window.requestIdleCallback || function (f) { f(); })(warmPages); }, 1500); }
-        if (document.prerendering) document.addEventListener("prerenderingchange", laterWarm, { once: true });
-        else if (document.readyState === "complete") laterWarm();
-        else window.addEventListener("load", laterWarm, { once: true });
         gesture(document.body, {
             enabled: function () { return !document.querySelector(".att-tabswipe-on"); },
             skip: function (t) { return !!(t.closest && t.closest("[data-swipe-tabs]")); },
@@ -226,7 +198,6 @@
                     ghost = prepare(href, (target.textContent || "").trim());
                     ghost.style.transform = "translate3d(" + (dir * window.innerWidth) + "px,0,0)";
                     document.body.appendChild(ghost);
-                    prerender(target.getAttribute("href"));
                 }
             },
             move: function (dx) {

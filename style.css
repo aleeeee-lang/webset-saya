@@ -3522,8 +3522,12 @@ html[data-theme="dark"] .jr-av.md{background:#2A2410;color:#FDE68A}
 
 /* ===== Instagram-style swiping (js/swipe.js) ===== */
 html.att-swipe-page,html.att-swipe-page body{touch-action:pan-y pinch-zoom}
+/* the page moving sideways must never widen the page (phones would zoom out and the menu would jump) */
+html.att-swipe-page{overflow-x:hidden}
+html.att-swipe-page body{overflow-x:clip}
+html:has(.att-tabswipe){overflow-x:hidden}
+html:has(.att-tabswipe) body{overflow-x:clip}
 .att-tabswipe{touch-action:pan-y pinch-zoom;position:relative;overflow-x:clip}
-html.att-swiping body{overflow-x:hidden}
 .att-swipe-ghost{position:fixed;inset:0;z-index:999;overflow:hidden;pointer-events:none;will-change:transform;background:#F3F3F7;contain:layout paint style;transform:translate3d(100vw,0,0)}
 .att-swipe-ghost *{animation:none!important;transition:none!important}
 .att-swipe-body{min-height:100%;box-sizing:border-box}

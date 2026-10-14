@@ -3555,3 +3555,12 @@ html[data-theme="dark"] .att-swipe-skel .sk-title{color:#EDEDED}
 .v2-cta.is-loading>*{visibility:hidden}
 @keyframes attShimmer{from{background-position:200% 0}to{background-position:0 0}}
 @media (prefers-reduced-motion:reduce){.v2-hero-title:empty::before,.v2-hero-title:empty::after{animation:none}}
+/* bottom menu: icons only (the label stays for screen readers) */
+.bottom-nav a small{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.bottom-nav{padding-top:7px!important;padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))!important;border-radius:0!important;box-shadow:none!important;border:0!important;border-top:1px solid rgba(255,255,255,.08)!important}
+html[data-theme="dark"] .bottom-nav{background:#000!important;border-top-color:#262626!important}
+.bottom-nav a{position:relative;justify-content:center}
+.bottom-nav a>span:first-child{width:46px!important;height:32px!important}
+.bottom-nav .nav-person-icon,.bottom-nav .nav-home-icon,.bottom-nav .nav-camera-icon,.bottom-nav .nav-dashboard-icon,.bottom-nav .nav-history-icon{width:24px;height:24px}
+.bottom-nav .nav-person-icon svg,.bottom-nav .nav-home-icon svg,.bottom-nav .nav-camera-icon svg,.bottom-nav .nav-dashboard-icon svg,.bottom-nav .nav-history-icon svg{width:24px;height:24px}
+body.v2-page{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}

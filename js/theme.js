@@ -115,8 +115,9 @@ function setTheme(theme) {
     if (window.attSyncBar) setTimeout(window.attSyncBar, 30);
 }
 
-// Phone status bar: same colour as whatever is at the very top of the page
-// (dark hero in dark mode, navy hero in light mode, page background elsewhere).
+// Phone status bar: one steady colour per page - always black in dark mode; in light mode
+// the colour at the top of the page when it opens (navy hero / page background).
+// It no longer follows scrolling, so it never flashes green or other card colours.
 (function () {
     if (window.self !== window.top) return;
     function meta() {
@@ -126,6 +127,8 @@ function setTheme(theme) {
     }
     function topColor() {
         if (document.documentElement.classList.contains("att-splash")) return "#000000";
+        if (document.documentElement.getAttribute("data-theme") === "dark") return "#000000";
+        if (window.scrollY > 4 && last) return last;          // only judged at the top of the page
         var el = document.elementFromPoint(Math.round(window.innerWidth / 2), 1);
         while (el && el.nodeType === 1) {
             var c = getComputedStyle(el).backgroundColor;
@@ -146,7 +149,6 @@ function setTheme(theme) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { sync(); setTimeout(sync, 400); });
     else sync();
     window.addEventListener("load", sync);
-    window.addEventListener("scroll", later, { passive: true });
     window.addEventListener("pageshow", sync);
     new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
 })();
@@ -186,7 +188,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014m";
+    p.src = "js/push.js?v=20261014q";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -194,7 +196,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014m";
+    f.src = "js/formready.js?v=20261014q";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -202,7 +204,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014m";
+    a.src = "js/animate.js?v=20261014q";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -210,7 +212,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014m";
+    w.src = "js/swipe.js?v=20261014q";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -218,7 +220,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014m";
+    s.src = "js/sidebar.js?v=20261014q";
     s.defer = true;
     document.head.appendChild(s);
 })();

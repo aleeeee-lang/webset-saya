@@ -1,45 +1,64 @@
-async function requireLogin() {
+// Signed-in user for this page. Fast path: the session saved on this device (no network),
+// shared by every caller on the page; the server double-checks it in the background.
+// (Data itself is still protected by the database rules on every request.)
+var _attUserP = null, _attProfP = null, _attPeriodP = null;
 
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.getUser();
-
-
-    if (error || !data.user) {
-
-        window.location.href = "login.html";
-
-        return null;
-
+function attMyProfile(uid) {
+    if (!_attProfP) {
+        _attProfP = supabaseClient
+            .from("profiles")
+            .select("status, role, name, class, avatar_url, left_date")
+            .eq("id", uid)
+            .maybeSingle()
+            .then(function (r) { return (r && r.data) || null; }, function () { return null; });
     }
+    return _attProfP;
+}
 
-    const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("status, role, name, class, avatar_url")
-        .eq("id", data.user.id)
-        .maybeSingle();
+function _attGoLogin(q) {
+    try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
+    window.location.href = "login.html" + (q || "");
+}
 
-    if (profile) {
+function requireLogin() {
+    if (_attUserP) return _attUserP;
+    _attUserP = (async function () {
+        let user = null;
         try {
-            localStorage.setItem("attendreem-profile", JSON.stringify({ role: profile.role, name: profile.name, class: profile.class, avatar_url: profile.avatar_url }));
-            window.dispatchEvent(new Event("attendreem-profile"));
+            const s = await supabaseClient.auth.getSession();
+            user = s && s.data && s.data.session ? s.data.session.user : null;
         } catch (e) {}
-    }
 
-    if (profile && profile.status === "inactive") {
+        if (!user) {
+            const { data, error } = await supabaseClient.auth.getUser();
+            if (error || !data.user) {
+                window.location.href = "login.html";
+                return null;
+            }
+            user = data.user;
+        } else {
+            // the account may have been removed or blocked since: confirm with the server, quietly
+            supabaseClient.auth.getUser().then(function (r) {
+                const st = r && r.error && r.error.status;
+                if (st === 401 || st === 403 || (r && !r.error && (!r.data || !r.data.user))) _attGoLogin();
+            }).catch(function () {});
+        }
 
-        await supabaseClient.auth.signOut();
-        try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
-        window.location.href = "login.html?inactive=1";
+        attMyProfile(user.id).then(async function (profile) {
+            if (!profile) return;
+            try {
+                localStorage.setItem("attendreem-profile", JSON.stringify({ role: profile.role, name: profile.name, class: profile.class, avatar_url: profile.avatar_url }));
+                window.dispatchEvent(new Event("attendreem-profile"));
+            } catch (e) {}
+            if (profile.status === "inactive") {
+                try { await supabaseClient.auth.signOut(); } catch (e) {}
+                _attGoLogin("?inactive=1");
+            }
+        });
 
-        return null;
-
-    }
-
-
-    return data.user;
-
+        return user;
+    })();
+    return _attUserP;
 }
 
 
@@ -72,22 +91,13 @@ async function logoutUser() {
 }
 
 async function getCurrentUser() {
-
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.getUser();
-
-
-    if (error || !data.user) {
-
-        return null;
-
-    }
-
-
+    try {
+        const s = await supabaseClient.auth.getSession();
+        if (s && s.data && s.data.session) return s.data.session.user;
+    } catch (e) {}
+    const { data, error } = await supabaseClient.auth.getUser();
+    if (error || !data.user) return null;
     return data.user;
-
 }
 
 async function getMyAttendance() {
@@ -144,7 +154,11 @@ async function getMyAttendanceAllTime() {
  * Either can be null — start=null means "since the beginning",
  * end=null means "through today, no end date".
  */
-async function getAttendancePeriod() {
+function getAttendancePeriod() {
+    if (!_attPeriodP) _attPeriodP = _attLoadPeriod();
+    return _attPeriodP;
+}
+async function _attLoadPeriod() {
     const { data, error } = await supabaseClient
         .from("attendance_period_settings")
         .select("period_start, period_end")
@@ -178,27 +192,20 @@ async function getAutoAlpaCount(user, attendanceData, period) {
     if (!user) return 0;
     if (!periodStart && (!attendanceData || attendanceData.length === 0)) return 0;
 
-    const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("class, status, left_date")
-        .eq("id", user.id)
-        .single();
+    const profile = await attMyProfile(user.id);
 
     if (!profile || !profile.class) return 0;
 
-    const { data: schedule } = await supabaseClient
-        .from("attendance_schedules")
-        .select("active_days, end_time")
-        .eq("class", profile.class)
-        .maybeSingle();
+    // the class schedule and the holiday list don't depend on each other: fetch both at once
+    const [schedRes, holRes] = await Promise.all([
+        supabaseClient.from("attendance_schedules").select("active_days, end_time").eq("class", profile.class).maybeSingle(),
+        supabaseClient.from("holidays").select("date")
+    ]);
+    const schedule = schedRes.data, holidays = holRes.data;
 
     if (!schedule || !schedule.active_days || schedule.active_days.length === 0) return 0;
 
     const activeDays = schedule.active_days;
-
-    const { data: holidays } = await supabaseClient
-        .from("holidays")
-        .select("date");
 
     const holidaySet = new Set((holidays || []).map(h => h.date));
     const recordedSet = new Set((attendanceData || []).map(a => a.date));

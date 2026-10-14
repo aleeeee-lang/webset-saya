@@ -120,8 +120,14 @@
         }
     }
 
+    // only keep a picture of the page once its data is in (never an empty, half-loaded page)
+    function settled() {
+        var n = window.attNet;
+        if (document.readyState !== "complete" || performance.now() < 1200) return false;
+        return !n || (!n.inflight && (!n.ever || Date.now() - n.quietAt > 300));
+    }
     function saveSnapshot() {
-        if (!navLinks()) return;
+        if (!navLinks() || !settled()) return;
         try {
             var c = document.body.cloneNode(true);
             trim(document.body, c, window.innerHeight * 1.3);
@@ -256,7 +262,12 @@
         window.addEventListener("pageshow", function (e) { if (e.persisted) reset(); });
         window.addEventListener("pagehide", saveSnapshot);
         document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") saveSnapshot(); });
-        setTimeout(function () { (window.requestIdleCallback || function (f) { f(); })(saveSnapshot); }, 4000);
+        // first picture once the page has settled (checked every second, for up to 20 s)
+        var tries = 0;
+        (function waitSettled() {
+            if (settled()) return (window.requestIdleCallback || function (f) { f(); })(saveSnapshot);
+            if (++tries < 20) setTimeout(waitSettled, 1000);
+        })();
     }
 
     // ---------- 2) tabs inside a page ----------

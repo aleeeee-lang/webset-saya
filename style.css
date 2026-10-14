@@ -3542,3 +3542,12 @@ html[data-theme="dark"] .att-swipe-ghost{background:#000}
 html[data-theme="dark"] .att-swipe-skel .sk-head b,html[data-theme="dark"] .att-swipe-skel .sk-head i,html[data-theme="dark"] .att-swipe-skel .sk-card.big{background:#1C1C1E}
 html[data-theme="dark"] .att-swipe-skel .sk-card{background:#161618}
 html[data-theme="dark"] .att-swipe-skel .sk-title{color:#EDEDED}
+/* home hero while today's status loads: placeholder lines instead of a wrong sentence */
+.v2-hero-title:empty{height:2.1em;position:relative}
+.v2-hero-title:empty::before,.v2-hero-title:empty::after{content:"";position:absolute;left:0;height:.78em;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.16),rgba(255,255,255,.08));background-size:200% 100%;animation:attShimmer 1.2s linear infinite}
+.v2-hero-title:empty::before{top:.1em;width:78%}
+.v2-hero-title:empty::after{top:1.15em;width:52%}
+.v2-cta.is-loading{background:rgba(198,244,50,.22);pointer-events:none}
+.v2-cta.is-loading>*{visibility:hidden}
+@keyframes attShimmer{from{background-position:200% 0}to{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.v2-hero-title:empty::before,.v2-hero-title:empty::after{animation:none}}

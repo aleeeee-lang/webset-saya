@@ -4,6 +4,21 @@
     document.documentElement.setAttribute("data-theme", theme);
 })();
 
+// Requests in flight (for "has this page finished loading its data?")
+window.attNet = { inflight: 0, quietAt: 0, ever: false };
+(function () {
+    var of = window.fetch;
+    if (!of) return;
+    window.fetch = function () {
+        var n = window.attNet;
+        n.inflight++; n.ever = true;
+        var p = of.apply(this, arguments);
+        var d = function () { n.inflight = Math.max(0, n.inflight - 1); if (!n.inflight) n.quietAt = Date.now(); };
+        p.then(d, d);
+        return p;
+    };
+})();
+
 // Snapshots of the bottom-menu pages (saved by js/swipe.js) drawn as a still picture:
 // used while swiping, and right after a swipe until the new page has its data.
 window.attSnapClean = function (root) {
@@ -23,6 +38,7 @@ window.attSnapGhost = function (href, label) {
     g.setAttribute("aria-hidden", "true");
     var snap = null;
     try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
+    if (snap && (!snap.t || new Date(snap.t).toDateString() !== new Date().toDateString())) snap = null;
     var inner = document.createElement("div");
     inner.className = "att-swipe-body";
     if (snap && snap.html) {
@@ -43,6 +59,7 @@ window.attSnapGhost = function (href, label) {
     }
     g.appendChild(inner);
     g._hasSnap = !!(snap && snap.html);
+    g._age = snap && snap.t ? Date.now() - snap.t : Infinity;
     return g;
 };
 
@@ -55,20 +72,12 @@ window.attSnapGhost = function (href, label) {
     var page = (location.pathname.split("/").pop() || "index.html");
     var root = document.documentElement;
     root.classList.add("att-swiped-in");
-    var ov = null, inflight = 0, ever = false, quietAt = 0, t0 = Date.now(), dcl = 0;
-    var of = window.fetch;
-    if (of) window.fetch = function () {
-        inflight++; ever = true;
-        var p = of.apply(this, arguments);
-        var d = function () { inflight--; if (!inflight) quietAt = Date.now(); };
-        p.then(d, d);
-        return p;
-    };
+    var ov = null, t0 = Date.now(), dcl = 0, net = window.attNet;
     function mount() {
         if (ov) return true;
         if (!document.body) return false;
         var g = window.attSnapGhost(page, "");
-        if (!g._hasSnap) return true;          // nothing saved: just show the page
+        if (!g._hasSnap || g._age > 20 * 60 * 1000) return true;   // nothing recent saved: just show the page
         g.classList.add("att-arrive");
         g.style.transform = "none";
         // after <body> (not inside it): the page's own elements stay first in the document,
@@ -91,7 +100,7 @@ window.attSnapGhost = function (href, label) {
     }
     (function check() {
         var now = Date.now();
-        var settled = dcl && !inflight && (ever ? now - quietAt > 120 : now - dcl > 450);
+        var settled = dcl && !net.inflight && (net.ever ? now - net.quietAt > 120 : now - dcl > 450);
         if (settled || now - t0 > 3000) return done();
         setTimeout(check, 40);
     })();
@@ -175,7 +184,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014k";
+    p.src = "js/push.js?v=20261014l";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -183,7 +192,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014k";
+    f.src = "js/formready.js?v=20261014l";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -191,7 +200,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014k";
+    a.src = "js/animate.js?v=20261014l";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -199,7 +208,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014k";
+    w.src = "js/swipe.js?v=20261014l";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -207,7 +216,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014k";
+    s.src = "js/sidebar.js?v=20261014l";
     s.defer = true;
     document.head.appendChild(s);
 })();

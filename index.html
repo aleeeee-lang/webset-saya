@@ -19,15 +19,15 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261014k"
+        href="style.css?v=20261014l"
     >
-<script src="js/theme.js?v=20261014k"></script>
-    <script src="js/lang.js?v=20261014k"></script>
-<script src="js/lessons.js?v=20261014k"></script>
-<script src="js/tasks-core.js?v=20261014k"></script>
-<script src="js/champs.js?v=20261014k"></script>
-    <script src="js/toast.js?v=20261014k"></script>
-    <script src="js/transition.js?v=20261014k"></script>
+<script src="js/theme.js?v=20261014l"></script>
+    <script src="js/lang.js?v=20261014l"></script>
+<script src="js/lessons.js?v=20261014l"></script>
+<script src="js/tasks-core.js?v=20261014l"></script>
+<script src="js/champs.js?v=20261014l"></script>
+    <script src="js/toast.js?v=20261014l"></script>
+    <script src="js/transition.js?v=20261014l"></script>
 
 </head>
 
@@ -66,12 +66,12 @@
 
         <div>
             <p class="v2-hero-date" id="homeDate">&nbsp;</p>
-            <h1 class="v2-hero-title" id="homeTitle" data-i18n="home_not_checked_in">You haven't checked in today</h1>
+            <h1 class="v2-hero-title" id="homeTitle" aria-busy="true"></h1>
         </div>
 
         <div class="v2-hero-chips" id="homeChips"></div>
 
-        <a href="attendance.html" class="v2-cta" id="homeCta">
+        <a href="attendance.html" class="v2-cta is-loading" id="homeCta">
             <span id="homeCtaLabel" data-i18n="check_in">Check in</span>
             <span class="v2-cta-arrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
@@ -368,10 +368,10 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014k"></script>
-<script src="js/auth.js?v=20261014k"></script>
+<script src="js/supabase.js?v=20261014l"></script>
+<script src="js/auth.js?v=20261014l"></script>
 
-<script src="js/notification.js?v=20261014k"></script>
+<script src="js/notification.js?v=20261014l"></script>
 
 <script>
 function homeT(key) {
@@ -465,6 +465,8 @@ function renderHomeStatus(todayRecord, schedule, holidayToday) {
 
     title.setAttribute("data-i18n", titleKey);
     title.textContent = homeT(titleKey);
+    title.removeAttribute("aria-busy");
+    cta.classList.remove("is-loading");
     chips.innerHTML = html;
     ctaLabel.textContent = homeT(ctaLabel.getAttribute("data-i18n"));
 }
@@ -564,6 +566,19 @@ async function loadHomeTasks(uid, cls) {
 
 async function loadHome() {
     renderHomeHeader();
+    // show the name and photo from the last visit right away (refreshed below)
+    try {
+        const cached = JSON.parse(localStorage.getItem("attendreem-profile") || "null");
+        if (cached && cached.name) {
+            document.getElementById("homeName").textContent = cached.name;
+            renderHomeAvatar(cached.name, cached.avatar_url);
+        }
+    } catch (e) {}
+    // if loading fails, don't leave the placeholder forever
+    setTimeout(function () {
+        const t = document.getElementById("homeTitle");
+        if (t && !t.textContent) { t.setAttribute("data-i18n", "home_not_checked_in"); t.textContent = homeT("home_not_checked_in"); t.removeAttribute("aria-busy"); document.getElementById("homeCta").classList.remove("is-loading"); }
+    }, 10000);
     const user = await requireLogin();
     if (!user) return;
 

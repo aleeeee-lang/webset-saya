@@ -3576,3 +3576,4 @@ html[data-theme="dark"] .activity-status-icon.kegiatan{background:rgba(198,244,5
 html[data-theme="dark"] .activity-status-icon.prestasi{background:rgba(251,191,36,.13);color:#FBBF24}
 html[data-theme="dark"] .activity-status-icon.pelanggaran{background:rgba(239,68,68,.14);color:#F87171}
 html[data-theme="dark"] .activity-status-icon.catatan{background:rgba(34,211,238,.12);color:#67E8F9}
+html.att-swipe-lock,html.att-swipe-lock body{overflow:hidden!important;overscroll-behavior:none}

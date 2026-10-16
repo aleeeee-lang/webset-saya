@@ -4,6 +4,16 @@
     document.documentElement.setAttribute("data-theme", theme);
 })();
 
+// Open the connection to the database while the page is still loading, so the first
+// data request doesn't wait for it (saves a few hundred ms on a phone connection)
+(function () {
+    [["https://vqpxumrodadqqaxuyehy.supabase.co", true], ["https://cdn.jsdelivr.net", false]].forEach(function (h) {
+        var l = document.createElement("link"); l.rel = "preconnect"; l.href = h[0];
+        if (h[1]) l.crossOrigin = "anonymous";     // the database is fetched with CORS, the library script isn't
+        document.head.appendChild(l);
+    });
+})();
+
 // Requests in flight (for "has this page finished loading its data?")
 window.attNet = { inflight: 0, quietAt: 0, ever: false };
 (function () {
@@ -187,7 +197,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261014u";
+    p.src = "js/push.js?v=20261014w";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -195,7 +205,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261014u";
+    f.src = "js/formready.js?v=20261014w";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -203,7 +213,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261014u";
+    a.src = "js/animate.js?v=20261014w";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -211,7 +221,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261014u";
+    w.src = "js/swipe.js?v=20261014w";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -219,7 +229,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261014u";
+    s.src = "js/sidebar.js?v=20261014w";
     s.defer = true;
     document.head.appendChild(s);
 })();

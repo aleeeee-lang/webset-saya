@@ -67,10 +67,16 @@
             if (!mode) {
                 // like Android's ViewPager: a small "slop" first, then whichever direction clearly wins
                 if (Math.abs(my) > 12 && Math.abs(my) > Math.abs(mx)) { mode = "no"; return; }
-                if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.15) return;
-                // the browser already decided this is a scroll: leave it alone
-                if (!e.cancelable) { mode = "no"; return; }
+                if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my) * 1.15) {
+                    // still deciding, but it looks sideways: keep the browser from starting its own
+                    // scroll in the meantime (on a slow finger it would otherwise grab the gesture
+                    // first and the page would never follow)
+                    if (Math.abs(mx) > Math.abs(my) && e.cancelable) e.preventDefault();
+                    return;
+                }
                 mode = "drag";
+                // the browser had already started scrolling up/down: freeze that while we drag sideways
+                if (!e.cancelable) document.documentElement.classList.add("att-swipe-lock");
                 sx = t.clientX;            // start counting from here: no jump of 12 px when the page starts to follow
                 if (h.start(mx < 0 ? 1 : -1) === false) { mode = "no"; return; }
                 mx = 0;
@@ -86,6 +92,7 @@
             h.move(dx);
         }, { passive: false });
         function end(e) {
+            document.documentElement.classList.remove("att-swipe-lock");
             if (mode !== "drag") { mode = ""; return; }
             mode = "";
             // a finger resting still for a moment before lifting means "no flick"
@@ -94,7 +101,7 @@
             h.end(v);
         }
         el.addEventListener("touchend", end);
-        el.addEventListener("touchcancel", function () { if (mode === "drag") { mode = ""; h.end(0, true); } else mode = ""; });
+        el.addEventListener("touchcancel", function () { document.documentElement.classList.remove("att-swipe-lock"); if (mode === "drag") { mode = ""; h.end(0, true); } else mode = ""; });
     }
 
     // returns a handle whose stop() freezes it where it is (a new touch can pick the page up mid-way)

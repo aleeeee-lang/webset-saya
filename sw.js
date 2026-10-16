@@ -1,6 +1,73 @@
-// Attendreem service worker: shows push notifications and opens the right page when tapped.
+// Attendreem service worker: makes the app open fast (keeps the app's own files on the phone),
+// shows push notifications and opens the right page when one is tapped.
+var CACHE = "attendreem-files-v1";
+
 self.addEventListener("install", function () { self.skipWaiting(); });
-self.addEventListener("activate", function (event) { event.waitUntil(self.clients.claim()); });
+self.addEventListener("activate", function (event) {
+    event.waitUntil((async function () {
+        var names = await caches.keys();
+        await Promise.all(names.filter(function (n) { return n.indexOf("attendreem-files-") === 0 && n !== CACHE; }).map(function (n) { return caches.delete(n); }));
+        if (self.registration.navigationPreload) { try { await self.registration.navigationPreload.enable(); } catch (e) {} }
+        await self.clients.claim();
+    })());
+});
+
+// What gets kept: the app's pages, styles, scripts, icons and fonts, plus the Supabase library.
+// Never kept: anything from Supabase itself (data, login, photos) - that always comes live.
+function keepable(url) {
+    if (/\.supabase\.co$/.test(url.hostname)) return false;
+    if (url.origin === self.location.origin) return true;
+    return url.hostname === "cdn.jsdelivr.net" || url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com";
+}
+async function put(req, res) {
+    if (!res || !(res.ok || res.type === "opaque")) return;
+    try {
+        var cache = await caches.open(CACHE);
+        await cache.put(req, res);
+        // a new ?v= of a file replaces the older copies of the same file
+        var u = new URL(req.url);
+        if (u.search) {
+            var keys = await cache.keys();
+            keys.forEach(function (k) {
+                var ku = new URL(k.url);
+                if (ku.origin === u.origin && ku.pathname === u.pathname && ku.search !== u.search) cache.delete(k);
+            });
+        }
+    } catch (e) {}
+}
+// pages: fresh from the internet when it answers quickly, otherwise the copy on the phone
+async function page(event) {
+    var req = event.request;
+    var cached = caches.match(req, { ignoreSearch: false });
+    var net = (async function () {
+        var res = (event.preloadResponse && await event.preloadResponse) || await fetch(req);
+        put(req, res.clone());
+        return res;
+    })();
+    event.waitUntil(net.then(function () {}, function () {}));
+    var timeout = new Promise(function (r) { setTimeout(function () { r(null); }, 900); });
+    var first = await Promise.race([net.catch(function () { return null; }), timeout]);
+    if (first) return first;
+    var c = await cached;
+    if (c) return c;
+    return net;
+}
+// styles, scripts, icons: straight from the phone, refreshed quietly in the background
+async function file(event) {
+    var req = event.request;
+    var c = await caches.match(req);
+    var net = fetch(req).then(function (res) { put(req, res.clone()); return res; });
+    event.waitUntil(net.then(function () {}, function () {}));
+    return c || net;
+}
+self.addEventListener("fetch", function (event) {
+    var req = event.request;
+    if (req.method !== "GET") return;
+    var url = new URL(req.url);
+    if (!keepable(url)) return;
+    if (req.mode === "navigate") { event.respondWith(page(event)); return; }
+    event.respondWith(file(event));
+});
 
 self.addEventListener("push", function (event) {
     var data = {};

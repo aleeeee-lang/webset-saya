@@ -170,103 +170,95 @@ async function _attLoadPeriod() {
 }
 
 /**
- * Counts school days the student has no attendance record for (auto-Alpa),
- * computed on the fly — nothing is written to the database.
- *
- * A "school day" is any date, between the anchor start date and the end
- * of the counting window (the admin's period_end if set, otherwise
- * "today" — inclusive of today once that class's scheduled end time has
- * passed), whose weekday is in that class's active_days (from
- * attendance_schedules) and that isn't a marked holiday. The anchor start
- * date is period.start when an admin has set one (attendance_period_settings),
- * otherwise the student's earliest attendance record.
- *
- * Returns 0 if there's no attendance history and no period.start to anchor
- * the range to, or no schedule/class is configured.
+ * The rules that decide whether a date is a school day for a class.
+ * Same rule as public.att_day_open() in the database (attendance_rules.sql):
+ *   - an agenda date switched OFF (or an old "holiday" row)  -> closed
+ *   - an agenda date switched ON                             -> open, even on a weekend
+ *   - otherwise the class's active days; no schedule         -> every day allowed
  */
-async function getAutoAlpaCount(user, attendanceData, period, profileOverride) {
+var _attRulesP = {};
+function attDayRules(cls) {
+    var k = cls || "";
+    if (!_attRulesP[k]) _attRulesP[k] = Promise.all([
+        cls ? supabaseClient.from("attendance_schedules").select("*").eq("class", cls).maybeSingle() : Promise.resolve({ data: null }),
+        supabaseClient.from("holidays").select("*")
+    ]).then(function (r) {
+        var agenda = {};
+        ((r[1] && r[1].data) || []).forEach(function (h) {
+            var a = agenda[h.date] || (agenda[h.date] = { closed: false, open: false, label: "" });
+            var on = h.attendance_open === true || h.attendance_open === false ? h.attendance_open : (h.type || "holiday") !== "holiday";
+            if (on === false) { a.closed = true; a.label = h.label || a.label; }
+            if (h.attendance_open === true) a.open = true;
+            if (!a.label) a.label = h.label || "";
+        });
+        return { schedule: (r[0] && r[0].data) || null, agenda: agenda };
+    }, function () { return { schedule: null, agenda: {} }; });
+    return _attRulesP[k];
+}
+function attDayOpen(dateStr, rules) {
+    var a = rules.agenda[dateStr];
+    if (a && a.closed) return false;
+    if (a && a.open) return true;
+    var s = rules.schedule;
+    if (!s || !s.active_days || !s.active_days.length) return true;
+    var d = new Date(dateStr + "T00:00:00"), iso = d.getDay() === 0 ? 7 : d.getDay();
+    return s.active_days.indexOf(iso) !== -1;
+}
+
+/**
+ * What a student's attendance rate is built from:
+ *   rows     - check-ins on school days only (a check-in on a closed day doesn't count)
+ *   autoAlpa - school days with no check-in at all, counted as Alpa
+ * Nothing is written to the database.
+ *
+ * The range starts at the admin's period start (or the student's first
+ * check-in, whichever is later) and ends today - today only once the
+ * class's closing time (or late window) has passed - or at the period end,
+ * or the date the student left.
+ */
+async function attCountable(user, attendanceData, period, profileOverride) {
     period = period || {};
-    const periodStart = period.start;
-    const periodEnd = period.end;
-
-    if (!user) return 0;
-    if (!periodStart && (!attendanceData || attendanceData.length === 0)) return 0;
-
+    var all = attendanceData || [];
+    if (!user) return { rows: all, autoAlpa: 0 };
     // a parent passes the child's profile; everyone else uses their own
-    const profile = profileOverride || await attMyProfile(user.id);
+    var profile = profileOverride || await attMyProfile(user.id);
+    var rules = await attDayRules(profile && profile.class);
+    var rows = all.filter(function (r) { return attDayOpen(r.date, rules); });
+    var schedule = rules.schedule;
+    if (!profile || !profile.class || !schedule || !schedule.active_days || !schedule.active_days.length) return { rows: rows, autoAlpa: 0 };
 
-    if (!profile || !profile.class) return 0;
+    var dates = all.map(function (a) { return a.date; }).sort();
+    var first = dates.length ? dates[0] : null;
+    var anchor = period.start && first ? (period.start > first ? period.start : first) : (period.start || first);
+    if (!anchor) return { rows: rows, autoAlpa: 0 };
 
-    // the class schedule and the holiday list don't depend on each other: fetch both at once
-    const [schedRes, holRes] = await Promise.all([
-        supabaseClient.from("attendance_schedules").select("active_days, end_time").eq("class", profile.class).maybeSingle(),
-        supabaseClient.from("holidays").select("date")
-    ]);
-    const schedule = schedRes.data, holidays = holRes.data;
-
-    if (!schedule || !schedule.active_days || schedule.active_days.length === 0) return 0;
-
-    const activeDays = schedule.active_days;
-
-    const holidaySet = new Set((holidays || []).map(h => h.date));
-    const recordedSet = new Set((attendanceData || []).map(a => a.date));
-
-    const dates = (attendanceData || []).map(a => a.date).sort();
-    const earliestRecord = dates.length > 0 ? dates[0] : null;
-
-    const anchor = periodStart && earliestRecord
-        ? (periodStart > earliestRecord ? periodStart : earliestRecord)
-        : (periodStart || earliestRecord);
-
-    if (!anchor) return 0;
-
-    const start = new Date(anchor + "T00:00:00");
-
-    const now = new Date();
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
-
-    // Today only counts once the class's scheduled end time has passed.
-    let includeToday = false;
-    if (schedule.end_time) {
-        const [eh, em] = schedule.end_time.split(":").map(Number);
-        const todayEnd = new Date(today);
-        todayEnd.setHours(eh, em || 0, 0, 0);
-        includeToday = now >= todayEnd;
+    var start = new Date(anchor + "T00:00:00");
+    var now = new Date();
+    var today = new Date(now); today.setHours(0, 0, 0, 0);
+    // today counts only once check-in has closed for good
+    var close = (schedule.late_mode === "late" && schedule.late_end_time) ? schedule.late_end_time : schedule.end_time;
+    var includeToday = false;
+    if (close) {
+        var hm = close.split(":").map(Number), te = new Date(today);
+        te.setHours(hm[0], hm[1] || 0, 0, 0);
+        includeToday = now >= te;
     }
-
-    let end = new Date(today);
+    var end = new Date(today);
     end.setDate(end.getDate() - (includeToday ? 0 : 1));
+    if (period.end) { var pe = new Date(period.end + "T00:00:00"); if (pe < end) end = pe; }
+    if (profile.status === "inactive" && profile.left_date) { var ld = new Date(profile.left_date + "T00:00:00"); if (ld < end) end = ld; }
+    if (end < start) return { rows: rows, autoAlpa: 0 };
 
-    // Never scan past the admin's period_end, if one is set.
-    if (periodEnd) {
-        const periodEndDate = new Date(periodEnd + "T00:00:00");
-        if (periodEndDate < end) end = periodEndDate;
+    var recorded = new Set(all.map(function (a) { return a.date; }));
+    var missing = 0;
+    for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        var ds = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+        if (!recorded.has(ds) && attDayOpen(ds, rules)) missing++;
     }
+    return { rows: rows, autoAlpa: missing };
+}
 
-    // If the student has been marked as left/graduated, auto-Alpa must stop
-    // advancing past the date they left — missing days after that aren't theirs.
-    if (profile.status === "inactive" && profile.left_date) {
-        const leftDateObj = new Date(profile.left_date + "T00:00:00");
-        if (leftDateObj < end) end = leftDateObj;
-    }
-
-    if (end < start) return 0;
-
-    let missing = 0;
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const isoWeekday = d.getDay() === 0 ? 7 : d.getDay();
-        if (!activeDays.includes(isoWeekday)) continue;
-
-        const dateStr = d.getFullYear() + "-" +
-            String(d.getMonth() + 1).padStart(2, "0") + "-" +
-            String(d.getDate()).padStart(2, "0");
-
-        if (holidaySet.has(dateStr)) continue;
-        if (recordedSet.has(dateStr)) continue;
-
-        missing++;
-    }
-
-    return missing;
+// older callers: just the number of auto-Alpa days
+async function getAutoAlpaCount(user, attendanceData, period, profileOverride) {
+    return (await attCountable(user, attendanceData, period, profileOverride)).autoAlpa;
 }

@@ -19,15 +19,15 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261016a"
+        href="style.css?v=20261016b"
     >
-<script src="js/theme.js?v=20261016a"></script>
-    <script src="js/lang.js?v=20261016a"></script>
-<script src="js/lessons.js?v=20261016a"></script>
-<script src="js/tasks-core.js?v=20261016a"></script>
-<script src="js/champs.js?v=20261016a"></script>
-    <script src="js/toast.js?v=20261016a"></script>
-    <script src="js/transition.js?v=20261016a"></script>
+<script src="js/theme.js?v=20261016b"></script>
+    <script src="js/lang.js?v=20261016b"></script>
+<script src="js/lessons.js?v=20261016b"></script>
+<script src="js/tasks-core.js?v=20261016b"></script>
+<script src="js/champs.js?v=20261016b"></script>
+    <script src="js/toast.js?v=20261016b"></script>
+    <script src="js/transition.js?v=20261016b"></script>
 
 </head>
 
@@ -368,10 +368,10 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261016a"></script>
-<script src="js/auth.js?v=20261016a"></script>
+<script src="js/supabase.js?v=20261016b"></script>
+<script src="js/auth.js?v=20261016b"></script>
 
-<script src="js/notification.js?v=20261016a"></script>
+<script src="js/notification.js?v=20261016b"></script>
 
 <script>
 function homeT(key) {
@@ -615,8 +615,8 @@ async function loadHome() {
     const holidayToday = events.find(function (e) { return e.date === today && (e.type || "holiday") === "holiday"; }) || null;
     renderHomeStatus(todayRecord, schedule, holidayToday);
 
-    const autoAlpa = await getAutoAlpaCount(user, attendance, results[4]);
-    renderHomeStats(attendance, autoAlpa);
+    const counted = await attCountable(user, attendance, results[4]);
+    renderHomeStats(counted.rows, counted.autoAlpa);
 }
 
 loadHome();

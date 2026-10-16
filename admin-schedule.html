@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261016a">
-<script src="js/theme.js?v=20261016a"></script>
-<script src="js/lang.js?v=20261016a"></script>
-    <script src="js/timepicker.js?v=20261016a"></script>
-<script src="js/toast.js?v=20261016a"></script>
+<link rel="stylesheet" href="style.css?v=20261016b">
+<script src="js/theme.js?v=20261016b"></script>
+<script src="js/lang.js?v=20261016b"></script>
+    <script src="js/timepicker.js?v=20261016b"></script>
+<script src="js/toast.js?v=20261016b"></script>
 </head>
 
 <body>
@@ -152,6 +152,14 @@
                 <div class="filter-dropdown" id="holidayTypeDropdown"></div>
             </div>
 
+            <div class="agenda-att-row">
+                <div style="flex:1;min-width:0">
+                    <strong data-i18n="label_agenda_att">Student check-in</strong>
+                    <small id="holidayAttHint"></small>
+                </div>
+                <label class="att-switch"><input type="checkbox" id="holidayAttOpen"><span></span></label>
+            </div>
+
             <button type="button" class="submit-button" id="addHolidayBtn" data-needs="holidayDate,holidayLabel" onclick="addHoliday()" style="margin-top:2px" data-i18n="btn_add_holiday">
                 Add Holiday
             </button>
@@ -163,8 +171,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261016a"></script>
-<script src="js/auth.js?v=20261016a"></script>
+<script src="js/supabase.js?v=20261016b"></script>
+<script src="js/auth.js?v=20261016b"></script>
 
 <script>
 
@@ -340,6 +348,33 @@ function typeBadgeText(meta) {
 
 let selectedHolidayType = "holiday";
 
+function renderAgendaAttHint() {
+    const on = document.getElementById("holidayAttOpen").checked;
+    document.getElementById("holidayAttHint").textContent = translations[on ? "agenda_att_hint_on" : "agenda_att_hint_off"][getLang()];
+}
+document.addEventListener("DOMContentLoaded", function () {
+    const sw = document.getElementById("holidayAttOpen");
+    if (sw) { sw.addEventListener("change", renderAgendaAttHint); renderAgendaAttHint(); }
+});
+
+// switch check-in on/off for a date that is already in the list
+async function setAgendaAtt(id, on, input) {
+    const lang = getLang();
+    input.disabled = true;
+    const { error } = await supabaseClient.from("holidays").update({ attendance_open: on }).eq("id", id);
+    input.disabled = false;
+    if (error) {
+        input.checked = !on;
+        showToast(translations.toast_holiday_failed[lang] + error.message, "error");
+        return;
+    }
+    const h = allHolidays.find(function (x) { return x.id === id; });
+    if (h) h.attendance_open = on;
+    const lbl = input.closest(".agenda-att-mini").querySelector("em");
+    if (lbl) lbl.textContent = translations[on ? "agenda_att_on" : "agenda_att_off"][lang];
+    showToast(translations[on ? "toast_agenda_att_on" : "toast_agenda_att_off"][lang], "success");
+}
+
 function renderHolidayTypePills() {
     const lang = getLang();
     const dropdown = document.getElementById("holidayTypeDropdown");
@@ -363,6 +398,9 @@ function renderHolidayTypePills() {
 
 function selectHolidayType(type) {
     selectedHolidayType = type;
+    // a holiday closes check-in by default; an exam or school event keeps it open
+    document.getElementById("holidayAttOpen").checked = type !== "holiday";
+    renderAgendaAttHint();
     renderHolidayTypePills();
     document.getElementById("holidayTypeDropdown").classList.remove("show");
 }
@@ -403,6 +441,11 @@ async function loadHolidays() {
         const meta = eventTypeColors[type] || eventTypeColors.holiday;
         const typeLabel = translations[meta.labelKey] ? translations[meta.labelKey][lang] : type;
         const badge = `<span style="display:inline-block;margin-top:4px;padding:3px 9px;border-radius:999px;background:${typeBadgeBg(meta)};color:${typeBadgeText(meta)};font-size:11px;font-weight:600">${typeLabel}</span>`;
+        // check-in on this date: switched on/off by the admin; old rows follow the schedule
+        const explicit = h.attendance_open === true || h.attendance_open === false;
+        const on = explicit ? h.attendance_open : type !== "holiday";
+        const attLabel = explicit ? translations[on ? "agenda_att_on" : "agenda_att_off"][lang] : (on ? translations.agenda_att_follow[lang] : translations.agenda_att_off[lang]);
+        const attSwitch = `<label class="agenda-att-mini" title="${translations.label_agenda_att[lang]}"><em>${attLabel}</em><span class="att-switch"><input type="checkbox" ${on ? "checked" : ""} onchange="setAgendaAtt('${h.id}', this.checked, this)"><span></span></span></label>`;
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
@@ -410,6 +453,7 @@ async function loadHolidays() {
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(h.label || "-")}</span>
                     ${badge}
                 </div>
+                ${attSwitch}
                 <button type="button" onclick="deleteHoliday('${escapeHTML(h.date)}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
             </div>
         `;
@@ -436,9 +480,14 @@ async function addHoliday() {
     btn.disabled = true;
     btn.textContent = translations.btn_saving[lang];
 
-    const { error } = await supabaseClient
+    const attOpen = document.getElementById("holidayAttOpen").checked;
+    let { error } = await supabaseClient
         .from("holidays")
-        .insert({ date: date, label: label, type: type });
+        .insert({ date: date, label: label, type: type, attendance_open: attOpen });
+    // database not updated yet (attendance_rules.sql): save without the switch
+    if (error && /attendance_open/.test(error.message || "")) {
+        ({ error } = await supabaseClient.from("holidays").insert({ date: date, label: label, type: type }));
+    }
 
     btn.disabled = false;
     btn.textContent = translations.btn_add_holiday[lang];
@@ -450,8 +499,7 @@ async function addHoliday() {
 
     document.getElementById("holidayDate").value = "";
     document.getElementById("holidayLabel").value = "";
-    selectedHolidayType = "holiday";
-    renderHolidayTypePills();
+    selectHolidayType("holiday");
     showToast(translations.toast_holiday_added[lang], "success");
     await loadHolidays();
 }

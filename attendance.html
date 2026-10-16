@@ -19,12 +19,12 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261016a"
+        href="style.css?v=20261016b"
     >
-    <script src="js/theme.js?v=20261016a"></script>
-    <script src="js/lang.js?v=20261016a"></script>
-    <script src="js/toast.js?v=20261016a"></script>
-    <script src="js/transition.js?v=20261016a"></script>
+    <script src="js/theme.js?v=20261016b"></script>
+    <script src="js/lang.js?v=20261016b"></script>
+    <script src="js/toast.js?v=20261016b"></script>
+    <script src="js/transition.js?v=20261016b"></script>
 
     
 </head>
@@ -324,15 +324,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261016a"></script>
+    <script src="js/supabase.js?v=20261016b"></script>
     
-    <script src="js/auth.js?v=20261016a"></script>
+    <script src="js/auth.js?v=20261016b"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261016a"></script>
+    <script src="js/camera.js?v=20261016b"></script>
 
-    <script src="js/attendance.js?v=20261016a"></script>
+    <script src="js/attendance.js?v=20261016b"></script>
 
 
 
@@ -359,29 +359,28 @@
             updateWindow(now);
         }
 
-        let attSchedule = null;
+        let attSchedule = null, attRules = null;
 
         function updateWindow(now) {
             const box = document.getElementById("attWindow");
+            const text = document.getElementById("attWindowText");
+            const count = document.getElementById("attWindowCount");
+            // a date the admin switched off (holiday), or a day that isn't a school day
+            const todayStr = localDateStr(now);
+            if (attRules && !attDayOpen(todayStr, attRules)) {
+                const ag = attRules.agenda[todayStr];
+                box.hidden = false; count.hidden = true; box.classList.add("closed");
+                text.textContent = ag && ag.closed ? attT("toast_att_day_closed") + (ag.label ? " · " + ag.label : "") : attT("toast_schedule_day_inactive");
+                return;
+            }
             if (!attSchedule) { box.hidden = true; return; }
-            const isoDay = now.getDay() === 0 ? 7 : now.getDay();
-            const active = attSchedule.active_days || [];
             const nowTime = now.toTimeString().slice(0, 5);
             const start = (attSchedule.start_time || "").slice(0, 5);
             const end = (attSchedule.end_time || "").slice(0, 5);
             const lateEnd = attSchedule.late_mode === "late" ? (attSchedule.late_end_time || "").slice(0, 5) : "";
-            const text = document.getElementById("attWindowText");
-            const count = document.getElementById("attWindowCount");
             box.hidden = false;
             box.classList.remove("closed");
             count.hidden = false;
-
-            if (active.length && active.indexOf(isoDay) === -1) {
-                text.textContent = attT("toast_schedule_day_inactive");
-                count.hidden = true;
-                box.classList.add("closed");
-                return;
-            }
 
             let target = "";
             if (start && nowTime < start) { text.textContent = attT("att_opens_at") + " " + start.replace(":", "."); target = start; }
@@ -403,8 +402,8 @@
             if (!user) return;
             const { data: profile } = await supabaseClient.from("profiles").select("class").eq("id", user.id).maybeSingle();
             if (!profile || !profile.class) return;
-            const { data } = await supabaseClient.from("attendance_schedules").select("*").eq("class", profile.class).maybeSingle();
-            attSchedule = data || null;
+            attRules = await attDayRules(profile.class);
+            attSchedule = attRules.schedule;
             updateDateTime();
         }
 

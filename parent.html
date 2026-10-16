@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261016a">
-<script src="js/theme.js?v=20261016a"></script>
-<script src="js/lang.js?v=20261016a"></script>
-<script src="js/toast.js?v=20261016a"></script>
+<link rel="stylesheet" href="style.css?v=20261016b">
+<script src="js/theme.js?v=20261016b"></script>
+<script src="js/lang.js?v=20261016b"></script>
+<script src="js/toast.js?v=20261016b"></script>
 </head>
 
 <body class="v2-page">
@@ -103,8 +103,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261016a"></script>
-<script src="js/auth.js?v=20261016a"></script>
+<script src="js/supabase.js?v=20261016b"></script>
+<script src="js/auth.js?v=20261016b"></script>
 
 <script>
 
@@ -189,11 +189,11 @@ async function checkParent() {
     await loadChildData();
 }
 
-function renderPAttendance(all, autoAlpa, period) {
+function renderPAttendance(all, autoAlpa, period, counted) {
     // same rule as the student's Home/Dashboard: only the admin's counting period,
-    // plus school days with no check-in counted as Alpa
+    // only school days, plus school days with no check-in counted as Alpa
     period = period || {};
-    const data = all.filter(function (r) {
+    const data = counted || all.filter(function (r) {
         return (!period.start || r.date >= period.start) && (!period.end || r.date <= period.end);
     });
     autoAlpa = autoAlpa || 0;
@@ -337,9 +337,9 @@ async function loadChildData() {
     const inPeriod = rows.filter(function (r) {
         return (!period.start || r.date >= period.start) && (!period.end || r.date <= period.end);
     });
-    const autoAlpa = childRes.data ? await getAutoAlpaCount(user, inPeriod, period, childRes.data) : 0;
+    const counted = childRes.data ? await attCountable(user, inPeriod, period, childRes.data) : { rows: inPeriod, autoAlpa: 0 };
     if (childId !== selectedChildId) return;   // switched to another child meanwhile
-    renderPAttendance(rows, autoAlpa, period);
+    renderPAttendance(rows, counted.autoAlpa, period, counted.rows);
     await renderPSpp(selectedChildId);
     await renderPDevelopment(selectedChildId);
 }

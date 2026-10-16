@@ -43,30 +43,37 @@ async function saveAttendance() {
     // CHECK ATTENDANCE SCHEDULE
     // =========================
 
+    // These checks only give a quick answer on the phone. The server checks the
+    // same rules again with its own clock (attendance_rules.sql), so changing
+    // the phone's date or time doesn't get around them.
     let isLateCheckIn = false;
+    const lang = getLang();
+    const rules = await attDayRules(studentClass);
+    const todayStr = localDateStr();
+
+    const { data: already } = await supabaseClient
+        .from("attendance").select("id").eq("user_id", user.id).eq("date", todayStr).limit(1);
+    if (already && already.length) {
+        showToast(translations.toast_att_already[lang], "error");
+        return;
+    }
+
+    if (!attDayOpen(todayStr, rules)) {
+        const ag = rules.agenda[todayStr];
+        showToast(translations.toast_att_day_closed[lang] + (ag && ag.label ? " (" + ag.label + ")" : ""), "error");
+        return;
+    }
 
     if (studentClass) {
 
-        const { data: schedule } = await supabaseClient
-            .from("attendance_schedules")
-            .select("*")
-            .eq("class", studentClass)
-            .maybeSingle();
+        const schedule = rules.schedule;
 
         if (schedule) {
 
-            const lang = getLang();
             const nowCheck = new Date();
-            const isoDay = nowCheck.getDay() === 0 ? 7 : nowCheck.getDay();
             const nowTime = nowCheck.toTimeString().slice(0, 5);
-            const activeDays = schedule.active_days || [];
             const startTime = (schedule.start_time || "").slice(0, 5);
             const endTime = (schedule.end_time || "").slice(0, 5);
-
-            if (activeDays.length && activeDays.indexOf(isoDay) === -1) {
-                showToast(translations.toast_schedule_day_inactive[lang], "error");
-                return;
-            }
 
             if (startTime && nowTime < startTime) {
                 showToast(translations.toast_schedule_not_open_yet[lang] + " " + startTime, "error");
@@ -76,7 +83,8 @@ async function saveAttendance() {
             if (endTime && nowTime > endTime) {
                 if (schedule.late_mode === "late") {
                     const lateEndTime = (schedule.late_end_time || "").slice(0, 5);
-                    if (lateEndTime && nowTime > lateEndTime) {
+                    // no late limit set = closes right at Closes At (as the admin page says)
+                    if (!lateEndTime || nowTime > lateEndTime) {
                         showToast(translations.toast_schedule_late_closed[lang], "error");
                         return;
                     }
@@ -244,11 +252,10 @@ async function saveAttendance() {
             error
         );
 
-        showToast(
-            "Attendance failed to save: " +
-            error.message,
-            "error"
-        );
+        // the server's own checks (attendance_rules.sql) answer with a short code
+        const code = ["ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
+        const msgKey = { ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed" }[code];
+        showToast(msgKey ? translations[msgKey][getLang()] : "Attendance failed to save: " + error.message, "error");
 
         return;
     }

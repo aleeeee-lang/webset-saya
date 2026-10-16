@@ -184,7 +184,7 @@ async function _attLoadPeriod() {
  * Returns 0 if there's no attendance history and no period.start to anchor
  * the range to, or no schedule/class is configured.
  */
-async function getAutoAlpaCount(user, attendanceData, period) {
+async function getAutoAlpaCount(user, attendanceData, period, profileOverride) {
     period = period || {};
     const periodStart = period.start;
     const periodEnd = period.end;
@@ -192,7 +192,8 @@ async function getAutoAlpaCount(user, attendanceData, period) {
     if (!user) return 0;
     if (!periodStart && (!attendanceData || attendanceData.length === 0)) return 0;
 
-    const profile = await attMyProfile(user.id);
+    // a parent passes the child's profile; everyone else uses their own
+    const profile = profileOverride || await attMyProfile(user.id);
 
     if (!profile || !profile.class) return 0;
 

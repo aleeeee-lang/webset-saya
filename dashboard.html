@@ -19,19 +19,19 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261014w"
+        href="style.css?v=20261016a"
     >
 
-    <script src="js/theme.js?v=20261014w"></script>
+    <script src="js/theme.js?v=20261016a"></script>
 
-    <script src="js/lang.js?v=20261014w"></script>
+    <script src="js/lang.js?v=20261016a"></script>
 
-    <script src="js/toast.js?v=20261014w"></script>
+    <script src="js/toast.js?v=20261016a"></script>
 
 
-    <script src="js/transition.js?v=20261014w"></script>
+    <script src="js/transition.js?v=20261016a"></script>
 
-    <script src="js/scroll-pop.js?v=20261014w"></script>
+    <script src="js/scroll-pop.js?v=20261016a"></script>
 
 </head>
 
@@ -276,9 +276,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261014w"></script>
+    <script src="js/supabase.js?v=20261016a"></script>
 
-    <script src="js/auth.js?v=20261014w"></script>
+    <script src="js/auth.js?v=20261016a"></script>
 
 
 
@@ -525,9 +525,17 @@ const recent =
         async function loadDashGrade() {
             const user = await requireLogin();
             if (!user) return;
-            const { data } = await supabaseClient.from("student_grades").select("score").eq("user_id", user.id);
-            const scores = (data || []).map(function (g) { return Number(g.score); }).filter(function (n) { return !isNaN(n); });
-            document.getElementById("dashAvgGrade").textContent = scores.length ? (scores.reduce(function (s, n) { return s + n; }, 0) / scores.length).toFixed(1).replace(".", ",") : "-";
+            const { data } = await supabaseClient.from("student_grades").select("subject,score,created_at").eq("user_id", user.id);
+            // same rule as the Grades page: the latest score of each subject
+            const latest = {};
+            (data || []).forEach(function (g) {
+                if (isNaN(Number(g.score))) return;
+                const k = g.subject || "";
+                if (!latest[k] || new Date(g.created_at) > new Date(latest[k].created_at)) latest[k] = g;
+            });
+            const scores = Object.values(latest).map(function (g) { return Number(g.score); });
+            const avg = scores.length ? (scores.reduce(function (s, n) { return s + n; }, 0) / scores.length).toFixed(1) : "";
+            document.getElementById("dashAvgGrade").textContent = avg ? (getLang() === "id" ? avg.replace(".", ",") : avg) : "-";
         }
 
         document.getElementById("dashMonth").textContent = monthYearLabel(new Date());

@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261014w">
-<script src="js/theme.js?v=20261014w"></script>
-<script src="js/lang.js?v=20261014w"></script>
-<script src="js/toast.js?v=20261014w"></script>
+<link rel="stylesheet" href="style.css?v=20261016a">
+<script src="js/theme.js?v=20261016a"></script>
+<script src="js/lang.js?v=20261016a"></script>
+<script src="js/toast.js?v=20261016a"></script>
 </head>
 
 <body class="v2-page">
@@ -103,8 +103,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261014w"></script>
-<script src="js/auth.js?v=20261014w"></script>
+<script src="js/supabase.js?v=20261016a"></script>
+<script src="js/auth.js?v=20261016a"></script>
 
 <script>
 
@@ -189,12 +189,19 @@ async function checkParent() {
     await loadChildData();
 }
 
-function renderPAttendance(data) {
-    const total = data.length;
+function renderPAttendance(all, autoAlpa, period) {
+    // same rule as the student's Home/Dashboard: only the admin's counting period,
+    // plus school days with no check-in counted as Alpa
+    period = period || {};
+    const data = all.filter(function (r) {
+        return (!period.start || r.date >= period.start) && (!period.end || r.date <= period.end);
+    });
+    autoAlpa = autoAlpa || 0;
+    const total = data.length + autoAlpa;
     const hadir = data.filter(i => i.status === "Hadir").length;
     const izin = data.filter(i => i.status === "Izin").length;
     const sakit = data.filter(i => i.status === "Sakit").length;
-    const alpa = data.filter(i => i.status === "Alpa").length;
+    const alpa = data.filter(i => i.status === "Alpa").length + autoAlpa;
     const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
 
     document.getElementById("pScorePercent").textContent = percent + "%";
@@ -205,7 +212,7 @@ function renderPAttendance(data) {
     document.getElementById("pAlpa").textContent = alpa;
 
     const today = localDateStr();
-    const rec = data.find(function (r) { return r.date === today; });
+    const rec = all.find(function (r) { return r.date === today; });
     const statusKey = rec ? ({ Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[rec.status] || "") : "";
     document.getElementById("pTodayStatus").textContent = statusKey ? tr(statusKey) : tr("teach_not_yet");
     document.getElementById("pTodayTime").textContent = rec && rec.time ? rec.time.slice(0, 5).replace(":", ".") : "";
@@ -277,7 +284,7 @@ async function renderPDevelopment(childId) {
         const latest = Object.values(bySubject);
         const avg = latest.reduce(function (sum, g) { return sum + Number(g.score); }, 0) / latest.length;
 
-        document.getElementById("pDevAverageScore").textContent = avg.toFixed(1);
+        document.getElementById("pDevAverageScore").textContent = getLang() === "id" ? avg.toFixed(1).replace(".", ",") : avg.toFixed(1);
         if (avg >= 85) document.getElementById("pDevAverageDesc").textContent = tr("score_excellent");
         else if (avg >= 70) document.getElementById("pDevAverageDesc").textContent = tr("score_good");
         else document.getElementById("pDevAverageDesc").textContent = tr("score_needs_improvement");
@@ -320,7 +327,19 @@ async function loadChildData() {
         .eq("user_id", selectedChildId)
         .order("date", { ascending: false });
 
-    renderPAttendance(data || []);
+    const rows = data || [];
+    const childId = selectedChildId;
+    const [period, childRes, user] = await Promise.all([
+        getAttendancePeriod(),
+        supabaseClient.from("profiles").select("class, status, left_date").eq("id", childId).maybeSingle(),
+        requireLogin()
+    ]);
+    const inPeriod = rows.filter(function (r) {
+        return (!period.start || r.date >= period.start) && (!period.end || r.date <= period.end);
+    });
+    const autoAlpa = childRes.data ? await getAutoAlpaCount(user, inPeriod, period, childRes.data) : 0;
+    if (childId !== selectedChildId) return;   // switched to another child meanwhile
+    renderPAttendance(rows, autoAlpa, period);
     await renderPSpp(selectedChildId);
     await renderPDevelopment(selectedChildId);
 }

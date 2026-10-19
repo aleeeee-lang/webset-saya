@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foto dibagikan - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261019k">
+<script src="js/theme.js?v=20261019k"></script>
+<script src="js/lang.js?v=20261019k"></script>
+<script src="js/shared-photos.js?v=20261019k"></script>
+</head>
+
+<body>
+
+<!-- Photos shared from another app (e.g. a transfer receipt from DANA). Pick what they're for. -->
+<main class="v2-wrap shr-page">
+
+    <header class="v2-head">
+        <button type="button" class="v2-back" id="shrBack" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="lsn-head-text">
+            <h1 id="shrTitle">Foto dibagikan</h1>
+            <p class="v2-head-sub" id="shrSub">&nbsp;</p>
+        </div>
+    </header>
+
+    <section class="shr-thumbs" id="shrThumbs"></section>
+
+    <h2 class="shr-h" id="shrAsk">Foto ini untuk apa?</h2>
+    <section class="shr-options" id="shrOptions">
+        <a class="shr-opt" href="kas.html?shared=1" data-to="kas">
+            <span class="shr-ic kas"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg></span>
+            <span class="shr-txt"><b data-k="kas_t">Bukti transfer kas</b><small data-k="kas_s">Kirim ke bendahara sebagai bukti bayar iuran</small></span>
+            <svg class="shr-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a class="shr-opt" href="history.html?shared=1" data-to="spp">
+            <span class="shr-ic spp"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8M4 20h16"/></svg></span>
+            <span class="shr-txt"><b data-k="spp_t">Bukti bayar SPP</b><small data-k="spp_s">Kirim ke admin sekolah untuk dicek</small></span>
+            <svg class="shr-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a class="shr-opt" href="tasks.html?shared=1" data-to="task">
+            <span class="shr-ic task"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg></span>
+            <span class="shr-txt"><b data-k="task_t">Foto hasil tugas</b><small data-k="task_s">Pilih tugas yang mau dikumpulkan</small></span>
+            <svg class="shr-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    <button type="button" class="shr-cancel" id="shrCancel">Batal</button>
+
+</main>
+
+<script>
+(function () {
+    const id = (typeof getLang === "function" ? getLang() : "id") === "id";
+    const T = {
+        title: ["Foto dibagikan", "Shared photos"],
+        ask: ["Foto ini untuk apa?", "What are these photos for?"],
+        kas_t: ["Bukti transfer kas", "Class cash transfer proof"],
+        kas_s: ["Kirim ke bendahara sebagai bukti bayar iuran", "Send it to the treasurer as proof of your dues"],
+        spp_t: ["Bukti bayar SPP", "SPP payment proof"],
+        spp_s: ["Kirim ke admin sekolah untuk dicek", "Send it to the school admin to check"],
+        task_t: ["Foto hasil tugas", "Photos of a task"],
+        task_s: ["Pilih tugas yang mau dikumpulkan", "Choose the task to hand in"],
+        cancel: ["Batal", "Cancel"],
+        none: ["Tidak ada foto yang diterima.", "No photos came through."],
+        none_s: ["Coba bagikan lagi dari aplikasinya.", "Try sharing again from the other app."],
+        n: ["{n} foto siap dipakai", "{n} photos ready"],
+        one: ["1 foto siap dipakai", "1 photo ready"]
+    };
+    const t = function (k) { return T[k][id ? 0 : 1]; };
+    document.documentElement.lang = id ? "id" : "en";
+    document.getElementById("shrTitle").textContent = t("title");
+    document.getElementById("shrAsk").textContent = t("ask");
+    document.getElementById("shrCancel").textContent = t("cancel");
+    document.querySelectorAll("[data-k]").forEach(function (e) { e.textContent = t(e.getAttribute("data-k")); });
+
+    async function leave() { await window.attShared.clear(); location.replace("index.html"); }
+    document.getElementById("shrCancel").addEventListener("click", leave);
+    document.getElementById("shrBack").addEventListener("click", leave);
+
+    window.attShared.list().then(function (blobs) {
+        const box = document.getElementById("shrThumbs");
+        if (!blobs.length) {
+            document.getElementById("shrSub").textContent = t("none");
+            box.innerHTML = '<div class="lsn-empty big"><b>' + t("none") + '</b><small>' + t("none_s") + '</small></div>';
+            document.getElementById("shrAsk").hidden = true;
+            document.getElementById("shrOptions").hidden = true;
+            return;
+        }
+        document.getElementById("shrSub").textContent = blobs.length === 1 ? t("one") : t("n").replace("{n}", blobs.length);
+        box.innerHTML = blobs.map(function (b) { return '<img alt="" src="' + URL.createObjectURL(b) + '">'; }).join("");
+        box.classList.toggle("one", blobs.length === 1);
+    });
+})();
+</script>
+</body>
+</html>

@@ -17,15 +17,17 @@
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
 
-   <link rel="stylesheet" href="style.css?v=20261019h">
+   <link rel="stylesheet" href="style.css?v=20261019k">
 
-    <script src="js/theme.js?v=20261019h"></script>
+    <script src="js/theme.js?v=20261019k"></script>
 
-    <script src="js/lang.js?v=20261019h"></script>
+    <script src="js/lang.js?v=20261019k"></script>
 
-    <script src="js/toast.js?v=20261019h"></script>
+    <script src="js/toast.js?v=20261019k"></script>
+    <script src="js/paymethods.js?v=20261019k"></script>
+    <script src="js/shared-photos.js?v=20261019k"></script>
 
-    <script src="js/transition.js?v=20261019h"></script>
+    <script src="js/transition.js?v=20261019k"></script>
 
 </head>
 
@@ -293,6 +295,9 @@
                 <p id="sppInfoText">-</p>
             </div>
         </section>
+
+        <!-- WHERE TO PAY (spp_settings.pay_methods, set by the admin) -->
+        <section class="pay-box" id="sppPayBox" hidden style="margin-top:16px"></section>
 
         <!-- SUBMIT PROOF -->
 
@@ -601,9 +606,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261019h"></script>
+    <script src="js/supabase.js?v=20261019k"></script>
 
-    <script src="js/auth.js?v=20261019h"></script>
+    <script src="js/auth.js?v=20261019k"></script>
 
      <script>
 function tr(key) {
@@ -906,6 +911,7 @@ let sppSettings = { amount: 0 };
 let sppData = [];
 let sppLoaded = false;
 let sppProofFile = null;
+let sppPayMethods = [];
 let currentSppRecord = null;
 
 function currentSppPeriod() {
@@ -962,6 +968,11 @@ function renderSpp() {
         submitCard.style.display = "block";
     }
 
+    // where to transfer: only while this month still has to be paid
+    window.AttPay.render(document.getElementById("sppPayBox"), submitCard.style.display === "none" ? [] : sppPayMethods, {
+        note: lang === "id" ? "Setelah transfer, kirim foto buktinya di bawah ini." : "After transferring, send the proof photo below."
+    });
+
     renderSppHistory();
 }
 
@@ -1010,9 +1021,10 @@ async function loadSpp() {
     if (!user) return;
 
     const [settingsRes, profileRes] = await Promise.all([
-        supabaseClient.from("spp_settings").select("amount").eq("id", "global").maybeSingle(),
+        supabaseClient.from("spp_settings").select("*").eq("id", "global").maybeSingle(),
         supabaseClient.from("profiles").select("spp_custom_amount").eq("id", user.id).maybeSingle()
     ]);
+    sppPayMethods = (settingsRes.data && settingsRes.data.pay_methods) || [];
 
     const defaultAmount = (settingsRes.data && settingsRes.data.amount) || 0;
     const customAmount = profileRes.data ? profileRes.data.spp_custom_amount : null;
@@ -1128,6 +1140,38 @@ function showSavingsTab(tab) {
 document.getElementById("tabSchoolBtn").addEventListener("click", function () { showSavingsTab("school"); });
 document.getElementById("tabPersonalBtn").addEventListener("click", function () { showSavingsTab("personal"); });
 document.getElementById("tabSppBtn").addEventListener("click", function () { showSavingsTab("spp"); });
+
+// arrived from the Android share menu (share.html -> history.html?shared=1): put the shared
+// screenshot into the SPP proof form; the student still checks it and taps Send
+(async function useSharedSpp() {
+    if (!window.attShared || !window.attShared.wanted()) return;
+    window.attShared.forget();
+    const blobs = await window.attShared.list();
+    if (!blobs.length) return;
+    showSavingsTab("spp");
+    await loadSpp();
+    const lang = getLang();
+    const card = document.getElementById("sppSubmitCard");
+    if (card.style.display === "none") {
+        showToast(currentSppRecord && currentSppRecord.status === "approved"
+            ? (lang === "id" ? "SPP bulan ini sudah lunas." : "This month's SPP is already paid.")
+            : (lang === "id" ? "Bukti SPP bulan ini sudah dikirim, tunggu dicek admin." : "This month's SPP proof is already waiting for the admin."), "info");
+        window.attShared.clear();
+        return;
+    }
+    const b = blobs[0];
+    sppProofFile = new File([b], "bukti-spp.jpg", { type: b.type || "image/jpeg" });
+    const preview = document.getElementById("sppProofPreview");
+    preview.src = URL.createObjectURL(b);
+    preview.style.display = "block";
+    document.getElementById("sppProofLabel").textContent = translations.btn_proof_selected[lang];
+    // put it in the file picker too, so the Send button lights up as usual
+    try { const dt = new DataTransfer(); dt.items.add(sppProofFile); document.getElementById("sppProofInput").files = dt.files; } catch (e) {}
+    if (window.attFormReady) window.attFormReady();
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    showToast(lang === "id" ? "Foto bukti sudah dipasang. Cek lalu tekan Kirim." : "Proof photo added. Check it, then tap Send.", "success");
+    window.attShared.clear();
+})();
 </script>
 
     <script>

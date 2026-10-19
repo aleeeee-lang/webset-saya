@@ -9,11 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019h">
-<script src="js/theme.js?v=20261019h"></script>
-<script src="js/lang.js?v=20261019h"></script>
-<script src="js/toast.js?v=20261019h"></script>
-<script src="js/avatarcrop.js?v=20261019h"></script>
+<link rel="stylesheet" href="style.css?v=20261019k">
+<script src="js/theme.js?v=20261019k"></script>
+<script src="js/lang.js?v=20261019k"></script>
+<script src="js/toast.js?v=20261019k"></script>
+<script src="js/shared-photos.js?v=20261019k"></script>
+<script src="js/avatarcrop.js?v=20261019k"></script>
 </head>
 
 <body class="v2-page">
@@ -115,8 +116,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019h"></script>
-<script src="js/auth.js?v=20261019h"></script>
+<script src="js/supabase.js?v=20261019k"></script>
+<script src="js/auth.js?v=20261019k"></script>
 
 <script>
 // ---------- small helpers ----------
@@ -159,6 +160,7 @@ function periodOf(offset) {
 // ---------- state ----------
 let me = null, prof = null, classes = [], cls = "", settings = defaults(), entries = [], members = [];
 let proofs = [], proofsReady = false;   // transfer proofs (class_cash_proofs.sql)
+let sharedChecked = false;
 let canManage = false, canSetup = false, periodOffset = 0, kind = "in", busy = false;
 function defaults() { return { class: "", treasurer_id: null, treasurer_name: null, dues_amount: 5000, dues_period: "weekly", pay_info: null }; }
 
@@ -205,6 +207,7 @@ async function load() {
     // transfer proofs only work once class_cash_proofs.sql has been run
     proofsReady = !pr.error;
     proofs = pr.data || [];
+    if (!sharedChecked) { sharedChecked = true; setTimeout(useSharedPhoto, 0); }
     if (e.error) {
         document.getElementById("kasHero").hidden = true;
         document.getElementById("kasList").innerHTML = emptyHTML(L("Kas kelas belum disiapkan", "Class cash isn't set up yet"), L("Admin perlu menjalankan class_cash.sql di Supabase dulu.", "An admin needs to run class_cash.sql in Supabase first."));
@@ -576,7 +579,7 @@ function proofError(err) {
 }
 
 // student: send a photo/screenshot of the transfer
-async function sendProof() {
+async function sendProof(prefill) {
     const p = periodOf(0);
     let blob = null;
     const w = await kasSheet({
@@ -587,9 +590,7 @@ async function sendProof() {
             '<label class="kas-proof-pick"><input type="file" accept="image/*"><span class="e">' + IC_UP + '<b>' + esc(L("Pilih foto / screenshot bukti", "Choose a photo / screenshot")) + '</b><small>' + esc(L("Pastikan nominal dan tanggalnya kelihatan", "Make sure the amount and date are visible")) + '</small></span><img alt="" hidden><em hidden>' + esc(L("Ganti", "Change")) + '</em></label>',
         setup: function (w, ok) {
             ok.disabled = true;
-            w.querySelector(".kas-proof-pick input").addEventListener("change", async function () {
-                const f = this.files && this.files[0];
-                if (!f) return;
+            const show = async function (f) {
                 blob = await shrink(f);
                 const img = w.querySelector(".kas-proof-pick img");
                 img.src = URL.createObjectURL(blob); img.hidden = false;
@@ -597,7 +598,13 @@ async function sendProof() {
                 w.querySelector(".kas-proof-pick em").hidden = false;
                 w.querySelector(".kas-proof-pick").classList.add("has");
                 ok.disabled = false;
+            };
+            w.querySelector(".kas-proof-pick input").addEventListener("change", function () {
+                const f = this.files && this.files[0];
+                if (f) show(f);
             });
+            // a screenshot shared from the e-wallet app (share.html) is already filled in
+            if (prefill) show(prefill);
         }
     });
     if (!w || !blob) return;
@@ -610,6 +617,26 @@ async function sendProof() {
     proofs.unshift(Object.assign({ status: "pending" }, r.data));
     showToast(L("Bukti terkirim. Tunggu dicek bendahara ya.", "Proof sent. The treasurer will check it."), "success");
     render();
+}
+
+// arrived from the Android share menu (share.html -> kas.html?shared=1): use the shared screenshot
+async function useSharedPhoto() {
+    if (!window.attShared || !window.attShared.wanted()) return;
+    window.attShared.forget();
+    const blobs = await window.attShared.list();
+    if (!blobs.length) return;
+    const p = periodOf(0);
+    const paid = entries.some(function (x) { return x.category === "dues" && x.student_id === me.id && x.period_key === p.key; });
+    const last = myProof(p.key);
+    let why = "";
+    if (prof.role !== "murid" || prof.class !== cls) why = L("Bukti transfer hanya bisa dikirim oleh siswa kelas ini.", "Only students of this class can send a transfer proof.");
+    else if (!proofsReady) why = L("Fitur bukti transfer belum disiapkan admin.", "Transfer proofs aren't set up yet.");
+    else if (!settings.dues_amount) why = L("Nominal iuran belum diatur wali kelas.", "The dues amount hasn't been set yet.");
+    else if (paid) why = L("Iuran periode ini sudah lunas.", "These dues are already paid.");
+    else if (last && last.status === "pending") why = L("Bukti untuk periode ini sudah dikirim, tunggu dicek bendahara.", "A proof for this period is already waiting.");
+    if (why) { showToast(why, "info"); window.attShared.clear(); return; }
+    await sendProof(blobs[0]);
+    window.attShared.clear();
 }
 
 document.getElementById("kasMine").addEventListener("click", function (e) {

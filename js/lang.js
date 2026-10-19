@@ -1004,6 +1004,8 @@ Object.assign(translations, {
     tsk_photo_count: { en: "{n} of {max} photos. Check they're sharp before sending.", id: "{n} dari {max} foto. Pastikan jelas sebelum dikirim." },
     tsk_photo_send: { en: "Hand in ({n} photos)", id: "Kumpulkan ({n} foto)" },
     tsk_locked: { en: "Handed in. It can't be changed or have photos added any more.", id: "Sudah dikumpulkan. Tidak bisa diubah atau ditambah foto lagi." },
+    tsk_shared_pick: { en: "{n} shared photo(s) ready. Tick the task you want to hand in with them.", id: "{n} foto dari aplikasi lain siap dipakai. Centang tugas yang mau dikumpulkan." },
+    tsk_shared_none: { en: "There's no task to hand in right now.", id: "Tidak ada tugas yang perlu dikumpulkan sekarang." },
     tsk_mark_done: { en: "Mark as done", id: "Tandai selesai" },
     tsk_mark_undone: { en: "Mark as not done", id: "Batal selesai" },
     tsk_done_toast: { en: "Nice, task done!", id: "Mantap, tugas selesai!" },

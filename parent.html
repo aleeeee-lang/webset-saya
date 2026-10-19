@@ -10,10 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019h">
-<script src="js/theme.js?v=20261019h"></script>
-<script src="js/lang.js?v=20261019h"></script>
-<script src="js/toast.js?v=20261019h"></script>
+<link rel="stylesheet" href="style.css?v=20261019k">
+<script src="js/theme.js?v=20261019k"></script>
+<script src="js/lang.js?v=20261019k"></script>
+<script src="js/toast.js?v=20261019k"></script>
+<script src="js/paymethods.js?v=20261019k"></script>
 </head>
 
 <body class="v2-page">
@@ -76,6 +77,8 @@
             </div>
         </div>
 
+        <section class="pay-box" id="pSppPayBox" hidden></section>
+
         <a href="schedule.html" class="v2-par-link" id="pLessonsLink"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_lessons">Lesson schedule</span><svg class="go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
 
         <!-- RECENT GRADES -->
@@ -103,8 +106,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019h"></script>
-<script src="js/auth.js?v=20261019h"></script>
+<script src="js/supabase.js?v=20261019k"></script>
+<script src="js/auth.js?v=20261019k"></script>
 
 <script>
 
@@ -231,7 +234,7 @@ function currentSppPeriod() {
 
 async function renderPSpp(childId) {
     const [settingsRes, profileRes, paymentsRes] = await Promise.all([
-        supabaseClient.from("spp_settings").select("amount").eq("id", "global").maybeSingle(),
+        supabaseClient.from("spp_settings").select("*").eq("id", "global").maybeSingle(),
         supabaseClient.from("profiles").select("spp_custom_amount").eq("id", childId).maybeSingle(),
         supabaseClient.from("spp_payments").select("*").eq("user_id", childId).order("period", { ascending: false })
     ]);
@@ -245,6 +248,13 @@ async function renderPSpp(childId) {
 
     document.getElementById("pSppMonthLabel").textContent = "SPP " + new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long" });
     document.getElementById("pSppAmount").textContent = formatRupiah(amount);
+
+    // parents often pay: show where to, while this month isn't paid yet
+    const unpaid = !record || record.status === "rejected";
+    window.AttPay.render(document.getElementById("pSppPayBox"), unpaid ? (settingsRes.data && settingsRes.data.pay_methods) || [] : [], {
+        title: getLang() === "id" ? "Bayar SPP ke" : "Pay SPP to",
+        note: getLang() === "id" ? "Bukti transfer dikirim dari akun anak di menu Tabungan → SPP." : "Send the transfer proof from your child's account (Savings → SPP)."
+    });
 
     const badge = document.getElementById("pSppStatusBadge");
     if (!record) {

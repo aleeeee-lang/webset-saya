@@ -60,8 +60,27 @@ async function file(event) {
     event.waitUntil(net.then(function () {}, function () {}));
     return c || net;
 }
+// Photos shared to the app from another app (Android share menu, see share_target in
+// manifest.webmanifest): keep them on the phone for a moment, then open share.html to pick
+// what they're for (transfer proof for class cash, or photos of a task).
+var SHARE_CACHE = "attendreem-share";
+async function receiveShare(event) {
+    var scope = self.registration.scope;
+    try {
+        var form = await event.request.formData();
+        var files = form.getAll("photos").filter(function (f) { return f && f.size && /^image\//.test(f.type || "image/"); }).slice(0, 10);
+        await caches.delete(SHARE_CACHE);
+        var cache = await caches.open(SHARE_CACHE);
+        for (var i = 0; i < files.length; i++) {
+            await cache.put(new Request(scope + "__share/" + i), new Response(files[i], { headers: { "content-type": files[i].type || "image/jpeg", "x-name": encodeURIComponent(files[i].name || "") } }));
+        }
+    } catch (e) {}
+    return Response.redirect(scope + "share.html", 303);
+}
+
 self.addEventListener("fetch", function (event) {
     var req = event.request;
+    if (req.method === "POST" && /\/share-target\/?$/.test(new URL(req.url).pathname)) { event.respondWith(receiveShare(event)); return; }
     if (req.method !== "GET") return;
     var url = new URL(req.url);
     if (!keepable(url)) return;

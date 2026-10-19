@@ -9,15 +9,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019h">
-<script src="js/theme.js?v=20261019h"></script>
-<script src="js/lang.js?v=20261019h"></script>
-<script src="js/toast.js?v=20261019h"></script>
-<script src="js/lessons.js?v=20261019h"></script>
-<script src="js/tasks-core.js?v=20261019h"></script>
-<script src="js/timepicker.js?v=20261019h"></script>
-<script src="js/timefield.js?v=20261019h"></script>
-<script src="js/avatarcrop.js?v=20261019h"></script>
+<link rel="stylesheet" href="style.css?v=20261019k">
+<script src="js/theme.js?v=20261019k"></script>
+<script src="js/lang.js?v=20261019k"></script>
+<script src="js/toast.js?v=20261019k"></script>
+<script src="js/shared-photos.js?v=20261019k"></script>
+<script src="js/lessons.js?v=20261019k"></script>
+<script src="js/tasks-core.js?v=20261019k"></script>
+<script src="js/timepicker.js?v=20261019k"></script>
+<script src="js/timefield.js?v=20261019k"></script>
+<script src="js/avatarcrop.js?v=20261019k"></script>
 </head>
 
 <body class="v2-page">
@@ -39,6 +40,12 @@
         <button type="button" data-f="all" data-i18n="tsk_f_all">All</button>
     </div>
 
+    <div class="tsk-shared" id="tskShared" hidden>
+        <div class="tsk-shared-thumbs" id="tskSharedThumbs"></div>
+        <p id="tskSharedText"></p>
+        <button type="button" class="x" id="tskSharedX" aria-label="Close">×</button>
+    </div>
+
     <div class="tsk-push" id="tskPush" hidden>
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
         <p data-i18n="push_banner">Get task reminders on your phone, even when the app is closed.</p>
@@ -52,8 +59,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019h"></script>
-<script src="js/auth.js?v=20261019h"></script>
+<script src="js/supabase.js?v=20261019k"></script>
+<script src="js/auth.js?v=20261019k"></script>
 
 <script>
 const esc = Lessons.esc;
@@ -187,6 +194,10 @@ function confirmDone(t) {
         w.querySelector(".ac-cancel").textContent = tr("tsk_ask_no");
         const ok = w.querySelector(".ac-ok");
         const photos = [];   // [{blob, url}]
+        // photos shared from another app (share.html -> tasks.html?shared=1) are already in
+        if (needPhoto && sharedPhotos.length) {
+            sharedPhotos.slice(0, MAX_PHOTOS).forEach(function (b) { photos.push({ blob: b, url: URL.createObjectURL(b) }); });
+        }
         function paint() {
             if (!needPhoto) return;
             const box = w.querySelector(".tsk-photos");
@@ -236,7 +247,7 @@ function confirmDone(t) {
         };
         w.addEventListener("click", function (e) { if (e.target === w) close(false); });
         w.querySelector(".ac-cancel").addEventListener("click", function () { close(false); });
-        ok.addEventListener("click", function () { if (!ok.disabled) close({ blobs: photos.map(function (p) { return p.blob; }) }); });
+        ok.addEventListener("click", function () { if (!ok.disabled) close({ blobs: photos.map(function (p) { return p.blob; }), usedShared: needPhoto && sharedPhotos.length > 0 }); });
         document.addEventListener("keydown", function k(e) { if (e.key === "Escape") { document.removeEventListener("keydown", k); close(false); } });
     });
 }
@@ -301,6 +312,7 @@ async function toggleDone(t, card) {
             if (card) card.classList.remove("busy");
             photoPaths = done;
         }
+        if (ans.usedShared) clearShared();
     }
     t.done = !was; t.done_at = t.done ? new Date().toISOString() : null;
     if (card) { card.classList.toggle("done", t.done); card.classList.add("pop"); }
@@ -588,8 +600,32 @@ async function init() {
     }
     await load();
     setInterval(render, 60000);
+    useShared();
     if (new URLSearchParams(location.search).get("new") === "1") openSheet(null);
 }
+// ---------- photos shared from another app (Android share menu) ----------
+let sharedPhotos = [];
+async function useShared() {
+    if (!window.attShared || !window.attShared.wanted()) return;
+    window.attShared.forget();
+    if (teacherMode) { window.attShared.clear(); return; }
+    sharedPhotos = (await window.attShared.list()).slice(0, MAX_PHOTOS);
+    if (!sharedPhotos.length) return;
+    const open = tasks.filter(function (t) { return t.class && !t.done; });
+    if (!open.length) { showToast(tr("tsk_shared_none"), "info"); clearShared(); return; }
+    filter = "open"; render();
+    const box = document.getElementById("tskShared");
+    document.getElementById("tskSharedThumbs").innerHTML = sharedPhotos.slice(0, 3).map(function (b) { return '<img alt="" src="' + URL.createObjectURL(b) + '">'; }).join("");
+    document.getElementById("tskSharedText").textContent = tr("tsk_shared_pick").replace("{n}", sharedPhotos.length);
+    box.hidden = false;
+    document.getElementById("tskSharedX").onclick = clearShared;
+}
+function clearShared() {
+    sharedPhotos = [];
+    document.getElementById("tskShared").hidden = true;
+    if (window.attShared) window.attShared.clear();
+}
+
 async function pushBanner() {
     const P = window.AttPush, el = document.getElementById("tskPush");
     if (!P || teacherMode) return;

@@ -10,10 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019h">
-<script src="js/theme.js?v=20261019h"></script>
-<script src="js/lang.js?v=20261019h"></script>
-<script src="js/toast.js?v=20261019h"></script>
+<link rel="stylesheet" href="style.css?v=20261019k">
+<script src="js/theme.js?v=20261019k"></script>
+<script src="js/lang.js?v=20261019k"></script>
+<script src="js/toast.js?v=20261019k"></script>
+<script src="js/paymethods.js?v=20261019k"></script>
 </head>
 
 <body>
@@ -45,6 +46,15 @@
             </button>
         </div>
 
+    </section>
+
+    <!-- WHERE TO PAY -->
+    <section class="attendance-card" id="payCard">
+        <div class="card-label" id="payTitle">Cara bayar SPP</div>
+        <p style="font-size:12px;color:#888;margin:4px 0 14px" id="payHint">Rekening atau e-wallet sekolah. Siswa dan orang tua melihatnya di halaman SPP, lengkap dengan tombol salin.</p>
+        <div class="pay-edit" id="payRows"></div>
+        <button type="button" class="pay-add" id="payAddBtn"></button>
+        <button type="button" class="submit-button" id="paySaveBtn" style="margin-top:12px"></button>
     </section>
 
     <!-- PER-STUDENT SPP OVERRIDE -->
@@ -108,8 +118,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019h"></script>
-<script src="js/auth.js?v=20261019h"></script>
+<script src="js/supabase.js?v=20261019k"></script>
+<script src="js/auth.js?v=20261019k"></script>
 
 <script>
 
@@ -180,9 +190,12 @@ function sppPeriodLabelAdmin(period) {
 async function loadSppAdmin() {
     const { data: settingsData } = await supabaseClient
         .from("spp_settings")
-        .select("amount")
+        .select("*")
         .eq("id", "global")
         .maybeSingle();
+    payRows = window.AttPay.clean(settingsData && settingsData.pay_methods).map(function (m) { return { method: m.method || "", number: m.number || "", name: m.name || "" }; });
+    payReady = !!settingsData ? ("pay_methods" in settingsData) : true;
+    renderPayRows();
 
     sppAmount = (settingsData && settingsData.amount) || 0;
     document.getElementById("sppAmountInput").value = sppAmount;
@@ -201,6 +214,58 @@ async function loadSppAdmin() {
     renderSppPending();
     renderSppReviewed();
 }
+
+// ---------- where to pay (spp_settings.pay_methods, spp_pay_methods.sql) ----------
+let payRows = [], payReady = true;
+const PAY_MAX = 5;
+function payT(id, en) { return getLang() === "id" ? id : en; }
+function renderPayRows() {
+    document.getElementById("payTitle").textContent = payT("Cara bayar SPP", "Ways to pay SPP");
+    document.getElementById("payHint").textContent = payT("Rekening atau e-wallet sekolah. Siswa dan orang tua melihatnya di halaman SPP, lengkap dengan tombol salin.", "School bank accounts or e-wallets. Students and parents see them on the SPP page, with a copy button.");
+    const box = document.getElementById("payRows");
+    if (!payRows.length) payRows.push({ method: "", number: "", name: "" });
+    box.innerHTML = payRows.map(function (r, i) {
+        return '<div class="pay-edit-row" data-i="' + i + '">' +
+            '<input class="am-field" data-f="method" maxlength="30" placeholder="' + payT("Bank / e-wallet, mis. Bank BRI", "Bank / e-wallet, e.g. BRI") + '" value="' + escapeHTML(r.method) + '">' +
+            '<input class="am-field" data-f="number" maxlength="40" inputmode="numeric" placeholder="' + payT("No. rekening / HP", "Account / phone number") + '" value="' + escapeHTML(r.number) + '">' +
+            '<input class="am-field" data-f="name" maxlength="60" placeholder="' + payT("Atas nama", "Account name") + '" value="' + escapeHTML(r.name) + '">' +
+            '<button type="button" class="pay-del" data-del="' + i + '" aria-label="' + payT("Hapus", "Remove") + '">×</button></div>';
+    }).join("");
+    const add = document.getElementById("payAddBtn");
+    add.textContent = "+ " + payT("Tambah cara bayar", "Add a way to pay");
+    add.hidden = payRows.length >= PAY_MAX;
+    document.getElementById("paySaveBtn").textContent = payT("Simpan cara bayar", "Save");
+}
+document.getElementById("payRows").addEventListener("input", function (e) {
+    const f = e.target.getAttribute("data-f"); if (!f) return;
+    payRows[Number(e.target.closest(".pay-edit-row").getAttribute("data-i"))][f] = e.target.value;
+});
+document.getElementById("payRows").addEventListener("click", function (e) {
+    const d = e.target.closest("[data-del]"); if (!d) return;
+    payRows.splice(Number(d.getAttribute("data-del")), 1);
+    renderPayRows();
+});
+document.getElementById("payAddBtn").addEventListener("click", function () {
+    if (payRows.length < PAY_MAX) { payRows.push({ method: "", number: "", name: "" }); renderPayRows(); }
+});
+document.getElementById("paySaveBtn").addEventListener("click", async function () {
+    const list = payRows.map(function (r) { return { method: r.method.trim(), number: r.number.trim(), name: r.name.trim() }; })
+        .filter(function (r) { return r.method || r.number || r.name; });
+    if (list.some(function (r) { return !r.method || !r.number; })) {
+        showToast(payT("Isi nama bank/e-wallet dan nomornya.", "Fill in the bank/e-wallet and the number."), "error"); return;
+    }
+    const user = await requireLogin(); if (!user) return;
+    const btn = this; btn.disabled = true;
+    const { error } = await supabaseClient.from("spp_settings").upsert({ id: "global", amount: sppAmount || 0, pay_methods: list, updated_by: user.id, updated_at: new Date().toISOString() }, { onConflict: "id" });
+    btn.disabled = false;
+    if (error) {
+        showToast(/pay_methods/.test(error.message || "") ? payT("Jalankan spp_pay_methods.sql di Supabase dulu.", "Run spp_pay_methods.sql in Supabase first.") : translations.toast_save_failed[getLang()] + error.message, "error");
+        return;
+    }
+    payRows = list.slice();
+    renderPayRows();
+    showToast(payT("Cara bayar disimpan.", "Saved."), "success");
+});
 
 async function saveSppAmount() {
     const lang = getLang();

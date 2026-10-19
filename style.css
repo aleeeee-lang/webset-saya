@@ -3718,3 +3718,67 @@ html[data-theme="dark"] .kas-proof-pick{background:#1C1C1E;border-color:#3A3A3C}
 html[data-theme="dark"] .kas-proof-pick .e{color:#AEAEB2}
 html[data-theme="dark"] .kas-sheet-input{background:#1C1C1E;border-color:#2C2C2E;color:#EDEDED}
 html[data-theme="dark"] .kas-reasons button{background:#1C1C1E;border-color:#2C2C2E;color:#EDEDED}
+
+/* photos shared from another app (Android share menu) */
+.shr-thumbs{display:flex;gap:10px;overflow-x:auto;margin:6px 0 18px;padding-bottom:2px}
+.shr-thumbs img{flex:0 0 auto;width:120px;height:160px;object-fit:cover;border-radius:16px;background:#e5e7ef}
+.shr-thumbs.one img{width:100%;height:auto;max-height:42vh;object-fit:contain;background:#000}
+.shr-h{font-size:15px;margin:0 0 10px;color:#14162B}
+.shr-options{display:flex;flex-direction:column;gap:10px}
+.shr-options[hidden],.shr-h[hidden]{display:none}
+.shr-opt{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:#fff;color:#14162B;text-decoration:none}
+.shr-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center}
+.shr-ic.kas{background:#EEF9D1;color:#3F6212}
+.shr-ic.task{background:#E0F2FE;color:#0369A1}
+.shr-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.shr-txt b{font-size:14.5px}
+.shr-txt small{font-size:12px;color:#8A8FA8}
+.shr-go{flex:none;color:#A9ADC7}
+.shr-cancel{display:block;width:100%;margin-top:14px;height:48px;border:none;border-radius:16px;background:transparent;color:#8A8FA8;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.tsk-shared{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:10px 12px;border-radius:18px;background:#E0F2FE;color:#0C4A6E}
+.tsk-shared[hidden]{display:none}
+.tsk-shared-thumbs{display:flex;flex:none}
+.tsk-shared-thumbs img{width:38px;height:38px;object-fit:cover;border-radius:10px;border:2px solid #E0F2FE}
+.tsk-shared-thumbs img+img{margin-left:-14px}
+.tsk-shared p{flex:1;margin:0;font-size:12.5px;line-height:1.4;font-weight:600}
+.tsk-shared .x{flex:none;width:30px;height:30px;border:none;border-radius:50%;background:rgba(12,74,110,.1);color:inherit;font-size:18px;line-height:1;cursor:pointer}
+html[data-theme="dark"] .shr-h{color:#EDEDED}
+html[data-theme="dark"] .shr-opt{background:#161618;color:#EDEDED}
+html[data-theme="dark"] .shr-ic.kas{background:#26311a;color:#C6F432}
+html[data-theme="dark"] .shr-ic.task{background:#0c2a3d;color:#7DD3FC}
+html[data-theme="dark"] .tsk-shared{background:#0c2a3d;color:#BAE6FD}
+html[data-theme="dark"] .tsk-shared-thumbs img{border-color:#0c2a3d}
+html[data-theme="dark"] .tsk-shared .x{background:rgba(255,255,255,.1)}
+.shr-ic.spp{background:#FEF3C7;color:#B45309}
+html[data-theme="dark"] .shr-ic.spp{background:#3B2E14;color:#F2C46B}
+
+/* SPP: where to pay */
+.pay-box{border-radius:22px;background:#fff;padding:14px}
+.pay-box[hidden]{display:none}
+.pay-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#14162B}
+.pay-head b{font-size:14px}
+.pay-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#F6F7FB}
+.pay-row+.pay-row{margin-top:8px}
+.pay-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pay-txt small{font-size:11.5px;color:#8A8FA8;font-weight:600}
+.pay-txt b{font-size:15px;color:#14162B;letter-spacing:.3px;overflow-wrap:anywhere}
+.pay-txt span{font-size:12px;color:#6B7090}
+.pay-copy{flex:none;display:flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:none;border-radius:10px;background:#14162B;color:#fff;font:700 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.pay-note{margin:10px 2px 0;font-size:12px;line-height:1.4;color:#8A8FA8}
+.v2-par .pay-box,.pay-box#pSppPayBox{margin:12px 0}
+.pay-edit{display:flex;flex-direction:column;gap:10px}
+.pay-edit-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative;padding:12px 40px 12px 12px;border-radius:14px;background:#F6F7FB}
+.pay-edit-row input{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;font-size:13.5px}
+.pay-edit-row input[data-f="name"]{grid-column:1/-1}
+.pay-del{position:absolute;top:10px;right:8px;width:26px;height:26px;border:none;border-radius:50%;background:#FEE2E2;color:#B91C1C;font-size:16px;line-height:1;cursor:pointer}
+.pay-add{margin-top:10px;border:1px dashed #C5C8D6;background:transparent;border-radius:12px;height:42px;width:100%;color:#4B5068;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.pay-add[hidden]{display:none}
+html[data-theme="dark"] .pay-box{background:#161618}
+html[data-theme="dark"] .pay-head,html[data-theme="dark"] .pay-txt b{color:#EDEDED}
+html[data-theme="dark"] .pay-row{background:#1C1C1E}
+html[data-theme="dark"] .pay-txt span{color:#AEAEB2}
+html[data-theme="dark"] .pay-copy{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .pay-edit-row{background:#1C1C1E}
+html[data-theme="dark"] .pay-edit-row input{background:#121212;border-color:#2C2C2E;color:#EDEDED}
+html[data-theme="dark"] .pay-del{background:#3a1414;color:#FCA5A5}
+html[data-theme="dark"] .pay-add{border-color:#3A3A3C;color:#AEAEB2}

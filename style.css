@@ -3782,3 +3782,9 @@ html[data-theme="dark"] .pay-edit-row{background:#1C1C1E}
 html[data-theme="dark"] .pay-edit-row input{background:#121212;border-color:#2C2C2E;color:#EDEDED}
 html[data-theme="dark"] .pay-del{background:#3a1414;color:#FCA5A5}
 html[data-theme="dark"] .pay-add{border-color:#3A3A3C;color:#AEAEB2}
+
+/* viewport-fit=cover: the page may now draw under the phone's system bars.
+   The bottom menu already pads itself with safe-area-inset-bottom, so its dark colour
+   reaches the edge behind the gesture bar. If a phone also lets the page run under the
+   status bar, keep the page content below it (0 on phones where that doesn't happen). */
+html{padding-top:env(safe-area-inset-top,0px)}

@@ -3586,3 +3586,60 @@ html.att-swipe-lock,html.att-swipe-lock body{overflow:hidden!important;overscrol
 .agenda-att-mini em{font-style:normal;font-size:10.5px;font-weight:700;color:#888;white-space:nowrap}
 html[data-theme="dark"] .agenda-att-row{background:#121212;border-color:#2A2A2D}
 html[data-theme="dark"] .agenda-att-row strong{color:#f2f2f7}
+
+/* tasks: trash button on finished tasks + "did you finish it?" sheet */
+.tsk-item .tsk-body{flex:1;min-width:0}
+.tsk-trash{width:34px;height:34px;flex-shrink:0;align-self:center;border:none;border-radius:12px;background:#F3F4F8;color:#8A8FA8;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s,color .15s,transform .15s}
+.tsk-trash:hover,.tsk-trash:active{background:#FEE2E2;color:#DC2626}
+.tsk-trash:active{transform:scale(.92)}
+.tsk-item.gone{opacity:0;transform:translateX(24px)}
+.tsk-ask .ac-card{text-align:center}
+.tsk-ask .ac-top{align-items:center}
+.tsk-ask .ac-top small{display:block;margin-top:6px;overflow-wrap:anywhere}
+.tsk-ask-ic{width:52px;height:52px;margin:4px auto 12px;border-radius:50%;background:#DCFCE7;color:#16A34A;display:flex;align-items:center;justify-content:center}
+.tsk-ask-ic svg{width:26px;height:26px}
+html[data-theme="dark"] .tsk-trash{background:#232326;color:#8E8E93}
+html[data-theme="dark"] .tsk-trash:hover,html[data-theme="dark"] .tsk-trash:active{background:#3a1414;color:#F87171}
+html[data-theme="dark"] .tsk-ask-ic{background:#14301f;color:#4ADE80}
+
+/* tasks: photo of the work before handing in */
+.tsk-ask.with-photo .ac-card{text-align:left}
+.tsk-ask.with-photo .ac-top{align-items:flex-start}
+.tsk-ask .ac-ok:disabled{opacity:.4;cursor:not-allowed}
+.tsk-item.busy{opacity:.55;pointer-events:none}
+.tsk-photo-link{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 10px;padding:12px 14px;border:none;border-radius:14px;background:#F3F4F8;color:#14162B;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.tsk-ph-btn{margin-left:auto;flex-shrink:0;width:32px;height:32px;border:none;border-radius:10px;background:#EEF9D1;color:#3F6212;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.tsk-people li{display:flex;align-items:center;gap:8px}
+.tsk-viewer{position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .18s}
+.tsk-viewer.in{opacity:1}
+.tsk-viewer-in{max-width:100%;max-height:100%;display:flex;align-items:center;justify-content:center;color:#fff}
+.tsk-viewer-in img{max-width:100%;max-height:calc(100vh - 32px);border-radius:12px;object-fit:contain}
+.tsk-viewer .x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.16);color:#fff;font-size:24px;line-height:1;cursor:pointer}
+.tsk-viewer-load{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#C6F432;animation:tskspin .8s linear infinite}
+@keyframes tskspin{to{transform:rotate(360deg)}}
+html[data-theme="dark"] .tsk-photo-link{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .tsk-ph-btn{background:#26311a;color:#C6F432}
+
+/* tasks: several photos of the work */
+.tsk-photos{display:flex;gap:10px;overflow-x:auto;margin:14px -2px 6px;padding:2px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.tsk-ph,.tsk-ph-add{position:relative;flex:0 0 auto;width:118px;height:150px;border-radius:16px;overflow:hidden;scroll-snap-align:start}
+.tsk-photos.empty .tsk-ph-add{width:100%;height:190px}
+.tsk-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.tsk-ph .n{position:absolute;left:8px;bottom:8px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:rgba(20,22,43,.72);color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tsk-ph .rm{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(20,22,43,.72);color:#fff;font-size:17px;line-height:1;cursor:pointer;padding:0}
+.tsk-ph-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:10px;box-sizing:border-box;background:#F3F4F8;border:2px dashed #C5C8D6;cursor:pointer;color:#4B5068}
+.tsk-ph-add input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.tsk-ph-add svg{width:24px;height:24px;color:#14162B;background:#C6F432;border-radius:50%;padding:10px;box-sizing:content-box}
+.tsk-photos.empty .tsk-ph-add svg{width:30px;height:30px;padding:12px}
+.tsk-ph-add b{font-size:13px;color:#14162B}
+.tsk-ph-add small{font-size:11.5px;color:#8A8FA8}
+.tsk-photos-note{margin:0 0 4px;font-size:12px;line-height:1.4;color:#8A8FA8}
+.tsk-locked-note{margin:0 0 10px;font-size:12px;line-height:1.4;color:#8A8FA8}
+.ac-actions .ac-cancel.wide{grid-column:1/-1}
+.tsk-ph-btn{width:auto;min-width:32px;padding:0 9px;gap:4px;font-size:12px;font-weight:800}
+.tsk-viewer-in{flex-direction:column;gap:14px;overflow-y:auto;max-height:100%;width:100%;align-items:center;padding:40px 0 20px;box-sizing:border-box}
+.tsk-viewer-in figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tsk-viewer-in figcaption{font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+.tsk-viewer-in img{max-height:calc(100vh - 110px)}
+html[data-theme="dark"] .tsk-ph-add{background:#1C1C1E;border-color:#3A3A3C;color:#AEAEB2}
+html[data-theme="dark"] .tsk-ph-add b{color:#F2F2F7}

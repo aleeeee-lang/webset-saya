@@ -51,11 +51,12 @@
         var ids = tasks.map(function (t) { return t.id; });
         var done = {};
         if (ids.length) {
-            var d = await client.from("task_done").select("task_id,done_at").eq("user_id", userId).in("task_id", ids);
-            (d.data || []).forEach(function (r) { done[r.task_id] = r.done_at; });
+            var d = await client.from("task_done").select("*").eq("user_id", userId).in("task_id", ids);
+            (d.data || []).forEach(function (r) { done[r.task_id] = r; });
         }
-        tasks.forEach(function (t) { t.done = !!done[t.id]; t.done_at = done[t.id] || null; });
-        return { tasks: tasks };
+        tasks.forEach(function (t) { var r = done[t.id]; t.done = !!r; t.done_at = r ? r.done_at : null; t.hidden = !!(r && r.hidden_at); t.photo_paths = r ? r.photo_paths || null : null; });
+        // finished tasks the student put in the trash are no longer shown to them
+        return { tasks: tasks.filter(function (t) { return !t.hidden; }) };
     }
 
     function localISO(dateStr, timeStr) {

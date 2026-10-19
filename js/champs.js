@@ -51,9 +51,13 @@
     // podium for the top 3: [{name, value, sub}]
     function podium(items) {
         if (!items.length) return "";
-        var order = items.length >= 3 ? [1, 0, 2] : items.length === 2 ? [1, 0] : [0];
-        return '<div class="jr-podium">' + order.map(function (i) {
+        // always three places, so one or two champions don't leave a lone pillar;
+        // an empty place is shown faded with a dash
+        return '<div class="jr-podium">' + [1, 0, 2].map(function (i) {
             var it = items[i];
+            if (!it) return '<div class="jr-pod p' + (i + 1) + ' empty"><span class="jr-medal">' + MEDAL[i] + '</span>' +
+                '<span class="jr-av jr-av-empty">–</span><b>' + esc(L("Belum ada", "Nobody yet")) + '</b><small>&nbsp;</small>' +
+                '<div class="jr-step"><span>' + (i + 1) + '</span></div></div>';
             return '<div class="jr-pod p' + (i + 1) + '"><span class="jr-medal">' + MEDAL[i] + '</span>' +
                 av(it.name, it.avatar) +
                 '<b>' + esc(it.name || "-") + '</b><small>' + cnt(it.value) + '</small>' +

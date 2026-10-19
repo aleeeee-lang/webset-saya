@@ -9,12 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019e">
-<script src="js/theme.js?v=20261019e"></script>
-<script src="js/lang.js?v=20261019e"></script>
-<script src="js/toast.js?v=20261019e"></script>
-<script src="js/avatarcrop.js?v=20261019e"></script>
-<script src="js/champs.js?v=20261019e"></script>
+<link rel="stylesheet" href="style.css?v=20261019f">
+<script src="js/theme.js?v=20261019f"></script>
+<script src="js/lang.js?v=20261019f"></script>
+<script src="js/toast.js?v=20261019f"></script>
+<script src="js/avatarcrop.js?v=20261019f"></script>
+<script src="js/champs.js?v=20261019f"></script>
 </head>
 
 <body class="v2-page">
@@ -115,8 +115,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019e"></script>
-<script src="js/auth.js?v=20261019e"></script>
+<script src="js/supabase.js?v=20261019f"></script>
+<script src="js/auth.js?v=20261019f"></script>
 
 <script>
 const C = window.Champs, L = C.L, esc = C.esc;
@@ -407,8 +407,9 @@ async function loadClasses() {
     const list = (r.data || []).map(function (x) { return Object.assign({ rate: x.total ? x.hadir / x.total : 0 }, x); })
         .sort(function (a, b) { return b.rate - a.rate || b.hadir - a.hadir; });
     if (!list.length) {
-        document.getElementById("jrClassTop").innerHTML = emptyBox(L("Belum ada data", "No data yet"), L("Muncul setelah ada absen bulan ini.", "Shows up once people check in this month."));
-        document.getElementById("jrClassBars").innerHTML = ""; return;
+        document.getElementById("jrClassTop").innerHTML = emptyBox(L("Belum ada kelas terajin", "No most diligent class yet"), L("Muncul setelah ada absen bulan ini.", "Shows up once people check in this month."));
+        // the per-class card below would otherwise be an empty box under its title
+        document.getElementById("jrClassBars").innerHTML = '<p class="jr-muted">' + esc(L("Belum ada data absen bulan ini.", "No check-ins this month yet.")) + '</p>'; return;
     }
     const best = list[0];
     document.getElementById("jrClassTop").innerHTML = '<div class="jr-class-crown"><span>👑</span><div><small>' + esc(L("Kelas paling rajin · ", "Most diligent class · ") + m.label) + '</small><b>' + esc(best.class) + '</b><em><span data-count>' + Math.round(best.rate * 100) + "%</span> " + esc(L("kehadiran", "attendance")) + '</em></div></div>';

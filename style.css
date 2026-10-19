@@ -3645,3 +3645,8 @@ html[data-theme="dark"] .tsk-ph-add b{color:#F2F2F7}
 
 /* Juara: an empty card shows plain text, not a second box inside the card (dark mode) */
 html[data-theme="dark"] .jr-card>.lsn-empty{background:none}
+/* Juara podium: a place nobody has reached yet */
+.jr-pod.empty{opacity:.38}
+.jr-pod.empty .jr-medal{filter:grayscale(1)}
+.jr-pod.empty .jr-av-empty{background:transparent;border-style:dashed;color:#8A8FA8;font-size:18px}
+.jr-pod.empty b{font-weight:600;color:#A9ADC7}

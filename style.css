@@ -3196,7 +3196,6 @@ html[data-theme="dark"] .attendance-page .bc-keep-note{color:#8E8E93!important}
 .kas-class{height:40px;border-radius:12px;border:1px solid #E2E4EE;background:#fff;padding:0 10px;font:600 13px 'Plus Jakarta Sans',sans-serif;color:#14162B;max-width:150px}
 .kas-class[hidden],.kas-mine[hidden],.kas-card[hidden],.kas-pane[hidden],.kas-hero[hidden],.kas-seg [hidden]{display:none!important}
 .kas-hero{background:#14162B;color:#fff;border-radius:26px;padding:22px 22px 18px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
-.kas-hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(198,244,50,.28),transparent 70%)}
 .kas-hero-label{font-size:13px;color:#A9ADC7;font-weight:600}
 .kas-hero-big{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:38px;line-height:1.05;font-weight:800;letter-spacing:-.02em;color:#C6F432}
 .kas-hero-row{display:flex;gap:10px;margin-top:8px}

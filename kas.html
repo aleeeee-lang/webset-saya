@@ -9,11 +9,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261019g">
-<script src="js/theme.js?v=20261019g"></script>
-<script src="js/lang.js?v=20261019g"></script>
-<script src="js/toast.js?v=20261019g"></script>
-<script src="js/avatarcrop.js?v=20261019g"></script>
+<link rel="stylesheet" href="style.css?v=20261019h">
+<script src="js/theme.js?v=20261019h"></script>
+<script src="js/lang.js?v=20261019h"></script>
+<script src="js/toast.js?v=20261019h"></script>
+<script src="js/avatarcrop.js?v=20261019h"></script>
 </head>
 
 <body class="v2-page">
@@ -59,6 +59,8 @@
                 <button type="button" id="kasNext" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
             </div>
             <div class="kas-progress"><span id="kasProgressBar"></span></div>
+            <div class="kas-payinfo" id="kasPayInfo" hidden></div>
+            <div class="kas-proofs" id="kasProofs" hidden></div>
             <div class="kas-members" id="kasMembers"></div>
         </div>
 
@@ -113,8 +115,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261019g"></script>
-<script src="js/auth.js?v=20261019g"></script>
+<script src="js/supabase.js?v=20261019h"></script>
+<script src="js/auth.js?v=20261019h"></script>
 
 <script>
 // ---------- small helpers ----------
@@ -156,8 +158,9 @@ function periodOf(offset) {
 
 // ---------- state ----------
 let me = null, prof = null, classes = [], cls = "", settings = defaults(), entries = [], members = [];
+let proofs = [], proofsReady = false;   // transfer proofs (class_cash_proofs.sql)
 let canManage = false, canSetup = false, periodOffset = 0, kind = "in", busy = false;
-function defaults() { return { class: "", treasurer_id: null, treasurer_name: null, dues_amount: 5000, dues_period: "weekly" }; }
+function defaults() { return { class: "", treasurer_id: null, treasurer_name: null, dues_amount: 5000, dues_period: "weekly", pay_info: null }; }
 
 async function init() {
     const user = await requireLogin();
@@ -194,10 +197,14 @@ async function init() {
 }
 
 async function load() {
-    const [s, e] = await Promise.all([
+    const [s, e, pr] = await Promise.all([
         supabaseClient.from("class_cash_settings").select("*").eq("class", cls).maybeSingle(),
-        supabaseClient.from("class_cash_entries").select("*").eq("class", cls).order("entry_date", { ascending: false }).order("created_at", { ascending: false }).limit(500)
+        supabaseClient.from("class_cash_entries").select("*").eq("class", cls).order("entry_date", { ascending: false }).order("created_at", { ascending: false }).limit(500),
+        supabaseClient.from("class_cash_proofs").select("*").eq("class", cls).order("created_at", { ascending: false }).limit(300)
     ]);
+    // transfer proofs only work once class_cash_proofs.sql has been run
+    proofsReady = !pr.error;
+    proofs = pr.data || [];
     if (e.error) {
         document.getElementById("kasHero").hidden = true;
         document.getElementById("kasList").innerHTML = emptyHTML(L("Kas kelas belum disiapkan", "Class cash isn't set up yet"), L("Admin perlu menjalankan class_cash.sql di Supabase dulu.", "An admin needs to run class_cash.sql in Supabase first."));
@@ -242,18 +249,33 @@ function render() {
     if (window.attFormReady) window.attFormReady();
 }
 
+const IC_CLOCK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const IC_OK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+const IC_UP = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/></svg>';
+const IC_COPY = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>';
+function myProof(key) { return proofs.find(function (x) { return x.student_id === me.id && x.period_key === key; }); }
+
 function renderMine() {
     const box = document.getElementById("kasMine");
     if (prof.role !== "murid" || prof.class !== cls || !settings.dues_amount) { box.hidden = true; return; }
     const p = periodOf(0);
     const paid = entries.some(function (x) { return x.category === "dues" && x.student_id === me.id && x.period_key === p.key; });
+    const last = myProof(p.key);                         // newest proof for this period
+    const waiting = !paid && last && last.status === "pending";
+    const rejected = !paid && last && last.status === "rejected";
+    const title = settings.dues_period === "monthly" ? L("Iuran bulan ini", "Dues this month") : L("Iuran minggu ini", "Dues this week");
+    let sub;
+    if (paid) sub = L("Sudah bayar. Makasih!", "Paid. Thanks!");
+    else if (waiting) sub = L("Bukti transfer terkirim · menunggu dicek bendahara", "Proof sent · waiting for the treasurer");
+    else sub = L("Belum bayar · ", "Not paid yet · ") + rp(settings.dues_amount) + (proofsReady ? L(" · bayar tunai ke bendahara, atau transfer lalu kirim buktinya", " · pay the treasurer in cash, or transfer and send the proof") : L(" ke bendahara", " to the treasurer"));
     box.hidden = false;
-    box.className = "kas-mine " + (paid ? "paid" : "due");
-    box.innerHTML = '<span class="kas-mine-ic">' + (paid
-        ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>'
-        : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>') + '</span>' +
-        '<div><b>' + esc((settings.dues_period === "monthly" ? L("Iuran bulan ini", "Dues this month") : L("Iuran minggu ini", "Dues this week"))) + '</b><small>' +
-        esc(paid ? L("Sudah bayar. Makasih!", "Paid. Thanks!") : L("Belum bayar · ", "Not paid yet · ") + rp(settings.dues_amount) + (paid ? "" : L(" ke bendahara", " to the treasurer"))) + '</small></div>';
+    box.className = "kas-mine " + (paid ? "paid" : waiting ? "wait" : "due");
+    box.innerHTML = '<div class="kas-mine-top"><span class="kas-mine-ic">' + (paid ? IC_OK : IC_CLOCK) + '</span>' +
+        '<div><b>' + esc(title) + '</b><small>' + esc(sub) + '</small></div></div>' +
+        (rejected ? '<p class="kas-mine-note bad">' + esc(L("Bukti sebelumnya ditolak", "Your last proof was rejected") + (last.reject_reason ? ": " + last.reject_reason : "") + L(". Silakan kirim lagi.", ". Please send a new one.")) + '</p>' : '') +
+        (!paid && !waiting && proofsReady && settings.pay_info ? '<div class="kas-mine-pay"><small>' + esc(L("Transfer ke", "Transfer to")) + '</small><b>' + esc(settings.pay_info) + '</b><button type="button" class="kas-copy" data-act="copy" aria-label="' + esc(L("Salin", "Copy")) + '">' + IC_COPY + '</button></div>' : '') +
+        (!paid && !waiting && proofsReady ? '<button type="button" class="kas-proof-btn" data-act="proof">' + IC_UP + '<span>' + esc(L("Kirim bukti transfer", "Send transfer proof")) + '</span></button>' : '') +
+        (waiting ? '<button type="button" class="kas-proof-link" data-act="view" data-path="' + esc(last.photo_path) + '">' + esc(L("Lihat bukti yang dikirim", "See the proof you sent")) + '</button>' : '');
 }
 
 function renderDues() {
@@ -265,13 +287,40 @@ function renderDues() {
     document.getElementById("kasPeriodInfo").textContent = paidIds.size + "/" + members.length + L(" sudah bayar · ", " paid · ") + rp(total);
     document.getElementById("kasProgressBar").style.width = (members.length ? Math.round(paidIds.size / members.length * 100) : 0) + "%";
     document.getElementById("kasNext").disabled = periodOffset >= 0;
+    renderPayInfo();
+    renderProofs();
+    const waitIds = new Set(proofs.filter(function (x) { return x.status === "pending" && x.period_key === p.key; }).map(function (x) { return x.student_id; }));
     const box = document.getElementById("kasMembers");
     if (!members.length) { box.innerHTML = '<p class="kas-muted">' + esc(L("Belum ada siswa di kelas ini.", "No students in this class yet.")) + '</p>'; return; }
     box.innerHTML = members.map(function (m) {
-        const on = paidIds.has(m.id);
-        return '<button type="button" class="kas-member' + (on ? " on" : "") + '" data-id="' + esc(m.id) + '" aria-pressed="' + on + '">' +
+        const on = paidIds.has(m.id), wait = !on && waitIds.has(m.id);
+        return '<button type="button" class="kas-member' + (on ? " on" : "") + (wait ? " wait" : "") + '" data-id="' + esc(m.id) + '" aria-pressed="' + on + '">' +
             '<span class="kas-tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>' +
-            '<span class="kas-member-name">' + esc(m.name || "-") + '</span><em>' + esc(on ? L("Lunas", "Paid") : rp(settings.dues_amount)) + '</em></button>';
+            '<span class="kas-member-name">' + esc(m.name || "-") + '</span><em>' + esc(on ? L("Lunas", "Paid") : wait ? L("Cek bukti", "Check proof") : rp(settings.dues_amount)) + '</em></button>';
+    }).join("");
+}
+
+// where students should transfer to (treasurer, homeroom teacher, admin can change it)
+function renderPayInfo() {
+    const box = document.getElementById("kasPayInfo");
+    if (!proofsReady) { box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div><small>' + esc(L("Tujuan transfer untuk siswa", "Where students transfer to")) + '</small><b>' + esc(settings.pay_info || L("Belum diisi", "Not set yet")) + '</b></div>' +
+        '<button type="button" data-act="payinfo">' + esc(settings.pay_info ? L("Ubah", "Edit") : L("Isi", "Set")) + '</button>';
+}
+
+// proofs waiting for the treasurer (all periods, newest first)
+function renderProofs() {
+    const box = document.getElementById("kasProofs");
+    const list = proofs.filter(function (x) { return x.status === "pending"; });
+    if (!proofsReady || !list.length) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML = '<h4>' + esc(L("Bukti transfer masuk", "Transfer proofs")) + ' <span>' + list.length + '</span></h4>' + list.map(function (x) {
+        return '<div class="kas-proof" data-id="' + esc(x.id) + '">' +
+            '<button type="button" class="kas-proof-thumb" data-act="view" data-path="' + esc(x.photo_path) + '" aria-label="' + esc(L("Lihat bukti", "See proof")) + '"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>' +
+            '<div class="kas-proof-text"><b>' + esc(x.student_name || "-") + '</b><small>' + esc(rp(x.amount) + " · " + L("Iuran ", "Dues ") + duesLabel(x.period_key)) + '</small></div>' +
+            '<button type="button" class="kas-proof-no" data-act="reject">' + esc(L("Tolak", "Reject")) + '</button>' +
+            '<button type="button" class="kas-proof-ok" data-act="accept">' + esc(L("Terima", "Accept")) + '</button></div>';
     }).join("");
 }
 
@@ -471,6 +520,161 @@ document.getElementById("kasList").addEventListener("click", async function (e) 
     entries = entries.filter(function (y) { return y.id !== id; });
     showToast(L("Catatan dihapus.", "Entry deleted."), "success");
     render();
+});
+
+// ---------- transfer proofs ----------
+// small bottom sheet: {title, text, body (html), ok, cancel} -> resolves with the sheet element or null
+function kasSheet(o) {
+    return new Promise(function (resolve) {
+        const w = document.createElement("div");
+        w.className = "ac-wrap ac-confirm kas-sheet";
+        w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' + (o.body || "") +
+            '<div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+        w.querySelector(".ac-top b").textContent = o.title;
+        w.querySelector(".ac-top small").textContent = o.text || "";
+        w.querySelector(".ac-cancel").textContent = o.cancel || L("Batal", "Cancel");
+        const ok = w.querySelector(".ac-ok");
+        ok.textContent = o.ok;
+        document.body.appendChild(w);
+        requestAnimationFrame(function () { w.classList.add("in"); });
+        let done = false;
+        const close = function (v) { if (done) return; done = true; w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); resolve(v); };
+        w.addEventListener("click", function (e) { if (e.target === w) close(null); });
+        w.querySelector(".ac-cancel").addEventListener("click", function () { close(null); });
+        ok.addEventListener("click", function () { if (!ok.disabled) close(w); });
+        if (o.setup) o.setup(w, ok);
+    });
+}
+
+// a private photo (proof) opened full screen
+async function kasViewPhoto(path) {
+    const w = document.createElement("div");
+    w.className = "tsk-viewer";
+    w.innerHTML = '<button type="button" class="x" aria-label="Close">×</button><div class="tsk-viewer-in"><span class="tsk-viewer-load"></span></div>';
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.classList.add("in"); });
+    const close = function () { w.classList.remove("in"); setTimeout(function () { w.remove(); }, 180); };
+    w.addEventListener("click", function (e) { if (e.target === w || e.target.closest(".x") || e.target.classList.contains("tsk-viewer-in")) close(); });
+    const r = await supabaseClient.storage.from("cash-receipts").createSignedUrl(path, 600);
+    const box = w.querySelector(".tsk-viewer-in");
+    if (r.error || !r.data) { box.innerHTML = '<p>' + esc(L("Foto nggak bisa dibuka.", "Couldn't open the photo.")) + '</p>'; return; }
+    box.innerHTML = '<figure><img alt=""></figure>';
+    box.querySelector("img").src = r.data.signedUrl;
+}
+
+const PROOF_ERR = {
+    CASH_ALREADY_PAID: ["Iuran periode ini sudah tercatat lunas.", "These dues are already marked as paid."],
+    CASH_NO_DUES: ["Nominal iuran belum diatur wali kelas.", "The dues amount hasn't been set yet."],
+    CASH_PROOF_DONE: ["Bukti ini sudah dicek sebelumnya.", "This proof was already checked."],
+    NOT_ALLOWED: ["Kamu tidak punya akses untuk ini.", "You're not allowed to do this."]
+};
+function proofError(err) {
+    const msg = (err && err.message) || "";
+    if (/class_cash_proofs_once|duplicate/i.test(msg)) return L("Bukti untuk periode ini sudah dikirim, tunggu dicek bendahara.", "A proof for this period is already waiting.");
+    const k = Object.keys(PROOF_ERR).find(function (c) { return msg.indexOf(c) !== -1; });
+    return k ? L(PROOF_ERR[k][0], PROOF_ERR[k][1]) : L("Gagal: ", "Failed: ") + msg;
+}
+
+// student: send a photo/screenshot of the transfer
+async function sendProof() {
+    const p = periodOf(0);
+    let blob = null;
+    const w = await kasSheet({
+        title: L("Kirim bukti transfer", "Send transfer proof"),
+        text: L("Iuran ", "Dues ") + p.label.replace(/^Minggu |^Week /, "") + " · " + rp(settings.dues_amount),
+        ok: L("Kirim", "Send"),
+        body: (settings.pay_info ? '<div class="kas-mine-pay in-sheet"><small>' + esc(L("Transfer ke", "Transfer to")) + '</small><b>' + esc(settings.pay_info) + '</b></div>' : '') +
+            '<label class="kas-proof-pick"><input type="file" accept="image/*"><span class="e">' + IC_UP + '<b>' + esc(L("Pilih foto / screenshot bukti", "Choose a photo / screenshot")) + '</b><small>' + esc(L("Pastikan nominal dan tanggalnya kelihatan", "Make sure the amount and date are visible")) + '</small></span><img alt="" hidden><em hidden>' + esc(L("Ganti", "Change")) + '</em></label>',
+        setup: function (w, ok) {
+            ok.disabled = true;
+            w.querySelector(".kas-proof-pick input").addEventListener("change", async function () {
+                const f = this.files && this.files[0];
+                if (!f) return;
+                blob = await shrink(f);
+                const img = w.querySelector(".kas-proof-pick img");
+                img.src = URL.createObjectURL(blob); img.hidden = false;
+                w.querySelector(".kas-proof-pick .e").hidden = true;
+                w.querySelector(".kas-proof-pick em").hidden = false;
+                w.querySelector(".kas-proof-pick").classList.add("has");
+                ok.disabled = false;
+            });
+        }
+    });
+    if (!w || !blob) return;
+    showToast(L("Mengirim bukti…", "Sending proof…"), "info");
+    const path = me.id + "/proof-" + p.key + "-" + Date.now() + ".jpg";
+    const up = await supabaseClient.storage.from("cash-receipts").upload(path, blob, { contentType: "image/jpeg" });
+    if (up.error) { showToast(L("Foto gagal diunggah: ", "Photo upload failed: ") + up.error.message, "error"); return; }
+    const r = await supabaseClient.from("class_cash_proofs").insert({ class: cls, student_id: me.id, period_key: p.key, amount: settings.dues_amount, photo_path: path }).select("*").single();
+    if (r.error) { supabaseClient.storage.from("cash-receipts").remove([path]); showToast(proofError(r.error), "error"); return; }
+    proofs.unshift(Object.assign({ status: "pending" }, r.data));
+    showToast(L("Bukti terkirim. Tunggu dicek bendahara ya.", "Proof sent. The treasurer will check it."), "success");
+    render();
+}
+
+document.getElementById("kasMine").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    const a = b.getAttribute("data-act");
+    if (a === "proof") sendProof();
+    else if (a === "view") kasViewPhoto(b.getAttribute("data-path"));
+    else if (a === "copy") {
+        const t = settings.pay_info || "";
+        const done = function () { showToast(L("Disalin.", "Copied."), "success"); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function () { showToast(t, "info"); });
+        else showToast(t, "info");
+    }
+});
+
+document.getElementById("kasPayInfo").addEventListener("click", async function (e) {
+    if (!e.target.closest('[data-act="payinfo"]')) return;
+    let input;
+    const w = await kasSheet({
+        title: L("Tujuan transfer", "Where to transfer"),
+        text: L("Ditampilkan ke siswa saat mau bayar lewat transfer.", "Shown to students who pay by transfer."),
+        ok: L("Simpan", "Save"),
+        body: '<input type="text" class="am-field kas-sheet-input" maxlength="120" placeholder="' + esc(L("mis. DANA 0812-3456-7890 a.n. Siti", "e.g. DANA 0812-3456-7890 (Siti)")) + '">',
+        setup: function (w) { input = w.querySelector("input"); input.value = settings.pay_info || ""; setTimeout(function () { input.focus(); }, 60); }
+    });
+    if (!w) return;
+    const val = input.value.trim();
+    const r = await supabaseClient.rpc("set_cash_pay_info", { target_class: cls, info: val });
+    if (r.error) { showToast(proofError(r.error), "error"); return; }
+    settings.pay_info = val || null;
+    showToast(L("Tujuan transfer disimpan.", "Saved."), "success");
+    render();
+});
+
+document.getElementById("kasProofs").addEventListener("click", async function (e) {
+    const b = e.target.closest("[data-act]");
+    if (!b || busy) return;
+    const a = b.getAttribute("data-act");
+    if (a === "view") { kasViewPhoto(b.getAttribute("data-path")); return; }
+    const row = b.closest(".kas-proof"), id = row.getAttribute("data-id"), x = proofs.find(function (y) { return y.id === id; });
+    if (!x) return;
+    let reason = null;
+    if (a === "reject") {
+        let input;
+        const w = await kasSheet({
+            title: L("Tolak bukti ", "Reject proof from ") + (x.student_name || ""),
+            text: L("Tulis alasannya, siswa akan melihatnya dan bisa kirim ulang.", "Say why. The student sees it and can send a new one."),
+            ok: L("Tolak", "Reject"),
+            body: '<div class="kas-reasons">' + [L("Nominal kurang", "Amount too low"), L("Foto tidak jelas", "Photo unclear"), L("Bukan bukti transfer", "Not a transfer proof")].map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join("") + '</div>' +
+                '<input type="text" class="am-field kas-sheet-input" maxlength="120" placeholder="' + esc(L("Alasan (boleh dikosongkan)", "Reason (optional)")) + '">',
+            setup: function (w) {
+                input = w.querySelector("input");
+                w.querySelector(".kas-reasons").addEventListener("click", function (ev) { const c = ev.target.closest("button"); if (c) input.value = c.textContent; });
+            }
+        });
+        if (!w) return;
+        reason = input.value.trim();
+    }
+    busy = true; row.classList.add("busy");
+    const r = await supabaseClient.rpc("review_cash_proof", { proof_id: id, accept: a === "accept", reason: reason });
+    busy = false;
+    if (r.error) { row.classList.remove("busy"); showToast(proofError(r.error), "error"); return; }
+    showToast(a === "accept" ? L("Diterima. Iuran ", "Accepted. ") + (x.student_name || "") + L(" tercatat lunas.", "'s dues are recorded.") : L("Bukti ditolak.", "Proof rejected."), "success");
+    load();
 });
 
 init();

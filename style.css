@@ -3649,3 +3649,72 @@ html[data-theme="dark"] .jr-card>.lsn-empty{background:none}
 .jr-pod.empty .jr-medal{filter:grayscale(1)}
 .jr-pod.empty .jr-av-empty{background:transparent;border-style:dashed;color:#8A8FA8;font-size:18px}
 .jr-pod.empty b{font-weight:600;color:#A9ADC7}
+
+/* Kas: transfer proofs */
+.kas-mine{flex-direction:column;align-items:stretch;gap:10px}
+.kas-mine .kas-mine-top{display:flex;flex-direction:row;align-items:center;gap:12px}
+.kas-mine.wait{background:#EEF2FF;color:#1E2A5A}
+.kas-mine.wait .kas-mine-ic{background:#D9E0FF;color:#3949AB}
+.kas-mine-note{margin:0;font-size:12.5px;line-height:1.4}
+.kas-mine-note.bad{color:#B91C1C}
+.kas-mine .kas-mine-pay,.kas-mine-pay{display:flex;flex-direction:row;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.7)}
+.kas-mine-pay small{font-size:11.5px;opacity:.75;flex:none}
+.kas-mine-pay b{flex:1;min-width:0;font-size:13.5px;overflow-wrap:anywhere}
+.kas-mine-pay.in-sheet{margin:12px 0 0;background:#F3F4F8;color:#14162B}
+.kas-copy{flex:none;width:32px;height:32px;border:none;border-radius:10px;background:rgba(20,22,43,.08);color:inherit;display:grid;place-items:center;cursor:pointer}
+.kas-proof-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border:none;border-radius:14px;background:#14162B;color:#fff;font:700 13.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.kas-proof-link{align-self:flex-start;border:none;background:none;padding:0;color:inherit;font:700 12.5px 'Plus Jakarta Sans',sans-serif;text-decoration:underline;cursor:pointer}
+.kas-payinfo{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:10px 12px;border-radius:14px;background:#F6F7FB}
+.kas-payinfo div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.kas-payinfo small{font-size:11.5px;color:#8A8FA8}
+.kas-payinfo b{font-size:13.5px;color:#14162B;overflow-wrap:anywhere}
+.kas-payinfo button{flex:none;height:32px;padding:0 14px;border:none;border-radius:10px;background:#14162B;color:#fff;font:700 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.kas-proofs{margin:12px 0 6px;padding:12px;border-radius:16px;background:#EEF2FF}
+.kas-proofs h4{margin:0 0 10px;font-size:13.5px;color:#1E2A5A;display:flex;align-items:center;gap:6px}
+.kas-proofs h4 span{min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:#3949AB;color:#fff;font-size:11.5px;display:inline-flex;align-items:center;justify-content:center}
+.kas-proof{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:#fff}
+.kas-proof+.kas-proof{margin-top:8px}
+.kas-proof.busy{opacity:.5;pointer-events:none}
+.kas-proof-thumb{flex:none;width:40px;height:40px;border:none;border-radius:10px;background:#D9E0FF;color:#3949AB;display:grid;place-items:center;cursor:pointer}
+.kas-proof-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.kas-proof-text b{font-size:13.5px;color:#14162B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kas-proof-text small{font-size:11.5px;color:#8A8FA8}
+.kas-proof-no,.kas-proof-ok{flex:none;height:34px;padding:0 12px;border:none;border-radius:10px;font:700 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.kas-proof-no{background:#FEE2E2;color:#B91C1C}
+.kas-proof-ok{background:#C6F432;color:#14162B}
+.kas-member.wait{background:#EEF2FF;border-color:#D9E0FF}
+.kas-member.wait em{color:#3949AB}
+.kas-proof-pick{position:relative;display:block;margin:12px 0 4px;border-radius:16px;overflow:hidden;background:#F3F4F8;border:2px dashed #C5C8D6;cursor:pointer;min-height:170px}
+.kas-proof-pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;z-index:2}
+.kas-proof-pick .e{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px;color:#4B5068}
+.kas-proof-pick .e svg{width:22px;height:22px;padding:11px;box-sizing:content-box;border-radius:50%;background:#C6F432;color:#14162B}
+.kas-proof-pick .e b{font-size:13.5px;color:#14162B}
+.kas-proof-pick .e small{font-size:11.5px;color:#8A8FA8}
+.kas-proof-pick .e[hidden]{display:none}
+.kas-proof-pick.has{border-style:solid;border-color:transparent;min-height:0}
+.kas-proof-pick img{display:block;width:100%;max-height:44vh;object-fit:contain;background:#000}
+.kas-proof-pick em{position:absolute;right:10px;bottom:10px;font-style:normal;font-size:12px;font-weight:700;color:#fff;background:rgba(20,22,43,.72);padding:6px 11px;border-radius:999px}
+.kas-sheet .ac-ok:disabled{opacity:.4;cursor:not-allowed}
+.kas-sheet-input{width:100%;box-sizing:border-box;margin:12px 0 4px;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px}
+.kas-reasons{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.kas-reasons button{height:32px;padding:0 12px;border:1px solid #E2E5EE;border-radius:999px;background:#fff;color:#14162B;font:600 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+html[data-theme="dark"] .kas-mine.wait{background:#161B33;color:#D9E0FF}
+html[data-theme="dark"] .kas-mine.wait .kas-mine-ic{background:#232B52;color:#A5B4FC}
+html[data-theme="dark"] .kas-mine-note.bad{color:#FCA5A5}
+html[data-theme="dark"] .kas-mine-pay{background:rgba(255,255,255,.06)}
+html[data-theme="dark"] .kas-mine-pay.in-sheet{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .kas-copy{background:rgba(255,255,255,.1)}
+html[data-theme="dark"] .kas-proof-btn,html[data-theme="dark"] .kas-payinfo button{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .kas-payinfo{background:#1C1C1E}
+html[data-theme="dark"] .kas-payinfo b,html[data-theme="dark"] .kas-proof-text b,html[data-theme="dark"] .kas-proof-pick .e b{color:#EDEDED}
+html[data-theme="dark"] .kas-proofs{background:#161B33}
+html[data-theme="dark"] .kas-proofs h4{color:#D9E0FF}
+html[data-theme="dark"] .kas-proof{background:#1C1C1E}
+html[data-theme="dark"] .kas-proof-thumb{background:#232B52;color:#A5B4FC}
+html[data-theme="dark"] .kas-proof-no{background:#3a1414;color:#FCA5A5}
+html[data-theme="dark"] .kas-member.wait{background:#161B33;border-color:#232B52}
+html[data-theme="dark"] .kas-member.wait em{color:#A5B4FC}
+html[data-theme="dark"] .kas-proof-pick{background:#1C1C1E;border-color:#3A3A3C}
+html[data-theme="dark"] .kas-proof-pick .e{color:#AEAEB2}
+html[data-theme="dark"] .kas-sheet-input{background:#1C1C1E;border-color:#2C2C2E;color:#EDEDED}
+html[data-theme="dark"] .kas-reasons button{background:#1C1C1E;border-color:#2C2C2E;color:#EDEDED}

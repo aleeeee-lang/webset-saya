@@ -10,10 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261020i">
-<script src="js/theme.js?v=20261020i"></script>
-<script src="js/lang.js?v=20261020i"></script>
-<script src="js/toast.js?v=20261020i"></script>
+<link rel="stylesheet" href="style.css?v=20261020o">
+<script src="js/theme.js?v=20261020o"></script>
+<script src="js/lang.js?v=20261020o"></script>
+<script src="js/toast.js?v=20261020o"></script>
+<script src="js/avatarcrop.js?v=20261020o"></script>
 </head>
 
 <body>
@@ -82,8 +83,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261020i"></script>
-<script src="js/auth.js?v=20261020i"></script>
+<script src="js/supabase.js?v=20261020o"></script>
+<script src="js/auth.js?v=20261020o"></script>
 
 <script>
 
@@ -202,6 +203,13 @@ async function loadStudents() {
 
     allStudentsData = data;
 
+    // who has a fingerprint phone registered (attendance_security.sql; missing table = feature off)
+    const fpSet = new Set();
+    try {
+        const fr = await supabaseClient.from("webauthn_credentials").select("user_id");
+        if (!fr.error) (fr.data || []).forEach(function (r) { fpSet.add(r.user_id); });
+    } catch (e) {}
+
     if (data.length === 0) {
         list.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_students_yet[getLang()] + "</p>";
         return;
@@ -237,6 +245,7 @@ async function loadStudents() {
                     <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(s.name || "-")}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(s.class || "-")} · NIS ${escapeHTML(s.nis || "-")}</span>
                     ${badge}
+                    ${fpSet.has(s.id) ? `<span class="fp-line"><span class="fp-badge">${translations.fp_badge[lang]}</span><button type="button" class="fp-reset-btn" onclick="resetFingerprint('${s.id}', ${escapeHTML(JSON.stringify(s.name || ""))})">${translations.fp_reset_short[lang]}</button></span>` : ""}
                 </div>
                 <div class="student-actions" id="actions-${s.id}" style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
                     <button type="button" class="am-btn" onclick="startEditStudent('${s.id}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${btnEditLabel}</button>
@@ -363,6 +372,21 @@ async function saveEditStudent(id) {
     }
 
     showToast(translations.toast_student_updated[lang], "success");
+    loadStudents();
+}
+
+// a new phone: remove the registered one so the student can register again
+async function resetFingerprint(id, name) {
+    const lang = getLang();
+    const ok = await attConfirm({
+        title: translations.fp_reset_title[lang],
+        text: translations.fp_reset_text[lang].replace("{name}", name || "-"),
+        ok: translations.fp_reset_btn[lang]
+    });
+    if (!ok) return;
+    const { error } = await supabaseClient.from("webauthn_credentials").delete().eq("user_id", id);
+    if (error) { showToast(translations.toast_save_failed[lang] + error.message, "error"); return; }
+    showToast(translations.fp_reset_done[lang], "success");
     loadStudents();
 }
 

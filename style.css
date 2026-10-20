@@ -2232,6 +2232,15 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-status-grid{grid-column:2;grid-row:4}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-reason{grid-column:2;grid-row:5}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-submit{grid-column:2;grid-row:6}
+  /* camera / fingerprint switch: left column, above the camera or fingerprint panel */
+  body.has-side main.v2-wrap:has(.v2-cam)>.v2-method{grid-column:1;grid-row:2}
+  body.has-side main.v2-wrap:has(.v2-cam)>#faceArea{display:contents}
+  body.has-side main.v2-wrap:has(.v2-cam)>#faceArea[hidden]{display:none!important}
+  body.has-side main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam{grid-column:1;grid-row:3/span 3;height:auto;min-height:480px;align-self:stretch}
+  body.has-side main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam-buttons{grid-column:1;grid-row:6}
+  body.has-side main.v2-wrap:has(.v2-cam)>.v2-fp{grid-column:1;grid-row:3/span 4;min-height:480px;position:static;border-radius:28px;justify-content:center;padding:22px;box-shadow:none}
+  body.has-side .v2-fp-round{position:static;transform:none;margin-bottom:10px;border-color:transparent}
+  body.has-side.fp-docked main.v2-wrap{padding-bottom:0}
   body.has-side .v2-status{height:72px}
 
   /* Dasbor */
@@ -3812,3 +3821,57 @@ html{padding-top:env(safe-area-inset-top,0px)}
 html[data-theme="dark"] .feedback-category-btn.fb-cat{background:#1C1C1E;color:#EDEDED;border-color:#3A3A3C}
 html[data-theme="dark"] .feedback-category-btn.fb-cat.on[data-category="saran"]{background:#C6F432;color:#14162B!important;border-color:#C6F432}
 html[data-theme="dark"] .feedback-category-btn.fb-cat.on[data-category="keluhan"]{background:#DC2626;color:#fff;border-color:#DC2626}
+/* Admin: check-in location card (admin-schedule.html) */
+.loc-card[hidden]{display:none!important}
+.loc-head{display:flex;align-items:flex-start;gap:12px}
+.loc-hint{margin:4px 0 0;font-size:12px;color:#888;line-height:1.5}
+.loc-body{display:flex;flex-direction:column;gap:12px;margin-top:14px;transition:opacity .2s}
+.loc-body.off{opacity:.45}
+.loc-here{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;border:1.5px dashed #C9CCDA;background:#F7F8FC;color:#14162B;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.loc-here:disabled{opacity:.6}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.loc-grid label,.loc-radius{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#888;min-width:0}
+.loc-grid input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;color:#14162B}
+.loc-radius-row{display:flex;align-items:center;gap:12px}
+.loc-radius-row input{flex:1;accent-color:#14162B}
+.loc-radius-row b{min-width:62px;text-align:right;font-size:14px;color:#14162B}
+.loc-map{font-size:12.5px;font-weight:700;color:#3F6212;text-decoration:none}
+.loc-map[hidden]{display:none}
+html[data-theme="dark"] .loc-here{background:#1C1C1E;border-color:#3A3A3C;color:#F2F2F7}
+html[data-theme="dark"] .loc-grid input{background:#1C1C1E!important;border-color:#2A2A2D!important;color:#F2F2F7!important}
+html[data-theme="dark"] .loc-radius-row input{accent-color:#C6F432}
+html[data-theme="dark"] .loc-radius-row b{color:#F2F2F7}
+html[data-theme="dark"] .loc-map{color:#C6F432}
+/* Check-in: Camera / Fingerprint switch + fingerprint panel */
+.v2-method{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:#ECEDF3}
+.v2-method button{display:flex;align-items:center;justify-content:center;gap:7px;height:40px;border:none;border-radius:12px;background:transparent;color:#5B6078;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.v2-method button.on{background:#14162B;color:#fff}
+.v2-method button.on svg{color:#C6F432}
+#faceArea[hidden],.v2-fp[hidden]{display:none!important}
+#faceArea{display:flex;flex-direction:column;gap:12px}
+/* fingerprint mode: panel pinned above the bottom menu, one big round button sticking out of its top */
+.v2-fp{position:fixed;left:0;right:0;bottom:var(--fp-nav-h,72px);z-index:998;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;box-sizing:border-box;padding:58px 22px 22px;border-radius:30px 30px 0 0;background:#14162B;color:#fff;box-shadow:0 -10px 30px rgba(20,22,43,.22)}
+.v2-fp b{font-size:16px}
+.v2-fp p{margin:0;font-size:12.5px;line-height:1.5;color:#B7BAD0;max-width:320px}
+.v2-fp-round{position:absolute;top:-46px;left:50%;transform:translateX(-50%);width:92px;height:92px;border-radius:50%;border:6px solid #F3F4F8;background:#C6F432;color:#14162B;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:0 10px 24px rgba(20,22,43,.28)}
+.v2-fp-round[hidden]{display:none}
+.v2-fp-round:disabled{opacity:.7}
+.v2-fp-round::after{content:"";position:absolute;inset:-6px;border-radius:50%;box-shadow:0 0 0 0 rgba(198,244,50,.55);animation:fpPulse 2s ease-out infinite;pointer-events:none}
+.v2-fp-round[data-mode="send"]::after{animation:none}
+@keyframes fpPulse{0%{box-shadow:0 0 0 0 rgba(198,244,50,.55)}80%,100%{box-shadow:0 0 0 18px rgba(198,244,50,0)}}
+@media (prefers-reduced-motion:reduce){.v2-fp-round::after{animation:none}}
+.v2-fp[data-tone="ok"] b{color:#4ADE80}
+.v2-fp[data-tone="warn"]{padding-top:22px}
+.v2-fp[data-tone="warn"] b{color:#FBBF24}
+body.fp-docked main.v2-wrap{padding-bottom:calc(var(--fp-panel-h,190px) + 40px)}
+body.fp-docked main.v2-wrap>.v2-submit{display:none!important}
+body.fp-docked #toastContainer{bottom:calc(var(--fp-nav-h,72px) + var(--fp-panel-h,190px) + 56px)}
+html[data-theme="dark"] .v2-method{background:#1C1C1E}
+html[data-theme="dark"] .v2-method button{color:#8E8E93}
+html[data-theme="dark"] .v2-method button.on{background:#2C2C2E;color:#fff!important}
+html[data-theme="dark"] .v2-fp{background:#1C1C1E;box-shadow:0 -1px 0 #2A2A2D}
+html[data-theme="dark"] .v2-fp-round{border-color:#000;color:#14162B!important}
+.fp-line{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+.fp-badge{display:inline-block;font-size:11px;font-weight:700;color:#3F6212;background:#EEF7D4;border-radius:6px;padding:2px 8px}
+.fp-reset-btn{border:none;background:none;padding:0;font-size:11.5px;font-weight:700;color:#dc2626;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+html[data-theme="dark"] .fp-badge{background:rgba(198,244,50,.14);color:#C6F432}

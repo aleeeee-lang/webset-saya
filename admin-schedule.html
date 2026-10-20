@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261020i">
-<script src="js/theme.js?v=20261020i"></script>
-<script src="js/lang.js?v=20261020i"></script>
-    <script src="js/timepicker.js?v=20261020i"></script>
-<script src="js/toast.js?v=20261020i"></script>
+<link rel="stylesheet" href="style.css?v=20261020o">
+<script src="js/theme.js?v=20261020o"></script>
+<script src="js/lang.js?v=20261020o"></script>
+    <script src="js/timepicker.js?v=20261020o"></script>
+<script src="js/toast.js?v=20261020o"></script>
 </head>
 
 <body>
@@ -66,6 +66,29 @@
             <button type="button" class="submit-button" id="savePeriodBtn" data-needs="periodStartInput" onclick="savePeriod()" style="margin-top:2px" data-i18n="btn_save_period">
                 Save Period
             </button>
+        </div>
+    </section>
+
+    <!-- ATTENDANCE LOCATION (attendance_location.sql) -->
+    <section class="attendance-card loc-card" id="locCard" hidden>
+        <div class="loc-head">
+            <div style="flex:1;min-width:0">
+                <div class="card-label" style="margin:0" id="locTitle">Lokasi absen</div>
+                <p class="loc-hint" id="locHint"></p>
+            </div>
+            <label class="att-switch"><input type="checkbox" id="locEnabled"><span></span></label>
+        </div>
+        <div class="loc-body" id="locBody">
+            <button type="button" class="loc-here" id="locHereBtn"></button>
+            <div class="loc-grid">
+                <label><span id="locLatLabel">Latitude</span><input class="am-field" id="locLat" inputmode="decimal" autocomplete="off" placeholder="-6.175392"></label>
+                <label><span id="locLngLabel">Longitude</span><input class="am-field" id="locLng" inputmode="decimal" autocomplete="off" placeholder="106.827153"></label>
+            </div>
+            <label class="loc-radius"><span id="locRadiusLabel">Radius</span>
+                <div class="loc-radius-row"><input type="range" id="locRadius" min="50" max="1000" step="10" value="80"><b id="locRadiusVal">80 m</b></div>
+            </label>
+            <a class="loc-map" id="locMap" target="_blank" rel="noopener" hidden></a>
+            <button type="button" class="submit-button" id="locSaveBtn"></button>
         </div>
     </section>
 
@@ -171,8 +194,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261020i"></script>
-<script src="js/auth.js?v=20261020i"></script>
+<script src="js/supabase.js?v=20261020o"></script>
+<script src="js/auth.js?v=20261020o"></script>
+<script src="js/admin-location.js?v=20261020o"></script>
 
 <script>
 
@@ -216,6 +240,7 @@ async function checkAdmin() {
     await loadSchedules();
     await loadHolidays();
     await loadPeriod();
+    if (window.AttLocAdmin) window.AttLocAdmin.init();
 
     document.getElementById("scheduleLateMode").addEventListener("change", syncLateUntilVisibility);
     syncLateUntilVisibility();

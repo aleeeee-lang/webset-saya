@@ -39,7 +39,10 @@ function resetFaceBoxTimer() {
 // (lighting, distance, lens quality all shift the numbers), so instead we
 // track a per-person baseline "eyes open" EAR and look for a relative dip,
 // which adapts automatically to whoever is in frame.
-const EAR_CLOSE_RATIO = 0.96;   // eyes considered closed below 96% of the open baseline (extremely sensitive, so any distance/angle still registers a blink)
+// The blink is now one of the random moves, so it must not happen by itself:
+// at 96% (the old setting) normal camera jitter already counted as a blink.
+// 88% still catches an ordinary blink easily but not a face that just sits still.
+const EAR_CLOSE_RATIO = 0.88;   // eyes considered closed below 88% of the open baseline
 const EAR_OPEN_RATIO = 0.93;    // eyes considered open again above 93% of the open baseline
 const BLINK_MIN_WAIT_MS = 0;    // optional pause before a blink may count (0 = right away, as originally)
 const EAR_BASELINE_SMOOTHING = 0.2;
@@ -54,6 +57,8 @@ let faceAbsentTimer = null;          // pending "reset liveness" timer while the
 
 function resetLiveness() {
     livenessPassed = false;
+    blinkSeen = false;
+    newChallenge();
     eyesClosedSeen = false;
     earBaseline = null;
     earCalibrationSamples = [];
@@ -87,8 +92,8 @@ function eyeAspectRatio(points, idx) {
     return vertical / (2 * horizontal);
 }
 
-function updateLiveness(landmarks) {
-    if (livenessPassed || !landmarks || !landmarks.positions) return;
+function updateBlink(landmarks) {
+    if (!landmarks || !landmarks.positions) return;
 
     const pts = landmarks.positions;
     const earLeft = eyeAspectRatio(pts, [36, 37, 38, 39, 40, 41]);
@@ -130,9 +135,120 @@ function updateLiveness(landmarks) {
 
         if (eyesClosedSeen) {
             // Eyes went closed, then open again: that's a blink.
-            livenessPassed = true;
+            blinkSeen = true;
+            eyesClosedSeen = false;
         }
     }
+}
+
+// =====================================
+// RANDOM CHALLENGE (anti video replay)
+// =====================================
+// A recorded video can blink, but it can't know which moves we will ask for.
+// Each time a face appears it must do CH_STEPS random moves, in order:
+// turn left, turn right, or blink. A turn the wrong way, or running out of
+// time, starts over with a new random order. The face leaving the camera
+// also starts over (resetLiveness).
+const CH_ACTIONS = ["left", "right", "blink"];
+const CH_STEPS = 3;
+const CH_MAX_FAILS = 3;         // this many wrong tries in a row -> wait CH_LOCK_MS
+const CH_LOCK_MS = 30000;
+const CH_STEP_MS = 7000;        // time allowed for one move
+const CH_MIN_SHOW_MS = 450;     // a move only counts once its instruction has been on screen this long
+const YAW_TURN = 0.17;          // nose this far from the middle of the face (0..0.5) = a clear head turn
+const YAW_CENTER = 0.08;        // within this = looking straight
+let blinkSeen = false;
+let chSteps = [];
+let chIndex = 0;
+let chStepStart = 0;
+let chArmed = false;            // the head was straight once since this move was asked
+let chHold = 0;                 // frames in a row the asked move was seen
+let chWrongHold = 0;
+let chNotice = "";              // short "wrong move / time's up" message
+let chNoticeUntil = 0;
+let chFails = 0;
+let chLockUntil = 0;
+
+function newChallenge() {
+    // random moves, never the same one twice in a row
+    chSteps = [];
+    while (chSteps.length < CH_STEPS) {
+        const pick = CH_ACTIONS[Math.floor(Math.random() * CH_ACTIONS.length)];
+        if (pick !== chSteps[chSteps.length - 1]) chSteps.push(pick);
+    }
+    chIndex = 0;
+    startChallengeStep();
+}
+function startChallengeStep() {
+    chStepStart = Date.now();
+    chArmed = false;
+    chHold = 0;
+    chWrongHold = 0;
+    blinkSeen = false;
+    eyesClosedSeen = false;
+}
+function failChallenge(key) {
+    chNotice = key;
+    chNoticeUntil = Date.now() + 1400;
+    chFails++;
+    if (chFails >= CH_MAX_FAILS) { chFails = 0; chLockUntil = Date.now() + CH_LOCK_MS; }
+    resetLiveness();
+}
+
+// head turn from the 68 landmarks: where the nose tip sits between the two
+// sides of the jaw. Measured on the camera's own (un-mirrored) picture, where
+// the person's left is on the right, so a turn to their left pushes it up.
+function headYaw(landmarks) {
+    const p = landmarks && landmarks.positions;
+    if (!p || p.length < 31) return 0;
+    const w = p[16].x - p[0].x;
+    if (!w) return 0;
+    return (p[30].x - p[0].x) / w - 0.5;      // about -0.5 .. 0.5, 0 = straight
+}
+
+function updateChallenge(landmarks) {
+    if (livenessPassed || !landmarks) return;
+    const now = Date.now();
+    if (now < chLockUntil) { chStepStart = now; return; }   // waiting after too many wrong tries
+    const want = chSteps[chIndex];
+    const yaw = headYaw(landmarks);
+    const straight = Math.abs(yaw) < YAW_CENTER;
+    const turned = yaw > YAW_TURN ? "left" : (yaw < -YAW_TURN ? "right" : null);
+
+    updateBlink(landmarks);
+    if (straight) chArmed = true;
+
+    if (now - chStepStart > CH_STEP_MS) { failChallenge("face_ch_timeout"); return; }
+    const ready = chArmed && now - chStepStart >= CH_MIN_SHOW_MS;
+    if (!ready) { blinkSeen = false; return; }
+
+    let done = false;
+    if (want === "blink") {
+        done = blinkSeen;
+    } else {
+        chHold = turned === want ? chHold + 1 : 0;
+        done = chHold >= 2;
+    }
+    // a clear turn the other way (or a turn while a blink was asked) = wrong move
+    chWrongHold = turned && turned !== want ? chWrongHold + 1 : 0;
+    if (!done && chWrongHold >= 3) { failChallenge("face_ch_wrong"); return; }
+
+    if (done) {
+        chIndex++;
+        if (chIndex >= chSteps.length) { livenessPassed = true; chFails = 0; }
+        else startChallengeStep();
+    }
+}
+
+function challengeText() {
+    const lang = typeof getLang === "function" ? getLang() : "en";
+    const T = function (k) { return translations[k] ? translations[k][lang] : k; };
+    const left = Math.ceil((chLockUntil - Date.now()) / 1000);
+    if (left > 0) return T("face_ch_locked").replace("{s}", left);
+    const step = "face_ch_" + chSteps[chIndex];
+    const txt = T(step) + " (" + (chIndex + 1) + "/" + chSteps.length + ")";
+    if (chNotice && Date.now() < chNoticeUntil) return T(chNotice) + " " + txt;
+    return txt;
 }
 
 function setFaceStatus(key, color) {
@@ -363,7 +479,7 @@ async function runFaceDetectionLoop() {
             }
 
             const wasLivenessPassed = livenessPassed;
-            if (result) updateLiveness(result.landmarks);
+            if (result) updateChallenge(result.landmarks);
 
             if (livenessPassed) {
                 setTakePhotoEnabled(true);
@@ -380,7 +496,12 @@ async function runFaceDetectionLoop() {
                     }, 2000);
                 }
             } else {
-                setFaceStatus("face_liveness_wait", "#14162B");
+                const statusEl = document.getElementById("faceStatus");
+                if (statusEl) {
+                    statusEl.textContent = challengeText();
+                    statusEl.style.color = (chNotice && Date.now() < chNoticeUntil) || Date.now() < chLockUntil ? "#d97706" : "#14162B";
+                }
+                faceStatusKey = "face_challenge";
                 setTakePhotoEnabled(false);
             }
         } else {

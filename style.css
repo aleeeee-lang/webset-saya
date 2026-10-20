@@ -3129,6 +3129,20 @@ html[data-theme="dark"] .att-app-row.att-app-sub{border-top-color:#2A2A2D}
 #prefAdminBox[hidden]{display:none!important}
 .notif-admin-head{padding:12px 0 6px 28px;border-top:1px solid #F0F0F4;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8A8FA8}
 html[data-theme="dark"] .notif-admin-head{border-top-color:#2A2A2D}
+/* notifications page + its link in Settings */
+.att-app-kind[hidden]{display:none!important}
+.att-app-row.att-app-kind{border-top:1px solid #F0F0F4}
+.att-app-kind svg{color:#8A8FA8}
+.card-label+.att-app-row.att-app-kind{border-top:none}
+.notif-page .notif-admin-head{padding-left:0;margin-top:6px}
+html[data-theme="dark"] .att-app-row.att-app-kind{border-top-color:#2A2A2D}
+a.att-app-link{text-decoration:none;cursor:pointer}
+.att-app-chev{color:#aaa;font-size:16px;flex-shrink:0}
+.set-share-row{display:flex;align-items:center;gap:12px;padding:12px 0;color:#20243a}
+.set-share-row[hidden]{display:none}
+.goal-shared-badge{display:inline-flex!important;align-items:center;gap:5px;background:#DCFCE7!important;color:#15803D!important;font-size:11px!important;font-weight:700!important;padding:3px 9px!important;border-radius:999px!important;opacity:1!important}
+.goal-shared-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+html[data-theme="dark"] .goal-shared-badge{background:rgba(34,197,94,.16)!important;color:#4ADE80!important}
 html[data-theme="dark"] .att-switch input:checked+span{background:#C6F432}
 
 /* ===== Home header: bell + search as plain icons (no box behind them) ===== */

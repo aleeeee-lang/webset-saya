@@ -19,12 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261020o"
+        href="style.css?v=20261020q"
     >
-    <script src="js/theme.js?v=20261020o"></script>
-    <script src="js/lang.js?v=20261020o"></script>
-    <script src="js/toast.js?v=20261020o"></script>
-    <script src="js/transition.js?v=20261020o"></script>
+    <script src="js/theme.js?v=20261020q"></script>
+    <script src="js/lang.js?v=20261020q"></script>
+    <script src="js/toast.js?v=20261020q"></script>
+    <script src="js/transition.js?v=20261020q"></script>
+    <script src="js/avatarcrop.js?v=20261020q"></script>
 
     
 </head>
@@ -108,7 +109,20 @@
             <button type="button" class="v2-fp-round" id="fpBtn" aria-label="Fingerprint"></button>
             <b id="fpTitle"></b>
             <p id="fpText"></p>
+            <div class="v2-fp-more" id="fpMore" hidden>
+                <button type="button" class="v2-fp-link" id="fpChangeBtn"></button>
+                <button type="button" class="v2-fp-link" id="fpTipBtn"></button>
+            </div>
         </section>
+
+        <!-- changing phones: face check first, then register this phone -->
+        <div class="v2-fpchange" id="fpChangeBar" hidden>
+            <div class="v2-fpchange-txt"><b id="fpChangeTitle"></b><small id="fpChangeText"></small></div>
+            <div class="v2-fpchange-btns">
+                <button type="button" class="v2-fpchange-cancel" id="fpChangeCancel"></button>
+                <button type="button" class="v2-fpchange-go" id="fpChangeGo" disabled></button>
+            </div>
+        </div>
 
         <button type="button" class="v2-submit" onclick="saveAttendance()">
             <span data-i18n="btn_submit_attendance">Submit Attendance</span>
@@ -339,17 +353,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261020o"></script>
+    <script src="js/supabase.js?v=20261020q"></script>
     
-    <script src="js/auth.js?v=20261020o"></script>
+    <script src="js/auth.js?v=20261020q"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261020o"></script>
+    <script src="js/camera.js?v=20261020q"></script>
 
-    <script src="js/fingerprint.js?v=20261020o"></script>
-    <script src="js/att-method.js?v=20261020o"></script>
-    <script src="js/attendance.js?v=20261020o"></script>
+    <script src="js/fingerprint.js?v=20261020q"></script>
+    <script src="js/att-method.js?v=20261020q"></script>
+    <script src="js/attendance.js?v=20261020q"></script>
 
 
 

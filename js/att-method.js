@@ -4,7 +4,7 @@
 // that saveAttendance() sends with the check-in.
 (function () {
     var TICKET_MS = 110000;      // the server accepts a ticket for 2 minutes
-    var state = { method: "face", ticket: null, ticketAt: 0, registered: null, supported: null, busy: false };
+    var state = { method: "face", ticket: null, ticketAt: 0, registered: null, supported: null, busy: false, nextChange: null, changing: false };
     function T(k) { return translations[k] ? translations[k][getLang()] : k; }
     function $(id) { return document.getElementById(id); }
 
@@ -47,16 +47,101 @@
 
     async function render() {
         if (state.method !== "fp") return;
+        $("fpMore").hidden = true;
         if (state.supported === null) state.supported = await window.AttFP.supported();
         if (!state.supported) { setPanel(T("fp_unsupported_t"), T("fp_unsupported"), null, "warn"); return; }
         if (state.registered === null) {
             setPanel(T("fp_checking"), "", null, "");
-            try { state.registered = !!(await window.AttFP.status()).registered; }
+            try {
+                var st = await window.AttFP.status();
+                state.registered = !!st.registered;
+                state.nextChange = st.next_change_at ? Date.parse(st.next_change_at) : null;
+            }
             catch (e) { setPanel(T("fp_unavailable_t"), T("fp_unavailable"), null, "warn"); state.registered = null; return; }
         }
+        $("fpMore").hidden = !state.registered;
+        if (state.registered) syncMore();
         if (!state.registered) { setPanel(T("fp_register_t"), T("fp_register"), T("fp_register_btn"), ""); return; }
         if (window.attFpTicket()) { setPanel(T("fp_ok_t"), T("fp_ok"), null, "ok"); return; }
         setPanel(T("fp_scan_t"), T("fp_scan"), T("fp_scan_btn"), "");
+    }
+
+    function fmtDay(ms) {
+        var d = new Date(ms), id = getLang() === "id";
+        var M = id ? ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"] : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + M[d.getMonth()] + " " + String(d.getHours()).padStart(2, "0") + "." + String(d.getMinutes()).padStart(2, "0");
+    }
+    function canChange() { return !state.nextChange || Date.now() >= state.nextChange; }
+    function syncMore() {
+        var b = $("fpChangeBtn");
+        b.textContent = canChange() ? T("fp_change_link") : T("fp_change_wait").replace("{d}", fmtDay(state.nextChange));
+        b.classList.toggle("off", !canChange());
+        $("fpTipBtn").textContent = T("fp_tip_link");
+    }
+
+    // ---------- changing phones: face check first, then register this phone ----------
+    var photoWatch = null;
+    function changeBar(on) {
+        state.changing = on;
+        $("fpChangeBar").hidden = !on;
+        document.body.classList.toggle("fp-changing", on);
+        if (photoWatch) { clearInterval(photoWatch); photoWatch = null; }
+        if (on) {
+            $("fpChangeTitle").textContent = T("fp_change_t");
+            $("fpChangeCancel").textContent = T("btn_cancel");
+            $("fpChangeGo").textContent = T("fp_change_go");
+            photoWatch = setInterval(function () {
+                var have = typeof capturedPhoto !== "undefined" && !!capturedPhoto;
+                $("fpChangeGo").disabled = !have || state.busy;
+                $("fpChangeText").textContent = T(have ? "fp_change_ready" : "fp_change_face");
+            }, 300);
+        }
+    }
+    async function startChange() {
+        if (!canChange()) { if (window.showToast) showToast(T("fp_change_wait").replace("{d}", fmtDay(state.nextChange)), "error"); return; }
+        var ok = await attConfirm({ title: T("fp_change_confirm_t"), text: T("fp_change_confirm"), ok: T("fp_change_confirm_ok"), tone: "primary" });
+        if (!ok) return;
+        if (typeof capturedPhoto !== "undefined") capturedPhoto = null;
+        var pv = $("photoPreview"); if (pv) pv.style.display = "none";
+        choose("face");
+        changeBar(true);
+        if (typeof startCamera === "function") startCamera();
+        // keep the camera and its buttons above the bar
+        setTimeout(function () { var c = document.querySelector(".v2-cam"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); }, 150);
+    }
+    async function finishChange() {
+        if (state.busy || typeof capturedPhoto === "undefined" || !capturedPhoto) return;
+        state.busy = true; $("fpChangeGo").disabled = true;
+        try {
+            var s = await supabaseClient.auth.getSession();
+            var uid = s.data.session.user.id;
+            var path = uid + "/fpchange-" + Date.now() + ".jpg";
+            var up = await supabaseClient.storage.from("attendance-photos").upload(path, capturedPhoto, { contentType: "image/jpeg" });
+            if (up.error) throw new Error("UPLOAD:" + up.error.message);
+            await window.AttFP.change(path);
+            state.registered = true; state.ticket = null;
+            state.nextChange = Date.now() + 7 * 24 * 3600 * 1000;
+            capturedPhoto = null;
+            var pv = $("photoPreview"); if (pv) pv.style.display = "none";
+            if (window.showToast) showToast(T("fp_change_done"), "success");
+            state.busy = false;
+            changeBar(false);
+            choose("fp");
+            return;
+        } catch (e) {
+            var code = (e && (e.code || e.name || e.message)) || "";
+            var key = code === "CHANGE_TOO_SOON" ? null
+                : code === "NotAllowedError" || code === "CANCELLED" ? "fp_err_cancel"
+                : code === "InvalidStateError" ? "fp_change_same"
+                : code === "PHOTO_MISSING" || code.indexOf("UPLOAD:") === 0 ? "fp_change_photo_err"
+                : "fp_err_generic";
+            if (code === "CHANGE_TOO_SOON") {
+                var n = e.data && e.data.next_change_at ? Date.parse(e.data.next_change_at) : null;
+                if (n) state.nextChange = n;
+                if (window.showToast) showToast(T("fp_change_wait").replace("{d}", n ? fmtDay(n) : "-"), "error");
+            } else if (window.showToast) showToast(T(key), "error");
+        }
+        state.busy = false;
     }
 
     async function onBtn() {
@@ -106,8 +191,14 @@
     document.addEventListener("DOMContentLoaded", function () {
         if (!$("attMethod")) return;
         document.querySelectorAll("#attMethod button").forEach(function (b) {
-            b.addEventListener("click", function () { choose(b.getAttribute("data-m")); });
+            b.addEventListener("click", function () { if (state.changing) changeBar(false); choose(b.getAttribute("data-m")); });
         });
         $("fpBtn").addEventListener("click", onBtn);
+        $("fpChangeBtn").addEventListener("click", startChange);
+        $("fpTipBtn").addEventListener("click", function () {
+            attConfirm({ title: T("fp_tip_t"), text: T("fp_tip"), ok: "OK", tone: "primary", info: true });
+        });
+        $("fpChangeCancel").addEventListener("click", function () { changeBar(false); choose("fp"); });
+        $("fpChangeGo").addEventListener("click", finishChange);
     });
 })();

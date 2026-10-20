@@ -7,7 +7,8 @@
 // POST JSON {action, ...} with the student's own login (Authorization header):
 //   register-options / register-verify   one phone per student (admin resets it)
 //   auth-options / auth-verify           every check-in -> { ticket }
-//   status                               { registered: boolean }
+//   change-options / change-verify       move to a new phone (face photo first, once per 7 days)
+//   status                               { registered, last_change_at, next_change_at }
 // Needs no extra secrets: SUPABASE_URL, SUPABASE_ANON_KEY and
 // SUPABASE_SERVICE_ROLE_KEY are provided by Supabase.
 
@@ -24,6 +25,8 @@ const ORIGINS = (Deno.env.get("WEBAUTHN_ORIGINS") ?? "https://aleeeee-lang.githu
   .split(",").map((s) => s.trim()).filter(Boolean);
 const RP_NAME = "Attendreem";
 const CHALLENGE_TTL_MS = 5 * 60_000;
+const CHANGE_EVERY_MS = 7 * 24 * 3600_000;   // a student may move to a new phone once per 7 days
+const PHOTO_MAX_AGE_MS = 15 * 60_000;         // the face photo must be this fresh
 
 const cors = (origin: string | null) => ({
   "Access-Control-Allow-Origin": origin && ORIGINS.includes(origin) ? origin : ORIGINS[0],
@@ -56,7 +59,7 @@ Deno.serve(async (req) => {
   const user = who.user;
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
-  const { data: prof } = await db.from("profiles").select("name, role").eq("id", user.id).maybeSingle();
+  const { data: prof } = await db.from("profiles").select("name, role, class").eq("id", user.id).maybeSingle();
   if (!prof || prof.role !== "murid") return reply({ error: "students only" }, 403);
 
   let body: Record<string, unknown> = {};
@@ -76,21 +79,102 @@ Deno.serve(async (req) => {
     return data.challenge as string;
   };
 
+  const lastChange = async () => {
+    const { data } = await db.from("fp_changes").select("created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1);
+    return data && data.length ? Date.parse(data[0].created_at) : 0;
+  };
+  const regOptions = () => generateRegistrationOptions({
+    rpName: RP_NAME,
+    rpID,
+    userName: user.email ?? user.id,
+    userDisplayName: prof.name ?? user.email ?? "Siswa",
+    userID: new TextEncoder().encode(user.id),
+    attestationType: "none",
+    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
+    timeout: 60_000,
+  });
+  const verifyReg = (response: unknown, expectedChallenge: string) => verifyRegistrationResponse({
+    response: response as never,
+    expectedChallenge,
+    expectedOrigin: origin,
+    expectedRPID: rpID,
+    requireUserVerification: true,
+  });
+  // notifications go through push_queue (sent right away by the database trigger)
+  const notifyChange = async (changeId: string) => {
+    const who = (prof.name ?? "Siswa") + (prof.class ? " (" + prof.class + ")" : "");
+    const rows: { user_id: string; title: string; body: string; url: string; tag: string }[] = [];
+    const [{ data: admins }, { data: subs }, { data: prefs }, { data: parents }] = await Promise.all([
+      db.from("profiles").select("id").eq("role", "admin"),
+      db.from("push_subscriptions").select("user_id"),
+      db.from("notif_prefs").select("user_id, admin_fp"),
+      db.from("parent_links").select("parent_id").eq("student_id", user.id),
+    ]);
+    const hasPush = new Set((subs ?? []).map((r: { user_id: string }) => r.user_id));
+    const fpOff = new Set((prefs ?? []).filter((r: { admin_fp?: boolean }) => r.admin_fp === false).map((r: { user_id: string }) => r.user_id));
+    for (const a of admins ?? []) {
+      if (hasPush.has(a.id) && !fpOff.has(a.id)) rows.push({ user_id: a.id, title: "👆 Sidik jari · Ganti HP", body: who + " mendaftarkan HP baru untuk absen sidik jari.", url: "admin-students.html", tag: "admin-fp-" + changeId });
+    }
+    for (const p of parents ?? []) {
+      if (hasPush.has(p.parent_id)) rows.push({ user_id: p.parent_id, title: "👆 HP sidik jari anak diganti", body: (prof.name ?? "Anak Anda") + " mendaftarkan HP baru untuk absen sidik jari.", url: "parent.html", tag: "fp-" + changeId });
+    }
+    if (hasPush.has(user.id)) rows.push({ user_id: user.id, title: "👆 HP sidik jarimu diganti", body: "Kalau ini bukan kamu, segera lapor ke admin.", url: "attendance.html", tag: "fp-" + changeId });
+    if (rows.length) await db.from("push_queue").insert(rows);
+  };
+
   try {
-    if (action === "status") return reply({ registered: !!cred });
+    if (action === "status") {
+      const last = cred ? await lastChange() : 0;
+      return reply({
+        registered: !!cred,
+        last_change_at: last ? new Date(last).toISOString() : null,
+        next_change_at: last ? new Date(last + CHANGE_EVERY_MS).toISOString() : null,
+      });
+    }
+
+    if (action === "change-options") {
+      if (!cred) return reply({ error: "NOT_REGISTERED" }, 404);
+      const last = await lastChange();
+      if (last && Date.now() - last < CHANGE_EVERY_MS) return reply({ error: "CHANGE_TOO_SOON", next_change_at: new Date(last + CHANGE_EVERY_MS).toISOString() }, 429);
+      const options = await regOptions();
+      await saveChallenge("change", options.challenge);
+      return reply(options);
+    }
+
+    if (action === "change-verify") {
+      if (!cred) return reply({ error: "NOT_REGISTERED" }, 404);
+      const last = await lastChange();
+      if (last && Date.now() - last < CHANGE_EVERY_MS) return reply({ error: "CHANGE_TOO_SOON" }, 429);
+      // the face photo taken just before, in the student's own folder
+      const photo = String(body.photo_path ?? "");
+      const m = photo.match(/^([0-9a-f-]{36})\/(fpchange-\d+\.jpg)$/);
+      if (!m || m[1] !== user.id) return reply({ error: "PHOTO_MISSING" }, 400);
+      const { data: files } = await db.storage.from("attendance-photos").list(user.id, { search: m[2], limit: 5 });
+      const f = (files ?? []).find((x: { name: string }) => x.name === m[2]) as { created_at?: string } | undefined;
+      if (!f || !f.created_at || Date.now() - Date.parse(f.created_at) > PHOTO_MAX_AGE_MS) return reply({ error: "PHOTO_MISSING" }, 400);
+      const expectedChallenge = await takeChallenge("change");
+      if (!expectedChallenge) return reply({ error: "EXPIRED" }, 400);
+      const v = await verifyReg(body.response, expectedChallenge);
+      if (!v.verified || !v.registrationInfo) return reply({ error: "NOT_VERIFIED" }, 400);
+      const c = v.registrationInfo.credential;
+      const { error: upErr } = await db.from("webauthn_credentials").update({
+        credential_id: c.id,
+        public_key: b64u.enc(c.publicKey),
+        counter: c.counter ?? 0,
+        transports: c.transports ?? null,
+        device_label: String(body.device ?? "").slice(0, 80) || null,
+        created_at: new Date().toISOString(),
+        last_used_at: null,
+      }).eq("user_id", user.id);
+      if (upErr) return reply({ error: upErr.message }, 400);
+      const { data: ch } = await db.from("fp_changes").insert({ user_id: user.id, photo_path: photo, old_credential_id: cred.credential_id }).select("id").single();
+      try { await notifyChange(ch?.id ?? crypto.randomUUID()); } catch (_) { /* the change itself is done */ }
+      return reply({ ok: true });
+    }
 
     if (action === "register-options") {
       if (cred) return reply({ error: "ALREADY_REGISTERED" }, 409);   // one phone; the admin resets it
-      const options = await generateRegistrationOptions({
-        rpName: RP_NAME,
-        rpID,
-        userName: user.email ?? user.id,
-        userDisplayName: prof.name ?? user.email ?? "Siswa",
-        userID: new TextEncoder().encode(user.id),
-        attestationType: "none",
-        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
-        timeout: 60_000,
-      });
+      const options = await regOptions();
       await saveChallenge("register", options.challenge);
       return reply(options);
     }
@@ -99,13 +183,7 @@ Deno.serve(async (req) => {
       if (cred) return reply({ error: "ALREADY_REGISTERED" }, 409);
       const expectedChallenge = await takeChallenge("register");
       if (!expectedChallenge) return reply({ error: "EXPIRED" }, 400);
-      const v = await verifyRegistrationResponse({
-        response: body.response as never,
-        expectedChallenge,
-        expectedOrigin: origin,
-        expectedRPID: rpID,
-        requireUserVerification: true,
-      });
+      const v = await verifyReg(body.response, expectedChallenge);
       if (!v.verified || !v.registrationInfo) return reply({ error: "NOT_VERIFIED" }, 400);
       const c = v.registrationInfo.credential;
       const { error } = await db.from("webauthn_credentials").insert({

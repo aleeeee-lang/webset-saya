@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261020o">
-<script src="js/theme.js?v=20261020o"></script>
-<script src="js/lang.js?v=20261020o"></script>
-<script src="js/toast.js?v=20261020o"></script>
+<link rel="stylesheet" href="style.css?v=20261020q">
+<script src="js/theme.js?v=20261020q"></script>
+<script src="js/lang.js?v=20261020q"></script>
+<script src="js/toast.js?v=20261020q"></script>
 </head>
 
 <body>
@@ -76,14 +76,19 @@
                 <div class="att-app-text"><span data-i18n="notif_admin_spp">x</span><small data-i18n="notif_admin_spp_hint">x</small></div>
                 <label class="att-switch"><input type="checkbox" id="prefAdminSpp" checked><span></span></label>
             </div>
+            <div class="att-app-row att-app-kind" id="prefAdminFpRow" hidden>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg>
+                <div class="att-app-text"><span data-i18n="notif_admin_fp">x</span><small data-i18n="notif_admin_fp_hint">x</small></div>
+                <label class="att-switch"><input type="checkbox" id="prefAdminFp" checked><span></span></label>
+            </div>
             </div>
         </section>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261020o"></script>
-<script src="js/auth.js?v=20261020o"></script>
+<script src="js/supabase.js?v=20261020q"></script>
+<script src="js/auth.js?v=20261020q"></script>
 
 <script>
 requireLogin();
@@ -129,6 +134,12 @@ async function syncPushKinds(on) {
         const col = "admin_" + k.toLowerCase();
         document.getElementById("prefAdmin" + k).checked = !data || data[col] !== false;
     });
+    // "phone changed" switch: only once fp_change.sql has added the column
+    let fpCol = adm && !!data && "admin_fp" in data;
+    if (adm && !data) fpCol = !(await supabaseClient.from("notif_prefs").select("admin_fp").limit(1)).error;
+    document.getElementById("prefAdminFpRow").hidden = !fpCol;
+    document.getElementById("prefAdminFp").checked = !data || data.admin_fp !== false;
+    box._fpCol = fpCol;
     box._adminCols = adm;
     box.dataset.uid = uid;
     box._prefCols = data || { exams: true };   // only send "exams" once the column exists
@@ -140,6 +151,7 @@ async function savePushKinds() {
     const row = { user_id: box.dataset.uid, lessons: document.getElementById("prefLessons").checked, tasks: document.getElementById("prefTasks").checked, general: document.getElementById("prefGeneral").checked, updated_at: new Date().toISOString() };
     if ("exams" in (box._prefCols || {})) row.exams = document.getElementById("prefExams").checked;
     if (box._adminCols) ["Leave", "Feedback", "Spp"].forEach(function (k) { row["admin_" + k.toLowerCase()] = document.getElementById("prefAdmin" + k).checked; });
+    if (box._fpCol) row.admin_fp = document.getElementById("prefAdminFp").checked;
     const { error } = await supabaseClient.from("notif_prefs").upsert(row, { onConflict: "user_id" });
     showToast(pushT(error ? "notif_kind_failed" : "notif_kind_saved"), error ? "error" : "success");
 }
@@ -147,7 +159,7 @@ document.getElementById("prefLessons").addEventListener("change", savePushKinds)
 document.getElementById("prefTasks").addEventListener("change", savePushKinds);
 document.getElementById("prefGeneral").addEventListener("change", savePushKinds);
 document.getElementById("prefExams").addEventListener("change", savePushKinds);
-["Leave", "Feedback", "Spp"].forEach(function (k) { document.getElementById("prefAdmin" + k).addEventListener("change", savePushKinds); });
+["Leave", "Feedback", "Spp", "Fp"].forEach(function (k) { document.getElementById("prefAdmin" + k).addEventListener("change", savePushKinds); });
 document.getElementById("pushToggle").addEventListener("change", async function () {
     const tg = this, ph = document.getElementById("pushHint");
     tg.disabled = true;

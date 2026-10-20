@@ -23,8 +23,9 @@
         var r = await supabaseClient.functions.invoke("webauthn", { body: body });
         if (!r.error) return r.data || {};
         var msg = r.error.message || "error";
-        try { var j = await r.error.context.json(); if (j && j.error) msg = j.error; } catch (e) {}
-        var err = new Error(msg); err.code = msg; throw err;
+        var j = null;
+        try { j = await r.error.context.json(); if (j && j.error) msg = j.error; } catch (e) {}
+        var err = new Error(msg); err.code = msg; err.data = j; throw err;
     }
 
     function regCredJSON(c) {
@@ -72,6 +73,16 @@
             var cred = await navigator.credentials.create({ publicKey: o });
             if (!cred) throw new Error("CANCELLED");
             return call("register-verify", { response: regCredJSON(cred), device: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "" });
+        },
+        // move fingerprint check-in to this phone (after a fresh face photo)
+        change: async function (photoPath) {
+            var o = await call("change-options");
+            o.challenge = b64u.toBuf(o.challenge);
+            o.user = Object.assign({}, o.user, { id: b64u.toBuf(o.user.id) });
+            o.excludeCredentials = [];
+            var cred = await navigator.credentials.create({ publicKey: o });
+            if (!cred) throw new Error("CANCELLED");
+            return call("change-verify", { response: regCredJSON(cred), photo_path: photoPath, device: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "" });
         },
         // returns a one-time ticket for the attendance insert
         verify: async function () {

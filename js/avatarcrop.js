@@ -173,13 +173,17 @@
             w.querySelector("small").textContent = o.text || "";
             w.querySelector(".ac-cancel").textContent = o.cancel || L("Batal", "Cancel");
             w.querySelector(".ac-ok").textContent = o.ok || "OK";
+            // o.tone: "primary" = a normal "continue" button (default stays red, for deleting)
+            if (o.tone === "primary") w.querySelector(".ac-ok").classList.remove("danger");
+            // o.info: just a message with one button
+            if (o.info) { w.querySelector(".ac-cancel").remove(); w.querySelector(".ac-actions").classList.add("one"); }
             document.body.appendChild(w);
             requestAnimationFrame(function () { w.classList.add("in"); });
             function fin(v) { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); document.removeEventListener("keydown", k); resolve(v); }
             function k(e) { if (e.key === "Escape") fin(false); }
             document.addEventListener("keydown", k);
             w.addEventListener("click", function (e) { if (e.target === w) fin(false); });
-            w.querySelector(".ac-cancel").addEventListener("click", function () { fin(false); });
+            var cb = w.querySelector(".ac-cancel"); if (cb) cb.addEventListener("click", function () { fin(false); });
             w.querySelector(".ac-ok").addEventListener("click", function () { fin(true); });
         });
     };

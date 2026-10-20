@@ -2674,6 +2674,7 @@ html.ac-lock,html.ac-lock body{overflow:hidden!important}
 .ac-ok{background:#C6F432;color:#14162B}
 .ac-ok.danger{background:#DC2626;color:#fff}
 .ac-ok:disabled{opacity:.6}
+.ac-actions.one{grid-template-columns:1fr!important}
 .ac-confirm .ac-actions{grid-template-columns:1fr 1fr}
 html[data-theme="dark"] .ac-card{background:#161618;color:#EDEDED}
 html[data-theme="dark"] .ac-top small,html[data-theme="dark"] .ac-zoom{color:#8E8E93}
@@ -3875,3 +3876,25 @@ html[data-theme="dark"] .v2-fp-round{border-color:#000;color:#14162B!important}
 .fp-badge{display:inline-block;font-size:11px;font-weight:700;color:#3F6212;background:#EEF7D4;border-radius:6px;padding:2px 8px}
 .fp-reset-btn{border:none;background:none;padding:0;font-size:11.5px;font-weight:700;color:#dc2626;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 html[data-theme="dark"] .fp-badge{background:rgba(198,244,50,.14);color:#C6F432}
+/* fingerprint panel: small links (change phone / add a finger) */
+.v2-fp-more{display:flex;gap:18px;justify-content:center;margin-top:8px}
+.v2-fp-more[hidden]{display:none}
+.v2-fp-link{border:none;background:none;padding:2px 0;font:700 12px 'Plus Jakarta Sans',sans-serif;color:#C6F432;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.v2-fp-link.off{color:#8A8FA8;text-decoration:none}
+/* changing phones: bar above the bottom menu while the face check runs */
+.v2-fpchange{position:fixed;left:0;right:0;bottom:var(--fp-nav-h,72px);z-index:998;display:flex;flex-direction:column;gap:10px;padding:12px 16px 14px;border-radius:26px 26px 0 0;background:#14162B;color:#fff;box-shadow:0 -10px 30px rgba(20,22,43,.22)}
+.v2-fpchange[hidden]{display:none!important}
+.v2-fpchange-txt{display:flex;flex-direction:column;gap:3px}
+.v2-fpchange-txt b{font-size:14.5px}
+.v2-fpchange-txt small{font-size:12px;color:#B7BAD0;line-height:1.45}
+.v2-fpchange-btns{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.v2-fpchange-cancel,.v2-fpchange-go{height:44px;border:none;border-radius:14px;font:800 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.v2-fpchange-cancel{background:rgba(255,255,255,.1);color:#fff}
+.v2-fpchange-go{background:#C6F432;color:#14162B}
+.v2-fpchange-go:disabled{opacity:.45;cursor:default}
+body.fp-changing main.v2-wrap>.v2-submit{display:none!important}
+body.fp-changing main.v2-wrap{padding-bottom:170px}
+body.fp-changing .v2-cam{scroll-margin-top:12px}
+body.fp-changing #toastContainer{bottom:calc(var(--fp-nav-h,72px) + 170px)}
+html[data-theme="dark"] .v2-fpchange{background:#1C1C1E;box-shadow:0 -1px 0 #2A2A2D}
+html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"] .v2-fpchange-go{color:#14162B!important}

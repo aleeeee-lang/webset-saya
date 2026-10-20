@@ -2239,8 +2239,11 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   body.has-side main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam{grid-column:1;grid-row:3/span 3;height:auto;min-height:480px;align-self:stretch}
   body.has-side main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam-buttons{grid-column:1;grid-row:6}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-fp{grid-column:1;grid-row:3/span 4;min-height:480px;position:static;border-radius:28px;justify-content:center;padding:22px;box-shadow:none}
-  body.has-side .v2-fp-round{position:static;transform:none;margin-bottom:10px;border-color:transparent}
+  body.has-side .v2-fp-round{position:relative;top:auto;left:auto;transform:none;margin-bottom:10px;border-color:transparent}
   body.has-side.fp-docked main.v2-wrap{padding-bottom:0}
+  body.has-side.fp-docked main.v2-wrap>.v2-submit{display:flex!important}
+  body.has-side .v2-fp-round{border-color:transparent!important}
+  body.has-side.fp-docked #toastContainer,body.has-side.fp-changing #toastContainer{bottom:96px}
   body.has-side .v2-status{height:72px}
 
   /* Dasbor */
@@ -3898,3 +3901,6 @@ body.fp-changing .v2-cam{scroll-margin-top:12px}
 body.fp-changing #toastContainer{bottom:calc(var(--fp-nav-h,72px) + 170px)}
 html[data-theme="dark"] .v2-fpchange{background:#1C1C1E;box-shadow:0 -1px 0 #2A2A2D}
 html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"] .v2-fpchange-go{color:#14162B!important}
+/* fingerprint: the automatic proof photo */
+.v2-fp-snap{width:58px;height:58px;border-radius:16px;object-fit:cover;transform:scaleX(-1);border:2px solid #4ADE80;margin:-4px 0 4px}
+.v2-fp-snap[hidden]{display:none}

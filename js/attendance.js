@@ -220,7 +220,8 @@ async function saveAttendance() {
     let fpFields = {};
     if (useFp) {
         const ticket = attFpTicket();
-        if (!ticket) { showToast(translations.toast_fp_needed[lang], "error"); return; }
+        const fpPhoto = typeof attFpPhoto === "function" ? attFpPhoto() : null;
+        if (!ticket || !fpPhoto) { showToast(translations.toast_fp_needed[lang], "error"); return; }
         fpFields = { fp_ticket: ticket };
     }
 
@@ -231,7 +232,10 @@ async function saveAttendance() {
     let photoUrl = null;
 
 
-    if (!useFp && typeof capturedPhoto !== "undefined" && capturedPhoto) {
+    // fingerprint: the photo taken automatically right after the scan
+    const photoToSend = useFp ? attFpPhoto() : (typeof capturedPhoto !== "undefined" ? capturedPhoto : null);
+
+    if (photoToSend) {
 
         // one folder per student, so the student (and admins) can open it later
         const filePath =
@@ -245,7 +249,7 @@ async function saveAttendance() {
             .from("attendance-photos")
             .upload(
                 filePath,
-                capturedPhoto,
+                photoToSend,
                 {
                     contentType: "image/jpeg"
                 }
@@ -320,9 +324,9 @@ async function saveAttendance() {
         );
 
         // the server's own checks (attendance_rules.sql) answer with a short code
-        const code = ["ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
+        const code = ["ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
         const msgKey = { ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
-                         ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid" }[code];
+                         ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid", ATT_FP_PHOTO: "fp_snap_failed" }[code];
         if (code === "ATT_FP_INVALID" && typeof attFpUsed === "function") attFpUsed();
         showToast(msgKey ? translations[msgKey][getLang()] : "Attendance failed to save: " + error.message, "error");
 

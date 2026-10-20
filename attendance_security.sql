@@ -179,6 +179,10 @@ begin
         if not found then
             raise exception 'ATT_FP_INVALID' using hint = 'Fingerprint check expired, scan again';
         end if;
+        -- the photo taken automatically after the scan, in the student's own folder
+        if new.photo_url is null or split_part(new.photo_url, '/', 1) <> auth.uid()::text then
+            raise exception 'ATT_FP_PHOTO' using hint = 'A photo is needed with fingerprint check-in';
+        end if;
         new.method := 'fingerprint';
     else
         new.method := 'face';

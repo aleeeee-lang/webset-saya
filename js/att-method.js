@@ -10,7 +10,39 @@
 
     window.attMethod = function () { return state.method; };
     window.attFpTicket = function () { return state.ticket && Date.now() - state.ticketAt < TICKET_MS ? state.ticket : null; };
-    window.attFpUsed = function () { state.ticket = null; render(); };
+    window.attFpUsed = function () { state.ticket = null; setSnap(null); render(); };
+    window.attFpPhoto = function () { return window.attFpTicket() ? state.photo : null; };
+
+    // take one photo with the front camera, without showing the camera screen
+    async function autoSnap() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
+        var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } }, audio: false });
+        try {
+            var v = document.createElement("video");
+            v.muted = true; v.playsInline = true; v.setAttribute("playsinline", "");
+            v.srcObject = stream;
+            await v.play();
+            // give the camera a moment to set light and focus
+            await new Promise(function (r) { setTimeout(r, 900); });
+            if (!v.videoWidth) await new Promise(function (r) { setTimeout(r, 600); });
+            var w = v.videoWidth, h = v.videoHeight;
+            if (!w || !h) return null;
+            var scale = Math.min(1, 960 / Math.max(w, h));
+            var c = document.createElement("canvas");
+            c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+            c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+            return await new Promise(function (r) { c.toBlob(r, "image/jpeg", 0.85); });
+        } finally {
+            stream.getTracks().forEach(function (t) { t.stop(); });
+        }
+    }
+    function setSnap(blob) {
+        if (state.photoUrl) { try { URL.revokeObjectURL(state.photoUrl); } catch (e) {} }
+        state.photo = blob || null;
+        state.photoUrl = blob ? URL.createObjectURL(blob) : null;
+        var img = $("fpSnap");
+        if (img) { img.hidden = !blob; if (blob) img.src = state.photoUrl; }
+    }
     window.addEventListener("resize", function () { if (state.method === "fp") render(); });
 
     var FP_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg>';
@@ -154,11 +186,21 @@
                 state.registered = true;
                 if (window.showToast) showToast(T("fp_registered_toast"), "success");
             } else {
-                state.ticket = await window.AttFP.verify();
-                state.ticketAt = Date.now();
-                if (window.showToast) showToast(T("fp_ok_t"), "success");
-                // the ticket runs out; ask again after that
-                setTimeout(render, TICKET_MS + 500);
+                var ticket = await window.AttFP.verify();
+                // proof of who is holding the phone: one front-camera photo, taken right away
+                setPanel(T("fp_snap_t"), T("fp_snap"), null, "");
+                var shot = null;
+                try { shot = await autoSnap(); } catch (se) { shot = null; state.snapErr = (se && se.name) || "x"; }
+                if (!shot) {
+                    if (window.showToast) showToast(T(state.snapErr === "NotAllowedError" ? "fp_snap_denied" : "fp_snap_failed"), "error");
+                } else {
+                    state.ticket = ticket;
+                    state.ticketAt = Date.now();
+                    setSnap(shot);
+                    if (window.showToast) showToast(T("fp_ok_t"), "success");
+                    // the ticket runs out; ask again after that
+                    setTimeout(render, TICKET_MS + 500);
+                }
             }
         } catch (e) {
             var code = (e && (e.code || e.name || e.message)) || "";

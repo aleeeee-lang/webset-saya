@@ -135,7 +135,15 @@ function setFaceStatus(key, color) {
 
     el.textContent = entry ? entry[lang] : "";
     el.style.color = color;
+    faceStatusKey = key;
 }
+let faceStatusKey = "";
+// the outline and the message use the same answer: a face counts as "gone"
+// only after it has been missing for a short moment, so one blurry frame
+// doesn't flip the message while the outline is still showing
+const FACE_GONE_MS = 600;
+let faceLastSeenAt = 0;
+let faceLastResult = null;
 
 function setTakePhotoEnabled(enabled) {
     const btn = document.getElementById("takePhotoBtn");
@@ -311,7 +319,11 @@ async function runFaceDetectionLoop() {
             )
             .withFaceLandmarks(true);
 
-        faceDetected = !!result;
+        const now = Date.now();
+        if (result) { faceLastSeenAt = now; faceLastResult = result; }
+        const inGrace = !result && faceLastResult && now - faceLastSeenAt < FACE_GONE_MS;
+        if (!result && !inGrace) faceLastResult = null;
+        faceDetected = !!result || !!inGrace;
 
         if (faceDetected) {
 
@@ -342,7 +354,7 @@ async function runFaceDetectionLoop() {
             }
 
             const wasLivenessPassed = livenessPassed;
-            updateLiveness(result.landmarks);
+            if (result) updateLiveness(result.landmarks);
 
             if (livenessPassed) {
                 setTakePhotoEnabled(true);
@@ -355,6 +367,17 @@ async function runFaceDetectionLoop() {
                     livenessStatusTimer = setTimeout(function () {
                         const statusEl = document.getElementById("faceStatus");
                         if (statusEl) statusEl.textContent = "";
+                        livenessStatusTimer = null;
+                    }, 2000);
+                }
+                else if (faceStatusKey === "face_not_detected") {
+                    // face came back after a blink was already verified
+                    setFaceStatus("face_detected", "#16a34a");
+                    if (livenessStatusTimer) clearTimeout(livenessStatusTimer);
+                    livenessStatusTimer = setTimeout(function () {
+                        const statusEl = document.getElementById("faceStatus");
+                        if (statusEl) statusEl.textContent = "";
+                        faceStatusKey = "";
                         livenessStatusTimer = null;
                     }, 2000);
                 }
@@ -386,7 +409,7 @@ async function runFaceDetectionLoop() {
 
         faceWasDetected = faceDetected;
 
-        drawFaceBox(faceBoxVisible ? result : null);
+        drawFaceBox(faceBoxVisible && faceDetected ? (result || faceLastResult) : null);
 
     } catch (error) {
         console.error("Face detection error:", error);

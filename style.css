@@ -2216,10 +2216,6 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   body.has-side .v2-hero-title{font-size:44px;max-width:none}
   body.has-side .v2-home-main{display:contents}
   body.has-side .v2-bento{grid-column:2;grid-row:1;grid-template-rows:1fr 1fr;height:100%}
-  body.has-side .v2-home-main>.v2-section-head:nth-child(2){grid-column:1;grid-row:2}
-  body.has-side .v2-home-main>.v2-agenda{grid-column:1;grid-row:3}
-  body.has-side .v2-home-main>.v2-section-head:nth-child(4){grid-column:2;grid-row:2}
-  body.has-side .v2-home-main>.v2-more{grid-column:2;grid-row:3}
   body.has-side .v2-agenda{grid-template-columns:repeat(2,minmax(0,1fr))}
 
   /* Absensi */
@@ -2926,12 +2922,6 @@ html[data-theme="dark"] .v2-lesson-tag{color:#C6F432}
 html[data-theme="dark"] .v2-lesson-tag.live i{background:#C6F432}
 html[data-theme="dark"] .v2-lesson-go{background:#1C1C1E}
 @media (min-width:1024px){
-  body.has-side .v2-home-main>.v2-lesson{grid-column:1;grid-row:2}
-  body.has-side .v2-home-main>.v2-taskcard{grid-column:1;grid-row:3}
-  body.has-side .v2-home-main>.v2-section-head:has(+ .v2-agenda){grid-column:1;grid-row:4}
-  body.has-side .v2-home-main>.v2-agenda{grid-column:1;grid-row:5}
-  body.has-side .v2-home-main>.v2-section-head:has(+ .v2-more){grid-column:2;grid-row:2}
-  body.has-side .v2-home-main>.v2-more{grid-column:2;grid-row:3/span 3;align-self:start}
 }
 .v2-teach-quick a:last-child:nth-child(odd){grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;justify-content:flex-start}
 .v2-par-link{display:flex;align-items:center;gap:12px;margin-top:12px;background:#fff;border-radius:20px;padding:16px;text-decoration:none;color:#14162B;font-size:14px;font-weight:700}
@@ -3481,7 +3471,7 @@ html.att-noanim .v2-ring-fill,html.att-noanim .v2-week-fill,html.att-noanim #seg
 .jr-home-chart .jr-chart{height:78px}
 .jr-home-chart .jr-chart-foot{margin-top:4px}
 @media (prefers-reduced-motion:reduce){.jr-pod .jr-step,.jr-bar rect,.jr-hbar-track i{animation:none}}
-html.att-noanim .jr-home .jr-bar rect{animation:none}
+html.att-noanim .jr-home .jr-bar rect{animation-duration:0s!important;animation-delay:0s!important}
 @media (min-width:1024px){
   body.has-side .v2-jr{max-width:900px}
   .jr-tabs{position:static}
@@ -3532,7 +3522,7 @@ html[data-theme="dark"] .jr-hbar.first .jr-hbar-track i{background:#FACC15}
 @keyframes jrPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes jrDrop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
 @keyframes jrIn{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-html.att-noanim .jr-pod .jr-step,html.att-noanim .jr-pod .jr-av,html.att-noanim .jr-pod .jr-medal,html.att-noanim .jr-bar rect,html.att-noanim .jr-meter i,html.att-noanim .jr-hbar-track i,html.att-noanim .jr-banner,html.att-noanim .jr-home,html.att-noanim .jr-award.live{animation:none}
+html.att-noanim .jr-pod .jr-step,html.att-noanim .jr-pod .jr-av,html.att-noanim .jr-pod .jr-medal,html.att-noanim .jr-bar rect,html.att-noanim .jr-meter i,html.att-noanim .jr-hbar-track i,html.att-noanim .jr-banner,html.att-noanim .jr-home,html.att-noanim .jr-award.live{animation-duration:0s!important;animation-delay:0s!important}
 @media (prefers-reduced-motion:reduce){.jr-meter i,.jr-pod .jr-av,.jr-pod .jr-medal,.jr-banner,.jr-home,.jr-award.live{animation:none}}
 .jr-paused *{animation-play-state:paused!important}
 .jr-me-rank{display:flex!important;align-items:center;justify-content:center}
@@ -3938,7 +3928,7 @@ html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"]
 @keyframes jrPodIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
 .jr-pod.empty{animation-name:jrPodInDim}
 @keyframes jrPodInDim{from{opacity:0;transform:translateY(26px)}to{opacity:.38;transform:none}}
-html.att-noanim .jr-pod,.att-tabswipe-on .jr-pod{animation:none!important}
+html.att-noanim .jr-pod,.att-tabswipe-on .jr-pod{animation-duration:0s!important;animation-delay:0s!important}
 @media (prefers-reduced-motion:reduce){.jr-pod{animation:none}}
 /* keep room for the scrollbar on every page, so switching between a long and a short
    tab (e.g. Juara: Kehadiran <-> Nilai) doesn't shift the whole page sideways */
@@ -4019,3 +4009,16 @@ html[data-theme="dark"] .attendance-page #tzSeg button.on b{color:#14162B!import
 html[data-theme="dark"] .attendance-page #tzSeg button.on small{color:#3F6212!important}
 html[data-theme="dark"] .attendance-page #tzSeg button small,html[data-theme="dark"] .attendance-page .tz-now{color:#9A9A9F!important}
 html[data-theme="dark"] .tz-now{color:#9A9A9F}
+
+/* ---------- Beranda: two columns that each flow on their own ----------
+   (the right "Menu lainnya" column no longer stretches to the height of the champions card) */
+.v2-home-left,.v2-home-right{display:contents}
+@media (min-width:1024px){
+  body.has-side .v2-home-main>.att-weakpw{grid-column:1/-1}
+  body.has-side .v2-home-left{display:flex;flex-direction:column;gap:14px;grid-column:1;min-width:0}
+  body.has-side .v2-home-right{display:flex;flex-direction:column;gap:14px;grid-column:2;min-width:0}
+  body.has-side .v2-home-left>.v2-section-head,body.has-side .v2-home-right>.v2-section-head{margin-top:6px}
+  body.has-side .v2-home-left>:not([hidden]) ~ .v2-section-head{margin-top:6px}
+  body.has-side .v2-home-right>.v2-section-head:first-child{margin-top:0}
+  body.has-side .v2-home-left:not(:has(>.v2-lesson:not([hidden]),>.v2-taskcard:not([hidden]),>.jr-home-wrap:not([hidden])))>.v2-section-head{margin-top:0}
+}

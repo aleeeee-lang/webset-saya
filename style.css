@@ -4022,3 +4022,35 @@ html[data-theme="dark"] .tz-now{color:#9A9A9F}
   body.has-side .v2-home-right>.v2-section-head:first-child{margin-top:0}
   body.has-side .v2-home-left:not(:has(>.v2-lesson:not([hidden]),>.v2-taskcard:not([hidden]),>.jr-home-wrap:not([hidden])))>.v2-section-head{margin-top:0}
 }
+
+/* ---------- Izin / Sakit: photo of a letter (js/att-proof.js) ---------- */
+.v2-proof{display:flex;flex-direction:column;gap:10px}
+.v2-proof[hidden]{display:none}
+.v2-proof-head{display:flex;flex-direction:column;gap:2px}
+.v2-proof-head b{font-size:12px;font-weight:700}
+.v2-proof-head small{font-size:12px;color:#8A8FA8;font-weight:500}
+.v2-proof-empty{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v2-proof-empty[hidden],.v2-proof-full[hidden]{display:none}
+.v2-proof-btn{height:56px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #C9CCD8;border-radius:18px;background:#fff;color:#14162B;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.v2-proof-btn:active{transform:scale(.98)}
+.v2-proof-full{display:flex;align-items:center;gap:12px;padding:10px;border-radius:18px;background:#fff;border:1.5px solid #E4E5EC}
+.v2-proof-full img{width:72px;height:72px;border-radius:12px;object-fit:cover;cursor:zoom-in;flex:none;background:#F1F2F6}
+.v2-proof-act{flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.v2-proof-link{border:none;background:#F1F2F6;color:#14162B;font-family:inherit;font-size:13px;font-weight:700;padding:10px 16px;border-radius:12px;cursor:pointer}
+.v2-proof-x{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;border-radius:12px;background:transparent;color:#EF4444;cursor:pointer}
+html[data-theme="dark"] .v2-proof-btn{background:#0A0A0A;border-color:#3A3A3F;color:#EDEDED}
+html[data-theme="dark"] .v2-proof-full{background:#0A0A0A;border-color:#2C2C2E}
+html[data-theme="dark"] .v2-proof-link{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .v2-proof-head small{color:#8E8E93}
+.am-proof{position:relative;width:38px;height:38px;flex:none;border-radius:10px;overflow:hidden;display:block}
+.am-proof img{width:100%;height:100%;object-fit:cover}
+.am-proof i{position:absolute;left:0;right:0;bottom:0;font-style:normal;font-size:8.5px;font-weight:800;text-align:center;line-height:13px;background:rgba(20,22,43,.82);color:#C6F432}
+
+.lv-proof{display:flex;align-items:center;gap:10px;padding:6px;border-radius:12px;background:#fff;text-decoration:none;color:#14162B;font-size:13px;font-weight:700}
+.lv-proof[hidden],.am-proof[hidden]{display:none}
+.lv-proof img{width:48px;height:48px;border-radius:9px;object-fit:cover;flex:none}
+html[data-theme="dark"] .lv-proof{background:#0A0A0A;color:#EDEDED}
+#proofBox.v2-proof .v2-proof-head b{color:inherit}
+html[data-theme="dark"] .attendance-page .v2-proof-x{color:#F87171!important}
+html[data-theme="dark"] .attendance-page .am-proof i{color:#C6F432!important}
+html[data-theme="dark"] .attendance-page .v2-proof-head small{color:#8E8E93!important}

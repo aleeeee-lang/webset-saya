@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021j">
-<script src="js/theme.js?v=20261021j"></script>
-<script src="js/lang.js?v=20261021j"></script>
-<script src="js/toast.js?v=20261021j"></script>
+<link rel="stylesheet" href="style.css?v=20261021l">
+<script src="js/theme.js?v=20261021l"></script>
+<script src="js/lang.js?v=20261021l"></script>
+<script src="js/toast.js?v=20261021l"></script>
 </head>
 
 <body>
@@ -110,8 +110,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021j"></script>
-<script src="js/auth.js?v=20261021j"></script>
+<script src="js/supabase.js?v=20261021l"></script>
+<script src="js/auth.js?v=20261021l"></script>
 
 <script>
 
@@ -329,6 +329,15 @@ async function renderRow(item, showDate) {
         if (signedData && signedData.signedUrl) {
             const url = signedData.signedUrl;
             photoHtml = `<img src="${safeURL(url)}" onclick="window.open('${safeURL(url)}', '_blank')" style="width:38px;height:38px;border-radius:10px;object-fit:cover;cursor:pointer;flex:none">`;
+        }
+    }
+
+    // Izin / Sakit: photo of the letter (attendance_proof.sql)
+    if (item.proof_url) {
+        const { data: pd } = await supabaseClient.storage.from("attendance-photos").createSignedUrl(item.proof_url, 3600);
+        if (pd && pd.signedUrl) {
+            const pu = safeURL(pd.signedUrl);
+            photoHtml += `<a class="am-proof" href="${pu}" target="_blank" rel="noopener" title="${getLang() === "id" ? "Foto surat" : "Letter photo"}"><img src="${pu}" alt=""><i>${getLang() === "id" ? "Surat" : "Letter"}</i></a>`;
         }
     }
 

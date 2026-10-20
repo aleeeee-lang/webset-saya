@@ -1179,6 +1179,7 @@ Object.assign(translations, {
     fp_err_already: { en: "Already registered. If this is a new phone, ask the admin to reset it.", id: "Sudah terdaftar. Kalau ini HP baru, minta admin reset dulu." },
     fp_err_generic: { en: "Fingerprint check failed. Try again or use the camera.", id: "Cek sidik jari gagal. Coba lagi atau pakai kamera." },
     toast_fp_needed: { en: "Scan your fingerprint first.", id: "Tempel sidik jari dulu." },
+    toast_proof_upload_failed: { en: "Could not upload the proof photo: ", id: "Foto surat gagal diunggah: " },
     toast_att_fp_invalid: { en: "Fingerprint check expired. Scan again.", id: "Cek sidik jari kedaluwarsa. Tempel lagi." },
     fp_badge: { en: "Fingerprint on", id: "Sidik jari" },
     fp_reset_short: { en: "Reset", id: "Reset" },

@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261021j"
+        href="style.css?v=20261021l"
     >
-    <script src="js/theme.js?v=20261021j"></script>
-    <script src="js/lang.js?v=20261021j"></script>
-    <script src="js/toast.js?v=20261021j"></script>
-    <script src="js/transition.js?v=20261021j"></script>
-    <script src="js/avatarcrop.js?v=20261021j"></script>
+    <script src="js/theme.js?v=20261021l"></script>
+    <script src="js/lang.js?v=20261021l"></script>
+    <script src="js/toast.js?v=20261021l"></script>
+    <script src="js/transition.js?v=20261021l"></script>
+    <script src="js/avatarcrop.js?v=20261021l"></script>
 
     
 </head>
@@ -79,6 +79,24 @@
             <span data-i18n="label_reason">Reason</span>
             <textarea id="reason" rows="5" placeholder="Why are you absent?" data-i18n-placeholder="reason_placeholder"></textarea>
         </label>
+
+        <!-- Izin / Sakit: photo of a letter (js/att-proof.js) -->
+        <section class="v2-proof" id="proofBox" hidden>
+            <div class="v2-proof-head"><b id="proofTitle">Foto surat / bukti</b><small id="proofHint"></small></div>
+            <div class="v2-proof-empty" id="proofEmpty">
+                <button type="button" class="v2-proof-btn" id="proofCam"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span id="proofCamTxt">Ambil foto</span></button>
+                <button type="button" class="v2-proof-btn" id="proofGal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg><span id="proofGalTxt">Dari galeri</span></button>
+            </div>
+            <div class="v2-proof-full" id="proofFull" hidden>
+                <img id="proofImg" alt="">
+                <div class="v2-proof-act">
+                    <button type="button" class="v2-proof-link" id="proofChange">Ganti</button>
+                    <button type="button" class="v2-proof-x" id="proofRemove"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
+                </div>
+            </div>
+            <input type="file" id="proofCamIn" accept="image/*" capture="environment" hidden>
+            <input type="file" id="proofGalIn" accept="image/*" hidden>
+        </section>
         </div>
 
         <div class="v2-method" id="attMethod" role="tablist">
@@ -355,17 +373,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261021j"></script>
+    <script src="js/supabase.js?v=20261021l"></script>
     
-    <script src="js/auth.js?v=20261021j"></script>
+    <script src="js/auth.js?v=20261021l"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261021j"></script>
+    <script src="js/camera.js?v=20261021l"></script>
 
-    <script src="js/fingerprint.js?v=20261021j"></script>
-    <script src="js/att-method.js?v=20261021j"></script>
-    <script src="js/attendance.js?v=20261021j"></script>
+    <script src="js/fingerprint.js?v=20261021l"></script>
+    <script src="js/att-method.js?v=20261021l"></script>
+    <script src="js/att-proof.js?v=20261021l"></script>
+    <script src="js/attendance.js?v=20261021l"></script>
 
 
 
@@ -452,6 +471,7 @@
             });
             statusInputs.forEach(function (input) { input.checked = input.value === value; });
             document.getElementById("reasonBox").hidden = !value || value === "Hadir";
+            if (window.attProofShow) attProofShow(value);
         }
 
         statusButtons.forEach(function (btn) {

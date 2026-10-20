@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021j">
-<script src="js/theme.js?v=20261021j"></script>
-<script src="js/lang.js?v=20261021j"></script>
-<script src="js/toast.js?v=20261021j"></script>
+<link rel="stylesheet" href="style.css?v=20261021l">
+<script src="js/theme.js?v=20261021l"></script>
+<script src="js/lang.js?v=20261021l"></script>
+<script src="js/toast.js?v=20261021l"></script>
 </head>
 
 <body>
@@ -44,8 +44,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021j"></script>
-<script src="js/auth.js?v=20261021j"></script>
+<script src="js/supabase.js?v=20261021l"></script>
+<script src="js/auth.js?v=20261021l"></script>
 
 <script>
 
@@ -120,6 +120,7 @@ function renderLeaveLists() {
                         <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(r.name || "-")} <span style="color:#888;font-weight:400">· ${escapeHTML(r.class || "-")}</span></strong>
                         <span style="display:block;margin-top:2px;font-size:12px;color:#888">${typeLabel} · ${dateRange}${r.reason ? " · " + escapeHTML(r.reason) : ""}</span>
                     </div>
+                    ${r.proof_url ? `<a class="lv-proof" data-proof="${escapeHTML(r.proof_url)}" target="_blank" rel="noopener" hidden><img alt=""><span>${lang === "id" ? "Lihat foto surat" : "View letter photo"}</span></a>` : ""}
                     <div style="display:flex;gap:8px">
                         <button type="button" class="v2-approve" onclick="reviewLeaveRequest('${r.id}', 'approved')" style="flex:1;border:none;background:#14162B;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff" data-i18n="btn_approve">Approve</button>
                         <button type="button" class="v2-reject" onclick="reviewLeaveRequest('${r.id}', 'rejected')" style="flex:1;border:none;background:#ECEDF2;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;color:#B91C1C" data-i18n="btn_reject">Reject</button>
@@ -142,10 +143,24 @@ function renderLeaveLists() {
                         <strong style="display:block;font-size:13px;color:#20243a">${escapeHTML(r.name || "-")} <span style="color:#888;font-weight:400">· ${escapeHTML(r.class || "-")}</span></strong>
                         <span style="display:block;margin-top:2px;font-size:12px;color:#888">${typeLabel} · ${dateRange}</span>
                     </div>
+                    ${r.proof_url ? `<a class="am-proof" data-proof="${escapeHTML(r.proof_url)}" target="_blank" rel="noopener" hidden><img alt=""><i>${lang === "id" ? "Surat" : "Letter"}</i></a>` : ""}
                     <span class="spp-status-badge ${r.status}">${statusLabel}</span>
                 </div>
             `;
         }).join("");
+    }
+    fillLeaveProofs();
+}
+
+// photos of letters (attendance_proof.sql): private files, opened with a link that works for an hour
+async function fillLeaveProofs() {
+    const links = document.querySelectorAll("[data-proof]");
+    for (const a of links) {
+        const { data } = await supabaseClient.storage.from("attendance-photos").createSignedUrl(a.getAttribute("data-proof"), 3600);
+        if (!data || !data.signedUrl) continue;
+        a.href = data.signedUrl;
+        a.querySelector("img").src = data.signedUrl;
+        a.hidden = false;
     }
 }
 
@@ -176,6 +191,8 @@ async function reviewLeaveRequest(id, decision) {
                 status: request.type,
                 reason: request.reason || ""
             };
+            // the letter photo goes onto each attendance day too
+            if (request.proof_url) payload.proof_url = request.proof_url;
 
             if (existing) {
                 await supabaseClient.from("attendance").update(payload).eq("id", existing.id);

@@ -197,7 +197,7 @@ function setTheme(theme) {
 // Install-as-app + push notifications (loaded on every page)
 (function () {
     var p = document.createElement("script");
-    p.src = "js/push.js?v=20261021j";
+    p.src = "js/push.js?v=20261021l";
     p.defer = true;
     document.head.appendChild(p);
 })();
@@ -205,7 +205,7 @@ function setTheme(theme) {
 // Form buttons: dim until the needed fields are filled (loaded on every page)
 (function () {
     var f = document.createElement("script");
-    f.src = "js/formready.js?v=20261021j";
+    f.src = "js/formready.js?v=20261021l";
     f.defer = true;
     document.head.appendChild(f);
 })();
@@ -213,7 +213,7 @@ function setTheme(theme) {
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");
-    a.src = "js/animate.js?v=20261021j";
+    a.src = "js/animate.js?v=20261021l";
     a.defer = true;
     document.head.appendChild(a);
 })();
@@ -221,7 +221,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261021j";
+    w.src = "js/swipe.js?v=20261021l";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -229,7 +229,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261021j";
+    s.src = "js/sidebar.js?v=20261021l";
     s.defer = true;
     document.head.appendChild(s);
 })();

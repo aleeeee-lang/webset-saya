@@ -279,14 +279,25 @@ async function saveAttendance() {
 
 
     // =========================
+    // PROOF PHOTO (Izin / Sakit, attendance_proof.sql)
+    // =========================
+    let proofFields = {};
+    const proof = (status === "Izin" || status === "Sakit") && typeof attProofBlob === "function" ? attProofBlob() : null;
+    if (proof) {
+        const proofPath = user.id + "/proof_" + Date.now() + ".jpg";
+        const { error: proofErr } = await supabaseClient.storage.from("attendance-photos").upload(proofPath, proof, { contentType: "image/jpeg" });
+        if (proofErr) {
+            showToast(translations.toast_proof_upload_failed[lang] + proofErr.message, "error");
+            return;
+        }
+        proofFields = { proof_url: proofPath };
+    }
+
+    // =========================
     // INSERT TO SUPABASE
     // =========================
 
-    const {
-        error
-    } = await supabaseClient
-        .from("attendance")
-        .insert([
+    const row =
             {
                 user_id: user.id,
 
@@ -308,9 +319,16 @@ async function saveAttendance() {
 
                 ...locFields,
 
-                ...fpFields
-            }
-        ]);
+                ...fpFields,
+
+                ...proofFields
+            };
+    let { error } = await supabaseClient.from("attendance").insert([row]);
+    // database without attendance_proof.sql yet: send it without the proof photo
+    if (error && proofFields.proof_url && /proof_url/.test(error.message || "")) {
+        delete row.proof_url;
+        ({ error } = await supabaseClient.from("attendance").insert([row]));
+    }
 
 
     // =========================
@@ -389,5 +407,7 @@ async function saveAttendance() {
         capturedPhoto = null;
 
     }
+
+    if (typeof attProofReset === "function") attProofReset();
 
 }

@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021b">
-<script src="js/theme.js?v=20261021b"></script>
-<script src="js/lang.js?v=20261021b"></script>
-<script src="js/toast.js?v=20261021b"></script>
+<link rel="stylesheet" href="style.css?v=20261021d">
+<script src="js/theme.js?v=20261021d"></script>
+<script src="js/lang.js?v=20261021d"></script>
+<script src="js/toast.js?v=20261021d"></script>
 </head>
 
 <body>
@@ -57,7 +57,7 @@
 
             <input type="text" id="leaveReason" class="am-field" data-i18n-placeholder="placeholder_leave_reason" placeholder="Reason" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
 
-            <button type="button" class="submit-button" id="submitLeaveBtn" data-needs="leaveStartDate" onclick="submitLeaveRequest()" style="margin-top:4px" data-i18n="btn_submit_leave_request">
+            <button type="button" class="submit-button" id="submitLeaveBtn" data-needs="leaveStartDate,leaveEndDate,leaveReason" onclick="submitLeaveRequest()" style="margin-top:4px" data-i18n="btn_submit_leave_request">
                 Submit Request
             </button>
 
@@ -74,8 +74,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021b"></script>
-<script src="js/auth.js?v=20261021b"></script>
+<script src="js/supabase.js?v=20261021d"></script>
+<script src="js/auth.js?v=20261021d"></script>
 
 <script>
 
@@ -97,7 +97,9 @@ async function checkUser() {
     myProfile = profile;
 
     document.getElementById("leaveStartDate").value = localDateStr();
-    document.getElementById("leaveEndDate").value = localDateStr();
+    // the end date is left empty on purpose: the button only works once the student picks it
+    document.getElementById("leaveEndDate").value = "";
+    syncLeaveEndMin();
 
     await loadMyLeaveRequests();
 }
@@ -176,15 +178,36 @@ async function deleteLeaveRequest(id) {
     await loadMyLeaveRequests();
 }
 
+// the end date can't be before the start date
+function syncLeaveEndMin() {
+    const st = document.getElementById("leaveStartDate").value;
+    const en = document.getElementById("leaveEndDate");
+    en.min = st || "";
+    if (st && en.value && en.value < st) en.value = "";
+    syncLeaveBtn();
+}
+// the button can only be pressed once both dates are chosen and a reason is written
+function syncLeaveBtn() {
+    const btn = document.getElementById("submitLeaveBtn");
+    if (btn.dataset.busy) return;
+    btn.disabled = !(document.getElementById("leaveStartDate").value && document.getElementById("leaveEndDate").value
+        && document.getElementById("leaveReason").value.trim());
+}
+document.getElementById("leaveReason").addEventListener("input", function () { syncLeaveBtn(); });
+document.getElementById("leaveStartDate").addEventListener("change", syncLeaveEndMin);
+document.getElementById("leaveStartDate").addEventListener("input", syncLeaveEndMin);
+document.getElementById("leaveEndDate").addEventListener("change", syncLeaveBtn);
+document.getElementById("leaveEndDate").addEventListener("input", syncLeaveBtn);
+
 async function submitLeaveRequest() {
     const lang = getLang();
     const type = document.getElementById("leaveType").value;
     const startDate = document.getElementById("leaveStartDate").value;
-    const endDate = document.getElementById("leaveEndDate").value || startDate;
+    const endDate = document.getElementById("leaveEndDate").value;
     const reason = document.getElementById("leaveReason").value.trim();
     const btn = document.getElementById("submitLeaveBtn");
 
-    if (!startDate) {
+    if (!startDate || !endDate) {
         showToast(translations.toast_select_leave_date[lang], "error");
         return;
     }
@@ -194,7 +217,12 @@ async function submitLeaveRequest() {
         return;
     }
 
-    btn.disabled = true;
+    if (!reason) {
+        showToast(translations.toast_leave_reason_needed[lang], "error");
+        return;
+    }
+
+    btn.disabled = true; btn.dataset.busy = "1";
     btn.textContent = translations.btn_submitting[lang];
 
     const { error } = await supabaseClient
@@ -209,8 +237,9 @@ async function submitLeaveRequest() {
             reason: reason || null
         });
 
-    btn.disabled = false;
+    delete btn.dataset.busy;
     btn.textContent = translations.btn_submit_leave_request[lang];
+    syncLeaveBtn();
 
     if (error) {
         showToast(translations.toast_save_failed[lang] + error.message, "error");
@@ -218,6 +247,8 @@ async function submitLeaveRequest() {
     }
 
     document.getElementById("leaveReason").value = "";
+    document.getElementById("leaveEndDate").value = "";   // next request: choose the end date again
+    syncLeaveBtn();
 
     showToast(translations.toast_leave_request_submitted[lang], "success");
     await loadMyLeaveRequests();

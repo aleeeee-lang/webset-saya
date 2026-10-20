@@ -3956,3 +3956,5 @@ html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calen
 .calendar-arrow.on,.v2-my .calendar-arrow.on{background:#14162B!important;color:#fff!important}
 html[data-theme="dark"] .calendar-arrow,html[data-theme="dark"] .v2-my .calendar-arrow{background:transparent!important;color:#EDEDED!important}
 html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calendar-arrow.on{background:#C6F432!important;color:#14162B!important}
+/* a form button that can't be pressed yet */
+.submit-button:disabled{opacity:.45;cursor:not-allowed}

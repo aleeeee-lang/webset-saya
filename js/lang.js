@@ -400,6 +400,7 @@ const translations = {
     btn_reactivate: { en: "Reactivate", id: "Aktifkan Lagi" },
     label_leave_date: { en: "Leave date", id: "Tanggal keluar" },
     hint_mark_left: { en: "Marks this student as no longer attending. Their login will be blocked and auto-absence stops counting after the leave date, but their attendance history stays intact.", id: "Menandai siswa ini sudah tidak sekolah di sini. Login mereka akan diblokir dan alpa otomatis berhenti dihitung setelah tanggal keluar, tapi riwayat absensinya tetap tersimpan." },
+    toast_leave_reason_needed: { en: "Write the reason for your leave first.", id: "Tulis alasan izinnya dulu." },
     toast_select_leave_date: { en: "Please select a leave date.", id: "Silakan pilih tanggal keluar." },
     toast_student_marked_left: { en: "Student marked as left/graduated.", id: "Siswa ditandai sudah keluar/lulus." },
     toast_student_reactivated: { en: "Student reactivated.", id: "Siswa diaktifkan lagi." },

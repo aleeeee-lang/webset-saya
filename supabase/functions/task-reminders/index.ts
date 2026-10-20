@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
   webpush.setVapidDetails("mailto:admin@attendreem.app", Deno.env.get("VAPID_PUBLIC_KEY")!, Deno.env.get("VAPID_PRIVATE_KEY")!);
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
-  {
+  if (!queueOnly) {   // the queue path doesn't use the clock
     const { data: loc, error: locErr } = await db.from("school_location").select("timezone").eq("id", "default").maybeSingle();
     if (!locErr && loc && TZ_HOURS[(loc as { timezone?: string }).timezone ?? ""]) TZ = TZ_HOURS[(loc as { timezone: string }).timezone];
   }

@@ -17,17 +17,18 @@
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
 
-   <link rel="stylesheet" href="style.css?v=20261020a">
+   <link rel="stylesheet" href="style.css?v=20261020b">
 
-    <script src="js/theme.js?v=20261020a"></script>
+    <script src="js/theme.js?v=20261020b"></script>
 
-    <script src="js/lang.js?v=20261020a"></script>
+    <script src="js/lang.js?v=20261020b"></script>
+    <script src="js/money-input.js?v=20261020b"></script>
 
-    <script src="js/toast.js?v=20261020a"></script>
-    <script src="js/paymethods.js?v=20261020a"></script>
-    <script src="js/shared-photos.js?v=20261020a"></script>
+    <script src="js/toast.js?v=20261020b"></script>
+    <script src="js/paymethods.js?v=20261020b"></script>
+    <script src="js/shared-photos.js?v=20261020b"></script>
 
-    <script src="js/transition.js?v=20261020a"></script>
+    <script src="js/transition.js?v=20261020b"></script>
 
 </head>
 
@@ -194,7 +195,7 @@
                     <div class="savings-field-label" data-i18n="label_amount">Amount (Rp)</div>
                     <div class="savings-amount-field">
                         <span class="rp-prefix">Rp</span>
-                        <input type="number" id="personalTransactionAmount" class="am-field" placeholder="10000" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
+                        <input type="text" data-money id="personalTransactionAmount" class="am-field" placeholder="10.000" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                     </div>
                 </div>
 
@@ -606,9 +607,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261020a"></script>
+    <script src="js/supabase.js?v=20261020b"></script>
 
-    <script src="js/auth.js?v=20261020a"></script>
+    <script src="js/auth.js?v=20261020b"></script>
 
      <script>
 function tr(key) {

@@ -125,7 +125,7 @@ const translations = {
     label_current_balance: { en: "Current Balance", id: "Saldo Saat Ini" },
     label_transaction_type: { en: "Transaction Type", id: "Jenis Transaksi" },
     label_amount: { en: "Amount (Rp)", id: "Jumlah (Rp)" },
-    placeholder_amount: { en: "e.g. 10000", id: "misal: 10000" },
+    placeholder_amount: { en: "e.g. 10,000", id: "misal: 10.000" },
     label_note_optional: { en: "Note (optional)", id: "Catatan (opsional)" },
     placeholder_savings_note: { en: "e.g. Weekly savings", id: "misal: Tabungan mingguan" },
     btn_add_transaction: { en: "Add Transaction", id: "Tambah Transaksi" },

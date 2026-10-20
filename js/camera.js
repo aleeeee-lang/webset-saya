@@ -53,7 +53,6 @@ let earBaseline = null;              // running "eyes open" EAR baseline, recalc
 let earCalibrationSamples = [];      // EAR samples collected while calibrating the baseline
 let blinkReadyAt = 0;                // time from which a blink may count (set when calibration finishes)
 let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
-const FACE_ABSENT_GRACE_MS = 2500;   // how long the face can be briefly out of frame before a verified blink is thrown away
 let faceAbsentTimer = null;          // pending "reset liveness" timer while the face is briefly undetected
 
 function resetLiveness() {
@@ -383,17 +382,6 @@ async function runFaceDetectionLoop() {
                         livenessStatusTimer = null;
                     }, 2000);
                 }
-                else if (faceStatusKey === "face_not_detected") {
-                    // face came back after a blink was already verified
-                    setFaceStatus("face_detected", "#16a34a");
-                    if (livenessStatusTimer) clearTimeout(livenessStatusTimer);
-                    livenessStatusTimer = setTimeout(function () {
-                        const statusEl = document.getElementById("faceStatus");
-                        if (statusEl) statusEl.textContent = "";
-                        faceStatusKey = "";
-                        livenessStatusTimer = null;
-                    }, 2000);
-                }
             } else {
                 setFaceStatus("face_liveness_wait", "#14162B");
                 setTakePhotoEnabled(false);
@@ -402,22 +390,10 @@ async function runFaceDetectionLoop() {
             setFaceStatus("face_not_detected", "#d97706");
             resetFaceBoxTimer();
 
-            if (livenessPassed) {
-                // Don't throw away an already-verified blink the instant
-                // detection blips out for a frame or two (the person moving
-                // around, momentary motion blur). Only reset if the face
-                // actually stays out of frame for a while.
-                setTakePhotoEnabled(true);
-                if (!faceAbsentTimer) {
-                    faceAbsentTimer = setTimeout(function () {
-                        resetLiveness();
-                        faceAbsentTimer = null;
-                    }, FACE_ABSENT_GRACE_MS);
-                }
-            } else {
-                setTakePhotoEnabled(false);
-                resetLiveness();
-            }
+            // The face left the camera (missing longer than FACE_GONE_MS, so a
+            // blurry frame doesn't count): whoever comes back must blink again.
+            setTakePhotoEnabled(false);
+            resetLiveness();
         }
 
         faceWasDetected = faceDetected;

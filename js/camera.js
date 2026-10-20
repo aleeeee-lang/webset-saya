@@ -39,14 +39,19 @@ function resetFaceBoxTimer() {
 // (lighting, distance, lens quality all shift the numbers), so instead we
 // track a per-person baseline "eyes open" EAR and look for a relative dip,
 // which adapts automatically to whoever is in frame.
-const EAR_CLOSE_RATIO = 0.96;   // eyes considered closed below 96% of the open baseline (extremely sensitive, so any distance/angle still registers a blink)
-const EAR_OPEN_RATIO = 0.93;    // eyes considered open again above 93% of the open baseline
+// A real blink drops the EAR by roughly 30-60%; normal camera jitter moves it
+// only a few percent, so the "closed" line sits well below that jitter and
+// "open again" sits above it (with a gap between them so noise can't toggle).
+const EAR_CLOSE_RATIO = 0.80;   // eyes considered closed below 80% of the open baseline
+const EAR_OPEN_RATIO = 0.90;    // eyes considered open again above 90% of the open baseline
+const BLINK_MIN_WAIT_MS = 700;  // the "please blink" message shows at least this long before a blink counts
 const EAR_BASELINE_SMOOTHING = 0.2;
 const EAR_CALIBRATION_FRAMES = 8;   // how many frames to sample before locking the "eyes open" baseline (fewer = ready sooner)
 let livenessPassed = false;
 let eyesClosedSeen = false;          // becomes true once we've seen the eyes closed since the face appeared
 let earBaseline = null;              // running "eyes open" EAR baseline, recalculated per face
 let earCalibrationSamples = [];      // EAR samples collected while calibrating the baseline
+let blinkReadyAt = 0;                // time from which a blink may count (set when calibration finishes)
 let livenessStatusTimer = null;      // hides the "berhasil berkedip" message after a short delay
 const FACE_ABSENT_GRACE_MS = 2500;   // how long the face can be briefly out of frame before a verified blink is thrown away
 let faceAbsentTimer = null;          // pending "reset liveness" timer while the face is briefly undetected
@@ -56,6 +61,7 @@ function resetLiveness() {
     eyesClosedSeen = false;
     earBaseline = null;
     earCalibrationSamples = [];
+    blinkReadyAt = 0;
     if (livenessStatusTimer) {
         clearTimeout(livenessStatusTimer);
         livenessStatusTimer = null;
@@ -107,6 +113,13 @@ function updateLiveness(landmarks) {
         // plain average down.
         earBaseline = Math.max.apply(null, earCalibrationSamples);
         earCalibrationSamples = [];
+        blinkReadyAt = Date.now() + BLINK_MIN_WAIT_MS;
+    }
+    if (Date.now() < blinkReadyAt) {
+        // still showing the "please blink" message; just keep the baseline fresh
+        if (ear > earBaseline) earBaseline = earBaseline + (ear - earBaseline) * EAR_BASELINE_SMOOTHING;
+        eyesClosedSeen = false;
+        return;
     }
 
     const closedThreshold = earBaseline * EAR_CLOSE_RATIO;

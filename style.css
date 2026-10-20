@@ -2059,8 +2059,6 @@ html[data-theme="dark"] .info-filter-btn{background:#1C1C1E!important;color:#EDE
 html[data-theme="dark"] .info-filter-btn.v2-chip-on{background:#C6F432!important;color:#14162B!important}
 html[data-theme="dark"] .piket-duty-row{background:#C6F432!important;border-color:#C6F432!important}
 html[data-theme="dark"] .piket-duty-row strong,html[data-theme="dark"] .piket-duty-row span{color:#14162B!important}
-html[data-theme="dark"] #categorySaranBtn[style*="background: rgb(20, 22, 43)"]{background:#C6F432!important;color:#14162B!important;border-color:#C6F432!important}
-html[data-theme="dark"] #categorySaranBtn[style*="rgba(20, 22, 43, 0.14)"]{background:#1C1C1E!important;color:#EDEDED!important;border-color:#3A3A3C!important}
 .calendar-arrow{background:#F3F3F7!important;color:#14162B!important;border-radius:12px}
 .calendar-arrow:last-child{background:#14162B!important;color:#fff!important}
 html[data-theme="dark"] .calendar-arrow{background:#1C1C1E!important;color:#EDEDED!important}
@@ -3788,3 +3786,11 @@ html[data-theme="dark"] .pay-add{border-color:#3A3A3C;color:#AEAEB2}
    reaches the edge behind the gesture bar. If a phone also lets the page run under the
    status bar, keep the page content below it (0 on phones where that doesn't happen). */
 html{padding-top:env(safe-area-inset-top,0px)}
+
+/* Saran & Keluhan: type buttons are neutral until picked */
+.feedback-category-btn.fb-cat{background:#fff;color:#14162B;border:1.5px solid #E2E5EE;transition:background .15s,color .15s,border-color .15s}
+.feedback-category-btn.fb-cat.on[data-category="saran"]{background:#14162B;color:#fff;border-color:#14162B}
+.feedback-category-btn.fb-cat.on[data-category="keluhan"]{background:#DC2626;color:#fff;border-color:#DC2626}
+html[data-theme="dark"] .feedback-category-btn.fb-cat{background:#1C1C1E;color:#EDEDED;border-color:#3A3A3C}
+html[data-theme="dark"] .feedback-category-btn.fb-cat.on[data-category="saran"]{background:#C6F432;color:#14162B!important;border-color:#C6F432}
+html[data-theme="dark"] .feedback-category-btn.fb-cat.on[data-category="keluhan"]{background:#DC2626;color:#fff;border-color:#DC2626}

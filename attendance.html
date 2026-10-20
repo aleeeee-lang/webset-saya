@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261020s"
+        href="style.css?v=20261020v"
     >
-    <script src="js/theme.js?v=20261020s"></script>
-    <script src="js/lang.js?v=20261020s"></script>
-    <script src="js/toast.js?v=20261020s"></script>
-    <script src="js/transition.js?v=20261020s"></script>
-    <script src="js/avatarcrop.js?v=20261020s"></script>
+    <script src="js/theme.js?v=20261020v"></script>
+    <script src="js/lang.js?v=20261020v"></script>
+    <script src="js/toast.js?v=20261020v"></script>
+    <script src="js/transition.js?v=20261020v"></script>
+    <script src="js/avatarcrop.js?v=20261020v"></script>
 
     
 </head>
@@ -36,13 +36,13 @@
     <main class="v2-wrap">
 
         <header class="v2-head">
-            <a href="index.html" class="v2-back" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
             <div>
                 <h1 data-i18n="page_check_in">Check in</h1>
                 <p class="v2-head-sub"><span id="attendanceDate">-</span> · <span id="currentTime">--.--</span></p>
             </div>
         </header>
 
+        <div class="att-side">
         <div class="v2-window" id="attWindow" hidden>
             <span class="v2-window-text"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="attWindowText"></span></span>
             <span class="v2-window-count" id="attWindowCount"></span>
@@ -77,8 +77,9 @@
 
         <label class="v2-reason" id="reasonBox" hidden>
             <span data-i18n="label_reason">Reason</span>
-            <textarea id="reason" rows="3" placeholder="Why are you absent?" data-i18n-placeholder="reason_placeholder"></textarea>
+            <textarea id="reason" rows="5" placeholder="Why are you absent?" data-i18n-placeholder="reason_placeholder"></textarea>
         </label>
+        </div>
 
         <div class="v2-method" id="attMethod" role="tablist">
             <button type="button" class="on" data-m="face" role="tab"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span data-i18n="att_m_face">Camera</span></button>
@@ -354,17 +355,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261020s"></script>
+    <script src="js/supabase.js?v=20261020v"></script>
     
-    <script src="js/auth.js?v=20261020s"></script>
+    <script src="js/auth.js?v=20261020v"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261020s"></script>
+    <script src="js/camera.js?v=20261020v"></script>
 
-    <script src="js/fingerprint.js?v=20261020s"></script>
-    <script src="js/att-method.js?v=20261020s"></script>
-    <script src="js/attendance.js?v=20261020s"></script>
+    <script src="js/fingerprint.js?v=20261020v"></script>
+    <script src="js/att-method.js?v=20261020v"></script>
+    <script src="js/attendance.js?v=20261020v"></script>
 
 
 

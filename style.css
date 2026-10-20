@@ -2227,10 +2227,10 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-head{grid-column:1/-1}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-cam{grid-column:1;grid-row:2/span 4;height:auto;min-height:520px;align-self:stretch}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-cam-buttons{grid-column:1;grid-row:6}
-  body.has-side main.v2-wrap:has(.v2-cam)>.v2-window{grid-column:2;grid-row:2}
-  body.has-side main.v2-wrap:has(.v2-cam)>.v2-label{grid-column:2;grid-row:3}
-  body.has-side main.v2-wrap:has(.v2-cam)>.v2-status-grid{grid-column:2;grid-row:4}
-  body.has-side main.v2-wrap:has(.v2-cam)>.v2-reason{grid-column:2;grid-row:5}
+  /* right column: status + reason stay in one block at the top, so picking Izin / Sakit
+     only opens the reason box below the buttons and nothing else moves */
+  body.has-side main.v2-wrap:has(.v2-cam)>.att-side{grid-column:2;grid-row:2/span 4;display:flex;flex-direction:column;gap:14px;align-self:start}
+  body.has-side .att-side .v2-reason textarea{min-height:200px}
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-submit{grid-column:2;grid-row:6}
   /* camera / fingerprint switch: left column, above the camera or fingerprint panel */
   body.has-side main.v2-wrap:has(.v2-cam)>.v2-method{grid-column:1;grid-row:2}
@@ -3904,3 +3904,28 @@ html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"]
 /* fingerprint: the automatic proof photo */
 .v2-fp-snap{width:58px;height:58px;border-radius:16px;object-fit:cover;transform:scaleX(-1);border:2px solid #4ADE80;margin:-4px 0 4px}
 .v2-fp-snap[hidden]{display:none}
+
+/* status block wrapper on the check-in page: invisible on phones (keeps the normal order) */
+.att-side{display:contents}
+/* a roomier reason box */
+.v2-reason textarea{min-height:130px}
+
+/* Check-in on a tablet held upright (no side menu yet): the same two columns as on a laptop,
+   so picking Izin / Sakit only opens the reason box and nothing else moves */
+@media (min-width:720px) and (max-width:1023px){
+  main.v2-wrap:has(.v2-cam){max-width:940px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:20px;row-gap:14px;align-items:start}
+  main.v2-wrap:has(.v2-cam)>.v2-head{grid-column:1/-1}
+  main.v2-wrap:has(.v2-cam)>.att-side{grid-column:2;grid-row:2/span 4;display:flex;flex-direction:column;gap:14px;align-self:start}
+  .att-side .v2-reason textarea{min-height:180px}
+  main.v2-wrap:has(.v2-cam)>.v2-submit{grid-column:2;grid-row:6}
+  main.v2-wrap:has(.v2-cam)>.v2-method{grid-column:1;grid-row:2}
+  main.v2-wrap:has(.v2-cam)>#faceArea{display:contents}
+  main.v2-wrap:has(.v2-cam)>#faceArea[hidden]{display:none!important}
+  main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam{grid-column:1;grid-row:3/span 3;height:auto;min-height:380px;align-self:stretch}
+  main.v2-wrap:has(.v2-cam) #faceArea>.v2-cam-buttons{grid-column:1;grid-row:6}
+  main.v2-wrap:has(.v2-cam)>.v2-fp{grid-column:1;grid-row:3/span 4;min-height:380px;position:static;border-radius:28px;justify-content:center;padding:22px;box-shadow:none}
+  .v2-fp-round{position:relative;top:auto;left:auto;transform:none;margin-bottom:10px;border-color:transparent!important}
+  body.fp-docked main.v2-wrap{padding-bottom:0}
+  body.fp-docked main.v2-wrap>.v2-submit{display:flex!important}
+  body.fp-docked #toastContainer{bottom:96px}
+}

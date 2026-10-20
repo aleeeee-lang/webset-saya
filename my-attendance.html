@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261020z">
-<script src="js/theme.js?v=20261020z"></script>
-<script src="js/lang.js?v=20261020z"></script>
-<script src="js/toast.js?v=20261020z"></script>
-<script src="js/transition.js?v=20261020z"></script>
-<script src="js/scroll-pop.js?v=20261020z"></script>
+<link rel="stylesheet" href="style.css?v=20261021b">
+<script src="js/theme.js?v=20261021b"></script>
+<script src="js/lang.js?v=20261021b"></script>
+<script src="js/toast.js?v=20261021b"></script>
+<script src="js/transition.js?v=20261021b"></script>
+<script src="js/scroll-pop.js?v=20261021b"></script>
 </head>
 
 <body class="v2-page">
@@ -193,8 +193,8 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261020z"></script>
-<script src="js/auth.js?v=20261020z"></script>
+<script src="js/supabase.js?v=20261021b"></script>
+<script src="js/auth.js?v=20261021b"></script>
 
 <script>
 function tr(key) {
@@ -422,8 +422,12 @@ function nextCalendarMonth() {
     renderCalendar();
 }
 
-document.getElementById("calendarPrevBtn").addEventListener("click", prevCalendarMonth);
-document.getElementById("calendarNextBtn").addEventListener("click", nextCalendarMonth);
+// the arrow you last pressed is the one that lights up
+function markCalendarArrow(btn) {
+    document.querySelectorAll(".calendar-nav .calendar-arrow").forEach(function (b) { b.classList.toggle("on", b === btn); });
+}
+document.getElementById("calendarPrevBtn").addEventListener("click", function () { markCalendarArrow(this); prevCalendarMonth(); });
+document.getElementById("calendarNextBtn").addEventListener("click", function () { markCalendarArrow(this); nextCalendarMonth(); });
 
 function renderInsight(data) {
     const total = data.length;

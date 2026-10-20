@@ -1990,7 +1990,7 @@ html[data-theme="dark"] .v2-dash-badge.dash_badge_improve{background:#FBBF24;col
 .v2-my .calendar-header span{display:none}
 .v2-my .calendar-header h2{margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800}
 .v2-my .calendar-arrow{width:34px;height:34px;border-radius:12px;background:#F3F3F7!important;color:#14162B!important;font-size:20px}
-.v2-my .calendar-arrow:last-child{background:#14162B!important;color:#fff!important}
+.v2-my .calendar-arrow.on{background:#14162B!important;color:#fff!important}
 .v2-my .calendar-week{font-size:11px;font-weight:700;color:#4A4F6A}
 .v2-my .calendar-days{gap:6px;justify-items:center}
 .v2-my .calendar-days span{width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:700;color:#8A8FA8;background:transparent}
@@ -2020,7 +2020,7 @@ html[data-theme="dark"] .v2-my-gear,html[data-theme="dark"] .v2-my-stats div{bac
 html[data-theme="dark"] .v2-my-hero h1{color:#fff}
 html[data-theme="dark"] .v2-my .monthly-calendar-card{background:#121212}
 html[data-theme="dark"] .v2-my .calendar-arrow{background:#1C1C1E!important;color:#EDEDED!important}
-html[data-theme="dark"] .v2-my .calendar-arrow:last-child{background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .v2-my .calendar-arrow.on{background:#C6F432!important;color:#14162B!important}
 html[data-theme="dark"] .v2-my .calendar-header h2{color:#EDEDED}
 html[data-theme="dark"] .v2-my .calendar-week{color:#9A9A9F}
 html[data-theme="dark"] .v2-my .calendar-days span{color:#86868B;background:transparent!important}
@@ -2060,9 +2060,9 @@ html[data-theme="dark"] .info-filter-btn.v2-chip-on{background:#C6F432!important
 html[data-theme="dark"] .piket-duty-row{background:#C6F432!important;border-color:#C6F432!important}
 html[data-theme="dark"] .piket-duty-row strong,html[data-theme="dark"] .piket-duty-row span{color:#14162B!important}
 .calendar-arrow{background:#F3F3F7!important;color:#14162B!important;border-radius:12px}
-.calendar-arrow:last-child{background:#14162B!important;color:#fff!important}
+.calendar-arrow.on{background:#14162B!important;color:#fff!important}
 html[data-theme="dark"] .calendar-arrow{background:#1C1C1E!important;color:#EDEDED!important}
-html[data-theme="dark"] .calendar-arrow:last-child{background:#C6F432!important;color:#14162B!important}
+html[data-theme="dark"] .calendar-arrow.on{background:#C6F432!important;color:#14162B!important}
 
 /* ===== V2 Guru ===== */
 .v2-teach{max-width:600px;margin:0 auto}
@@ -3945,3 +3945,14 @@ html.att-noanim .jr-pod,.att-tabswipe-on .jr-pod{animation:none!important}
 html{scrollbar-gutter:stable}
 /* Juara podium: the champion comes first, then 2nd and 3rd */
 .jr-pod.p1{animation-delay:0s}.jr-pod.p2{animation-delay:.1s}.jr-pod.p3{animation-delay:.18s}
+/* month arrows: just the arrow, no box behind it; the last one pressed is coloured */
+.calendar-arrow,.v2-my .calendar-arrow{background:transparent!important;color:#A3A7BD!important;font-size:28px!important;line-height:1;width:34px;height:34px;padding:0;border-radius:10px;transition:color .15s}
+.calendar-arrow.on,.v2-my .calendar-arrow.on{background:transparent!important;color:#14162B!important;font-weight:700}
+html[data-theme="dark"] .calendar-arrow,html[data-theme="dark"] .v2-my .calendar-arrow{background:transparent!important;color:#6E7286!important}
+html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calendar-arrow.on{background:transparent!important;color:#C6F432!important}
+.calendar-arrow:focus-visible{outline:2px solid #C6F432;outline-offset:2px}
+/* month arrows: only the arrow by default; the box shows on the one you pressed */
+.calendar-arrow,.v2-my .calendar-arrow{background:transparent!important;color:#14162B!important;transition:background-color .15s,color .15s}
+.calendar-arrow.on,.v2-my .calendar-arrow.on{background:#14162B!important;color:#fff!important}
+html[data-theme="dark"] .calendar-arrow,html[data-theme="dark"] .v2-my .calendar-arrow{background:transparent!important;color:#EDEDED!important}
+html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calendar-arrow.on{background:#C6F432!important;color:#14162B!important}

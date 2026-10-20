@@ -3126,6 +3126,9 @@ html[data-theme="dark"] .att-weakpw-act button{border-color:#5A4520!important;co
 .att-app-row.att-app-sub{padding-left:28px;border-top:1px solid #F0F0F4}
 .att-app-sub svg{color:#8A8FA8}
 html[data-theme="dark"] .att-app-row.att-app-sub{border-top-color:#2A2A2D}
+#prefAdminBox[hidden]{display:none!important}
+.notif-admin-head{padding:12px 0 6px 28px;border-top:1px solid #F0F0F4;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8A8FA8}
+html[data-theme="dark"] .notif-admin-head{border-top-color:#2A2A2D}
 html[data-theme="dark"] .att-switch input:checked+span{background:#C6F432}
 
 /* ===== Home header: bell + search as plain icons (no box behind them) ===== */

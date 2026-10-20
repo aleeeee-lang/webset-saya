@@ -8,7 +8,8 @@
 //            skipped on days marked as a holiday in the academic calendar.
 //   exams:   academic-calendar days of type "exam": 3 days before and the day before (17:00), and on the day (06:00);
 //            for a multi-day exam only the first day gets the early reminders. Everyone with notifications on.
-//   queue:   announcements and attendance changes queued by database triggers (push_events.sql);
+//   queue:   announcements and attendance changes queued by database triggers (push_events.sql),
+//            and new leave requests / feedback / SPP proofs for admins (admin_push.sql);
 //            the database also calls this right away with {"queue_only": true} (push_instant.sql)
 // Each person can turn tasks / lessons / general off in Settings (table notif_prefs).
 // Secrets needed (Edge Functions -> Secrets): VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, CRON_SECRET.
@@ -75,7 +76,8 @@ Deno.serve(async (req) => {
   }
   if (!qErr && queued?.length) {
     for (const q of queued as { user_id: string; title: string; body: string; url: string; tag: string | null }[]) {
-      if (noGeneral.has(q.user_id)) continue;
+      // admin division pushes (admin_push.sql) have their own switches in Settings
+      if (noGeneral.has(q.user_id) && !(q.tag ?? "").startsWith("admin-")) continue;
       msgs.push({ user: q.user_id, title: q.title, body: q.body, url: q.url, tag: q.tag ?? "attendreem", ttl: 24 * 3600 });
     }
   }

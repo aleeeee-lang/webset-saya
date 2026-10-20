@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021f">
-<script src="js/theme.js?v=20261021f"></script>
-<script src="js/lang.js?v=20261021f"></script>
-<script src="js/toast.js?v=20261021f"></script>
+<link rel="stylesheet" href="style.css?v=20261021h">
+<script src="js/theme.js?v=20261021h"></script>
+<script src="js/lang.js?v=20261021h"></script>
+<script src="js/toast.js?v=20261021h"></script>
 </head>
 
 <body>
@@ -54,6 +54,7 @@
             <span><i class="legend spp"></i><span data-i18n="type_spp">SPP Payment</span></span>
             <span><i class="legend exam"></i><span data-i18n="type_exam">Exam</span></span>
             <span><i class="legend event"></i><span data-i18n="type_event">School Event</span></span>
+            <span><i class="legend note"></i><span data-i18n="legend_my_notes">My notes</span></span>
         </div>
 
     </section>
@@ -83,8 +84,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021f"></script>
-<script src="js/auth.js?v=20261021f"></script>
+<script src="js/supabase.js?v=20261021h"></script>
+<script src="js/auth.js?v=20261021h"></script>
+<script src="js/my-notes.js?v=20261021h"></script>
 
 <script>
 
@@ -151,19 +153,28 @@ function renderCalendar() {
         if (ev) cls = (ev.type || "holiday") + "-day";
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 
-        if (ev) {
-            html += `<span class="${cls.trim()}" onclick="showEventInfo('${key}')" style="cursor:pointer">${day}</span>`;
-        } else {
-            html += `<span class="${cls.trim()}">${day}</span>`;
-        }
+        html += `<span class="${cls.trim()}" data-date="${key}" onclick="showEventInfo('${key}')" style="cursor:pointer">${day}</span>`;
     }
 
-    document.getElementById("calendarDays").innerHTML = html;
+    const box = document.getElementById("calendarDays");
+    box.innerHTML = html;
+    if (window.AttNotes) AttNotes.mark(box);
 }
 
 function showEventInfo(dateKey) {
     const lang = getLang();
     const ev = eventByDate[dateKey];
+    if (window.AttNotes) {
+        // day sheet: the school agenda of that day + the student's own notes
+        const info = [];
+        if (ev) {
+            const m = eventTypeMeta[ev.type || "holiday"] || eventTypeMeta.holiday;
+            const tl = translations[m.labelKey] ? translations[m.labelKey][lang] : ev.type;
+            info.push({ text: ev.label ? tl + " — " + ev.label : tl, dot: ev.type || "holiday" });
+        }
+        AttNotes.open(dateKey, { info: info, onChange: function () { AttNotes.mark(document.getElementById("calendarDays")); } });
+        return;
+    }
     if (!ev) return;
 
     const meta = eventTypeMeta[ev.type || "holiday"] || eventTypeMeta.holiday;
@@ -277,8 +288,13 @@ function nextCalendarMonth() {
 function markCalendarArrow(btn) {
     document.querySelectorAll(".calendar-arrow").forEach(function (b) { b.classList.toggle("on", b === btn); });
 }
-document.getElementById("calendarPrevBtn").addEventListener("click", function () { markCalendarArrow(this); prevCalendarMonth(); });
-document.getElementById("calendarNextBtn").addEventListener("click", function () { markCalendarArrow(this); nextCalendarMonth(); });
+// back on the current month: no arrow box
+function calendarOnThisMonth() {
+    const n = new Date();
+    return calendarViewYear === n.getFullYear() && calendarViewMonth === n.getMonth();
+}
+document.getElementById("calendarPrevBtn").addEventListener("click", function () { prevCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
+document.getElementById("calendarNextBtn").addEventListener("click", function () { nextCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 
 async function checkUser() {
     const user = await requireLogin();
@@ -287,6 +303,7 @@ async function checkUser() {
     await loadEvents();
     renderCalendar();
     renderUpcomingEvents();
+    if (window.AttNotes) AttNotes.load().then(function () { AttNotes.mark(document.getElementById("calendarDays")); });
 }
 
 checkUser();

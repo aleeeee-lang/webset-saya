@@ -3962,3 +3962,45 @@ html[data-theme="dark"] .submit-button:disabled{background:#26262A!important;col
 
 html[data-theme="dark"] .attendance-page .submit-button:disabled{background:#26262A!important;color:#A1A1AA!important;opacity:1!important}
 .attendance-page .submit-button:disabled{opacity:1!important}
+
+/* ---------- personal notes on the calendar (js/my-notes.js) ---------- */
+.calendar-days span[data-date]{position:relative}
+.calendar-days span.has-note::before{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:#8B5CF6;box-shadow:0 0 0 1.5px #fff}
+html[data-theme="dark"] .calendar-days span.has-note::before{background:#A78BFA;box-shadow:0 0 0 1.5px #121212}
+.legend.note,.v2-my .legend.note{background:#8B5CF6}
+html[data-theme="dark"] .legend.note,html[data-theme="dark"] .v2-my .legend.note{background:#A78BFA}
+.mn-wrap{position:fixed;inset:0;z-index:7000;background:rgba(7,8,15,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s;font-family:'Plus Jakarta Sans',sans-serif;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.mn-wrap.in{opacity:1}
+.mn-sheet{width:100%;max-width:440px;max-height:86vh;overflow:auto;box-sizing:border-box;background:#fff;color:#14162B;border-radius:28px 28px 0 0;padding:20px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;transform:translateY(24px);transition:transform .2s cubic-bezier(.22,.8,.3,1)}
+.mn-wrap.in .mn-sheet{transform:none}
+@media (min-width:600px){.mn-wrap{align-items:center}.mn-sheet{border-radius:28px;padding-bottom:20px}}
+.mn-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mn-head b{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.mn-x{width:34px;height:34px;flex-shrink:0;border:none;border-radius:50%;background:#F1F2F6;color:#4A4F6A;font-size:20px;line-height:1;cursor:pointer}
+.mn-info{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#F6F7FB}
+.mn-line{display:flex;align-items:center;gap:9px;font-size:13px;color:#3A3F5C;font-weight:600}
+.mn-line .legend{flex-shrink:0}
+.mn-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8FA8;margin-top:2px}
+.mn-list{display:flex;flex-direction:column;gap:6px}
+.mn-note{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;border-radius:14px;background:#F3F0FF}
+.mn-note span{flex:1;min-width:0;font-size:14px;color:#14162B;word-break:break-word}
+.mn-dot{width:8px;height:8px;border-radius:50%;background:#8B5CF6;flex-shrink:0}
+.mn-del{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#EF4444;cursor:pointer}
+.mn-empty{margin:0;font-size:13px;color:#8A8FA8}
+.mn-add{display:flex;gap:8px}
+.mn-add input{flex:1;min-width:0;height:48px;box-sizing:border-box;padding:0 14px;border:1px solid #E2E5EE;border-radius:14px;background:#FAFAFC;font:inherit;font-size:14px;color:#14162B;outline:none}
+.mn-add input:focus{border-color:#8B5CF6}
+.mn-add button{height:48px;padding:0 18px;border:none;border-radius:14px;background:#14162B;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.mn-add button:disabled{background:#E6E8EF;color:#6B7088}
+.mn-hint{margin:0;font-size:11.5px;color:#8A8FA8}
+html[data-theme="dark"] .mn-sheet{background:#1A1A1D;color:#F4F4F5}
+html[data-theme="dark"] .mn-x{background:#26262A;color:#D4D4D8}
+html[data-theme="dark"] .mn-info{background:#232327}
+html[data-theme="dark"] .mn-line{color:#D4D4D8}
+html[data-theme="dark"] .mn-note{background:#2A2438}
+html[data-theme="dark"] .mn-note span{color:#F4F4F5}
+html[data-theme="dark"] .mn-dot{background:#A78BFA}
+html[data-theme="dark"] .mn-add input{background:#232327;border-color:#34343A;color:#F4F4F5}
+html[data-theme="dark"] .mn-add input:focus{border-color:#A78BFA}
+html[data-theme="dark"] .mn-add button{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .mn-add button:disabled{background:#26262A;color:#A1A1AA}

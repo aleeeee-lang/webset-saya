@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021f">
-<script src="js/theme.js?v=20261021f"></script>
-<script src="js/lang.js?v=20261021f"></script>
-<script src="js/toast.js?v=20261021f"></script>
-<script src="js/transition.js?v=20261021f"></script>
-<script src="js/scroll-pop.js?v=20261021f"></script>
+<link rel="stylesheet" href="style.css?v=20261021h">
+<script src="js/theme.js?v=20261021h"></script>
+<script src="js/lang.js?v=20261021h"></script>
+<script src="js/toast.js?v=20261021h"></script>
+<script src="js/transition.js?v=20261021h"></script>
+<script src="js/scroll-pop.js?v=20261021h"></script>
 </head>
 
 <body class="v2-page">
@@ -77,6 +77,7 @@
             <span><i class="legend spp"></i><span data-i18n="type_spp">SPP Payment</span></span>
             <span><i class="legend exam"></i><span data-i18n="type_exam">Exam</span></span>
             <span><i class="legend event"></i><span data-i18n="type_event">School Event</span></span>
+            <span><i class="legend note"></i><span data-i18n="legend_my_notes">My notes</span></span>
         </div>
 
         <a href="calendar.html" style="display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid #f1f1f6;text-decoration:none;color:#3F6212;font-size:13px;font-weight:600">
@@ -193,8 +194,9 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021f"></script>
-<script src="js/auth.js?v=20261021f"></script>
+<script src="js/supabase.js?v=20261021h"></script>
+<script src="js/auth.js?v=20261021h"></script>
+<script src="js/my-notes.js?v=20261021h"></script>
 
 <script>
 function tr(key) {
@@ -389,14 +391,12 @@ function renderCalendar() {
 
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 
-        if (isHoliday) {
-            html += `<span class="${cls.trim()}" onclick="showHolidayInfo('${key}')" style="cursor:pointer">${day}</span>`;
-        } else {
-            html += `<span class="${cls.trim()}">${day}</span>`;
-        }
+        html += `<span class="${cls.trim()}" data-date="${key}" data-status="${status || ""}" onclick="showHolidayInfo('${key}')" style="cursor:pointer">${day}</span>`;
     }
 
-    document.getElementById("myCalendarDays").innerHTML = html;
+    const box = document.getElementById("myCalendarDays");
+    box.innerHTML = html;
+    if (window.AttNotes) AttNotes.mark(box);
 }
 
 function showHolidayInfo(dateKey) {
@@ -405,6 +405,19 @@ function showHolidayInfo(dateKey) {
     const label = holidayInfoByDate[dateKey] || "";
     const typeKey = "type_" + type;
     const typeLabel = translations[typeKey] ? translations[typeKey][lang] : type;
+    if (window.AttNotes) {
+        // day sheet: my attendance + the school agenda of that day + my own notes
+        const info = [];
+        const rec = myAttendanceData.find(function (r) { return r.date === dateKey; });
+        if (rec) {
+            const sk = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[rec.status];
+            info.push({ text: (sk ? tr(sk) : rec.status) + (rec.time ? " · " + String(rec.time).slice(0, 5) : ""), dot: String(rec.status || "").toLowerCase() });
+        }
+        if (holidaySet.has(dateKey)) info.push({ text: label ? typeLabel + " — " + label : typeLabel, dot: type });
+        AttNotes.open(dateKey, { info: info, onChange: function () { AttNotes.mark(document.getElementById("myCalendarDays")); } });
+        return;
+    }
+    if (!holidaySet.has(dateKey)) return;
     const dateLabel = dayMonthYearLabel(new Date(dateKey + "T00:00:00"));
     const message = label ? (typeLabel + " — " + label + " (" + dateLabel + ")") : (typeLabel + " (" + dateLabel + ")");
     showToast(message, "info");
@@ -426,8 +439,13 @@ function nextCalendarMonth() {
 function markCalendarArrow(btn) {
     document.querySelectorAll(".calendar-nav .calendar-arrow").forEach(function (b) { b.classList.toggle("on", b === btn); });
 }
-document.getElementById("calendarPrevBtn").addEventListener("click", function () { markCalendarArrow(this); prevCalendarMonth(); });
-document.getElementById("calendarNextBtn").addEventListener("click", function () { markCalendarArrow(this); nextCalendarMonth(); });
+// back on the current month: no arrow box
+function calendarOnThisMonth() {
+    const n = new Date();
+    return calendarViewYear === n.getFullYear() && calendarViewMonth === n.getMonth();
+}
+document.getElementById("calendarPrevBtn").addEventListener("click", function () { prevCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
+document.getElementById("calendarNextBtn").addEventListener("click", function () { nextCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 
 function renderInsight(data) {
     const total = data.length;
@@ -462,6 +480,7 @@ async function loadMyAttendance() {
     myAttendanceData = data;
     calendarViewYear = new Date().getFullYear();
     calendarViewMonth = new Date().getMonth();
+    markCalendarArrow(null);
 
     // a check-in on a closed day (holiday) doesn't count towards the score
     const counted = await attCountable(await requireLogin(), data, {});
@@ -470,6 +489,7 @@ async function loadMyAttendance() {
     await loadHolidays();
     renderCalendar();
     renderInsight(data);
+    if (window.AttNotes) AttNotes.load().then(function () { AttNotes.mark(document.getElementById("myCalendarDays")); });
 }
 
 loadMyAttendance();

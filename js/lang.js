@@ -243,6 +243,7 @@ const translations = {
     type_spp: { en: "SPP Payment", id: "Bayar SPP" },
     type_exam: { en: "Exam", id: "Ujian" },
     type_event: { en: "School Event", id: "Acara Sekolah" },
+    legend_my_notes: { en: "My notes", id: "Catatan saya" },
 
     page_my_attendance: { en: "My Attendance", id: "Absensi Saya" },
     score_label: { en: "ATTENDANCE SCORE", id: "SKOR ABSENSI" },

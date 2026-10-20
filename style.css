@@ -3940,3 +3940,8 @@ html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"]
 @keyframes jrPodInDim{from{opacity:0;transform:translateY(26px)}to{opacity:.38;transform:none}}
 html.att-noanim .jr-pod,.att-tabswipe-on .jr-pod{animation:none!important}
 @media (prefers-reduced-motion:reduce){.jr-pod{animation:none}}
+/* keep room for the scrollbar on every page, so switching between a long and a short
+   tab (e.g. Juara: Kehadiran <-> Nilai) doesn't shift the whole page sideways */
+html{scrollbar-gutter:stable}
+/* Juara podium: the champion comes first, then 2nd and 3rd */
+.jr-pod.p1{animation-delay:0s}.jr-pod.p2{animation-delay:.1s}.jr-pod.p3{animation-delay:.18s}

@@ -262,3 +262,18 @@ async function attCountable(user, attendanceData, period, profileOverride) {
 async function getAutoAlpaCount(user, attendanceData, period, profileOverride) {
     return (await attCountable(user, attendanceData, period, profileOverride)).autoAlpa;
 }
+
+// Fresh numbers when coming back to a page:
+//  - Back/Forward can show a page straight from the browser's memory (bfcache),
+//    i.e. as it was before - e.g. "0 Hadir" from before today's check-in;
+//  - the installed app can sit in the background for a long time.
+// Pages that refresh on "tabshow" (Dashboard, History/SPP, My Attendance, ...) reload their data.
+(function () {
+    var hiddenAt = 0;
+    function refresh() { try { window.dispatchEvent(new Event("tabshow")); } catch (e) {} }
+    window.addEventListener("pageshow", function (e) { if (e.persisted) refresh(); });
+    document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "hidden") hiddenAt = Date.now();
+        else if (hiddenAt && Date.now() - hiddenAt > 60000) { hiddenAt = 0; refresh(); }
+    });
+})();

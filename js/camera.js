@@ -179,6 +179,7 @@ function clearFaceBox() {
     const boxCanvas = document.getElementById("faceBoxCanvas");
     if (!boxCanvas) return;
     const ctx = boxCanvas.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
 }
 
@@ -192,16 +193,20 @@ function drawFaceBox(result) {
     const displayHeight = video.clientHeight;
     if (!displayWidth || !displayHeight) return;
 
-    if (boxCanvas.width !== displayWidth || boxCanvas.height !== displayHeight) {
-        boxCanvas.width = displayWidth;
-        boxCanvas.height = displayHeight;
+    // draw at the screen's real pixel density so a hairline stays sharp
+    const dpr = Math.max(1, Math.min(4, window.devicePixelRatio || 1));
+    if (boxCanvas.width !== Math.round(displayWidth * dpr) || boxCanvas.height !== Math.round(displayHeight * dpr)) {
+        boxCanvas.width = Math.round(displayWidth * dpr);
+        boxCanvas.height = Math.round(displayHeight * dpr);
     }
 
     // Keep the box mirrored in sync with the mirrored video preview.
     boxCanvas.style.transform = video.style.transform || "none";
 
     const ctx = boxCanvas.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, boxCanvas.width, boxCanvas.height);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     if (!result || !video.videoWidth || !video.videoHeight) return;
 
@@ -256,7 +261,7 @@ function drawFaceBox(result) {
     const r = Math.max(4, Math.min(16, w / 4, h / 4));
 
     ctx.strokeStyle = "#22c55e";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1 / dpr;   // one physical screen pixel: the thinnest line a screen can show
     ctx.lineJoin = "round";
     ctx.beginPath();
     ctx.moveTo(x + r, y);

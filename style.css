@@ -2375,7 +2375,8 @@ html[data-theme="dark"] .v2-trend.up{background:rgba(74,222,128,.13);color:#86EF
 html[data-theme="dark"] .v2-cam #faceStatus{background:rgba(255,255,255,.9)}
 /* Smaller camera hint; hide the guide frame and face box once the camera is live */
 .v2-cam #faceStatus{top:10px;padding:3px 9px;font-size:10px;font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.15)}
-.v2-cam video[style*="block"]~.v2-cam-frame,.v2-cam video[style*="block"]~#faceBoxCanvas{display:none!important}
+.v2-cam video[style*="block"]~.v2-cam-frame{display:none!important}
+/* the face-detection outline stays on over the live camera */
 
 /* Native controls follow dark mode (light clock/calendar icons, dark pickers); lime checkboxes */
 html[data-theme="dark"]{color-scheme:dark}

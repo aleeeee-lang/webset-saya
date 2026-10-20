@@ -3201,15 +3201,15 @@ html[data-theme="dark"] .attendance-page .submit-button.bc-send{background:#C6F4
 
 /* ===== Form buttons: dim until ready (js/formready.js) ===== */
 .attendance-page .submit-button[data-needs]{transition:background .2s,color .2s,box-shadow .2s}
-.attendance-page .submit-button[data-needs].is-waiting{background:#E9EAF0!important;color:#9A9DB0!important;box-shadow:none!important;transform:none!important}
+.attendance-page .submit-button[data-needs].is-waiting{background:#E6E8EF!important;color:#6B7088!important;box-shadow:none!important;transform:none!important}
 .attendance-page .submit-button[data-needs].is-ready{background:#14162B!important;color:#fff!important}
-html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-waiting{background:#1C1C1E!important;color:#5E5E63!important}
+html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-waiting{background:#26262A!important;color:#A1A1AA!important}
 html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-ready{background:#F2F2F2!important;color:#111!important}
 /* buttons that are always usable: no "disabled" look in dark mode */
 html[data-theme="dark"] .attendance-page .submit-button:not([data-needs]):not(.bc-next):not(.bc-send){background:#F2F2F2!important;color:#111!important}
 .savings-submit-btn[data-needs],.login-btn[data-needs]{transition:background .2s,color .2s,box-shadow .2s}
-.savings-submit-btn[data-needs].is-waiting,.login-btn[data-needs].is-waiting{background:#E9EAF0!important;color:#9A9DB0!important;box-shadow:none!important;transform:none!important}
-html[data-theme="dark"] .savings-submit-btn[data-needs].is-waiting{background:#1C1C1E!important;color:#5E5E63!important}
+.savings-submit-btn[data-needs].is-waiting,.login-btn[data-needs].is-waiting{background:#E6E8EF!important;color:#6B7088!important;box-shadow:none!important;transform:none!important}
+html[data-theme="dark"] .savings-submit-btn[data-needs].is-waiting{background:#26262A!important;color:#A1A1AA!important}
 .attendance-page .bc-keep-note{margin:-4px 0 10px;font-size:12px;color:#8A8FA8!important}
 .bc-del{flex-shrink:0;width:36px;height:36px;border-radius:10px;border:none;background:transparent;color:#B0B3C2;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s}
 .bc-del:hover,.bc-del:focus-visible{background:#FEE2E2;color:#DC2626}
@@ -3331,10 +3331,10 @@ html[data-theme="dark"] .kas-link{background:#1A2009;border-color:#3D4A14;color:
 html[data-theme="dark"] .kas-link-text small{color:#A3B86A}
 html[data-theme="dark"] .kas-link-go{color:#A3B86A}
 .v2-kas .submit-button{width:100%;min-height:50px;border:none;border-radius:14px;background:#14162B;color:#fff;font:700 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .2s,color .2s}
-.v2-kas .submit-button[data-needs].is-waiting{background:#E9EAF0;color:#9A9DB0}
+.v2-kas .submit-button[data-needs].is-waiting{background:#E6E8EF;color:#6B7088}
 .v2-kas .submit-button:disabled{opacity:.7}
 html[data-theme="dark"] .v2-kas .submit-button{background:#F2F2F2;color:#111}
-html[data-theme="dark"] .v2-kas .submit-button[data-needs].is-waiting{background:#2C2C2E;color:#6E6E73}
+html[data-theme="dark"] .v2-kas .submit-button[data-needs].is-waiting{background:#2C2C2E;color:#A1A1AA}
 
 /* ===== Charts grow in (js/animate.js) ===== */
 .v2-ring-fill{transition:stroke-dasharray 1s cubic-bezier(.22,.8,.3,1)!important}
@@ -3419,7 +3419,7 @@ html.att-noanim .v2-ring-fill,html.att-noanim .v2-week-fill,html.att-noanim #seg
 .jr-add{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:16px;border:1.5px dashed #C9CDDB;background:transparent;color:#30344A;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
 .jr-form{gap:12px}
 .v2-jr .submit-button{width:100%;min-height:50px;border:none;border-radius:14px;background:#14162B;color:#fff;font:700 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:background .2s,color .2s}
-.v2-jr .submit-button[data-needs].is-waiting{background:#E9EAF0;color:#9A9DB0}
+.v2-jr .submit-button[data-needs].is-waiting{background:#E6E8EF;color:#6B7088}
 .v2-jr .submit-button:disabled{opacity:.7}
 .jr-award{display:flex;align-items:flex-start;gap:12px;background:#fff;border-radius:20px;padding:14px;margin-bottom:8px}
 .jr-award.live{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A}
@@ -3505,7 +3505,7 @@ html[data-theme="dark"] .jr-avg{stroke:#EDEDED}
 html[data-theme="dark"] .jr-line{border-color:#EDEDED}
 html[data-theme="dark"] .jr-chart text{fill:#6E6E73}
 html[data-theme="dark"] .jr-btn,html[data-theme="dark"] .v2-jr .submit-button{background:#F2F2F2;color:#111}
-html[data-theme="dark"] .v2-jr .submit-button[data-needs].is-waiting{background:#2C2C2E;color:#6E6E73}
+html[data-theme="dark"] .v2-jr .submit-button[data-needs].is-waiting{background:#2C2C2E;color:#A1A1AA}
 html[data-theme="dark"] .jr-add{border-color:#48484A;color:#C9C9CE}
 html[data-theme="dark"] .jr-award.live{background:linear-gradient(135deg,#2A2410,#221D0B);border-color:#4A3D12}
 html[data-theme="dark"] .jr-award-ic{background:#2A2410}
@@ -3956,5 +3956,9 @@ html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calen
 .calendar-arrow.on,.v2-my .calendar-arrow.on{background:#14162B!important;color:#fff!important}
 html[data-theme="dark"] .calendar-arrow,html[data-theme="dark"] .v2-my .calendar-arrow{background:transparent!important;color:#EDEDED!important}
 html[data-theme="dark"] .calendar-arrow.on,html[data-theme="dark"] .v2-my .calendar-arrow.on{background:#C6F432!important;color:#14162B!important}
-/* a form button that can't be pressed yet */
-.submit-button:disabled{opacity:.45;cursor:not-allowed}
+/* a form button that can't be pressed yet: muted, but the label stays readable */
+.submit-button:disabled{opacity:1!important;cursor:not-allowed;background:#E6E8EF!important;color:#6B7088!important;box-shadow:none!important}
+html[data-theme="dark"] .submit-button:disabled{background:#26262A!important;color:#A1A1AA!important}
+
+html[data-theme="dark"] .attendance-page .submit-button:disabled{background:#26262A!important;color:#A1A1AA!important;opacity:1!important}
+.attendance-page .submit-button:disabled{opacity:1!important}

@@ -3929,3 +3929,14 @@ html[data-theme="dark"] .attendance-page .v2-fpchange-go,html[data-theme="dark"]
   body.fp-docked main.v2-wrap>.v2-submit{display:flex!important}
   body.fp-docked #toastContainer{bottom:96px}
 }
+/* Juara podium: each column rises as one piece (no squashed numbers, no labels floating
+   over empty space), 3rd -> 2nd -> 1st, then the medals drop in */
+.jr-pod .jr-step,.jr-pod .jr-av{animation:none}
+.jr-pod{animation:jrPodIn .55s cubic-bezier(.22,.8,.3,1) both}
+.jr-pod.p3{animation-delay:0s}.jr-pod.p2{animation-delay:.08s}.jr-pod.p1{animation-delay:.16s}
+.jr-pod .jr-medal{animation-delay:.5s}
+@keyframes jrPodIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.jr-pod.empty{animation-name:jrPodInDim}
+@keyframes jrPodInDim{from{opacity:0;transform:translateY(26px)}to{opacity:.38;transform:none}}
+html.att-noanim .jr-pod,.att-tabswipe-on .jr-pod{animation:none!important}
+@media (prefers-reduced-motion:reduce){.jr-pod{animation:none}}

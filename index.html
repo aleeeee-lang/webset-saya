@@ -19,15 +19,15 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261021h"
+        href="style.css?v=20261021i"
     >
-<script src="js/theme.js?v=20261021h"></script>
-    <script src="js/lang.js?v=20261021h"></script>
-<script src="js/lessons.js?v=20261021h"></script>
-<script src="js/tasks-core.js?v=20261021h"></script>
-<script src="js/champs.js?v=20261021h"></script>
-    <script src="js/toast.js?v=20261021h"></script>
-    <script src="js/transition.js?v=20261021h"></script>
+<script src="js/theme.js?v=20261021i"></script>
+    <script src="js/lang.js?v=20261021i"></script>
+<script src="js/lessons.js?v=20261021i"></script>
+<script src="js/tasks-core.js?v=20261021i"></script>
+<script src="js/champs.js?v=20261021i"></script>
+    <script src="js/toast.js?v=20261021i"></script>
+    <script src="js/transition.js?v=20261021i"></script>
 
 </head>
 
@@ -368,10 +368,10 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021h"></script>
-<script src="js/auth.js?v=20261021h"></script>
+<script src="js/supabase.js?v=20261021i"></script>
+<script src="js/auth.js?v=20261021i"></script>
 
-<script src="js/notification.js?v=20261021h"></script>
+<script src="js/notification.js?v=20261021i"></script>
 
 <script>
 function homeT(key) {
@@ -388,7 +388,7 @@ function homeChip(text, kind) {
 }
 
 function homeGreetingKey() {
-    const h = new Date().getHours();
+    const h = attNow().getHours();
     if (h < 11) return "greet_morning";
     if (h < 15) return "greet_afternoon";
     if (h < 18) return "greet_evening";
@@ -405,7 +405,7 @@ function renderHomeAvatar(name, url) {
 }
 
 function renderHomeHeader() {
-    const now = new Date();
+    const now = attNow();
     const days = { en: ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"], id: ["MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"] };
     const lang = getLang();
     document.getElementById("homeDate").textContent = (days[lang] || days.en)[now.getDay()] + " · " + dayMonthLabel(now).toUpperCase();
@@ -434,7 +434,7 @@ function renderHomeStatus(todayRecord, schedule, holidayToday) {
         cta.href = "calendar.html";
         ctaLabel.setAttribute("data-i18n", "link_view_academic_calendar");
     } else if (schedule) {
-        const now = new Date();
+        const now = attNow();
         const isoDay = now.getDay() === 0 ? 7 : now.getDay();
         const nowTime = now.toTimeString().slice(0, 5);
         const activeDays = schedule.active_days || [];
@@ -450,7 +450,7 @@ function renderHomeStatus(todayRecord, schedule, holidayToday) {
             html += homeChip(homeT("home_opens_at") + " " + homeTime(start), "outline");
         } else if (end && nowTime <= end) {
             const parts = end.split(":");
-            const closeAt = new Date(); closeAt.setHours(+parts[0], +parts[1], 0, 0);
+            const closeAt = attNow(); closeAt.setHours(+parts[0], +parts[1], 0, 0);
             const mins = Math.max(0, Math.round((closeAt - now) / 60000));
             html += homeChip(homeT("home_closes_at") + " " + homeTime(end), "outline");
             html += homeChip(mins >= 60 ? homeT("home_hours_left").replace("{n}", Math.floor(mins / 60)) : homeT("home_minutes_left").replace("{n}", mins), "lime");
@@ -490,7 +490,7 @@ function renderHomeStats(data, autoAlpa) {
 }
 
 function renderHomeSpp(record) {
-    const now = new Date();
+    const now = attNow();
     document.getElementById("homeSppLabel").textContent = "SPP " + monthNameOf(now.getMonth());
     const status = record ? record.status : "unpaid";
     const el = document.getElementById("homeSppStatus");
@@ -583,7 +583,7 @@ async function loadHome() {
     if (!user) return;
 
     const today = localDateStr();
-    const period = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, "0");
+    const period = attNow().getFullYear() + "-" + String(attNow().getMonth() + 1).padStart(2, "0");
 
     const results = await Promise.all([
         supabaseClient.from("profiles").select("name, class, avatar_url").eq("id", user.id).maybeSingle(),

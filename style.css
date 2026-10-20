@@ -4004,3 +4004,18 @@ html[data-theme="dark"] .mn-add input{background:#232327;border-color:#34343A;co
 html[data-theme="dark"] .mn-add input:focus{border-color:#A78BFA}
 html[data-theme="dark"] .mn-add button{background:#C6F432;color:#14162B}
 html[data-theme="dark"] .mn-add button:disabled{background:#26262A;color:#A1A1AA}
+
+/* ---------- school time zone picker (admin-schedule) ---------- */
+.tz-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.tz-seg button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border:1.5px solid #E2E5EE;border-radius:14px;background:#FAFAFC;color:#3A3F5C;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s}
+.tz-seg button b{font-size:15px;font-weight:800}
+.tz-seg button small{font-size:11px;color:#8A8FA8}
+.tz-seg button.on{background:#14162B;border-color:#14162B;color:#fff}
+.tz-seg button.on small{color:#C6F432}
+.tz-now{margin:10px 0 0;font-size:12px;color:#6B7088;line-height:1.45}
+html[data-theme="dark"] .tz-seg button{background:#232327;border-color:#34343A;color:#D4D4D8}
+html[data-theme="dark"] #tzSeg button.on{background:#C6F432;border-color:#C6F432}
+html[data-theme="dark"] .attendance-page #tzSeg button.on b{color:#14162B!important}
+html[data-theme="dark"] .attendance-page #tzSeg button.on small{color:#3F6212!important}
+html[data-theme="dark"] .attendance-page #tzSeg button small,html[data-theme="dark"] .attendance-page .tz-now{color:#9A9A9F!important}
+html[data-theme="dark"] .tz-now{color:#9A9A9F}

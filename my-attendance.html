@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021h">
-<script src="js/theme.js?v=20261021h"></script>
-<script src="js/lang.js?v=20261021h"></script>
-<script src="js/toast.js?v=20261021h"></script>
-<script src="js/transition.js?v=20261021h"></script>
-<script src="js/scroll-pop.js?v=20261021h"></script>
+<link rel="stylesheet" href="style.css?v=20261021i">
+<script src="js/theme.js?v=20261021i"></script>
+<script src="js/lang.js?v=20261021i"></script>
+<script src="js/toast.js?v=20261021i"></script>
+<script src="js/transition.js?v=20261021i"></script>
+<script src="js/scroll-pop.js?v=20261021i"></script>
 </head>
 
 <body class="v2-page">
@@ -194,9 +194,9 @@
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021h"></script>
-<script src="js/auth.js?v=20261021h"></script>
-<script src="js/my-notes.js?v=20261021h"></script>
+<script src="js/supabase.js?v=20261021i"></script>
+<script src="js/auth.js?v=20261021i"></script>
+<script src="js/my-notes.js?v=20261021i"></script>
 
 <script>
 function tr(key) {
@@ -318,7 +318,7 @@ function renderQuickStats(data) {
         else break;
     }
 
-    const now = new Date();
+    const now = attNow();
     const activeDays = data.filter(function (item) {
         const d = new Date(item.date + "T00:00:00");
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
@@ -329,8 +329,8 @@ function renderQuickStats(data) {
     document.getElementById("myActiveDays").textContent = activeDays + " " + daysUnitLabel;
 }
 
-let calendarViewYear = new Date().getFullYear();
-let calendarViewMonth = new Date().getMonth();
+let calendarViewYear = attNow().getFullYear();
+let calendarViewMonth = attNow().getMonth();
 let myAttendanceData = [];
 let holidaySet = new Set();
 let holidayTypeByDate = {};
@@ -353,7 +353,7 @@ function renderCalendar() {
     const year = calendarViewYear;
     const month = calendarViewMonth;
     const data = myAttendanceData;
-    const now = new Date();
+    const now = attNow();
 
     document.getElementById("calendarMonthLabel").textContent =
         monthYearLabel(new Date(year, month, 1));
@@ -441,9 +441,11 @@ function markCalendarArrow(btn) {
 }
 // back on the current month: no arrow box
 function calendarOnThisMonth() {
-    const n = new Date();
+    const n = attNow();
     return calendarViewYear === n.getFullYear() && calendarViewMonth === n.getMonth();
 }
+// the school clock arrived (other time zone / phone clock off): redraw "today"
+window.addEventListener("attclock", function () { calendarViewYear = attNow().getFullYear(); calendarViewMonth = attNow().getMonth(); markCalendarArrow(null); renderCalendar(); });
 document.getElementById("calendarPrevBtn").addEventListener("click", function () { prevCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 document.getElementById("calendarNextBtn").addEventListener("click", function () { nextCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 
@@ -478,8 +480,8 @@ async function loadMyAttendance() {
     }
 
     myAttendanceData = data;
-    calendarViewYear = new Date().getFullYear();
-    calendarViewMonth = new Date().getMonth();
+    calendarViewYear = attNow().getFullYear();
+    calendarViewMonth = attNow().getMonth();
     markCalendarArrow(null);
 
     // a check-in on a closed day (holiday) doesn't count towards the score

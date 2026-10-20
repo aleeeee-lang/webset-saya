@@ -19,19 +19,19 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261021h"
+        href="style.css?v=20261021i"
     >
 
-    <script src="js/theme.js?v=20261021h"></script>
+    <script src="js/theme.js?v=20261021i"></script>
 
-    <script src="js/lang.js?v=20261021h"></script>
+    <script src="js/lang.js?v=20261021i"></script>
 
-    <script src="js/toast.js?v=20261021h"></script>
+    <script src="js/toast.js?v=20261021i"></script>
 
 
-    <script src="js/transition.js?v=20261021h"></script>
+    <script src="js/transition.js?v=20261021i"></script>
 
-    <script src="js/scroll-pop.js?v=20261021h"></script>
+    <script src="js/scroll-pop.js?v=20261021i"></script>
 
 </head>
 
@@ -276,9 +276,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261021h"></script>
+    <script src="js/supabase.js?v=20261021i"></script>
 
-    <script src="js/auth.js?v=20261021h"></script>
+    <script src="js/auth.js?v=20261021i"></script>
 
 
 
@@ -506,7 +506,7 @@ const recent =
         function renderWeekly(data) {
             const box = document.getElementById("dashWeekBars");
             const lang = getLang();
-            const monday = new Date();
+            const monday = attNow();
             monday.setHours(0, 0, 0, 0);
             monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
             let html = "";
@@ -541,7 +541,7 @@ const recent =
             document.getElementById("dashAvgGrade").textContent = avg ? (getLang() === "id" ? avg.replace(".", ",") : avg) : "-";
         }
 
-        document.getElementById("dashMonth").textContent = monthYearLabel(new Date());
+        document.getElementById("dashMonth").textContent = monthYearLabel(attNow());
         loadDashGrade();
 
         function toggleViewAll() {

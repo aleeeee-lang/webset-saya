@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021h">
-<script src="js/theme.js?v=20261021h"></script>
-<script src="js/lang.js?v=20261021h"></script>
-    <script src="js/timepicker.js?v=20261021h"></script>
-<script src="js/toast.js?v=20261021h"></script>
+<link rel="stylesheet" href="style.css?v=20261021i">
+<script src="js/theme.js?v=20261021i"></script>
+<script src="js/lang.js?v=20261021i"></script>
+    <script src="js/timepicker.js?v=20261021i"></script>
+<script src="js/toast.js?v=20261021i"></script>
 </head>
 
 <body>
@@ -70,6 +70,17 @@
     </section>
 
     <!-- ATTENDANCE LOCATION (attendance_location.sql) -->
+    <section class="attendance-card loc-card" id="tzCard" hidden>
+        <div class="card-label" style="margin:0" id="tzTitle">Zona waktu sekolah</div>
+        <p class="loc-hint" id="tzHint"></p>
+        <div class="tz-seg" id="tzSeg" role="radiogroup">
+            <button type="button" data-tz="Asia/Jakarta" role="radio"><b>WIB</b><small>GMT+7</small></button>
+            <button type="button" data-tz="Asia/Makassar" role="radio"><b>WITA</b><small>GMT+8</small></button>
+            <button type="button" data-tz="Asia/Jayapura" role="radio"><b>WIT</b><small>GMT+9</small></button>
+        </div>
+        <p class="tz-now" id="tzNow"></p>
+    </section>
+
     <section class="attendance-card loc-card" id="locCard" hidden>
         <div class="loc-head">
             <div style="flex:1;min-width:0">
@@ -194,9 +205,10 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021h"></script>
-<script src="js/auth.js?v=20261021h"></script>
-<script src="js/admin-location.js?v=20261021h"></script>
+<script src="js/supabase.js?v=20261021i"></script>
+<script src="js/auth.js?v=20261021i"></script>
+<script src="js/avatarcrop.js?v=20261021i"></script>
+<script src="js/admin-location.js?v=20261021i"></script>
 
 <script>
 

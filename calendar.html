@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021h">
-<script src="js/theme.js?v=20261021h"></script>
-<script src="js/lang.js?v=20261021h"></script>
-<script src="js/toast.js?v=20261021h"></script>
+<link rel="stylesheet" href="style.css?v=20261021i">
+<script src="js/theme.js?v=20261021i"></script>
+<script src="js/lang.js?v=20261021i"></script>
+<script src="js/toast.js?v=20261021i"></script>
 </head>
 
 <body>
@@ -84,14 +84,14 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021h"></script>
-<script src="js/auth.js?v=20261021h"></script>
-<script src="js/my-notes.js?v=20261021h"></script>
+<script src="js/supabase.js?v=20261021i"></script>
+<script src="js/auth.js?v=20261021i"></script>
+<script src="js/my-notes.js?v=20261021i"></script>
 
 <script>
 
-let calendarViewYear = new Date().getFullYear();
-let calendarViewMonth = new Date().getMonth();
+let calendarViewYear = attNow().getFullYear();
+let calendarViewMonth = attNow().getMonth();
 let allEvents = [];
 let eventByDate = {};
 
@@ -131,7 +131,7 @@ async function loadEvents() {
 function renderCalendar() {
     const year = calendarViewYear;
     const month = calendarViewMonth;
-    const now = new Date();
+    const now = attNow();
 
     document.getElementById("calendarMonthLabel").textContent = monthYearLabel(new Date(year, month, 1));
 
@@ -290,9 +290,11 @@ function markCalendarArrow(btn) {
 }
 // back on the current month: no arrow box
 function calendarOnThisMonth() {
-    const n = new Date();
+    const n = attNow();
     return calendarViewYear === n.getFullYear() && calendarViewMonth === n.getMonth();
 }
+// the school clock arrived (other time zone / phone clock off): redraw "today"
+window.addEventListener("attclock", function () { calendarViewYear = attNow().getFullYear(); calendarViewMonth = attNow().getMonth(); markCalendarArrow(null); renderCalendar(); renderUpcomingEvents(); });
 document.getElementById("calendarPrevBtn").addEventListener("click", function () { prevCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 document.getElementById("calendarNextBtn").addEventListener("click", function () { nextCalendarMonth(); markCalendarArrow(calendarOnThisMonth() ? null : this); });
 

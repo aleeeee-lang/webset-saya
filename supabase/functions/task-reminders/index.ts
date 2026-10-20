@@ -18,7 +18,9 @@
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const TZ = Number(Deno.env.get("TZ_OFFSET_HOURS") ?? "7"); // WIB = 7, WITA = 8, WIT = 9
+// the school's time zone, set by the admin in Kelola Jadwal (school_timezone.sql); WIB = 7, WITA = 8, WIT = 9
+const TZ_HOURS: Record<string, number> = { "Asia/Jakarta": 7, "Asia/Makassar": 8, "Asia/Jayapura": 9 };
+let TZ = Number(Deno.env.get("TZ_OFFSET_HOURS") ?? "7");
 const H = 3600_000;
 
 const localDay = (d: Date) => Math.floor((d.getTime() + TZ * H) / 86400_000);
@@ -44,6 +46,11 @@ Deno.serve(async (req) => {
   try { queueOnly = !!(await req.json()).queue_only; } catch (_) { /* empty body from cron */ }
   webpush.setVapidDetails("mailto:admin@attendreem.app", Deno.env.get("VAPID_PUBLIC_KEY")!, Deno.env.get("VAPID_PRIVATE_KEY")!);
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+
+  {
+    const { data: loc, error: locErr } = await db.from("school_location").select("timezone").eq("id", "default").maybeSingle();
+    if (!locErr && loc && TZ_HOURS[(loc as { timezone?: string }).timezone ?? ""]) TZ = TZ_HOURS[(loc as { timezone: string }).timezone];
+  }
 
   const now = new Date();
   const today = localDay(now);

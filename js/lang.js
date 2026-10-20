@@ -738,8 +738,54 @@ function safeURL(value) {
     return "#";
 }
 
+// ---------- school clock ----------
+// The server decides the time (school_timezone.sql). The page asks it once
+// (attSyncClock, from auth.js) and keeps the difference to the phone clock,
+// so what the student sees is what the server will use, even when the phone
+// clock is wrong or the phone is in another time zone.
+//   attNow()      -> a Date whose getHours()/getDate()/... show the school's wall clock
+//                    (for showing and comparing times only: never send it as a timestamp)
+//   attTzLabel()  -> "WIB" / "WITA" / "WIT"
+var ATT_TZ_HOURS = { "Asia/Jakarta": 7, "Asia/Makassar": 8, "Asia/Jayapura": 9 };
+var attClock = (function () {
+    try {
+        var c = JSON.parse(localStorage.getItem("att-clock") || "null");
+        if (c && typeof c.off === "number" && ATT_TZ_HOURS[c.tz]) return c;
+    } catch (e) {}
+    return { off: 0, tz: "Asia/Jakarta" };
+})();
+function attNow() {
+    var real = Date.now() + attClock.off;
+    var h = ATT_TZ_HOURS[attClock.tz] || 7;
+    return new Date(real + (h * 60 + new Date(real).getTimezoneOffset()) * 60000);
+}
+function attTzLabel() {
+    return { "Asia/Jakarta": "WIB", "Asia/Makassar": "WITA", "Asia/Jayapura": "WIT" }[attClock.tz] || "WIB";
+}
+var _attClockP = null;
+function attSyncClock() {
+    if (_attClockP) return _attClockP;
+    if (typeof supabaseClient === "undefined") return Promise.resolve(attClock);   // a global const, not on window
+    _attClockP = (async function () {
+        try {
+            var t0 = Date.now();
+            var r = await supabaseClient.rpc("server_clock");
+            var t1 = Date.now();
+            if (r.error || !r.data || !r.data.now) return attClock;       // SQL not run yet: WIB, phone clock
+            var off = Math.round(Date.parse(r.data.now) - (t0 + t1) / 2);
+            var tz = ATT_TZ_HOURS[r.data.tz] ? r.data.tz : "Asia/Jakarta";
+            var changed = tz !== attClock.tz || Math.abs(off - attClock.off) > 30000;
+            attClock = { off: off, tz: tz };
+            try { localStorage.setItem("att-clock", JSON.stringify(attClock)); } catch (e) {}
+            if (changed) window.dispatchEvent(new Event("attclock"));
+        } catch (e) {}
+        return attClock;
+    })();
+    return _attClockP;
+}
+
 function localDateStr(d) {
-    d = d || new Date();
+    d = d || attNow();
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
 

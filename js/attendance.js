@@ -94,7 +94,8 @@ async function saveAttendance() {
 
         if (schedule) {
 
-            const nowCheck = new Date();
+            if (typeof attSyncClock === "function") await attSyncClock();
+            const nowCheck = attNow();
             const nowTime = nowCheck.toTimeString().slice(0, 5);
             const startTime = (schedule.start_time || "").slice(0, 5);
             const endTime = (schedule.end_time || "").slice(0, 5);
@@ -147,7 +148,7 @@ async function saveAttendance() {
     // GET DATE & TIME (local time)
     // =========================
 
-    const now = new Date();
+    const now = attNow();
 
     const date =
         now.getFullYear() + "-" +

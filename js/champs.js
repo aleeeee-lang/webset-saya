@@ -12,7 +12,7 @@
 
     // month window: offset 0 = this month (up to today), -1 = last month, ...
     function month(offset) {
-        var now = new Date();
+        var now = attNow();
         var a = new Date(now.getFullYear(), now.getMonth() + offset, 1);
         var b = new Date(now.getFullYear(), now.getMonth() + offset + 1, 0);
         if (offset === 0) b = now;
@@ -72,7 +72,7 @@
         var W = 320, H = opts.height || 120, pad = 18, n = days.length;
         var gap = Math.max(2, Math.min(8, 60 / n)), bw = Math.min(26, Math.max(4, (W - gap * (n - 1)) / n));
         var x0 = Math.max(0, (W - (bw * n + gap * (n - 1))) / 2);
-        var today = iso(new Date());
+        var today = iso(attNow());
         var bars = days.map(function (d, i) {
             var pct = d.total ? d.hadir / d.total : 0;
             var h = Math.max(3, Math.round(pct * (H - pad)));

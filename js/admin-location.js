@@ -84,6 +84,62 @@
             L("Pakai lokasi saya sekarang", "Use my current location") + '</span>';
     }
 
+    // ---------- school time zone (school_timezone.sql) ----------
+    var TZ_REGIONS = {
+        "Asia/Jakarta": ["Sumatra, Jawa, Kalimantan Barat & Tengah", "Sumatra, Java, West & Central Kalimantan"],
+        "Asia/Makassar": ["Bali, NTB, NTT, Sulawesi, Kalimantan Selatan, Timur & Utara", "Bali, Nusa Tenggara, Sulawesi, South, East & North Kalimantan"],
+        "Asia/Jayapura": ["Maluku & Papua", "Maluku & Papua"]
+    };
+    var tzCur = "Asia/Jakarta", tzTimer = null;
+    function tzPaint() {
+        document.querySelectorAll("#tzSeg button").forEach(function (b) {
+            var on = b.getAttribute("data-tz") === tzCur;
+            b.classList.toggle("on", on);
+            b.setAttribute("aria-checked", on ? "true" : "false");
+        });
+        var r = TZ_REGIONS[tzCur];
+        var n = typeof attNow === "function" ? attNow() : new Date();
+        $("tzNow").textContent = L("Jam sekolah sekarang: ", "School time now: ") + String(n.getHours()).padStart(2, "0") + "." + String(n.getMinutes()).padStart(2, "0") + " " +
+            (typeof attTzLabel === "function" ? attTzLabel() : "") + " · " + L(r[0], r[1]);
+    }
+    async function tzInit() {
+        $("tzTitle").textContent = L("Zona waktu sekolah", "School time zone");
+        $("tzHint").textContent = L("Jam buka/tutup absen, batas telat, dan tanggal absen mengikuti zona ini. Jam diambil dari server, bukan dari HP.",
+                                    "Check-in open/close times, the late limit and check-in dates follow this zone. The time comes from the server, not the phone.");
+        var r = await supabaseClient.from("school_location").select("timezone").eq("id", "default").maybeSingle();
+        if (r.error) return;                  // school_timezone.sql not run yet
+        tzCur = (r.data && r.data.timezone) || "Asia/Jakarta";
+        $("tzCard").hidden = false;
+        tzPaint();
+        tzTimer = setInterval(tzPaint, 15000);
+        window.addEventListener("attclock", tzPaint);
+        $("tzSeg").addEventListener("click", async function (e) {
+            var b = e.target.closest("button[data-tz]");
+            if (!b || b.getAttribute("data-tz") === tzCur) return;
+            var next = b.getAttribute("data-tz"), prev = tzCur;
+            var label = b.querySelector("b").textContent;
+            if (window.attConfirm) {
+                var ok = await attConfirm({
+                    title: L("Ganti ke " + label + "?", "Switch to " + label + "?"),
+                    text: L("Jam absen semua siswa langsung mengikuti " + label + ". Pastikan jam buka/tutup di jadwal kelas sudah ditulis dalam " + label + ".",
+                            "Every student's check-in time follows " + label + " right away. Make sure the class open/close times are written in " + label + "."),
+                    ok: L("Ganti", "Switch"), cancel: L("Batal", "Cancel"), tone: "primary"
+                });
+                if (!ok) return;
+            }
+            tzCur = next; tzPaint();
+            var s = await supabaseClient.auth.getSession();
+            var uid = s && s.data && s.data.session ? s.data.session.user.id : null;
+            var w = await supabaseClient.from("school_location").upsert({ id: "default", timezone: next, updated_by: uid, updated_at: new Date().toISOString() }, { onConflict: "id" });
+            if (w.error) { tzCur = prev; tzPaint(); toast(L("Gagal menyimpan: ", "Could not save: ") + w.error.message, "error"); return; }
+            // pick up the new zone on this page too
+            try { localStorage.removeItem("att-clock"); } catch (er) {}
+            if (typeof attClock !== "undefined") attClock.tz = next;
+            tzPaint();
+            toast(L("Zona waktu sekolah: " + label, "School time zone: " + label), "success");
+        });
+    }
+
     window.AttLocAdmin = {
         init: async function () {
             $("locTitle").textContent = L("Lokasi absen", "Check-in location");
@@ -94,6 +150,7 @@
             $("locRadiusLabel").textContent = L("Jarak maksimal dari titik sekolah", "Maximum distance from the school point");
             $("locSaveBtn").textContent = L("Simpan lokasi", "Save location");
             label();
+            tzInit();
             if (!(await load())) return;
             $("locCard").hidden = false;
             $("locEnabled").addEventListener("change", syncUI);

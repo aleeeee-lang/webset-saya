@@ -44,6 +44,8 @@ function requireLogin() {
             }).catch(function () {});
         }
 
+        if (typeof attSyncClock === "function") attSyncClock();   // server time + school time zone
+
         attMyProfile(user.id).then(async function (profile) {
             if (!profile) return;
             try {
@@ -233,7 +235,7 @@ async function attCountable(user, attendanceData, period, profileOverride) {
     if (!anchor) return { rows: rows, autoAlpa: 0 };
 
     var start = new Date(anchor + "T00:00:00");
-    var now = new Date();
+    var now = attNow();
     var today = new Date(now); today.setHours(0, 0, 0, 0);
     // today counts only once check-in has closed for good
     var close = (schedule.late_mode === "late" && schedule.late_end_time) ? schedule.late_end_time : schedule.end_time;

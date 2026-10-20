@@ -9,12 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261021h">
-<script src="js/theme.js?v=20261021h"></script>
-<script src="js/lang.js?v=20261021h"></script>
-<script src="js/toast.js?v=20261021h"></script>
-<script src="js/avatarcrop.js?v=20261021h"></script>
-<script src="js/champs.js?v=20261021h"></script>
+<link rel="stylesheet" href="style.css?v=20261021i">
+<script src="js/theme.js?v=20261021i"></script>
+<script src="js/lang.js?v=20261021i"></script>
+<script src="js/toast.js?v=20261021i"></script>
+<script src="js/avatarcrop.js?v=20261021i"></script>
+<script src="js/champs.js?v=20261021i"></script>
 </head>
 
 <body class="v2-page">
@@ -115,8 +115,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261021h"></script>
-<script src="js/auth.js?v=20261021h"></script>
+<script src="js/supabase.js?v=20261021i"></script>
+<script src="js/auth.js?v=20261021i"></script>
 
 <script>
 // Each tab fetches fresh data when it opens. If nothing changed, don't redraw the
@@ -169,7 +169,7 @@ async function init() {
     }
     const fc = document.getElementById("jrFClass");
     fc.innerHTML = classes.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
-    document.getElementById("jrFDate").value = C.iso(new Date());
+    document.getElementById("jrFDate").value = C.iso(attNow());
     document.getElementById("jrAddBtn").hidden = !isStaff;
     const t = (location.hash || "").replace("#", "");
     if (["att", "grade", "award", "class"].indexOf(t) !== -1) tab = t;
@@ -302,7 +302,7 @@ document.getElementById("jrAnnounce").addEventListener("click", async function (
     const res = await supabaseClient.from("achievements").insert({
         kind: "rank", title: names, event_name: L("Peringkat kelas ", "Class ranking ") + period, class: cls, period: period,
         details: top.map(function (r) { return { name: r.name, avg: r.avg_score, rank: r.rnk }; }),
-        rank_label: L("Juara kelas", "Class champions"), achieved_on: C.iso(new Date()), created_by: me.id, created_by_name: prof.name || null
+        rank_label: L("Juara kelas", "Class champions"), achieved_on: C.iso(attNow()), created_by: me.id, created_by_name: prof.name || null
     });
     if (res.error) { showToast(L("Gagal mengumumkan.", "Couldn't announce.") + " (" + res.error.message + ")", "error"); return; }
     showToast(L("Juara diumumkan! Tampil di beranda selama 7 hari.", "Announced! Shown on home pages for 7 days."), "success");
@@ -362,7 +362,7 @@ document.getElementById("jrAddBtn").addEventListener("click", function () {
 async function loadFormStudents() {
     const c = document.getElementById("jrFClass").value, sel = document.getElementById("jrFStudent");
     sel.innerHTML = '<option value="">' + esc(L("Memuat…", "Loading…")) + '</option>';
-    const r = await supabaseClient.rpc("champ_attendance", { target_class: c, d_from: C.iso(new Date()), d_to: C.iso(new Date()) });
+    const r = await supabaseClient.rpc("champ_attendance", { target_class: c, d_from: C.iso(attNow()), d_to: C.iso(attNow()) });
     const list = (r.data || []).slice().sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
     sel.innerHTML = '<option value="">' + esc(L("— Pilih siswa —", "— Choose a student —")) + '</option>' + list.map(function (s) { return '<option value="' + esc(s.user_id) + '">' + esc(s.name) + '</option>'; }).join("");
 }

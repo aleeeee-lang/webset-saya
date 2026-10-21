@@ -4242,3 +4242,5 @@ html[data-theme="dark"] .attendance-page .ls-live{color:#FCA5A5!important}
 html[data-theme="dark"] .attendance-page .ls-head small,html[data-theme="dark"] .attendance-page .ls-s-title small,html[data-theme="dark"] .attendance-page .ls-num span,html[data-theme="dark"] .attendance-page .ls-num small,html[data-theme="dark"] .attendance-page .ls-last span{color:#A9ADC4!important}
 @media (min-width:1024px){.ls-list{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}}
 
+.ls-idle{display:inline-flex;align-items:center;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.08);color:#A9ADC4;font-size:11px;font-weight:700}
+html[data-theme="dark"] .attendance-page .ls-idle{color:#A9ADC4!important}

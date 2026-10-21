@@ -11,7 +11,8 @@
 --   classes:  the same numbers for every class today (shown when no lesson is on).
 -- Admins see every class; teachers see the classes they teach or lead; a student
 -- sees their own class, as numbers only (no names).
--- The page asks again every few seconds, so the numbers follow the check-ins.
+-- While a lesson is on, the page asks again every few seconds; with no lesson it stops
+-- and only wakes up when the next lesson starts (next_in) or the page is opened again.
 
 create or replace function public.live_sessions()
 returns json
@@ -73,6 +74,10 @@ begin
     select json_build_object(
         'now', to_char(now_local, 'YYYY-MM-DD"T"HH24:MI:SS'),
         'student', stu,
+        -- seconds until the next lesson starts today (the page sleeps until then)
+        'next_in', (select round(extract(epoch from (min(cs.start_time) - t)))::int
+                    from class_schedules cs join my_classes c on c.class = cs.class
+                    where cs.day = dow and cs.start_time > t),
         'tz', tz,
         'sessions', coalesce((
             select json_agg(json_build_object(

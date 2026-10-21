@@ -45,7 +45,7 @@
         if (!el || typeof supabaseClient === "undefined") return;
         // parents have no class to follow
         try { var pr = JSON.parse(localStorage.getItem("attendreem-profile") || "{}"); if (pr.role === "orangtua") { el.hidden = true; return; } } catch (e) {}
-        var open = {}, last = null, timer = 0, busy = false, prevHadir = {};
+        var open = {}, last = null, timer = 0, wake = 0, busy = false, prevHadir = {}, active = false;
         el.classList.add("ls-card");
         el.hidden = true;
         el.addEventListener("click", function (e) {
@@ -66,6 +66,11 @@
             if (r.error || !r.data) { if (!last) el.hidden = true; return; }   // students, or the SQL isn't run yet
             last = r.data;
             render(r.data);
+            // only keep checking while a lesson is going on; otherwise sleep until the next one
+            active = !!(r.data.sessions && r.data.sessions.length);
+            clearInterval(timer); clearTimeout(wake); timer = 0; wake = 0;
+            if (active) timer = setInterval(load, POLL);
+            else if (r.data.next_in > 0) wake = setTimeout(load, (r.data.next_in + 2) * 1000);
         }
 
         function render(d) {
@@ -79,8 +84,9 @@
                   (cls.length ? '<div class="ls-rows">' + cls.map(classRow).join("") + "</div>" : "");
             el.classList.toggle("ls-student", curStudent);
             el.innerHTML = '<div class="ls-head"><div><b>' + esc(curStudent ? L("Kelasmu sekarang", "Your class now") : L("Rekap sesi", "Session recap")) + '</b><small>' +
-                esc(ses.length ? L(ses.length + " pelajaran berlangsung · diperbarui ", ses.length + " lesson(s) now · updated ") : L("Diperbarui ", "Updated ")) + esc(t) + "</small></div>" +
-                '<span class="ls-live"><i></i>LIVE</span></div>' + body;
+                esc(ses.length ? L(ses.length + " pelajaran berlangsung · diperbarui ", ses.length + " lesson(s) now · updated ") + t
+                               : (d.next_in > 0 ? L("Mulai lagi saat pelajaran berikutnya", "Starts again with the next lesson") : L("Tidak ada pelajaran lagi hari ini", "No more lessons today"))) + "</small></div>" +
+                (ses.length ? '<span class="ls-live"><i></i>LIVE</span>' : '<span class="ls-idle">' + esc(L("Tidak ada sesi", "No session")) + "</span>") + "</div>" + body;
             el.hidden = false;
             // a little flash on the number that just went up
             ses.forEach(function (s) {
@@ -94,13 +100,12 @@
         }
 
         load();
-        timer = setInterval(load, POLL);
         document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") load(); });
         window.addEventListener("tabshow", load);
         // a new check-in: refresh right away (when the database sends live changes)
         try {
             supabaseClient.channel("ls-attendance-" + Math.random().toString(36).slice(2))
-                .on("postgres_changes", { event: "INSERT", schema: "public", table: "attendance" }, function () { setTimeout(load, 400); })
+                .on("postgres_changes", { event: "INSERT", schema: "public", table: "attendance" }, function () { if (active) setTimeout(load, 400); })
                 .subscribe();
         } catch (e) {}
     }

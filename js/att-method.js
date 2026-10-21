@@ -50,13 +50,29 @@
     var FP_BIG = FP_IC.replace('width="20" height="20"', 'width="40" height="40"');
     var SEND_BIG = SEND_IC.replace('width="20" height="20"', 'width="38" height="38"');
     // the round button: scan / register, or "send" once matched; hidden when there's nothing to press
+    // the effects around the round button: a thin ring that runs while scanning and a soft light
+    // over the finger; matched = the ring closes and a check is drawn; not matched = a red ring
+    var CHECK_BIG = '<svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="fpx-check" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    var FX = '<span class="fpx-clip" aria-hidden="true"><i class="fpx-scan"></i></span>' +
+        '<svg class="fpx-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47"/></svg>' +
+        '';
+    function fx(stateName) {
+        var b = $("fpBtn");
+        if (!b) return;
+        b.dataset.anim = stateName || "";
+        var ic = b.querySelector(".fpx-ic");
+        if (ic) ic.innerHTML = stateName === "ok" ? CHECK_BIG : (b.dataset.mode === "send" ? SEND_BIG : FP_BIG);
+        if (navigator.vibrate) { try { if (stateName === "ok") navigator.vibrate(24); else if (stateName === "err") navigator.vibrate([40, 50, 40]); } catch (e) {} }
+    }
     function setButton(label, mode) {
         var b = $("fpBtn");
         b.hidden = !label;
         if (!label) return;
-        b.innerHTML = mode === "send" ? SEND_BIG : FP_BIG;
+        if (state.celebrating || state.busy) return;      // keep the effect running / the check on screen
+        b.innerHTML = '<span class="fpx-ic">' + (mode === "send" ? SEND_BIG : FP_BIG) + '</span>' + FX;
         b.setAttribute("aria-label", label);
         b.dataset.mode = mode;
+        b.dataset.anim = "";
     }
     // room for the panel: page padding, and toasts sit above it
     function syncSpace() {
@@ -77,23 +93,28 @@
         syncSpace();
     }
 
+    // what the server says about this student's fingerprint (asked once, in the background;
+    // the last answer is remembered so the panel is right straight away)
+    var LS = "att-fp-registered";
+    try { var c = localStorage.getItem(LS); if (c === "1") state.registered = true; else if (c === "0") state.registered = false; } catch (e) {}
+    var statusP = null;
+    function loadStatus() {
+        if (!statusP) statusP = window.AttFP.status().then(function (st) {
+            state.registered = !!st.registered;
+            state.nextChange = st.next_change_at ? Date.parse(st.next_change_at) : null;
+            try { localStorage.setItem(LS, state.registered ? "1" : "0"); } catch (e) {}
+            render();
+            return st;
+        }, function (e) { statusP = null; throw e; });
+        return statusP;
+    }
+
     async function render() {
         if (state.method !== "fp") return;
-        $("fpMore").hidden = true;
+        $("fpMore").hidden = true;      // "Ganti HP" and "Tambah / ganti jari" live in Settings now
         if (state.supported === null) state.supported = await window.AttFP.supported();
         if (!state.supported) { setPanel(T("fp_unsupported_t"), T("fp_unsupported"), null, "warn"); return; }
-        if (state.registered === null) {
-            setPanel(T("fp_checking"), "", null, "");
-            try {
-                var st = await window.AttFP.status();
-                state.registered = !!st.registered;
-                state.nextChange = st.next_change_at ? Date.parse(st.next_change_at) : null;
-            }
-            catch (e) { setPanel(T("fp_unavailable_t"), T("fp_unavailable"), null, "warn"); state.registered = null; return; }
-        }
-        $("fpMore").hidden = !state.registered;
-        if (state.registered) syncMore();
-        if (!state.registered) { setPanel(T("fp_register_t"), T("fp_register"), T("fp_register_btn"), ""); return; }
+        if (state.registered === false) { setPanel(T("fp_register_t"), T("fp_register"), T("fp_register_btn"), ""); return; }
         if (window.attFpTicket()) { setPanel(T("fp_ok_t"), T("fp_ok"), null, "ok"); return; }
         setPanel(T("fp_scan_t"), T("fp_scan"), T("fp_scan_btn"), "");
     }
@@ -177,29 +198,43 @@
     }
 
     async function onBtn() {
-        if (state.busy) return;
+        if (state.busy || state.celebrating) return;
         if ($("fpBtn").dataset.mode === "send") { if (typeof saveAttendance === "function") saveAttendance(); return; }
+        // check the form first, so a scan is never wasted
+        if (state.registered !== false) {
+            var picked = document.querySelector('input[name="status"]:checked');
+            if (!picked) { if (window.showToast) showToast(T("toast_pick_status_first"), "error"); return; }
+            var rs = document.getElementById("reason");
+            if (picked.value !== "Hadir" && rs && !rs.value.trim()) { if (window.showToast) showToast(T("toast_reason_needed"), "error"); if (rs.focus) rs.focus(); return; }
+        }
         state.busy = true; $("fpBtn").disabled = true;
+        var sendNow = false;
         try {
-            if (!state.registered) {
+            if (state.registered === null) { try { await loadStatus(); } catch (se) { /* the scan below says what's wrong */ } }
+            if (state.registered === false) {
                 await window.AttFP.register();
                 state.registered = true;
+                try { localStorage.setItem(LS, "1"); } catch (e) {}
                 if (window.showToast) showToast(T("fp_registered_toast"), "success");
             } else {
+                fx("scan");
                 var ticket = await window.AttFP.verify();
                 // proof of who is holding the phone: one front-camera photo, taken right away
-                setPanel(T("fp_snap_t"), T("fp_snap"), null, "");
+                fx("snap");
                 var shot = null;
                 try { shot = await autoSnap(); } catch (se) { shot = null; state.snapErr = (se && se.name) || "x"; }
                 if (!shot) {
+                    fx("err");
                     if (window.showToast) showToast(T(state.snapErr === "NotAllowedError" ? "fp_snap_denied" : "fp_snap_failed"), "error");
                 } else {
                     state.ticket = ticket;
                     state.ticketAt = Date.now();
                     setSnap(shot);
-                    if (window.showToast) showToast(T("fp_ok_t"), "success");
                     // the ticket runs out; ask again after that
                     setTimeout(render, TICKET_MS + 500);
+                    sendNow = true;
+                    fx("ok");
+                    state.celebrating = true;
                 }
             }
         } catch (e) {
@@ -208,12 +243,24 @@
                 : code === "ALREADY_REGISTERED" ? "fp_err_already"
                 : code === "InvalidStateError" ? "fp_err_already"
                 : code === "WRONG_DEVICE" ? "fp_err_other_phone"
+                : code === "NOT_REGISTERED" ? "fp_register_t"
                 : "fp_err_generic";
+            fx("err");
             if (code === "ALREADY_REGISTERED") state.registered = true;
+            if (code === "NOT_REGISTERED") { state.registered = false; try { localStorage.setItem(LS, "0"); } catch (e2) {} }
             if (window.showToast) showToast(T(key), "error");
         }
         state.busy = false; $("fpBtn").disabled = false;
-        render();
+        if (sendNow) {
+            // matched: let the check show, then send the check-in (if it fails, the round button sends it again)
+            await new Promise(function (r) { setTimeout(r, 650); });
+            if (typeof saveAttendance === "function") saveAttendance();
+            setTimeout(function () { state.celebrating = false; render(); }, 1500);
+            return;
+        }
+        // a failed scan: shake, then back to the normal button
+        setTimeout(function () { if (!state.busy) { fx(""); render(); } }, 700);
+        if ($("fpBtn").dataset.anim !== "err") render();
     }
 
     function choose(m) {
@@ -242,5 +289,14 @@
         });
         $("fpChangeCancel").addEventListener("click", function () { changeBar(false); choose("fp"); });
         $("fpChangeGo").addEventListener("click", finishChange);
+        window.AttFP.supported().then(function (ok) {
+            state.supported = ok;
+            if (!ok) return;
+            var p = loadStatus();
+            if (location.hash === "#fpchange") {
+                history.replaceState(null, "", location.pathname + location.search);
+                p.then(function () { startChange(); }, function () { if (window.showToast) showToast(T("fp_unavailable"), "error"); });
+            }
+        });
     });
 })();

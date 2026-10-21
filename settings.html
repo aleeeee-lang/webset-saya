@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261022a">
-<script src="js/theme.js?v=20261022a"></script>
-<script src="js/avatarcrop.js?v=20261022a"></script>
-<script src="js/lang.js?v=20261022a"></script>
-<script src="js/toast.js?v=20261022a"></script>
+<link rel="stylesheet" href="style.css?v=20261022e">
+<script src="js/theme.js?v=20261022e"></script>
+<script src="js/avatarcrop.js?v=20261022e"></script>
+<script src="js/lang.js?v=20261022e"></script>
+<script src="js/toast.js?v=20261022e"></script>
 </head>
 
 <body>
@@ -107,6 +107,17 @@
             <div class="att-app-text"><span data-i18n="notif_page">Notifications</span><small id="notifLinkHint"></small></div>
             <span class="att-app-chev">›</span>
         </a>
+        <!-- students: fingerprint check-in (moved here from the check-in page) -->
+        <a href="attendance.html#fpchange" class="att-app-row att-app-link" id="fpChangeRow" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 6h4"/><path d="M9.5 17.5a3.5 3.5 0 0 1 5 0"/><path d="M8.5 14.5a5 5 0 0 1 7 0"/></svg>
+            <div class="att-app-text"><span data-i18n="set_fp_change">Ganti HP untuk absen sidik jari</span><small id="fpChangeHint" data-i18n="set_fp_change_hint"></small></div>
+            <span class="att-app-chev">›</span>
+        </a>
+        <button type="button" class="att-app-row att-app-link" id="fpTipRow" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg>
+            <div class="att-app-text"><span data-i18n="fp_tip_link">Tambah / ganti jari</span><small data-i18n="set_fp_tip_hint"></small></div>
+            <span class="att-app-chev">›</span>
+        </button>
     </section>
 
     <section class="attendance-card" style="padding:8px 16px;display:none" id="adminSettingsSection">
@@ -214,8 +225,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261022a"></script>
-<script src="js/auth.js?v=20261022a"></script>
+<script src="js/supabase.js?v=20261022e"></script>
+<script src="js/auth.js?v=20261022e"></script>
+<script src="js/fingerprint.js?v=20261022e"></script>
 
 <script>
 
@@ -280,9 +292,33 @@ async function loadAccountInfo() {
         if (profile.role === "murid") {
             document.getElementById("shareGoalsToggle").checked = !!(user.user_metadata && user.user_metadata.share_goals);
             document.getElementById("shareGoalsRow").hidden = false;
+            setupFpRows();
         }
     }
 
+}
+
+// students: fingerprint rows (only when this phone can use a fingerprint / screen lock)
+async function setupFpRows() {
+    if (!window.AttFP || !(await AttFP.supported())) return;
+    const lang = getLang();
+    document.getElementById("fpChangeRow").hidden = false;
+    document.getElementById("fpTipRow").hidden = false;
+    document.getElementById("fpTipRow").addEventListener("click", function () {
+        attConfirm({ title: translations.fp_tip_t[getLang()], text: translations.fp_tip[getLang()], ok: "OK", tone: "primary", info: true });
+    });
+    try {
+        const st = await AttFP.status();
+        const next = st.next_change_at ? Date.parse(st.next_change_at) : 0;
+        if (next && next > Date.now()) {
+            const d = new Date(next);
+            const txt = d.toLocaleDateString(lang === "id" ? "id-ID" : "en-GB", { day: "numeric", month: "short" }) + " " +
+                String(d.getHours()).padStart(2, "0") + "." + String(d.getMinutes()).padStart(2, "0");
+            const h = document.getElementById("fpChangeHint");
+            h.removeAttribute("data-i18n");
+            h.textContent = translations.set_fp_change_wait[lang].replace("{d}", txt);
+        }
+    } catch (e) {}
 }
 
 function cacheAvatar(url) {

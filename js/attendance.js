@@ -178,7 +178,7 @@ async function saveAttendance() {
 
     if (!status) {
 
-        showToast("Please select your attendance status.", "error");
+        showToast(translations.toast_pick_status_first[lang], "error");
 
         return;
     }
@@ -186,7 +186,7 @@ async function saveAttendance() {
 
     if (status !== "Hadir" && !reason) {
 
-        showToast("Please provide a reason for your absence.", "error");
+        showToast(translations.toast_reason_needed[lang], "error");
 
         return;
     }
@@ -373,10 +373,7 @@ async function saveAttendance() {
     // SUCCESS
     // =========================
 
-    showToast(
-        "Attendance successfully saved!",
-        "success"
-    );
+    showToast(translations.toast_attendance_saved[lang], "success");
 
     if (typeof attFpUsed === "function") attFpUsed();   // a ticket works only once
 

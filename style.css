@@ -4060,3 +4060,44 @@ html[data-theme="dark"] .attendance-page .v2-proof-head small{color:#8E8E93!impo
 .v2-submit.is-waiting .v2-submit-arrow{background:#D3D6E0;color:#6B7088}
 html[data-theme="dark"] .v2-submit.is-waiting{background:#1C1C1E;color:#A1A1AA}
 html[data-theme="dark"] .v2-submit.is-waiting .v2-submit-arrow{background:#2C2C2E;color:#A1A1AA}
+button.att-app-link{width:100%;background:none;border:none;font:inherit;text-align:left;margin:0;padding:12px 0;color:inherit}
+.att-app-row[hidden]{display:none!important}
+
+/* ---------- fingerprint button effect (js/att-method.js fx()) ----------
+   calm on purpose: nothing moves until the button is pressed.
+   scan: a thin ring runs and a soft light sweeps over the finger.
+   ok:   the button turns white (black in dark mode), the ring closes and a check is drawn.
+   err:  the ring turns red and the button nudges. */
+.v2-fp-round{transition:background .3s,color .3s,box-shadow .3s,scale .12s;overflow:visible}
+.v2-fp-round::after{animation:none;box-shadow:none}
+.v2-fp-round:active{scale:.94}
+.v2-fp-round:disabled[data-anim]:not([data-anim=""]){opacity:1}
+.fpx-ic{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
+.fpx-clip{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none;z-index:1}
+.fpx-scan{position:absolute;left:-10%;right:-10%;height:26%;top:-30%;opacity:0;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.42) 50%,rgba(255,255,255,0))}
+.fpx-ring{position:absolute;left:-15px;top:-15px;width:calc(100% + 30px);height:calc(100% + 30px);pointer-events:none;overflow:visible}
+.fpx-ring circle{fill:none;stroke:#C6F432;stroke-width:2;stroke-linecap:round;stroke-dasharray:296;stroke-dashoffset:296;transform-origin:50% 50%;transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1),stroke .3s}
+
+.v2-fp-round[data-anim="scan"]{box-shadow:0 0 0 12px rgba(198,244,50,.07),0 10px 24px rgba(20,22,43,.28)}
+.v2-fp-round[data-anim="scan"] .fpx-scan{opacity:1;animation:fpxScan 1.6s cubic-bezier(.45,.05,.55,.95) infinite alternate}
+.v2-fp-round[data-anim="scan"] .fpx-ring circle{stroke-dasharray:64 232;stroke-dashoffset:0;animation:fpxSpin 1.5s cubic-bezier(.45,.05,.55,.95) infinite}
+.v2-fp-round[data-anim="snap"] .fpx-ring circle{stroke-dashoffset:0}
+
+.v2-fp-round[data-anim="ok"]{background:#fff;color:#14162B;box-shadow:0 0 0 12px rgba(198,244,50,.12),0 10px 24px rgba(20,22,43,.28)}
+html[data-theme="dark"] .v2-fp-round[data-anim="ok"]{background:#0B0B0C;color:#C6F432!important}
+.v2-fp-round[data-anim="ok"] .fpx-ring circle{stroke:#C6F432;stroke-dashoffset:0}
+.v2-fp-round[data-anim="ok"] .fpx-check{stroke-dasharray:24;stroke-dashoffset:24;animation:fpxDraw .45s .08s cubic-bezier(.4,0,.2,1) forwards}
+.v2-fp-round[data-anim="ok"] .fpx-ic{animation:fpxIn .35s cubic-bezier(.2,.8,.3,1)}
+
+.v2-fp-round[data-anim="err"]{animation:fpxNudge .4s cubic-bezier(.4,0,.2,1)}
+.v2-fp-round[data-anim="err"] .fpx-ring circle{stroke:#EF4444;stroke-dashoffset:0}
+
+@keyframes fpxScan{from{top:-30%}to{top:104%}}
+@keyframes fpxSpin{to{transform:rotate(360deg)}}
+@keyframes fpxDraw{to{stroke-dashoffset:0}}
+@keyframes fpxIn{from{scale:.7;opacity:0}to{scale:1;opacity:1}}
+@keyframes fpxNudge{0%,100%{translate:0 0}25%{translate:-4px 0}50%{translate:3px 0}75%{translate:-2px 0}}
+@media (prefers-reduced-motion:reduce){.v2-fp-round[data-anim] *{animation:none!important}}
+
+/* the proof photo is taken in the background: no thumbnail popping into the panel */
+#fpSnap{display:none!important}

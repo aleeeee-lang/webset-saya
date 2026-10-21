@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261022a"
+        href="style.css?v=20261022e"
     >
-    <script src="js/theme.js?v=20261022a"></script>
-    <script src="js/lang.js?v=20261022a"></script>
-    <script src="js/toast.js?v=20261022a"></script>
-    <script src="js/transition.js?v=20261022a"></script>
-    <script src="js/avatarcrop.js?v=20261022a"></script>
+    <script src="js/theme.js?v=20261022e"></script>
+    <script src="js/lang.js?v=20261022e"></script>
+    <script src="js/toast.js?v=20261022e"></script>
+    <script src="js/transition.js?v=20261022e"></script>
+    <script src="js/avatarcrop.js?v=20261022e"></script>
 
     
 </head>
@@ -373,18 +373,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261022a"></script>
+    <script src="js/supabase.js?v=20261022e"></script>
     
-    <script src="js/auth.js?v=20261022a"></script>
+    <script src="js/auth.js?v=20261022e"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261022a"></script>
+    <script src="js/camera.js?v=20261022e"></script>
 
-    <script src="js/fingerprint.js?v=20261022a"></script>
-    <script src="js/att-method.js?v=20261022a"></script>
-    <script src="js/att-proof.js?v=20261022a"></script>
-    <script src="js/attendance.js?v=20261022a"></script>
+    <script src="js/fingerprint.js?v=20261022e"></script>
+    <script src="js/att-method.js?v=20261022e"></script>
+    <script src="js/att-proof.js?v=20261022e"></script>
+    <script src="js/attendance.js?v=20261022e"></script>
 
 
 
@@ -484,11 +484,13 @@
         (function () {
             const btn = document.querySelector(".v2-submit");
             function sync() {
-                const picked = !!document.querySelector('input[name="status"]:checked');
-                const ready = picked && typeof attIdentityReady === "function" && attIdentityReady();
+                const pickedEl = document.querySelector('input[name="status"]:checked');
+                const reasonOk = !pickedEl || pickedEl.value === "Hadir" || document.getElementById("reason").value.trim() !== "";
+                const ready = !!pickedEl && reasonOk && typeof attIdentityReady === "function" && attIdentityReady();
                 btn.classList.toggle("is-waiting", !ready);
             }
             document.addEventListener("click", function () { setTimeout(sync, 60); }, true);
+            document.getElementById("reason").addEventListener("input", sync);
             setInterval(sync, 500);
             sync();
         })();

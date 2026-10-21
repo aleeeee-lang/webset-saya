@@ -19,19 +19,19 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261022o"
+        href="style.css?v=20261022p"
     >
 
-    <script src="js/theme.js?v=20261022o"></script>
+    <script src="js/theme.js?v=20261022p"></script>
 
-    <script src="js/lang.js?v=20261022o"></script>
+    <script src="js/lang.js?v=20261022p"></script>
 
-    <script src="js/toast.js?v=20261022o"></script>
+    <script src="js/toast.js?v=20261022p"></script>
 
 
-    <script src="js/transition.js?v=20261022o"></script>
+    <script src="js/transition.js?v=20261022p"></script>
 
-    <script src="js/scroll-pop.js?v=20261022o"></script>
+    <script src="js/scroll-pop.js?v=20261022p"></script>
 
 </head>
 
@@ -256,9 +256,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261022o"></script>
+    <script src="js/supabase.js?v=20261022p"></script>
 
-    <script src="js/auth.js?v=20261022o"></script>
+    <script src="js/auth.js?v=20261022p"></script>
 
 
 
@@ -398,10 +398,12 @@
                 return total > 0 ? (n / total) * 100 : 0;
             };
 
-            document.getElementById("segHadir").style.width = pct(hadir) + "%";
-            document.getElementById("segIzin").style.width = pct(izin) + "%";
-            document.getElementById("segSakit").style.width = pct(sakit) + "%";
-            document.getElementById("segAlpa").style.width = pct(alpa) + "%";
+            // empty parts are left out, so 100% Hadir fills the whole bar (no gaps for the zeros)
+            [["segHadir", hadir], ["segIzin", izin], ["segSakit", sakit], ["segAlpa", alpa]].forEach(function (x) {
+                const el = document.getElementById(x[0]);
+                el.style.width = pct(x[1]) + "%";
+                el.style.display = x[1] > 0 ? "" : "none";
+            });
 
 
 
@@ -576,7 +578,7 @@ document.addEventListener("touchend", function (event) {
 </script>
 
 
-<script src="js/live-sessions.js?v=20261022o"></script>
+<script src="js/live-sessions.js?v=20261022p"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 

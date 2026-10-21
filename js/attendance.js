@@ -27,6 +27,14 @@ function attDistanceM(lat1, lng1, lat2, lng2) {
 }
 function attDistanceLabel(m) { return m >= 1000 ? (m / 1000).toFixed(1).replace(".", ",") + " km" : Math.round(m) + " m"; }
 
+// true once the face photo was taken (camera) or the fingerprint was scanned and its photo taken
+function attIdentityReady() {
+    if (typeof attMethod === "function" && attMethod() === "fp") {
+        return !!(typeof attFpTicket === "function" && attFpTicket() && typeof attFpPhoto === "function" && attFpPhoto());
+    }
+    return typeof capturedPhoto !== "undefined" && !!capturedPhoto;
+}
+
 async function saveAttendance() {
 
     // =========================
@@ -180,6 +188,14 @@ async function saveAttendance() {
 
         showToast("Please provide a reason for your absence.", "error");
 
+        return;
+    }
+
+    // a check-in always needs the photo from the camera (or the fingerprint scan with its photo);
+    // the server checks this too (attendance_photo_required.sql)
+    if (!attIdentityReady()) {
+        const fpMode = typeof attMethod === "function" && attMethod() === "fp";
+        showToast(translations[fpMode ? "toast_fp_needed" : "toast_face_photo_needed"][lang], "error");
         return;
     }
 
@@ -343,8 +359,8 @@ async function saveAttendance() {
         );
 
         // the server's own checks (attendance_rules.sql) answer with a short code
-        const code = ["ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
-        const msgKey = { ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
+        const code = ["ATT_PHOTO_NEEDED", "ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
+        const msgKey = { ATT_PHOTO_NEEDED: "toast_face_photo_needed", ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
                          ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid", ATT_FP_PHOTO: "fp_snap_failed" }[code];
         if (code === "ATT_FP_INVALID" && typeof attFpUsed === "function") attFpUsed();
         showToast(msgKey ? translations[msgKey][getLang()] : "Attendance failed to save: " + error.message, "error");

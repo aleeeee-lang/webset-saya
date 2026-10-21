@@ -4054,3 +4054,9 @@ html[data-theme="dark"] .lv-proof{background:#0A0A0A;color:#EDEDED}
 html[data-theme="dark"] .attendance-page .v2-proof-x{color:#F87171!important}
 html[data-theme="dark"] .attendance-page .am-proof i{color:#C6F432!important}
 html[data-theme="dark"] .attendance-page .v2-proof-head small{color:#8E8E93!important}
+
+/* check-in: waiting until a status is picked and the photo / fingerprint is done (still tappable: shows the hint) */
+.v2-submit.is-waiting{background:#E6E8EF;color:#6B7088}
+.v2-submit.is-waiting .v2-submit-arrow{background:#D3D6E0;color:#6B7088}
+html[data-theme="dark"] .v2-submit.is-waiting{background:#1C1C1E;color:#A1A1AA}
+html[data-theme="dark"] .v2-submit.is-waiting .v2-submit-arrow{background:#2C2C2E;color:#A1A1AA}

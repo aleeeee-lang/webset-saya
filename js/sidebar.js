@@ -30,6 +30,7 @@
         task: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/>',
         book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/>',
         trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/>',
+        checkin: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 15.5a3.5 3.5 0 0 1-.5-1.8V12a3.5 3.5 0 0 1 7 0v.6"/><path d="M12 12v1.5a5 5 0 0 1-1 3"/><path d="M15.5 15a6 6 0 0 1-.6 1.8"/>',
         qr: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/>',
         grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
     };
@@ -40,7 +41,7 @@
     var MENUS = {
         murid: [
             ["index.html", "home", "Home", "Beranda"],
-            ["attendance.html", "cam", "Check in", "Absensi"],
+            ["attendance.html", "checkin", "Check in", "Absensi"],
             ["dashboard.html", "bar", "Dashboard", "Dasbor"],
             ["history.html", "wallet", "Savings", "Tabungan"],
             ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
@@ -76,7 +77,7 @@
         admin: [
             { label: ["General", "Menu umum"] },
             ["index.html", "home", "Home", "Beranda"],
-            ["attendance.html", "cam", "Check in", "Absensi"],
+            ["attendance.html", "checkin", "Check in", "Absensi"],
             ["dashboard.html", "bar", "Dashboard", "Dasbor"],
             ["history.html", "wallet", "Savings", "Tabungan"],
             ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
@@ -85,7 +86,7 @@
             ["admin-students.html", "users", "Students", "Kelola siswa"],
             ["admin-teachers.html", "user", "Teachers", "Kelola guru"],
             ["admin-parents.html", "users", "Parents", "Akun orang tua"],
-            ["admin-attendance.html", "cam", "Attendance", "Kelola absensi"],
+            ["admin-attendance.html", "checkin", "Attendance", "Kelola absensi"],
             ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
             ["admin-schedule.html", "clock", "Schedule", "Jadwal absen"],
             ["admin-lessons.html", "book", "Lesson Schedule", "Jadwal pelajaran"],
@@ -183,8 +184,8 @@
         "kas.html": "kas uang kas iuran bendahara keuangan kelas pemasukan pengeluaran saldo cash treasurer"
     };
     var SHORTCUTS = {
-        murid: [["attendance.html", "Absen", "Check in", "lime", "cam"], ["schedule.html", "Jadwal", "Lessons", "", "book"], ["tasks.html", "Tugas", "Tasks", "amber", "task"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],
-        guru: [["teacher.html", "Absen kelas", "Class check-in", "lime", "cam"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["tasks.html", "Beri tugas", "Give a task", "amber", "task"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
+        murid: [["attendance.html", "Absen", "Check in", "lime", "checkin"], ["schedule.html", "Jadwal", "Lessons", "", "book"], ["tasks.html", "Tugas", "Tasks", "amber", "task"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],
+        guru: [["teacher.html", "Absen kelas", "Class check-in", "lime", "checkin"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["tasks.html", "Beri tugas", "Give a task", "amber", "task"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
         orangtua: [["parent.html", "Portal anak", "Child portal", "lime", "home"], ["calendar.html", "Kalender", "Calendar", "", "cal"], ["information.html", "Informasi", "Information", "cyan", "info"]],
         admin: [["admin-students.html", "Kelola siswa", "Students", "lime", "users"], ["admin-lessons.html", "Jadwal pelajaran", "Lessons", "cyan", "book"], ["admin-schedule.html", "Jadwal absen", "Schedule", "", "clock"], ["admin-spp.html", "Kelola SPP", "SPP", "amber", "wallet"], ["admin-leave.html", "Persetujuan izin", "Leave", "red", "doc"], ["admin-broadcast.html", "Kirim notifikasi", "Notify", "cyan", "bell"]]
     };

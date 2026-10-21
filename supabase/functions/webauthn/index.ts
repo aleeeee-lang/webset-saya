@@ -90,7 +90,9 @@ Deno.serve(async (req) => {
     userDisplayName: prof.name ?? user.email ?? "Siswa",
     userID: new TextEncoder().encode(user.id),
     attestationType: "none",
-    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
+    // "discouraged": the phone keeps the key on this device only (on Android it isn't saved as a
+    // synced passkey in Google Password Manager), so the fingerprint stays tied to one phone
+    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "discouraged", requireResidentKey: false },
     timeout: 60_000,
   });
   const verifyReg = (response: unknown, expectedChallenge: string) => verifyRegistrationResponse({

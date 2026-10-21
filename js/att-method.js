@@ -4,7 +4,9 @@
 // that saveAttendance() sends with the check-in.
 (function () {
     var TICKET_MS = 110000;      // the server accepts a ticket for 2 minutes
-    var state = { method: "face", ticket: null, ticketAt: 0, registered: null, supported: null, busy: false, nextChange: null, changing: false };
+    // check-in is by fingerprint or QR (both take a photo by themselves); the camera page is only
+    // used to change phones, or as a fallback on a device without a fingerprint / screen lock
+    var state = { method: "fp", ticket: null, ticketAt: 0, registered: null, supported: null, busy: false, nextChange: null, changing: false };
     function T(k) { return translations[k] ? translations[k][getLang()] : k; }
     function $(id) { return document.getElementById(id); }
 
@@ -295,7 +297,16 @@
         $("fpChangeGo").addEventListener("click", finishChange);
         window.AttFP.supported().then(function (ok) {
             state.supported = ok;
-            if (!ok) return;
+            if (!ok) {
+                // no fingerprint on this device: the camera check-in stays as the way in
+                var fb = document.querySelector('#attMethod button[data-m="fp"]');
+                var cb = document.querySelector('#attMethod button[data-m="face"]');
+                if (fb) fb.hidden = true;
+                if (cb) cb.hidden = false;
+                if (state.method === "fp") choose("face");
+                return;
+            }
+            if (state.method === "fp") choose("fp");
             var p = loadStatus();
             if (location.hash === "#fpchange") {
                 history.replaceState(null, "", location.pathname + location.search);

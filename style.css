@@ -4174,3 +4174,7 @@ html[data-theme="dark"] .attendance-page .qs-row.done small{color:#4ADE80!import
 html[data-theme="dark"] .attendance-page .qs-row.done .qs-dot{background:#4ADE80}
 html[data-theme="dark"] .qs-close{background:#2A1416}
 html[data-theme="dark"] .attendance-page .qs-close{color:#FCA5A5!important}
+
+/* the method tabs: as many columns as visible tabs (the camera tab is hidden on phones with a fingerprint) */
+.v2-method,.v2-method:has(button:nth-child(3)){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:1fr}
+.v2-method button[hidden]{display:none!important}

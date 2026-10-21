@@ -30,11 +30,11 @@
             if (!v.videoWidth) await new Promise(function (r) { setTimeout(r, 600); });
             var w = v.videoWidth, h = v.videoHeight;
             if (!w || !h) return null;
-            var scale = Math.min(1, 960 / Math.max(w, h));
+            var scale = Math.min(1, 480 / Math.max(w, h));     // small: the face is clear, the storage stays light
             var c = document.createElement("canvas");
             c.width = Math.round(w * scale); c.height = Math.round(h * scale);
             c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
-            return await new Promise(function (r) { c.toBlob(r, "image/jpeg", 0.85); });
+            return await new Promise(function (r) { c.toBlob(r, "image/jpeg", 0.72); });
         } finally {
             stream.getTracks().forEach(function (t) { t.stop(); });
         }

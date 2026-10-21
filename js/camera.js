@@ -706,8 +706,11 @@ function takePhoto() {
     // SET CANVAS
     // =====================================
 
-    canvas.width = width;
-    canvas.height = height;
+    // a small photo is enough to see the face (and keeps the free storage from filling up)
+    const shrink = Math.min(1, 480 / Math.max(width, height));
+    const cw = Math.round(width * shrink), ch = Math.round(height * shrink);
+    canvas.width = cw;
+    canvas.height = ch;
 
 
     const context =
@@ -715,12 +718,7 @@ function takePhoto() {
 
 
     // Bersihkan canvas
-    context.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
+    context.clearRect(0, 0, cw, ch);
 
 
     // =====================================
@@ -730,11 +728,11 @@ function takePhoto() {
    context.save();
 
 if (FLIP_CAMERA) {
-    context.translate(width, 0);
+    context.translate(cw, 0);
     context.scale(-1, 1);
 }
 
-context.drawImage(video, 0, 0, width, height);
+context.drawImage(video, 0, 0, cw, ch);
 
 context.restore();
 
@@ -788,7 +786,7 @@ context.restore();
 
         "image/jpeg",
 
-        0.9
+        0.72
 
     );
 

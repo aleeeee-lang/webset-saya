@@ -11,12 +11,12 @@
         return new Promise(function (resolve) {
             var img = new Image(), u = URL.createObjectURL(file);
             img.onload = function () {
-                var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+                var max = 1280, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
                 var c = document.createElement("canvas");
                 c.width = Math.round(w * k); c.height = Math.round(h * k);
                 c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
                 URL.revokeObjectURL(u);
-                c.toBlob(function (b) { resolve(b); }, "image/jpeg", 0.82);
+                c.toBlob(function (b) { resolve(b); }, "image/jpeg", 0.75);
             };
             img.onerror = function () { URL.revokeObjectURL(u); resolve(null); };
             img.src = u;

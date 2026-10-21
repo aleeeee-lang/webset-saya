@@ -36,6 +36,48 @@ const whenLabel = (due: Date, now: Date) => {
   return DAYS[new Date(due.getTime() + TZ * H).getUTCDay()] + " " + hhmm(due);
 };
 
+// ---------- photo clean-up (keeps the free 1 GB storage from filling up) ----------
+// Once a day (02.00-02.10 school time): check-in photos older than 30 days, and letter /
+// phone-change photos older than 90 days, are removed from storage. The attendance itself stays.
+const FACE_DAYS = 30, DOC_DAYS = 90;
+// deno-lint-ignore no-explicit-any
+async function cleanupPhotos(db: any, local: Date) {
+  const day = (n: number) => new Date(local.getTime() - n * 86400_000).toISOString().slice(0, 10);
+  const stamp = (n: number) => new Date(Date.now() - n * 86400_000).toISOString();
+  const bucket = db.storage.from("attendance-photos");
+  let removed = 0;
+  const drop = async (paths: string[]) => {
+    for (let i = 0; i < paths.length; i += 100) {
+      const part = paths.slice(i, i + 100);
+      const { error } = await bucket.remove(part);
+      if (!error) removed += part.length;
+    }
+  };
+  // 1) face photos of check-ins older than 30 days
+  for (let round = 0; round < 10; round++) {
+    const { data: rows, error } = await db.from("attendance").select("id, photo_url").lt("date", day(FACE_DAYS)).not("photo_url", "is", null).limit(500);
+    if (error || !rows?.length) break;
+    await drop(rows.map((r: { photo_url: string }) => r.photo_url));
+    await db.from("attendance").update({ photo_url: null }).in("id", rows.map((r: { id: string }) => r.id));
+    if (rows.length < 500) break;
+  }
+  // 2) letter photos (Izin / Sakit) older than 90 days
+  for (const t of ["attendance", "leave_requests"]) {
+    const dateCol = t === "attendance" ? "date" : "end_date";
+    const { data: rows, error } = await db.from(t).select("id, proof_url").lt(dateCol, day(DOC_DAYS)).not("proof_url", "is", null).limit(500);
+    if (error || !rows?.length) continue;   // column missing on an older database: skip
+    // the same letter can be on several days: remove each file once
+    await drop([...new Set(rows.map((r: { proof_url: string }) => r.proof_url))] as string[]);
+    await db.from(t).update({ proof_url: null }).in("id", rows.map((r: { id: string }) => r.id));
+  }
+  // 3) phone-change face photos older than 90 days (the change history itself stays)
+  {
+    const { data: rows, error } = await db.from("fp_changes").select("photo_path").lt("created_at", stamp(DOC_DAYS)).limit(500);
+    if (!error && rows?.length) await drop(rows.map((r: { photo_path: string }) => r.photo_path));
+  }
+  return removed;
+}
+
 type Task = { id: string; title: string; subject: string | null; due_at: string; user_id: string | null; class: string | null; created_at: string };
 
 Deno.serve(async (req) => {
@@ -93,6 +135,11 @@ Deno.serve(async (req) => {
   if (!queueOnly) {
     // ---------- lessons ----------
     const local = new Date(now.getTime() + TZ * H);
+
+    // ---------- once a day: old photos ----------
+    if (local.getUTCHours() === 2 && local.getUTCMinutes() < 10) {
+      try { console.log("photos removed", await cleanupPhotos(db, local)); } catch (e) { console.error("cleanup", (e as Error).message); }
+    }
     const isoDay = local.getUTCDay() === 0 ? 7 : local.getUTCDay();
     const todayStr = local.toISOString().slice(0, 10);
     const nowMin = local.getUTCHours() * 60 + local.getUTCMinutes();

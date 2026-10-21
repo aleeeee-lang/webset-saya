@@ -30,6 +30,7 @@
         task: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/>',
         book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/>',
         trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/>',
+        qr: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/>',
         grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
     };
     function ic(n, w) {
@@ -56,6 +57,7 @@
         ],
         guru: [
             ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
+            ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
             ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
             ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
@@ -84,6 +86,7 @@
             ["admin-teachers.html", "user", "Teachers", "Kelola guru"],
             ["admin-parents.html", "users", "Parents", "Akun orang tua"],
             ["admin-attendance.html", "cam", "Attendance", "Kelola absensi"],
+            ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
             ["admin-schedule.html", "clock", "Schedule", "Jadwal absen"],
             ["admin-lessons.html", "book", "Lesson Schedule", "Jadwal pelajaran"],
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],

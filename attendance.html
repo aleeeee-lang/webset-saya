@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261022e"
+        href="style.css?v=20261022h"
     >
-    <script src="js/theme.js?v=20261022e"></script>
-    <script src="js/lang.js?v=20261022e"></script>
-    <script src="js/toast.js?v=20261022e"></script>
-    <script src="js/transition.js?v=20261022e"></script>
-    <script src="js/avatarcrop.js?v=20261022e"></script>
+    <script src="js/theme.js?v=20261022h"></script>
+    <script src="js/lang.js?v=20261022h"></script>
+    <script src="js/toast.js?v=20261022h"></script>
+    <script src="js/transition.js?v=20261022h"></script>
+    <script src="js/avatarcrop.js?v=20261022h"></script>
 
     
 </head>
@@ -102,7 +102,27 @@
         <div class="v2-method" id="attMethod" role="tablist">
             <button type="button" class="on" data-m="face" role="tab"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span data-i18n="att_m_face">Camera</span></button>
             <button type="button" data-m="fp" role="tab"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg><span data-i18n="att_m_fp">Fingerprint</span></button>
+            <button type="button" data-m="qr" role="tab"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></svg><span data-i18n="att_m_qr">QR</span></button>
         </div>
+
+        <!-- QR mode: the student's own QR sent by the teacher (js/att-qr.js) -->
+        <section class="v2-qr" id="qrArea" hidden>
+            <div class="v2-qr-empty" id="qrEmpty" hidden>
+                <span class="v2-qr-empty-ic"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></svg></span>
+                <b id="qrEmptyTitle"></b>
+                <p id="qrEmptyText"></p>
+            </div>
+            <div class="v2-qr-pass" id="qrPass" hidden>
+                <div class="v2-qr-card"><div class="v2-qr-code" id="qrCodeBox"></div></div>
+                <div class="v2-qr-meta">
+                    <small id="qrFrom"></small>
+                    <b id="qrUntil"></b>
+                    <span id="qrLeft"></span>
+                </div>
+                <button type="button" class="v2-qr-go" id="qrGo"></button>
+                <p class="v2-qr-hint" id="qrHint"></p>
+            </div>
+        </section>
 
         <div id="faceArea">
         <section class="v2-cam">
@@ -373,18 +393,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261022e"></script>
+    <script src="js/supabase.js?v=20261022h"></script>
     
-    <script src="js/auth.js?v=20261022e"></script>
+    <script src="js/auth.js?v=20261022h"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261022e"></script>
+    <script src="js/camera.js?v=20261022h"></script>
 
-    <script src="js/fingerprint.js?v=20261022e"></script>
-    <script src="js/att-method.js?v=20261022e"></script>
-    <script src="js/att-proof.js?v=20261022e"></script>
-    <script src="js/attendance.js?v=20261022e"></script>
+    <script src="js/fingerprint.js?v=20261022h"></script>
+    <script src="js/att-method.js?v=20261022h"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="js/att-qr.js?v=20261022h"></script>
+    <script src="js/att-proof.js?v=20261022h"></script>
+    <script src="js/attendance.js?v=20261022h"></script>
 
 
 

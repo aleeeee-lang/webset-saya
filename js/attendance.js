@@ -29,6 +29,9 @@ function attDistanceLabel(m) { return m >= 1000 ? (m / 1000).toFixed(1).replace(
 
 // true once the face photo was taken (camera) or the fingerprint was scanned and its photo taken
 function attIdentityReady() {
+    if (typeof attMethod === "function" && attMethod() === "qr") {
+        return !!(typeof attQrCode === "function" && attQrCode() && attQrPhoto());
+    }
     if (typeof attMethod === "function" && attMethod() === "fp") {
         return !!(typeof attFpTicket === "function" && attFpTicket() && typeof attFpPhoto === "function" && attFpPhoto());
     }
@@ -194,8 +197,8 @@ async function saveAttendance() {
     // a check-in always needs the photo from the camera (or the fingerprint scan with its photo);
     // the server checks this too (attendance_photo_required.sql)
     if (!attIdentityReady()) {
-        const fpMode = typeof attMethod === "function" && attMethod() === "fp";
-        showToast(translations[fpMode ? "toast_fp_needed" : "toast_face_photo_needed"][lang], "error");
+        const m = typeof attMethod === "function" ? attMethod() : "face";
+        showToast(translations[m === "fp" ? "toast_fp_needed" : m === "qr" ? "qr_none" : "toast_face_photo_needed"][lang], "error");
         return;
     }
 
@@ -208,9 +211,15 @@ async function saveAttendance() {
     // The server measures the distance again (attendance_location.sql); this
     // only reads the GPS and gives a quick answer.
     let locFields = {};
+    // the QR always needs the location (attendance_qr.sql), even when the general check is off
+    const qrMode = typeof attMethod === "function" && attMethod() === "qr";
     if (status === "Hadir") {
         const loc = await attSchoolLocation();
-        if (loc && loc.enabled && loc.lat != null && loc.lng != null) {
+        if (qrMode && !(loc && loc.lat != null && loc.lng != null)) {
+            showToast(translations.qr_no_school[lang], "error");
+            return;
+        }
+        if (loc && (loc.enabled || qrMode) && loc.lat != null && loc.lng != null) {
             const pos = await attReadPosition();
             if (!pos.ok) {
                 showToast(translations[pos.denied ? "toast_att_loc_denied" : "toast_att_loc_failed"][lang], "error");
@@ -250,7 +259,9 @@ async function saveAttendance() {
 
 
     // fingerprint: the photo taken automatically right after the scan
-    const photoToSend = useFp ? attFpPhoto() : (typeof capturedPhoto !== "undefined" ? capturedPhoto : null);
+    const useQr = typeof attMethod === "function" && attMethod() === "qr";
+    const qrFields = useQr && typeof attQrCode === "function" && attQrCode() ? { qr_code: attQrCode() } : {};
+    const photoToSend = useQr ? attQrPhoto() : useFp ? attFpPhoto() : (typeof capturedPhoto !== "undefined" ? capturedPhoto : null);
 
     if (photoToSend) {
 
@@ -337,7 +348,9 @@ async function saveAttendance() {
 
                 ...fpFields,
 
-                ...proofFields
+                ...proofFields,
+
+                ...qrFields
             };
     let { error } = await supabaseClient.from("attendance").insert([row]);
     // database without attendance_proof.sql yet: send it without the proof photo
@@ -359,8 +372,8 @@ async function saveAttendance() {
         );
 
         // the server's own checks (attendance_rules.sql) answer with a short code
-        const code = ["ATT_PHOTO_NEEDED", "ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
-        const msgKey = { ATT_PHOTO_NEEDED: "toast_face_photo_needed", ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
+        const code = ["ATT_QR_EXPIRED", "ATT_QR_NO_SCHOOL", "ATT_QR_INVALID", "ATT_PHOTO_NEEDED", "ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
+        const msgKey = { ATT_QR_EXPIRED: "qr_expired", ATT_QR_NO_SCHOOL: "qr_no_school", ATT_QR_INVALID: "qr_invalid", ATT_PHOTO_NEEDED: "toast_face_photo_needed", ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
                          ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid", ATT_FP_PHOTO: "fp_snap_failed" }[code];
         if (code === "ATT_FP_INVALID" && typeof attFpUsed === "function") attFpUsed();
         showToast(msgKey ? translations[msgKey][getLang()] : "Attendance failed to save: " + error.message, "error");
@@ -376,6 +389,7 @@ async function saveAttendance() {
     showToast(translations.toast_attendance_saved[lang], "success");
 
     if (typeof attFpUsed === "function") attFpUsed();   // a ticket works only once
+    if (useQr && typeof attQrUsed === "function") attQrUsed();
 
 
     // =========================

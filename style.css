@@ -4101,3 +4101,76 @@ html[data-theme="dark"] .v2-fp-round[data-anim="ok"]{background:#0B0B0C;color:#C
 
 /* the proof photo is taken in the background: no thumbnail popping into the panel */
 #fpSnap{display:none!important}
+body.qr-mode main.v2-wrap>.v2-submit{display:none!important}
+
+/* ---------- QR check-in: the student's own QR (js/att-qr.js) ---------- */
+.v2-method:has(button:nth-child(3)){grid-template-columns:1fr 1fr 1fr}
+.v2-method button{position:relative}
+.v2-method button.has-dot::after{content:"";position:absolute;top:7px;right:10px;width:8px;height:8px;border-radius:50%;background:#EF4444;box-shadow:0 0 0 2px #ECEDF3}
+html[data-theme="dark"] .v2-method button.has-dot::after{box-shadow:0 0 0 2px #1C1C1E}
+.v2-qr{border-radius:28px;background:#14162B;color:#fff;padding:22px 20px;box-sizing:border-box}
+.v2-qr[hidden],.v2-qr-empty[hidden],.v2-qr-pass[hidden]{display:none!important}
+html[data-theme="dark"] .v2-qr{background:#1C1C1E}
+.v2-qr-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 6px}
+.v2-qr-empty-ic{width:58px;height:58px;border-radius:18px;background:rgba(198,244,50,.12);color:#C6F432;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.v2-qr-empty b{font-size:16px}
+.v2-qr-empty p{margin:0;font-size:13px;line-height:1.5;color:#B7BAD0;max-width:300px}
+.v2-qr-pass{display:flex;flex-direction:column;align-items:center;gap:14px}
+.v2-qr-card{width:min(62vw,230px);padding:14px;border-radius:22px;background:#fff;box-sizing:border-box}
+.v2-qr-code{width:100%;aspect-ratio:1}
+.v2-qr-code svg,.v2-qr-code img{width:100%;height:100%;display:block}
+.v2-qr-code svg path{fill:#14162B}
+.v2-qr-meta{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+.v2-qr-meta small{font-size:12px;color:#A9ADC4}
+.v2-qr-meta b{font-size:17px}
+.v2-qr-meta span{font-size:12.5px;color:#C6F432;font-variant-numeric:tabular-nums}
+.v2-qr-go{width:100%;max-width:340px;height:54px;border:none;border-radius:18px;background:#C6F432;color:#14162B;font:800 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.v2-qr-go:disabled{opacity:.75;cursor:wait}
+.v2-qr-hint{margin:0;font-size:12px;color:#A9ADC4;text-align:center}
+.v2-qr-pass.busy .v2-qr-card{animation:qrBusy 1.2s ease-in-out infinite}
+@keyframes qrBusy{50%{box-shadow:0 0 0 10px rgba(198,244,50,.18)}}
+html[data-theme="dark"] .attendance-page .v2-qr-meta b,html[data-theme="dark"] .v2-qr-empty b{color:#fff}
+body.qr-mode main.v2-wrap>.v2-submit{display:none!important}
+@media (min-width:720px){
+  main.v2-wrap:has(.v2-cam)>.v2-qr{grid-column:1;grid-row:3/span 4;min-height:380px;display:flex;align-items:center;justify-content:center}
+}
+@media (min-width:1024px){
+  body.has-side main.v2-wrap:has(.v2-cam)>.v2-qr{grid-column:1;grid-row:3/span 4;min-height:480px}
+}
+
+/* ---------- send check-in QR (qr-send.html) ---------- */
+.qs-page .attendance-card{display:flex;flex-direction:column;gap:14px}
+.qs-page .attendance-card[hidden],.qs-msg[hidden],.qs-warn[hidden],.qs-close[hidden]{display:none!important}
+.qs-hint{margin:0;font-size:13px;line-height:1.55;color:#6B7090}
+.qs-field{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:700;color:#4A4F6A}
+.qs-field select{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px}
+.qs-dur{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qs-dur button{height:44px;border:1.5px solid #E2E5EE;border-radius:12px;background:#FAFAFC;color:#3A3F5C;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.qs-dur button.on{background:#14162B;border-color:#14162B;color:#fff}
+.qs-until{font-size:12px;font-weight:600;color:#6B7088}
+.qs-warn{margin:0;padding:12px 14px;border-radius:14px;background:#FFF7E6;color:#9A5B00;font-size:12.5px;line-height:1.5}
+.qs-msg{margin:12px 0;padding:14px 16px;border-radius:16px;background:#FEF2F2;color:#B91C1C;font-size:13.5px}
+.qs-live-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.qs-live-head small{display:block;margin-top:4px;font-size:12.5px;color:#6B7088;font-variant-numeric:tabular-nums}
+.qs-count{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:#14162B;font-variant-numeric:tabular-nums}
+.qs-bar{height:8px;border-radius:99px;background:#EEF0F5;overflow:hidden}
+.qs-bar i{display:block;height:100%;width:0;background:#C6F432;border-radius:99px;transition:width .5s ease}
+.qs-list{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto}
+.qs-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#F7F8FB}
+.qs-row b{flex:1;min-width:0;font-size:13.5px;color:#14162B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qs-row small{font-size:12px;color:#8A8FA8;flex:none}
+.qs-dot{width:9px;height:9px;border-radius:50%;background:#D3D6E0;flex:none}
+.qs-row.done .qs-dot{background:#22C55E}
+.qs-row.done small{color:#15803D;font-weight:700}
+.qs-close{height:46px;border:none;border-radius:14px;background:#ECEDF2;color:#B91C1C;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+html[data-theme="dark"] .qs-hint,html[data-theme="dark"] .qs-until,html[data-theme="dark"] .qs-live-head small{color:#9A9A9F!important}
+html[data-theme="dark"] .qs-field select{background:#1C1C1E;border-color:#2C2C2E}
+html[data-theme="dark"] .qs-dur button{background:#1C1C1E;border-color:#2C2C2E}
+html[data-theme="dark"] .attendance-page .qs-dur button.on{background:#C6F432;border-color:#C6F432;color:#14162B!important}
+html[data-theme="dark"] .qs-warn{background:#2A2110;color:#FCD34D!important}
+html[data-theme="dark"] .qs-bar{background:#2C2C2E}
+html[data-theme="dark"] .qs-row{background:#1C1C1E}
+html[data-theme="dark"] .attendance-page .qs-row.done small{color:#4ADE80!important}
+html[data-theme="dark"] .attendance-page .qs-row.done .qs-dot{background:#4ADE80}
+html[data-theme="dark"] .qs-close{background:#2A1416}
+html[data-theme="dark"] .attendance-page .qs-close{color:#FCA5A5!important}

@@ -13,7 +13,8 @@
     window.attFpUsed = function () { state.ticket = null; setSnap(null); render(); };
     window.attFpPhoto = function () { return window.attFpTicket() ? state.photo : null; };
 
-    // take one photo with the front camera, without showing the camera screen
+    // take one photo with the front camera, without showing the camera screen (also used by js/att-qr.js)
+    window.attAutoSnap = function () { return autoSnap(); };
     async function autoSnap() {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
         var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } }, audio: false });
@@ -272,6 +273,9 @@
         });
         $("faceArea").hidden = m !== "face";
         $("fpPanel").hidden = m !== "fp";
+        if ($("qrArea")) $("qrArea").hidden = m !== "qr";
+        if (m !== "face" && typeof stopCamera === "function") { try { stopCamera(); } catch (e) {} }
+        try { window.dispatchEvent(new CustomEvent("attmethod", { detail: m })); } catch (e) {}
         if (m !== "fp") syncSpace();
         if (m === "fp" && typeof stopCamera === "function") { try { stopCamera(); } catch (e) {} }
         render();

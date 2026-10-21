@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kirim QR Absen - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261022h">
+<script src="js/theme.js?v=20261022h"></script>
+<script src="js/lang.js?v=20261022h"></script>
+<script src="js/toast.js?v=20261022h"></script>
+<script src="js/avatarcrop.js?v=20261022h"></script>
+</head>
+
+<body>
+
+<main class="attendance-page qs-page">
+
+    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 style="margin:0" id="qsTitle">Kirim QR absen</h2>
+    </section>
+
+    <!-- SEND -->
+    <section class="attendance-card" id="qsForm" hidden>
+        <p class="qs-hint" id="qsHint"></p>
+        <label class="qs-field"><span id="qsClassLabel">Kelas</span>
+            <select id="qsClass" class="am-field"></select>
+        </label>
+        <div class="qs-field"><span id="qsDurLabel">Berlaku selama</span>
+            <div class="qs-dur" id="qsDur" role="radiogroup">
+                <button type="button" data-min="10">10 mnt</button>
+                <button type="button" data-min="15" class="on">15 mnt</button>
+                <button type="button" data-min="30">30 mnt</button>
+                <button type="button" data-min="60">60 mnt</button>
+            </div>
+            <small class="qs-until" id="qsUntil"></small>
+        </div>
+        <button type="button" class="submit-button" id="qsSend"></button>
+        <p class="qs-warn" id="qsNoLoc" hidden></p>
+    </section>
+
+    <!-- LIVE: who has checked in with this send -->
+    <section class="attendance-card qs-live" id="qsLive" hidden>
+        <div class="qs-live-head">
+            <div>
+                <div class="card-label" style="margin:0" id="qsLiveTitle"></div>
+                <small id="qsLiveSub"></small>
+            </div>
+            <span class="qs-count" id="qsCount"></span>
+        </div>
+        <div class="qs-bar"><i id="qsBar"></i></div>
+        <div class="qs-list" id="qsList"></div>
+        <button type="button" class="qs-close" id="qsClose"></button>
+    </section>
+
+    <p class="qs-msg" id="qsMsg" hidden></p>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261022h"></script>
+<script src="js/auth.js?v=20261022h"></script>
+
+<script>
+// Teacher / admin: send every student of a class their own check-in QR (attendance_qr.sql)
+let qsMinutes = 15, qsBatch = null, qsPoll = null, qsTick = null, qsExp = 0;
+function L(id, en) { return getLang() === "id" ? id : en; }
+function hhmm(d) { return String(d.getHours()).padStart(2, "0") + "." + String(d.getMinutes()).padStart(2, "0"); }
+function qsMsg(t) { const m = document.getElementById("qsMsg"); m.hidden = !t; m.textContent = t || ""; }
+
+async function qsInit() {
+    const user = await requireLogin();
+    if (!user) return;
+    document.getElementById("qsTitle").textContent = L("Kirim QR absen", "Send check-in QR");
+    document.getElementById("qsHint").textContent = L("Setiap siswa di kelas ini dapat QR-nya sendiri lewat notifikasi dan di halaman Absen → QR. QR hanya bisa dipakai di area sekolah, sekali, dan hilang saat waktunya habis.",
+        "Every student of the class gets their own QR as a notification and on Check in → QR. It only works inside the school area, once, and disappears when the time is over.");
+    document.getElementById("qsClassLabel").textContent = L("Kelas", "Class");
+    document.getElementById("qsDurLabel").textContent = L("Berlaku selama", "Open for");
+    document.getElementById("qsSend").textContent = L("Kirim QR ke siswa", "Send QR to students");
+    document.getElementById("qsClose").textContent = L("Tutup QR sekarang", "Close the QR now");
+    document.querySelectorAll("#qsDur button").forEach(function (b) { b.textContent = b.dataset.min + " " + L("menit", "min"); });
+
+    const { data: me } = await supabaseClient.from("profiles").select("role, class").eq("id", user.id).maybeSingle();
+    if (!me || (me.role !== "admin" && me.role !== "guru")) { qsMsg(L("Halaman ini untuk admin dan guru.", "This page is for admins and teachers.")); return; }
+
+    let classes = [];
+    if (me.role === "admin") {
+        const { data } = await supabaseClient.from("profiles").select("class").eq("role", "murid");
+        classes = [...new Set((data || []).map(r => r.class).filter(Boolean))];
+    } else {
+        const { data } = await supabaseClient.from("class_schedules").select("class").eq("teacher_id", user.id);
+        classes = [...new Set([me.class].concat((data || []).map(r => r.class)).filter(Boolean))];
+    }
+    classes.sort((a, b) => a.localeCompare(b, "id", { numeric: true }));
+    const sel = document.getElementById("qsClass");
+    sel.innerHTML = classes.map(c => '<option value="' + escapeHTML(c) + '">' + escapeHTML(c) + "</option>").join("");
+    if (!classes.length) { qsMsg(L("Belum ada kelas yang bisa dipilih.", "No class to choose yet.")); return; }
+    try { const sv = localStorage.getItem("att-qs-class"); if (sv && classes.includes(sv)) sel.value = sv; } catch (e) {}
+    sel.addEventListener("change", function () { try { localStorage.setItem("att-qs-class", sel.value); } catch (e) {} });
+
+    // the QR only works inside the school area: warn when the admin hasn't set the point
+    const { data: loc } = await supabaseClient.from("school_location").select("lat,lng").eq("id", "default").maybeSingle();
+    if (!loc || loc.lat == null || loc.lng == null) {
+        const w = document.getElementById("qsNoLoc");
+        w.hidden = false;
+        w.textContent = L("Lokasi sekolah belum diatur, jadi siswa belum bisa absen pakai QR. Atur dulu di Kelola Jadwal → Lokasi absen.", "The school location isn't set, so students can't check in with the QR yet. Set it in Schedule → Check-in location.");
+    }
+
+    document.querySelectorAll("#qsDur button").forEach(function (b) {
+        b.addEventListener("click", function () {
+            qsMinutes = Number(b.dataset.min);
+            document.querySelectorAll("#qsDur button").forEach(x => x.classList.toggle("on", x === b));
+            qsUntil();
+        });
+    });
+    qsUntil(); setInterval(qsUntil, 20000);
+    document.getElementById("qsSend").addEventListener("click", qsSend);
+    document.getElementById("qsClose").addEventListener("click", qsClose);
+    document.getElementById("qsForm").hidden = false;
+
+    // still running from before (page reopened)?
+    try {
+        const saved = JSON.parse(localStorage.getItem("att-qs-batch") || "null");
+        if (saved && saved.exp > Date.now()) { qsBatch = saved.id; qsExp = saved.exp; qsShowLive(saved.cls); }
+    } catch (e) {}
+}
+
+function qsUntil() {
+    const t = new Date(attNow().getTime() + qsMinutes * 60000);
+    document.getElementById("qsUntil").textContent = L("QR hilang jam ", "The QR disappears at ") + hhmm(t) + " " + attTzLabel();
+}
+
+async function qsSend() {
+    const cls = document.getElementById("qsClass").value;
+    const ok = await attConfirm({
+        title: L("Kirim QR ke kelas " + cls + "?", "Send the QR to class " + cls + "?"),
+        text: L("Setiap siswa dapat QR sendiri, berlaku " + qsMinutes + " menit. QR yang masih aktif untuk kelas ini akan diganti.", "Every student gets their own QR for " + qsMinutes + " minutes. An open QR for this class is replaced."),
+        ok: L("Kirim", "Send"), cancel: L("Batal", "Cancel"), tone: "primary"
+    });
+    if (!ok) return;
+    const btn = document.getElementById("qsSend");
+    btn.disabled = true;
+    const { data, error } = await supabaseClient.rpc("qr_send", { target_class: cls, minutes: qsMinutes });
+    btn.disabled = false;
+    if (error || !data) {
+        const missing = error && /qr_send|function/i.test(error.message || "") && !/NOT_ALLOWED/.test(error.message || "");
+        showToast(missing ? L("QR absen belum diaktifkan. Jalankan attendance_qr.sql di Supabase.", "QR check-in isn't set up yet. Run attendance_qr.sql in Supabase.")
+                          : L("Gagal mengirim: ", "Could not send: ") + (error ? error.message : "-"), "error");
+        return;
+    }
+    qsBatch = data.batch_id; qsExp = Date.parse(data.expires_at);
+    try { localStorage.setItem("att-qs-batch", JSON.stringify({ id: qsBatch, exp: qsExp, cls: cls })); } catch (e) {}
+    showToast(L("QR terkirim ke " + data.count + " siswa.", "QR sent to " + data.count + " students."), "success");
+    qsShowLive(cls);
+}
+
+function qsShowLive(cls) {
+    document.getElementById("qsLive").hidden = false;
+    document.getElementById("qsLiveTitle").textContent = L("QR aktif · Kelas ", "Open QR · Class ") + cls;
+    clearInterval(qsPoll); clearInterval(qsTick);
+    qsStatus(); qsPoll = setInterval(qsStatus, 8000);
+    const sub = document.getElementById("qsLiveSub");
+    const tick = function () {
+        const s = Math.max(0, Math.round((qsExp - Date.now()) / 1000));
+        if (s <= 0) { sub.textContent = L("Waktu habis, QR sudah hilang dari HP siswa.", "Time's up, the QR is gone from the students' phones."); document.getElementById("qsClose").hidden = true; clearInterval(qsTick); return; }
+        sub.textContent = L("Hilang dalam ", "Disappears in ") + Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    };
+    document.getElementById("qsClose").hidden = false;
+    tick(); qsTick = setInterval(tick, 1000);
+    setTimeout(function () { document.getElementById("qsLive").scrollIntoView({ behavior: "smooth", block: "start" }); }, 100);
+}
+
+async function qsStatus() {
+    if (!qsBatch) return;
+    const { data, error } = await supabaseClient.rpc("qr_send_status", { batch: qsBatch });
+    if (error) return;
+    const rows = data || [], done = rows.filter(r => r.used_at).length;
+    document.getElementById("qsCount").textContent = done + " / " + rows.length;
+    document.getElementById("qsBar").style.width = (rows.length ? Math.round(done / rows.length * 100) : 0) + "%";
+    rows.sort((a, b) => (a.used_at ? 0 : 1) - (b.used_at ? 0 : 1) || String(a.name).localeCompare(String(b.name)));
+    document.getElementById("qsList").innerHTML = rows.map(function (r) {
+        const t = r.used_at ? hhmm(new Date(new Date(r.used_at).getTime() + (attNow().getTime() - Date.now()))) : "";
+        return '<div class="qs-row' + (r.used_at ? " done" : "") + '"><span class="qs-dot"></span><b></b><small>' +
+            (r.used_at ? L("Hadir · ", "Present · ") + t : L("Belum absen", "Not yet")) + "</small></div>";
+    }).join("");
+    document.querySelectorAll("#qsList .qs-row b").forEach(function (b, i) { b.textContent = rows[i].name || "-"; });
+    if (qsExp <= Date.now()) clearInterval(qsPoll);
+}
+
+async function qsClose() {
+    const ok = await attConfirm({ title: L("Tutup QR sekarang?", "Close the QR now?"), text: L("Siswa yang belum absen tidak bisa memakai QR ini lagi.", "Students who haven't checked in can't use this QR anymore."), ok: L("Tutup", "Close"), cancel: L("Batal", "Cancel") });
+    if (!ok) return;
+    await supabaseClient.rpc("qr_close", { batch: qsBatch });
+    qsExp = Date.now();
+    try { localStorage.removeItem("att-qs-batch"); } catch (e) {}
+    qsStatus();
+    document.getElementById("qsLiveSub").textContent = L("QR ditutup.", "QR closed.");
+    document.getElementById("qsClose").hidden = true;
+    clearInterval(qsTick);
+}
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) history.back();
+    else window.location.href = "settings.html";
+}
+
+qsInit();
+</script>
+
+</body>
+</html>

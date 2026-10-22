@@ -4248,3 +4248,4 @@ html[data-theme="dark"] .attendance-page .ls-idle{color:#A9ADC4!important}
 /* attendance bar on the dashboard: the bar itself is the pill, parts inside are plain */
 .v2-seg{border-radius:999px;overflow:hidden}
 .v2-seg div,.v2-seg div:first-child,.v2-seg div:last-child{border-radius:3px;flex-shrink:1;min-width:0}
+html[data-theme="dark"] .attendance-page #backupHint{color:#8E8E93!important}

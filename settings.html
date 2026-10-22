@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023a">
-<script src="js/theme.js?v=20261023a"></script>
-<script src="js/avatarcrop.js?v=20261023a"></script>
-<script src="js/lang.js?v=20261023a"></script>
-<script src="js/toast.js?v=20261023a"></script>
+<link rel="stylesheet" href="style.css?v=20261023b">
+<script src="js/theme.js?v=20261023b"></script>
+<script src="js/avatarcrop.js?v=20261023b"></script>
+<script src="js/lang.js?v=20261023b"></script>
+<script src="js/toast.js?v=20261023b"></script>
 </head>
 
 <body>
@@ -217,6 +217,12 @@
             <span style="flex:1;font-size:13px" data-i18n="menu_audit_log">Audit Log</span>
             <span style="color:#aaa;font-size:16px">›</span>
         </a>
+
+        <a href="#" role="button" id="backupBtn" style="display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#20243a">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/><path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5"/><path d="M17 15v6M14.5 18.5 17 21l2.5-2.5"/></svg>
+            <span style="flex:1;font-size:13px"><span data-i18n="set_backup">Back up all data</span><small id="backupHint" style="display:block;margin-top:3px;font-size:10px;font-weight:500;color:#8a8fa3"></small></span>
+            <span style="color:#aaa;font-size:16px">›</span>
+        </a>
     </section>
 
     <section class="attendance-card" style="padding:8px 16px">
@@ -231,9 +237,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023a"></script>
-<script src="js/auth.js?v=20261023a"></script>
-<script src="js/fingerprint.js?v=20261023a"></script>
+<script src="js/supabase.js?v=20261023b"></script>
+<script src="js/auth.js?v=20261023b"></script>
+<script src="js/fingerprint.js?v=20261023b"></script>
 
 <script>
 
@@ -503,6 +509,50 @@ function goBack() {
     }
 }
 
+
+// admin: one file with all school data (admin_backup.sql)
+(function () {
+    const KEY = "attendreem-last-backup";
+    function lastLabel() {
+        let t = null; try { t = localStorage.getItem(KEY); } catch (e) {}
+        const el = document.getElementById("backupHint"), lang = getLang();
+        if (!el) return;
+        if (!t) { el.textContent = translations.set_backup_hint[lang]; return; }
+        const d = new Date(t);
+        el.textContent = translations.set_backup_last[lang].replace("{d}", d.toLocaleDateString(lang === "id" ? "id-ID" : "en-GB", { day: "numeric", month: "short", year: "numeric" }));
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("backupBtn");
+        if (!btn) return;
+        setTimeout(lastLabel, 0);
+        btn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            if (btn.dataset.busy) return;
+            const lang = getLang(), hint = document.getElementById("backupHint");
+            btn.dataset.busy = "1"; hint.textContent = translations.set_backup_busy[lang];
+            let r;
+            try { r = await supabaseClient.rpc("admin_backup"); } catch (e) { r = { error: e }; }
+            delete btn.dataset.busy;
+            if (r.error || !r.data) {
+                lastLabel();
+                const msg = String((r.error && (r.error.message || r.error.code)) || "");
+                showToast(/admin_backup|PGRST202|42883/.test(msg) ? translations.toast_backup_need_sql[lang] : translations.toast_backup_fail[lang], "error");
+                return;
+            }
+            const day = (r.data.school_time || new Date().toISOString()).slice(0, 10);
+            const blob = new Blob([JSON.stringify(r.data, null, 1)], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "attendreem-backup-" + day + ".json";
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+            try { localStorage.setItem(KEY, new Date().toISOString()); } catch (e) {}
+            lastLabel();
+            const n = r.data.counts ? Object.keys(r.data.counts).reduce(function (s, k) { return s + r.data.counts[k]; }, 0) : 0;
+            showToast(translations.toast_backup_ok[lang].replace("{n}", n.toLocaleString(lang === "id" ? "id-ID" : "en-US")), "success");
+        });
+    });
+})();
 </script>
 
 </body>

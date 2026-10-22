@@ -130,7 +130,9 @@ Deno.serve(async (req) => {
   if (!qErr && queued?.length) {
     for (const q of queued as { user_id: string; title: string; body: string; url: string; tag: string | null }[]) {
       // admin division pushes (admin_push.sql) have their own switches in Settings
-      if (noGeneral.has(q.user_id) && !(q.tag ?? "").startsWith("admin-")) continue;
+      // "Absen dibuka" (attendance_open_exact.sql) has its own switch, checked in the database
+      const tg = q.tag ?? "";
+      if (noGeneral.has(q.user_id) && !tg.startsWith("admin-") && !tg.startsWith("attopen-")) continue;
       msgs.push({ user: q.user_id, title: q.title, body: q.body, url: q.url, tag: q.tag ?? "attendreem", ttl: 24 * 3600 });
     }
   }

@@ -97,6 +97,8 @@ self.addEventListener("push", function (event) {
         badge: "badge-96.png",
         tag: data.tag || undefined,
         renotify: !!data.tag,
+        // "Absen sudah dibuka" stays on screen until the student taps or swipes it (not on iPhone)
+        requireInteraction: String(data.tag || "").indexOf("attopen-") === 0,
         data: { url: data.url || "index.html" }
     }));
 });

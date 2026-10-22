@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023b">
-<script src="js/theme.js?v=20261023b"></script>
-<script src="js/lang.js?v=20261023b"></script>
-    <script src="js/timepicker.js?v=20261023b"></script>
-<script src="js/toast.js?v=20261023b"></script>
+<link rel="stylesheet" href="style.css?v=20261023c">
+<script src="js/theme.js?v=20261023c"></script>
+<script src="js/lang.js?v=20261023c"></script>
+    <script src="js/timepicker.js?v=20261023c"></script>
+<script src="js/toast.js?v=20261023c"></script>
 </head>
 
 <body>
@@ -205,10 +205,10 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023b"></script>
-<script src="js/auth.js?v=20261023b"></script>
-<script src="js/avatarcrop.js?v=20261023b"></script>
-<script src="js/admin-location.js?v=20261023b"></script>
+<script src="js/supabase.js?v=20261023c"></script>
+<script src="js/auth.js?v=20261023c"></script>
+<script src="js/avatarcrop.js?v=20261023c"></script>
+<script src="js/admin-location.js?v=20261023c"></script>
 
 <script>
 
@@ -584,12 +584,18 @@ async function loadClasses() {
     allClasses = Array.from(new Set(data.map(s => s.class).filter(Boolean))).sort();
 
     const select = document.getElementById("scheduleClassSelect");
+    allClasses = allClasses.filter(function (c) { return c !== "Guru"; });
     allClasses.forEach(function (c) {
         const opt = document.createElement("option");
         opt.value = c;
         opt.textContent = c;
         select.appendChild(opt);
     });
+    // teachers check in too, with their own hours (teacher_attendance.sql)
+    const g = document.createElement("option");
+    g.value = "Guru";
+    g.textContent = translations.opt_group_teachers[getLang()] + " — " + translations.opt_teacher_hours[getLang()];
+    select.appendChild(g);
 }
 
 function dayLabelsOf(activeDays, lang) {

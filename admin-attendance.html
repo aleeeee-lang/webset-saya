@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023b">
-<script src="js/theme.js?v=20261023b"></script>
-<script src="js/lang.js?v=20261023b"></script>
-<script src="js/toast.js?v=20261023b"></script>
+<link rel="stylesheet" href="style.css?v=20261023c">
+<script src="js/theme.js?v=20261023c"></script>
+<script src="js/lang.js?v=20261023c"></script>
+<script src="js/toast.js?v=20261023c"></script>
 </head>
 
 <body>
@@ -38,6 +38,7 @@
                 <span data-i18n="btn_remind_missing_attendance">Remind Who's Missing</span>
             </button>
         </div>
+        <div class="am-group" id="todayGroup" role="tablist"><button type="button" class="on" data-g="murid" data-i18n="label_students_group">Siswa</button><button type="button" data-g="guru" data-i18n="opt_group_teachers">Guru</button></div>
         <div id="todayList" style="display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
@@ -110,12 +111,14 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023b"></script>
-<script src="js/auth.js?v=20261023b"></script>
+<script src="js/supabase.js?v=20261023c"></script>
+<script src="js/auth.js?v=20261023c"></script>
 
 <script>
 
 let allStudents = [];
+let allTeachers = [];   // teachers check in too (teacher_attendance.sql), as the group "Guru"
+let todayGroup = "murid";
 
 function todayStr() {
     const now = new Date();
@@ -179,15 +182,24 @@ async function loadStudents() {
     }
 
     allStudents = data;
+    const { data: tData } = await supabaseClient.from("profiles").select("id, name, class, status").eq("role", "guru").order("name", { ascending: true });
+    allTeachers = (tData || []).filter(function (t) { return t.status !== "inactive"; }).map(function (t) { return { id: t.id, name: t.name, class: "Guru" }; });
 
     const classSet = new Set(data.map(s => s.class).filter(Boolean));
     const classSelect = document.getElementById("filterClass");
     classSet.forEach(function (c) {
+        if (c === "Guru") return;
         const opt = document.createElement("option");
         opt.value = c;
         opt.textContent = c;
         classSelect.appendChild(opt);
     });
+    if (allTeachers.length) {
+        const opt = document.createElement("option");
+        opt.value = "Guru";
+        opt.textContent = translations.opt_group_teachers[getLang()];
+        classSelect.appendChild(opt);
+    }
 
     const studentSelect = document.getElementById("studentSelect");
     data.forEach(function (s) {
@@ -195,6 +207,26 @@ async function loadStudents() {
         opt.value = s.id;
         opt.textContent = s.name + (s.class ? " (" + s.class + ")" : "");
         studentSelect.appendChild(opt);
+    });
+    if (allTeachers.length) {
+        const grp = document.createElement("optgroup");
+        grp.label = translations.opt_group_teachers[getLang()];
+        allTeachers.forEach(function (t) {
+            const opt = document.createElement("option");
+            opt.value = t.id;
+            opt.textContent = t.name;
+            grp.appendChild(opt);
+        });
+        studentSelect.appendChild(grp);
+    } else {
+        document.getElementById("todayGroup").hidden = true;
+    }
+    document.getElementById("todayGroup").addEventListener("click", function (e) {
+        const b = e.target.closest("button[data-g]");
+        if (!b || b.dataset.g === todayGroup) return;
+        todayGroup = b.dataset.g;
+        this.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
+        loadToday();
     });
 
     classSelect.addEventListener("change", loadFiltered);
@@ -223,7 +255,7 @@ async function sendAttendanceReminder() {
     }
 
     const checkedInIds = new Set((records || []).map(function (r) { return r.user_id; }));
-    const missing = allStudents.filter(function (s) { return !checkedInIds.has(s.id); });
+    const missing = (todayGroup === "guru" ? allTeachers : allStudents).filter(function (s) { return !checkedInIds.has(s.id); });
 
     if (missing.length === 0) {
         showToast(translations.toast_nobody_to_remind[lang], "success");
@@ -259,7 +291,7 @@ function trendBarColor(pct) {
 
 async function loadTrendChart() {
     const selectedClass = document.getElementById("filterClass").value;
-    const scopedStudents = selectedClass === "all" ? allStudents : allStudents.filter(function (s) { return s.class === selectedClass; });
+    const scopedStudents = selectedClass === "Guru" ? allTeachers : selectedClass === "all" ? allStudents : allStudents.filter(function (s) { return s.class === selectedClass; });
     const totalStudents = scopedStudents.length;
 
     const days = [];
@@ -283,7 +315,7 @@ async function loadTrendChart() {
     days.forEach(function (d) { byDate[d] = 0; });
 
     records.forEach(function (r) {
-        if (selectedClass !== "all" && !scopedIds.has(r.user_id)) return;
+        if (!scopedIds.has(r.user_id)) return;   // "all" = every student; teachers only under "Guru"
         if (r.status === "Hadir" && byDate.hasOwnProperty(r.date)) byDate[r.date]++;
     });
 
@@ -368,7 +400,7 @@ async function loadToday() {
 
     const rows = [];
 
-    for (const s of allStudents) {
+    for (const s of (todayGroup === "guru" ? allTeachers : allStudents)) {
         const r = byUser[s.id];
 
         if (r) {
@@ -399,6 +431,7 @@ async function loadFiltered() {
 
     let query = supabaseClient.from("attendance").select("*").eq("date", date);
     if (cls !== "all") query = query.eq("class", cls);
+    else query = query.or("class.is.null,class.neq.Guru");   // teachers only under "Guru"
 
     const { data, error } = await query.order("time", { ascending: true });
 
@@ -491,7 +524,7 @@ async function saveRecord() {
         return;
     }
 
-    const student = allStudents.find(s => s.id === userId);
+    const student = allStudents.find(s => s.id === userId) || allTeachers.find(s => s.id === userId);
 
     btn.disabled = true;
     btn.textContent = translations.btn_saving[lang];

@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261023b"
+        href="style.css?v=20261023c"
     >
-    <script src="js/theme.js?v=20261023b"></script>
-    <script src="js/lang.js?v=20261023b"></script>
-    <script src="js/toast.js?v=20261023b"></script>
-    <script src="js/transition.js?v=20261023b"></script>
-    <script src="js/avatarcrop.js?v=20261023b"></script>
+    <script src="js/theme.js?v=20261023c"></script>
+    <script src="js/lang.js?v=20261023c"></script>
+    <script src="js/toast.js?v=20261023c"></script>
+    <script src="js/transition.js?v=20261023c"></script>
+    <script src="js/avatarcrop.js?v=20261023c"></script>
 
     
 </head>
@@ -370,20 +370,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261023b"></script>
+    <script src="js/supabase.js?v=20261023c"></script>
     
-    <script src="js/auth.js?v=20261023b"></script>
+    <script src="js/auth.js?v=20261023c"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261023b"></script>
+    <script src="js/camera.js?v=20261023c"></script>
 
-    <script src="js/fingerprint.js?v=20261023b"></script>
-    <script src="js/att-method.js?v=20261023b"></script>
+    <script src="js/fingerprint.js?v=20261023c"></script>
+    <script src="js/att-method.js?v=20261023c"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-    <script src="js/att-qr.js?v=20261023b"></script>
-    <script src="js/att-proof.js?v=20261023b"></script>
-    <script src="js/attendance.js?v=20261023b"></script>
+    <script src="js/att-qr.js?v=20261023c"></script>
+    <script src="js/att-proof.js?v=20261023c"></script>
+    <script src="js/attendance.js?v=20261023c"></script>
 
 
 
@@ -447,12 +447,39 @@
         async function loadSchedule() {
             const user = await requireLogin();
             if (!user) return;
-            const { data: profile } = await supabaseClient.from("profiles").select("class").eq("id", user.id).maybeSingle();
-            if (!profile || !profile.class) return;
-            attRules = await attDayRules(profile.class);
+            const profile = await attMyProfile(user.id);
+            const ckey = attClassKey(profile);
+            if (!ckey) return;
+            attRules = await attDayRules(ckey);
             attSchedule = attRules.schedule;
             updateDateTime();
         }
+
+        // who uses this page: students and teachers check in; admins and parents go to their own pages
+        function attRolePage(role) {
+            if (role === "admin") { location.replace("admin-attendance.html"); return false; }
+            if (role === "orangtua") { location.replace("parent.html"); return false; }
+            if (role === "guru") {
+                // teachers have their own home; the student-only tabs are hidden
+                document.documentElement.classList.add("att-teacher");
+                const nav = document.querySelector(".bottom-nav");
+                if (nav) {
+                    const home = nav.querySelector('a[href="index.html"]');
+                    if (home) home.setAttribute("href", "teacher.html");
+                    ["dashboard.html", "history.html"].forEach(function (h) { const a = nav.querySelector('a[href="' + h + '"]'); if (a) a.style.display = "none"; });
+                    const me = nav.querySelector('a[href="my-attendance.html"]');
+                    if (me) me.setAttribute("href", "settings.html");
+                }
+            }
+            return true;
+        }
+        try { attRolePage((JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role); } catch (e) {}
+        (async function () {
+            const user = await requireLogin();
+            if (!user) return;
+            const p = await attMyProfile(user.id);
+            if (p) attRolePage(p.role);
+        })();
 
         updateDateTime();
         setInterval(updateDateTime, 1000);

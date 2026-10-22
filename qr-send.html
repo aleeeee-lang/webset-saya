@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023b">
-<script src="js/theme.js?v=20261023b"></script>
-<script src="js/lang.js?v=20261023b"></script>
-<script src="js/toast.js?v=20261023b"></script>
-<script src="js/avatarcrop.js?v=20261023b"></script>
+<link rel="stylesheet" href="style.css?v=20261023c">
+<script src="js/theme.js?v=20261023c"></script>
+<script src="js/lang.js?v=20261023c"></script>
+<script src="js/toast.js?v=20261023c"></script>
+<script src="js/avatarcrop.js?v=20261023c"></script>
 </head>
 
 <body>
@@ -66,8 +66,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023b"></script>
-<script src="js/auth.js?v=20261023b"></script>
+<script src="js/supabase.js?v=20261023c"></script>
+<script src="js/auth.js?v=20261023c"></script>
 
 <script>
 // Teacher / admin: send every student of a class their own check-in QR (attendance_qr.sql)
@@ -94,12 +94,14 @@ async function qsInit() {
     let classes = [];
     if (me.role === "admin") {
         const { data } = await supabaseClient.from("profiles").select("class").eq("role", "murid");
-        classes = [...new Set((data || []).map(r => r.class).filter(Boolean))];
+        classes = [...new Set((data || []).map(r => r.class).filter(c => c && c !== "Guru"))];
     } else {
         const { data } = await supabaseClient.from("class_schedules").select("class").eq("teacher_id", user.id);
         classes = [...new Set([me.class].concat((data || []).map(r => r.class)).filter(Boolean))];
     }
     classes.sort((a, b) => a.localeCompare(b, "id", { numeric: true }));
+    // the admin can also send to every teacher (teacher_attendance.sql)
+    if (me.role === "admin") classes.push("Guru");
     const sel = document.getElementById("qsClass");
     sel.innerHTML = classes.map(c => '<option value="' + escapeHTML(c) + '">' + escapeHTML(c) + "</option>").join("");
     if (!classes.length) { qsMsg(L("Belum ada kelas yang bisa dipilih.", "No class to choose yet.")); return; }

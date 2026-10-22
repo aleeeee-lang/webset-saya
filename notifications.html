@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023b">
-<script src="js/theme.js?v=20261023b"></script>
-<script src="js/lang.js?v=20261023b"></script>
-<script src="js/toast.js?v=20261023b"></script>
+<link rel="stylesheet" href="style.css?v=20261023c">
+<script src="js/theme.js?v=20261023c"></script>
+<script src="js/lang.js?v=20261023c"></script>
+<script src="js/toast.js?v=20261023c"></script>
 </head>
 
 <body>
@@ -92,8 +92,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023b"></script>
-<script src="js/auth.js?v=20261023b"></script>
+<script src="js/supabase.js?v=20261023c"></script>
+<script src="js/auth.js?v=20261023c"></script>
 
 <script>
 requireLogin();
@@ -131,9 +131,10 @@ async function syncPushKinds(on) {
     document.getElementById("prefGeneral").checked = !data || data.general !== false;
     document.getElementById("prefExams").checked = !data || data.exams !== false;
     document.getElementById("prefExamsRow").hidden = role === "admin";
-    // "check-in opens": students, once attendance_open_push.sql has added the column
-    let openCol = role === "murid" && !!data && "att_open" in data;
-    if (role === "murid" && !data) openCol = !(await supabaseClient.from("notif_prefs").select("att_open").limit(1)).error;
+    // "check-in opens": students and teachers, once attendance_open_push.sql has added the column
+    const checksIn = role === "murid" || role === "guru";
+    let openCol = checksIn && !!data && "att_open" in data;
+    if (checksIn && !data) openCol = !(await supabaseClient.from("notif_prefs").select("att_open").limit(1)).error;
     document.getElementById("prefAttOpenRow").hidden = !openCol;
     document.getElementById("prefAttOpen").checked = !data || data.att_open !== false;
     box._openCol = openCol;

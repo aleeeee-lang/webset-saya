@@ -3,6 +3,13 @@
 // (Data itself is still protected by the database rules on every request.)
 var _attUserP = null, _attProfP = null, _attPeriodP = null;
 
+// the check-in group of a person: teachers are one group "Guru" (teacher_attendance.sql),
+// students their class
+function attClassKey(p) {
+    if (!p) return null;
+    return p.role === "guru" ? "Guru" : (p.class || null);
+}
+
 function attMyProfile(uid) {
     if (!_attProfP) {
         _attProfP = supabaseClient
@@ -224,10 +231,11 @@ async function attCountable(user, attendanceData, period, profileOverride) {
     if (!user) return { rows: all, autoAlpa: 0 };
     // a parent passes the child's profile; everyone else uses their own
     var profile = profileOverride || await attMyProfile(user.id);
-    var rules = await attDayRules(profile && profile.class);
+    var ckey = attClassKey(profile);
+    var rules = await attDayRules(ckey);
     var rows = all.filter(function (r) { return attDayOpen(r.date, rules); });
     var schedule = rules.schedule;
-    if (!profile || !profile.class || !schedule || !schedule.active_days || !schedule.active_days.length) return { rows: rows, autoAlpa: 0 };
+    if (!profile || !ckey || !schedule || !schedule.active_days || !schedule.active_days.length) return { rows: rows, autoAlpa: 0 };
 
     var dates = all.map(function (a) { return a.date; }).sort();
     var first = dates.length ? dates[0] : null;

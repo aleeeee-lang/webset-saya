@@ -64,15 +64,15 @@ async function saveAttendance() {
 
     const { data: profile } = await supabaseClient
         .from("profiles")
-        .select("name, class")
+        .select("name, class, role")
         .eq("id", user.id)
         .single();
 
     const studentName =
         (profile && profile.name) ? profile.name : user.email;
 
-    const studentClass =
-        (profile && profile.class) ? profile.class : null;
+    // teachers check in as the group "Guru" (teacher_attendance.sql)
+    const studentClass = attClassKey(profile);
 
     // =========================
     // CHECK ATTENDANCE SCHEDULE

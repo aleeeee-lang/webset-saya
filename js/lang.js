@@ -1150,6 +1150,8 @@ Object.assign(translations, {
     notif_exam_today: { en: "Exam today:", id: "Hari ini ujian:" },
     notif_exam_tomorrow: { en: "Exam tomorrow:", id: "Besok ujian:" },
     notif_exam_soon: { en: "Exam in {n} days:", id: "{n} hari lagi ujian:" },
+    notif_kind_attopen: { en: "Check-in opens", id: "Absen dibuka" },
+    notif_kind_attopen_hint: { en: "When today's check-in opens, if you haven't checked in yet.", id: "Saat absen hari ini dibuka, kalau kamu belum absen." },
     notif_kind_exams: { en: "Exams", id: "Ujian" },
     notif_kind_exams_hint: { en: "3 days before, the day before and on the day (academic calendar).", id: "H-3, H-1, dan hari H (dari kalender akademik)." },
     toast_att_loc_denied: { en: "Allow location access to check in Hadir (browser/app settings).", id: "Izinkan akses lokasi dulu untuk absen Hadir (di pengaturan browser/aplikasi)." },

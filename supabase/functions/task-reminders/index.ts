@@ -8,6 +8,8 @@
 //            skipped on days marked as a holiday in the academic calendar.
 //   exams:   academic-calendar days of type "exam": 3 days before and the day before (17:00), and on the day (06:00);
 //            for a multi-day exam only the first day gets the early reminders. Everyone with notifications on.
+//   check-in opens: when a class's check-in time starts (attendance_schedules.start_time), students
+//            of that class who haven't checked in get "Absen sudah dibuka" (attendance_open_push.sql).
 //   queue:   announcements and attendance changes queued by database triggers (push_events.sql),
 //            and new leave requests / feedback / SPP proofs for admins (admin_push.sql);
 //            the database also calls this right away with {"queue_only": true} (push_instant.sql)
@@ -107,6 +109,7 @@ Deno.serve(async (req) => {
   const noLessons = new Set((prefRows ?? []).filter((r: { lessons: boolean }) => r.lessons === false).map((r: { user_id: string }) => r.user_id));
 
   const noExams = new Set((prefRows ?? []).filter((r: { exams?: boolean }) => r.exams === false).map((r: { user_id: string }) => r.user_id));
+  const noAttOpen = new Set((prefRows ?? []).filter((r: { att_open?: boolean }) => r.att_open === false).map((r: { user_id: string }) => r.user_id));
   const noGeneral = new Set((prefRows ?? []).filter((r: { general?: boolean }) => r.general === false).map((r: { user_id: string }) => r.user_id));
 
   type Msg = { user: string; title: string; body: string; url: string; tag: string; ttl: number };
@@ -114,6 +117,7 @@ Deno.serve(async (req) => {
   const taskLog: { task_id: string; user_id: string; stage: string }[] = [];
   const lessonLog: { schedule_id: string; user_id: string; day: string }[] = [];
   const examLog: { holiday_id: string; user_id: string; stage: string }[] = [];
+  const openLog: { class: string; day: string; user_id: string }[] = [];
 
   // ---------- queued: announcements + attendance ----------
   // claim_push_queue marks the rows as sent and returns them in one step, so two runs at once never double-send
@@ -176,6 +180,37 @@ Deno.serve(async (req) => {
             });
             lessonLog.push({ schedule_id: l.id, user_id: p.id, day: todayStr });
           }
+        }
+      }
+    }
+
+    // ---------- check-in opens ----------
+    {
+      const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+      const { data: sch, error: schErr } = await db.from("attendance_schedules").select("class,start_time,end_time,late_mode,late_end_time");
+      // just opened (the run every 5 minutes may come a little late: allow 20 minutes)
+      const opening = (schErr ? [] : sch ?? []).filter((s: { start_time: string | null }) => {
+        if (!s.start_time) return false;
+        const d = nowMin - toMin(s.start_time);
+        return d >= 0 && d < 20;
+      }) as { class: string; start_time: string; end_time: string | null; late_mode: string | null; late_end_time: string | null }[];
+      for (const s of opening) {
+        const { data: open } = await db.rpc("att_day_open", { p_class: s.class, p_date: todayStr });
+        if (open !== true) continue;                 // holiday / not a school day for this class
+        const [{ data: studs }, { data: done }, { data: logged, error: logErr }] = await Promise.all([
+          db.from("profiles").select("id,status").eq("role", "murid").eq("class", s.class),
+          db.from("attendance").select("user_id").eq("class", s.class).eq("date", todayStr),
+          db.from("att_open_push_log").select("user_id").eq("class", s.class).eq("day", todayStr),
+        ]);
+        if (logErr) break;                           // log table missing -> never risk repeating
+        const skip = new Set([...(done ?? []), ...(logged ?? [])].map((r: { user_id: string }) => r.user_id));
+        const close = (s.late_mode === "late" && s.late_end_time ? s.late_end_time : s.end_time) || "";
+        const until = close ? " sampai " + close.slice(0, 5).replace(":", ".") : "";
+        const left = close ? Math.max(5, toMin(close) - nowMin) : 120;
+        for (const st of (studs ?? []) as { id: string; status: string | null }[]) {
+          if (st.status === "inactive" || skip.has(st.id) || noAttOpen.has(st.id)) continue;
+          msgs.push({ user: st.id, title: "🔔 Absen sudah dibuka", body: "Absen dibuka" + until + ". Tempel sidik jari atau pakai QR dari guru.", url: "attendance.html", tag: "attopen-" + todayStr, ttl: left * 60 });
+          openLog.push({ class: s.class, day: todayStr, user_id: st.id });
         }
       }
     }
@@ -268,6 +303,7 @@ Deno.serve(async (req) => {
   // log first so a slow run never sends the same reminder twice
   if (taskLog.length) await db.from("task_push_log").upsert(taskLog, { onConflict: "task_id,user_id,stage", ignoreDuplicates: true });
   if (lessonLog.length) await db.from("lesson_push_log").upsert(lessonLog, { onConflict: "schedule_id,user_id,day", ignoreDuplicates: true });
+  if (openLog.length) await db.from("att_open_push_log").upsert(openLog, { onConflict: "class,day,user_id", ignoreDuplicates: true });
   if (examLog.length) await db.from("exam_push_log").upsert(examLog, { onConflict: "holiday_id,user_id,stage", ignoreDuplicates: true });
 
   const users = [...new Set(msgs.map((m) => m.user))];
@@ -292,5 +328,5 @@ Deno.serve(async (req) => {
   })));
   if (gone.length) await db.from("push_subscriptions").delete().in("endpoint", gone);
 
-  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, exams: examLog.length, queued: queued?.length ?? 0, removed: gone.length });
+  return Response.json({ sent, reminders: msgs.length, lessons: lessonLog.length, exams: examLog.length, opened: openLog.length, queued: queued?.length ?? 0, removed: gone.length });
 });

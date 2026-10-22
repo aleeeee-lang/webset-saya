@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261022p">
-<script src="js/theme.js?v=20261022p"></script>
-<script src="js/lang.js?v=20261022p"></script>
-<script src="js/toast.js?v=20261022p"></script>
+<link rel="stylesheet" href="style.css?v=20261023a">
+<script src="js/theme.js?v=20261023a"></script>
+<script src="js/lang.js?v=20261023a"></script>
+<script src="js/toast.js?v=20261023a"></script>
 </head>
 
 <body>
@@ -43,6 +43,11 @@
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
                 <div class="att-app-text"><span data-i18n="notif_kind_general">Announcements &amp; attendance</span><small data-i18n="notif_kind_general_hint">New announcements, and when a teacher records your attendance.</small></div>
                 <label class="att-switch"><input type="checkbox" id="prefGeneral" checked><span></span></label>
+            </div>
+            <div class="att-app-row att-app-kind" id="prefAttOpenRow" hidden>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 15.5a3.5 3.5 0 0 1-.5-1.8V12a3.5 3.5 0 0 1 7 0v.6"/><path d="M12 12v1.5a5 5 0 0 1-1 3"/></svg>
+                <div class="att-app-text"><span data-i18n="notif_kind_attopen">Check-in opens</span><small data-i18n="notif_kind_attopen_hint">When today's check-in opens, if you haven't checked in yet.</small></div>
+                <label class="att-switch"><input type="checkbox" id="prefAttOpen" checked><span></span></label>
             </div>
             <div class="att-app-row att-app-kind" id="prefExamsRow">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
@@ -87,8 +92,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261022p"></script>
-<script src="js/auth.js?v=20261022p"></script>
+<script src="js/supabase.js?v=20261023a"></script>
+<script src="js/auth.js?v=20261023a"></script>
 
 <script>
 requireLogin();
@@ -126,6 +131,12 @@ async function syncPushKinds(on) {
     document.getElementById("prefGeneral").checked = !data || data.general !== false;
     document.getElementById("prefExams").checked = !data || data.exams !== false;
     document.getElementById("prefExamsRow").hidden = role === "admin";
+    // "check-in opens": students, once attendance_open_push.sql has added the column
+    let openCol = role === "murid" && !!data && "att_open" in data;
+    if (role === "murid" && !data) openCol = !(await supabaseClient.from("notif_prefs").select("att_open").limit(1)).error;
+    document.getElementById("prefAttOpenRow").hidden = !openCol;
+    document.getElementById("prefAttOpen").checked = !data || data.att_open !== false;
+    box._openCol = openCol;
     // admins: one switch per division (shown once admin_push.sql has added the columns)
     let adm = role === "admin" && !!data && "admin_leave" in data;
     if (role === "admin" && !data) adm = !(await supabaseClient.from("notif_prefs").select("admin_leave").limit(1)).error;
@@ -152,6 +163,7 @@ async function savePushKinds() {
     if ("exams" in (box._prefCols || {})) row.exams = document.getElementById("prefExams").checked;
     if (box._adminCols) ["Leave", "Feedback", "Spp"].forEach(function (k) { row["admin_" + k.toLowerCase()] = document.getElementById("prefAdmin" + k).checked; });
     if (box._fpCol) row.admin_fp = document.getElementById("prefAdminFp").checked;
+    if (box._openCol) row.att_open = document.getElementById("prefAttOpen").checked;
     const { error } = await supabaseClient.from("notif_prefs").upsert(row, { onConflict: "user_id" });
     showToast(pushT(error ? "notif_kind_failed" : "notif_kind_saved"), error ? "error" : "success");
 }
@@ -159,6 +171,7 @@ document.getElementById("prefLessons").addEventListener("change", savePushKinds)
 document.getElementById("prefTasks").addEventListener("change", savePushKinds);
 document.getElementById("prefGeneral").addEventListener("change", savePushKinds);
 document.getElementById("prefExams").addEventListener("change", savePushKinds);
+document.getElementById("prefAttOpen").addEventListener("change", savePushKinds);
 ["Leave", "Feedback", "Spp", "Fp"].forEach(function (k) { document.getElementById("prefAdmin" + k).addEventListener("change", savePushKinds); });
 document.getElementById("pushToggle").addEventListener("change", async function () {
     const tg = this, ph = document.getElementById("pushHint");

@@ -94,7 +94,6 @@ self.addEventListener("push", function (event) {
     var title = data.title || "Attendreem";
     event.waitUntil(self.registration.showNotification(title, {
         body: data.body || "",
-        icon: "icon-512.png",
         badge: "badge-96.png",
         tag: data.tag || undefined,
         renotify: !!data.tag,

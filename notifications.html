@@ -168,7 +168,7 @@ document.getElementById("pushToggle").addEventListener("change", async function 
         const r = await window.AttPush.enable();
         if (r.ok) {
             showToast(pushT("push_enabled_toast"), "success");
-            try { const reg = await navigator.serviceWorker.ready; reg.showNotification("Attendreem", { body: pushT("push_test_body"), icon: "icon-512.png", badge: "badge-96.png" }); } catch (e) {}
+            try { const reg = await navigator.serviceWorker.ready; reg.showNotification("Attendreem", { body: pushT("push_test_body"), badge: "badge-96.png" }); } catch (e) {}
         } else {
             const map = { denied: "push_blocked", "ios-install": "push_ios_first", unsupported: "push_unsupported" };
             showToast(pushT(map[r.reason] || "push_failed") + (r.error && r.error.message ? " (" + r.error.message + ")" : ""), "error");

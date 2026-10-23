@@ -28,6 +28,9 @@
 
     window.showToast = function (message, type) {
         type = type || "info";
+        // the double-save guard (js/supabase.js): show its note on its own, not as a failure
+        var dup = /Data yang sama baru saja disimpan\.|The same entry was just saved\./.exec(String(message || ""));
+        if (dup) { message = dup[0]; type = "info"; }
 
         const container = ensureContainer();
 

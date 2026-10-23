@@ -78,8 +78,6 @@
         admin: [
             { label: ["General", "Menu umum"] },
             ["index.html", "home", "Home", "Beranda"],
-            ["dashboard.html", "bar", "Dashboard", "Dasbor"],
-            ["history.html", "wallet", "Savings", "Tabungan"],
             { label: ["Manage", "Kelola"] },
             ["settings.html", "grid", "Admin Panel", "Panel admin"],
             ["admin-students.html", "users", "Students", "Kelola siswa"],

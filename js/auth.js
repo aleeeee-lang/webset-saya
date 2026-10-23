@@ -3,6 +3,25 @@
 // (Data itself is still protected by the database rules on every request.)
 var _attUserP = null, _attProfP = null, _attPeriodP = null;
 
+// Student-only pages have nothing for an admin (no own check-in, savings, leave, goals...):
+// send them to the admin page that does the same job.
+var ATT_ADMIN_PAGE = {
+    "dashboard.html": "index.html",
+    "history.html": "admin-savings.html",
+    "my-attendance.html": "admin-attendance.html",
+    "leave.html": "admin-leave.html",
+    "goals.html": "admin-development.html",
+    "piket.html": "admin-piket.html",
+    "feedback.html": "admin-feedback.html"
+};
+function attAdminRedirect(role) {
+    if (role !== "admin") return;
+    var page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+    var to = ATT_ADMIN_PAGE[page];
+    if (to) location.replace(to + location.search);
+}
+try { attAdminRedirect((JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role); } catch (e) {}
+
 // the check-in group of a person: teachers are one group "Guru" (teacher_attendance.sql),
 // students their class
 function attClassKey(p) {
@@ -58,6 +77,7 @@ function requireLogin() {
             try {
                 localStorage.setItem("attendreem-profile", JSON.stringify({ role: profile.role, name: profile.name, class: profile.class, avatar_url: profile.avatar_url }));
                 window.dispatchEvent(new Event("attendreem-profile"));
+                attAdminRedirect(profile.role);
             } catch (e) {}
             if (profile.status === "inactive") {
                 try { await supabaseClient.auth.signOut(); } catch (e) {}

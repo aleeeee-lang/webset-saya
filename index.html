@@ -19,15 +19,15 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261023f"
+        href="style.css?v=20261023h"
     >
-<script src="js/theme.js?v=20261023f"></script>
-    <script src="js/lang.js?v=20261023f"></script>
-<script src="js/lessons.js?v=20261023f"></script>
-<script src="js/tasks-core.js?v=20261023f"></script>
-<script src="js/champs.js?v=20261023f"></script>
-    <script src="js/toast.js?v=20261023f"></script>
-    <script src="js/transition.js?v=20261023f"></script>
+<script src="js/theme.js?v=20261023h"></script>
+    <script src="js/lang.js?v=20261023h"></script>
+<script src="js/lessons.js?v=20261023h"></script>
+<script src="js/tasks-core.js?v=20261023h"></script>
+<script src="js/champs.js?v=20261023h"></script>
+    <script src="js/toast.js?v=20261023h"></script>
+    <script src="js/transition.js?v=20261023h"></script>
 
 </head>
 
@@ -349,10 +349,12 @@
     </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023f"></script>
-<script src="js/auth.js?v=20261023f"></script>
+<script src="js/supabase.js?v=20261023h"></script>
+<script src="js/auth.js?v=20261023h"></script>
 
-<script src="js/notification.js?v=20261023f"></script>
+<script src="js/notification.js?v=20261023h"></script>
+<script src="js/live-sessions.js?v=20261023h"></script>
+<script src="js/admin-home.js?v=20261023h"></script>
 
 <script>
 function homeT(key) {
@@ -547,6 +549,10 @@ async function loadHomeTasks(uid, cls) {
 
 async function loadHome() {
     renderHomeHeader();
+    // admins get their own home (js/admin-home.js): switch before anything student-only shows
+    let cachedRole = "";
+    try { cachedRole = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
+    if (cachedRole === "admin" && window.AdminHome) AdminHome.layout();
     // show the name and photo from the last visit right away (refreshed below)
     try {
         const cached = JSON.parse(localStorage.getItem("attendreem-profile") || "null");
@@ -558,10 +564,20 @@ async function loadHome() {
     // if loading fails, don't leave the placeholder forever
     setTimeout(function () {
         const t = document.getElementById("homeTitle");
-        if (t && !t.textContent) { t.setAttribute("data-i18n", "home_not_checked_in"); t.textContent = homeT("home_not_checked_in"); t.removeAttribute("aria-busy"); document.getElementById("homeCta").classList.remove("is-loading"); }
+        if (t && !t.textContent && !document.documentElement.classList.contains("is-admin-home")) { t.setAttribute("data-i18n", "home_not_checked_in"); t.textContent = homeT("home_not_checked_in"); t.removeAttribute("aria-busy"); document.getElementById("homeCta").classList.remove("is-loading"); }
     }, 10000);
     const user = await requireLogin();
     if (!user) return;
+
+    const me = await attMyProfile(user.id);
+    if (me && me.role === "admin" && window.AdminHome) {
+        document.getElementById("homeName").textContent = me.name || user.email || "";
+        renderHomeAvatar(me.name || user.email, me.avatar_url);
+        const ev = await supabaseClient.from("holidays").select("date,label,type").gte("date", localDateStr()).order("date", { ascending: true }).limit(5);
+        renderHomeAgenda(ev.data || []);
+        AdminHome.start(user, me);
+        return;
+    }
 
     const today = localDateStr();
     const period = attNow().getFullYear() + "-" + String(attNow().getMonth() + 1).padStart(2, "0");
@@ -615,7 +631,7 @@ document.addEventListener("touchend", e => {
     touchEndX = e.changedTouches[0].screenX;
 
     if (touchEndX - touchStartX < -80) {
-        window.location.href = "attendance.html";
+        window.location.href = document.documentElement.classList.contains("is-admin-home") ? "admin-attendance.html" : "attendance.html";
     }
 });
 </script>

@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023h">
-<script src="js/theme.js?v=20261023h"></script>
-<script src="js/lang.js?v=20261023h"></script>
-<script src="js/money-input.js?v=20261023h"></script>
-<script src="js/toast.js?v=20261023h"></script>
-<script src="js/paymethods.js?v=20261023h"></script>
+<link rel="stylesheet" href="style.css?v=20261023i">
+<script src="js/theme.js?v=20261023i"></script>
+<script src="js/lang.js?v=20261023i"></script>
+<script src="js/money-input.js?v=20261023i"></script>
+<script src="js/toast.js?v=20261023i"></script>
+<script src="js/paymethods.js?v=20261023i"></script>
 </head>
 
 <body>
@@ -55,7 +55,7 @@
         <p style="font-size:12px;color:#888;margin:4px 0 14px" id="payHint">Rekening atau e-wallet sekolah. Siswa dan orang tua melihatnya di halaman SPP, lengkap dengan tombol salin.</p>
         <div class="pay-edit" id="payRows"></div>
         <button type="button" class="pay-add" id="payAddBtn"></button>
-        <button type="button" class="submit-button" id="paySaveBtn" style="margin-top:12px"></button>
+        <button type="button" class="submit-button pay-save is-waiting" id="paySaveBtn" style="margin-top:12px"></button>
     </section>
 
     <!-- PER-STUDENT SPP OVERRIDE -->
@@ -119,8 +119,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023h"></script>
-<script src="js/auth.js?v=20261023h"></script>
+<script src="js/supabase.js?v=20261023i"></script>
+<script src="js/auth.js?v=20261023i"></script>
 
 <script>
 
@@ -196,6 +196,7 @@ async function loadSppAdmin() {
         .maybeSingle();
     payRows = window.AttPay.clean(settingsData && settingsData.pay_methods).map(function (m) { return { method: m.method || "", number: m.number || "", name: m.name || "" }; });
     payReady = !!settingsData ? ("pay_methods" in settingsData) : true;
+    paySaved = payKey(payRows);
     renderPayRows();
 
     sppAmount = (settingsData && settingsData.amount) || 0;
@@ -217,7 +218,20 @@ async function loadSppAdmin() {
 }
 
 // ---------- where to pay (spp_settings.pay_methods, spp_pay_methods.sql) ----------
-let payRows = [], payReady = true;
+let payRows = [], payReady = true, paySaved = "[]";
+// what would be saved, to see whether anything changed since the last save
+function payKey(rows) {
+    return JSON.stringify(rows.map(function (r) { return { method: r.method.trim(), number: r.number.trim(), name: r.name.trim() }; })
+        .filter(function (r) { return r.method || r.number || r.name; }));
+}
+// "Simpan" lights up only when there is a change and every filled row has a bank and a number
+function paySync() {
+    const list = JSON.parse(payKey(payRows));
+    const ok = payKey(payRows) !== paySaved && list.every(function (r) { return r.method && r.number; });
+    const b = document.getElementById("paySaveBtn");
+    b.classList.toggle("is-ready", ok);
+    b.classList.toggle("is-waiting", !ok);
+}
 const PAY_MAX = 5;
 function payT(id, en) { return getLang() === "id" ? id : en; }
 function renderPayRows() {
@@ -226,20 +240,25 @@ function renderPayRows() {
     const box = document.getElementById("payRows");
     if (!payRows.length) payRows.push({ method: "", number: "", name: "" });
     box.innerHTML = payRows.map(function (r, i) {
-        return '<div class="pay-edit-row" data-i="' + i + '">' +
+        return '<div class="pay-edit-row' + (r.method || r.number || r.name ? ' filled' : '') + '" data-i="' + i + '">' +
             '<input class="am-field" data-f="method" maxlength="30" placeholder="' + payT("Bank / e-wallet, mis. Bank BRI", "Bank / e-wallet, e.g. BRI") + '" value="' + escapeHTML(r.method) + '">' +
             '<input class="am-field" data-f="number" maxlength="40" inputmode="numeric" placeholder="' + payT("No. rekening / HP", "Account / phone number") + '" value="' + escapeHTML(r.number) + '">' +
             '<input class="am-field" data-f="name" maxlength="60" placeholder="' + payT("Atas nama", "Account name") + '" value="' + escapeHTML(r.name) + '">' +
-            '<button type="button" class="pay-del" data-del="' + i + '" aria-label="' + payT("Hapus", "Remove") + '">×</button></div>';
+            '<button type="button" class="pay-del" data-del="' + i + '" aria-label="' + payT("Hapus", "Remove") + '"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>';
     }).join("");
     const add = document.getElementById("payAddBtn");
     add.textContent = "+ " + payT("Tambah cara bayar", "Add a way to pay");
     add.hidden = payRows.length >= PAY_MAX;
     document.getElementById("paySaveBtn").textContent = payT("Simpan cara bayar", "Save");
+    paySync();
 }
 document.getElementById("payRows").addEventListener("input", function (e) {
     const f = e.target.getAttribute("data-f"); if (!f) return;
-    payRows[Number(e.target.closest(".pay-edit-row").getAttribute("data-i"))][f] = e.target.value;
+    const row = e.target.closest(".pay-edit-row"), r = payRows[Number(row.getAttribute("data-i"))];
+    r[f] = e.target.value;
+    // the remove cross gets its colour once something is filled in
+    row.classList.toggle("filled", !!(r.method.trim() || r.number.trim() || r.name.trim()));
+    paySync();
 });
 document.getElementById("payRows").addEventListener("click", function (e) {
     const d = e.target.closest("[data-del]"); if (!d) return;
@@ -264,6 +283,7 @@ document.getElementById("paySaveBtn").addEventListener("click", async function (
         return;
     }
     payRows = list.slice();
+    paySaved = payKey(payRows);
     renderPayRows();
     showToast(payT("Cara bayar disimpan.", "Saved."), "success");
 });

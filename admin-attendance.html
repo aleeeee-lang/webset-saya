@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023m">
-<script src="js/theme.js?v=20261023m"></script>
-<script src="js/lang.js?v=20261023m"></script>
-<script src="js/toast.js?v=20261023m"></script>
+<link rel="stylesheet" href="style.css?v=20261023o">
+<script src="js/theme.js?v=20261023o"></script>
+<script src="js/lang.js?v=20261023o"></script>
+<script src="js/toast.js?v=20261023o"></script>
 </head>
 
 <body>
@@ -111,8 +111,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023m"></script>
-<script src="js/auth.js?v=20261023m"></script>
+<script src="js/supabase.js?v=20261023o"></script>
+<script src="js/auth.js?v=20261023o"></script>
 
 <script>
 
@@ -349,7 +349,11 @@ async function loadTrendChart() {
 
 async function renderRow(item, showDate) {
     const cls = (item.status || "").toLowerCase();
-    const sub = (showDate ? item.date + " · " : "") + (item.time ? item.time + " · " : "") + (item.reason || statusLabelOf(item.status) || "-");
+    const idl = getLang() === "id";
+    // check-out (attendance_checkout.sql): "07:02 → 14:05"
+    const timeTxt = item.time ? String(item.time).slice(0, 5) + (item.checkout_time ? " → " + String(item.checkout_time).slice(0, 5) : "") : "";
+    const outNote = item.checkout_reason ? " · " + item.checkout_reason : "";
+    const sub = (showDate ? item.date + " · " : "") + (timeTxt ? timeTxt + " · " : "") + (item.reason || statusLabelOf(item.status) || "-") + outNote;
 
     let photoHtml = "";
 
@@ -473,7 +477,7 @@ function exportFilteredCsv() {
         return;
     }
 
-    const headers = ["Name", "Class", "Date", "Day", "Time", "Status", "Reason"];
+    const headers = ["Name", "Class", "Date", "Day", "Time", "Status", "Reason", "Check-out", "Check-out note"];
 
     const lines = [headers.join(",")];
 
@@ -485,7 +489,9 @@ function exportFilteredCsv() {
             csvEscape(r.day),
             csvEscape(r.time),
             csvEscape(statusLabelOf(r.status)),
-            csvEscape(r.reason)
+            csvEscape(r.reason),
+            csvEscape(r.checkout_time ? String(r.checkout_time).slice(0, 5) : ""),
+            csvEscape(r.checkout_reason)
         ].join(","));
     });
 

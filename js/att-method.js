@@ -119,7 +119,8 @@
         if (!state.supported) { setPanel(T("fp_unsupported_t"), T("fp_unsupported"), null, "warn"); return; }
         if (state.registered === false) { setPanel(T("fp_register_t"), T("fp_register"), T("fp_register_btn"), ""); return; }
         if (window.attFpTicket()) { setPanel(T("fp_ok_t"), T("fp_ok"), null, "ok"); return; }
-        setPanel(T("fp_scan_t"), T("fp_scan"), T("fp_scan_btn"), "");
+        var co = window.attCheckout && window.attCheckout.active;
+        setPanel(T("fp_scan_t"), co ? T("fp_scan_co") : T("fp_scan"), T("fp_scan_btn"), "");
     }
 
     function fmtDay(ms) {
@@ -204,7 +205,12 @@
         if (state.busy || state.celebrating) return;
         if ($("fpBtn").dataset.mode === "send") { if (typeof saveAttendance === "function") saveAttendance(); return; }
         // check the form first, so a scan is never wasted
-        if (state.registered !== false) {
+        var coOut = window.attCheckout && window.attCheckout.active;
+        if (coOut && window.attCheckout.early()) {
+            var rs0 = document.getElementById("reason");
+            if (rs0 && !rs0.value.trim()) { if (window.showToast) showToast(getLang() === "id" ? "Isi alasan pulang lebih awal dulu." : "Add a reason for leaving early.", "error"); if (rs0.focus) rs0.focus(); return; }
+        }
+        if (state.registered !== false && !coOut) {
             var picked = document.querySelector('input[name="status"]:checked');
             if (!picked) { if (window.showToast) showToast(T("toast_pick_status_first"), "error"); return; }
             var rs = document.getElementById("reason");

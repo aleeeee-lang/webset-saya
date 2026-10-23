@@ -39,6 +39,8 @@ function attIdentityReady() {
 }
 
 async function saveAttendance() {
+    // after a Hadir check-in the same button checks out (js/att-checkout.js)
+    if (window.attCheckout && window.attCheckout.active) return window.attCheckout.save();
 
     // =========================
     // GET LOGIN USER
@@ -387,6 +389,7 @@ async function saveAttendance() {
     // =========================
 
     showToast(translations.toast_attendance_saved[lang], "success");
+    if (window.attCheckout) window.attCheckout.reload();   // show today's summary / the check-out
 
     if (typeof attFpUsed === "function") attFpUsed();   // a ticket works only once
     if (useQr && typeof attQrUsed === "function") attQrUsed();

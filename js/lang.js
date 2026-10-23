@@ -1196,6 +1196,7 @@ Object.assign(translations, {
     fp_registered_toast: { en: "Fingerprint registered on this phone.", id: "Sidik jari terdaftar di HP ini." },
     fp_scan_t: { en: "Scan your fingerprint", id: "Tempel sidik jari" },
     fp_scan: { en: "Pick your status, tap the round button and touch the sensor. Once it matches, a quick photo is taken and your check-in is sent.", id: "Pilih status, tekan tombol bulat, lalu tempel jari. Setelah cocok, foto singkat diambil dan absen langsung terkirim." },
+    fp_scan_co: { en: "Tap the round button and touch the sensor. Once it matches, a quick photo is taken and your check-out is sent.", id: "Tekan tombol bulat, lalu tempel jari. Setelah cocok, foto singkat diambil dan absen pulang langsung terkirim." },
     fp_scan_btn: { en: "Scan fingerprint", id: "Tempel sidik jari" },
     fp_ok_t: { en: "Fingerprint matched ✓", id: "Sidik jari cocok ✓" },
     fp_ok: { en: "Photo taken as proof. Tap the round button to send (within 2 minutes).", id: "Foto bukti sudah diambil. Tekan tombol bulat untuk kirim absen (dalam 2 menit)." },

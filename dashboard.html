@@ -19,19 +19,19 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261023m"
+        href="style.css?v=20261023o"
     >
 
-    <script src="js/theme.js?v=20261023m"></script>
+    <script src="js/theme.js?v=20261023o"></script>
 
-    <script src="js/lang.js?v=20261023m"></script>
+    <script src="js/lang.js?v=20261023o"></script>
 
-    <script src="js/toast.js?v=20261023m"></script>
+    <script src="js/toast.js?v=20261023o"></script>
 
 
-    <script src="js/transition.js?v=20261023m"></script>
+    <script src="js/transition.js?v=20261023o"></script>
 
-    <script src="js/scroll-pop.js?v=20261023m"></script>
+    <script src="js/scroll-pop.js?v=20261023o"></script>
 
 </head>
 
@@ -256,9 +256,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261023m"></script>
+    <script src="js/supabase.js?v=20261023o"></script>
 
-    <script src="js/auth.js?v=20261023m"></script>
+    <script src="js/auth.js?v=20261023o"></script>
 
 
 
@@ -456,7 +456,7 @@ const recent =
 
                                 <div class="recent-date">
                                     <strong>${dayNameOf(item.date)}, ${dayMonthLabel(new Date(item.date + "T00:00:00"))}</strong>
-                                    <span>${(item.time || "-").slice(0, 5).replace(":", ".")}</span>
+                                    <span>${(item.time || "-").slice(0, 5).replace(":", ".")}${item.checkout_time ? " → " + String(item.checkout_time).slice(0, 5).replace(":", ".") : ""}</span>
                                 </div>
 
                                 <div class="recent-status ${item.status.toLowerCase()}">
@@ -578,7 +578,7 @@ document.addEventListener("touchend", function (event) {
 </script>
 
 
-<script src="js/live-sessions.js?v=20261023m"></script>
+<script src="js/live-sessions.js?v=20261023o"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 

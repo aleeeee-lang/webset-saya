@@ -19,13 +19,13 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261023m"
+        href="style.css?v=20261023o"
     >
-    <script src="js/theme.js?v=20261023m"></script>
-    <script src="js/lang.js?v=20261023m"></script>
-    <script src="js/toast.js?v=20261023m"></script>
-    <script src="js/transition.js?v=20261023m"></script>
-    <script src="js/avatarcrop.js?v=20261023m"></script>
+    <script src="js/theme.js?v=20261023o"></script>
+    <script src="js/lang.js?v=20261023o"></script>
+    <script src="js/toast.js?v=20261023o"></script>
+    <script src="js/transition.js?v=20261023o"></script>
+    <script src="js/avatarcrop.js?v=20261023o"></script>
 
     
 </head>
@@ -370,20 +370,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261023m"></script>
+    <script src="js/supabase.js?v=20261023o"></script>
     
-    <script src="js/auth.js?v=20261023m"></script>
+    <script src="js/auth.js?v=20261023o"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261023m"></script>
+    <script src="js/camera.js?v=20261023o"></script>
 
-    <script src="js/fingerprint.js?v=20261023m"></script>
-    <script src="js/att-method.js?v=20261023m"></script>
+    <script src="js/fingerprint.js?v=20261023o"></script>
+    <script src="js/att-method.js?v=20261023o"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-    <script src="js/att-qr.js?v=20261023m"></script>
-    <script src="js/att-proof.js?v=20261023m"></script>
-    <script src="js/attendance.js?v=20261023m"></script>
+    <script src="js/att-qr.js?v=20261023o"></script>
+    <script src="js/att-proof.js?v=20261023o"></script>
+    <script src="js/att-checkout.js?v=20261023o"></script>
+    <script src="js/attendance.js?v=20261023o"></script>
 
 
 
@@ -412,6 +413,8 @@
             const box = document.getElementById("attWindow");
             const text = document.getElementById("attWindowText");
             const count = document.getElementById("attWindowCount");
+            // check-out time, or today is done (js/att-checkout.js)
+            if (window.attCheckout && window.attCheckout.paintWindow(box, text, count)) return;
             // a date the admin switched off (holiday), or a day that isn't a school day
             const todayStr = localDateStr(now);
             if (attRules && !attDayOpen(todayStr, attRules)) {

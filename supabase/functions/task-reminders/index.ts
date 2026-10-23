@@ -63,6 +63,14 @@ async function cleanupPhotos(db: any, local: Date) {
     await db.from("attendance").update({ photo_url: null }).in("id", rows.map((r: { id: string }) => r.id));
     if (rows.length < 500) break;
   }
+  // 1b) check-out photos older than 30 days (attendance_checkout.sql; skipped on an older database)
+  for (let round = 0; round < 10; round++) {
+    const { data: rows, error } = await db.from("attendance").select("id, checkout_photo_url").lt("date", day(FACE_DAYS)).not("checkout_photo_url", "is", null).limit(500);
+    if (error || !rows?.length) break;
+    await drop(rows.map((r: { checkout_photo_url: string }) => r.checkout_photo_url));
+    await db.from("attendance").update({ checkout_photo_url: null }).in("id", rows.map((r: { id: string }) => r.id));
+    if (rows.length < 500) break;
+  }
   // 2) letter photos (Izin / Sakit) older than 90 days
   for (const t of ["attendance", "leave_requests"]) {
     const dateCol = t === "attendance" ? "date" : "end_date";
@@ -132,7 +140,7 @@ Deno.serve(async (req) => {
       // admin division pushes (admin_push.sql) have their own switches in Settings
       // "Absen dibuka" (attendance_open_exact.sql) has its own switch, checked in the database
       const tg = q.tag ?? "";
-      if (noGeneral.has(q.user_id) && !tg.startsWith("admin-") && !tg.startsWith("attopen-")) continue;
+      if (noGeneral.has(q.user_id) && !tg.startsWith("admin-") && !tg.startsWith("attopen-") && !tg.startsWith("attout-")) continue;
       msgs.push({ user: q.user_id, title: q.title, body: q.body, url: q.url, tag: q.tag ?? "attendreem", ttl: 24 * 3600 });
     }
   }

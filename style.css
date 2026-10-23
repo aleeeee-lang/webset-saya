@@ -4395,3 +4395,31 @@ html[data-theme="dark"] .attendance-page .submit-button.pay-save.is-ready{backgr
 .feedback-filter-btn.on{background:#14162B!important;color:#fff!important}
 html[data-theme="dark"] .attendance-page .feedback-filter-btn{background:#1C1C1E!important;color:#A1A1AA!important}
 html[data-theme="dark"] .attendance-page .feedback-filter-btn.on{background:#C6F432!important;color:#14162B!important}
+/* ===== Absen pulang (js/att-checkout.js) ===== */
+.co-card{background:#fff;border-radius:22px;padding:14px 16px;margin:0 0 14px;box-sizing:border-box}
+.co-row{display:flex;align-items:center;gap:10px}
+.co-step{display:flex;align-items:center;gap:10px;min-width:0}
+.co-step i{width:36px;height:36px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#F1F2F6;color:#8A8FA8;font-style:normal}
+.co-step.done i{background:#C6F432;color:#14162B}
+.co-step.miss i{background:#FDE7E7;color:#B42318}
+.co-step span{display:flex;flex-direction:column;min-width:0}
+.co-step small{font-size:11px;font-weight:700;color:#8A8FA8;text-transform:uppercase;letter-spacing:.04em}
+.co-step b{font-size:17px;font-weight:800;color:#14162B;line-height:1.15}
+.co-step.miss b{color:#B42318}
+.co-step em{font-style:normal;font-size:11px;font-weight:800;color:#8A5A00}
+.co-line{flex:1;height:3px;border-radius:9px;background:#E6E8EF;min-width:20px}
+.co-line.done{background:#C6F432}
+.co-note{margin:12px 0 0;font-size:13px;color:#5B6078}
+html.att-co-out .v2-label,html.att-co-out .v2-status-grid,html.att-co-out #proofBox{display:none!important}
+html.att-co-done .att-side,html.att-co-done #attMethod,html.att-co-done #qrArea,html.att-co-done #faceArea,html.att-co-done #fpPanel,html.att-co-done .v2-submit,html.att-co-done #fpChangeBar{display:none!important}
+html.att-co-done body.fp-docked main.v2-wrap{padding-bottom:0}
+html[data-theme="dark"] .co-card{background:#121212}
+html[data-theme="dark"] .co-step i{background:#1C1C1E;color:#8E8E93}
+html[data-theme="dark"] .co-step.done i{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .co-step.miss i{background:rgba(229,72,77,.16);color:#FF8A8E}
+html[data-theme="dark"] .attendance-page .co-step b,html[data-theme="dark"] .co-step b{color:#EDEDED}
+html[data-theme="dark"] .co-step.miss b{color:#FF8A8E}
+html[data-theme="dark"] .co-step em{color:#F5C451}
+html[data-theme="dark"] .co-line{background:#2C2C2E}
+html[data-theme="dark"] .co-line.done{background:#C6F432}
+html[data-theme="dark"] .co-note{color:#A1A1AA}

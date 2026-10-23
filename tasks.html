@@ -9,16 +9,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023j">
-<script src="js/theme.js?v=20261023j"></script>
-<script src="js/lang.js?v=20261023j"></script>
-<script src="js/toast.js?v=20261023j"></script>
-<script src="js/shared-photos.js?v=20261023j"></script>
-<script src="js/lessons.js?v=20261023j"></script>
-<script src="js/tasks-core.js?v=20261023j"></script>
-<script src="js/timepicker.js?v=20261023j"></script>
-<script src="js/timefield.js?v=20261023j"></script>
-<script src="js/avatarcrop.js?v=20261023j"></script>
+<link rel="stylesheet" href="style.css?v=20261023k">
+<script src="js/theme.js?v=20261023k"></script>
+<script src="js/lang.js?v=20261023k"></script>
+<script src="js/toast.js?v=20261023k"></script>
+<script src="js/shared-photos.js?v=20261023k"></script>
+<script src="js/lessons.js?v=20261023k"></script>
+<script src="js/tasks-core.js?v=20261023k"></script>
+<script src="js/timepicker.js?v=20261023k"></script>
+<script src="js/timefield.js?v=20261023k"></script>
+<script src="js/avatarcrop.js?v=20261023k"></script>
 </head>
 
 <body class="v2-page">
@@ -59,8 +59,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023j"></script>
-<script src="js/auth.js?v=20261023j"></script>
+<script src="js/supabase.js?v=20261023k"></script>
+<script src="js/auth.js?v=20261023k"></script>
 
 <script>
 const esc = Lessons.esc;
@@ -430,6 +430,8 @@ function openSheet(t) {
         if (!title) { fTitle.focus(); warn.textContent = tr("tsk_err_title"); warn.hidden = false; return; }
         if (!fDate.value || !time) { warn.textContent = tr("tsk_err_due"); warn.hidden = false; return; }
         const row = { title: title, subject: fSubject.value.trim() || null, description: fNote.value.trim() || null, due_at: Tasks.localISO(fDate.value, time), updated_at: new Date().toISOString() };
+        if (editing && attSame([row.title, row.subject, row.description, new Date(row.due_at).getTime(), teacherMode ? selCls : null],
+                               [t.title, t.subject || null, t.description || null, new Date(t.due_at).getTime(), teacherMode ? t.class : null])) { close(); attNoChange(); return; }
         this.disabled = true;
         const res = editing
             ? await supabaseClient.from("tasks").update(row).eq("id", t.id)

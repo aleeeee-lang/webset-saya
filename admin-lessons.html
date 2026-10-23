@@ -9,14 +9,14 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023j">
-<script src="js/theme.js?v=20261023j"></script>
-<script src="js/lang.js?v=20261023j"></script>
-<script src="js/toast.js?v=20261023j"></script>
-<script src="js/lessons.js?v=20261023j"></script>
-<script src="js/timepicker.js?v=20261023j"></script>
-<script src="js/timefield.js?v=20261023j"></script>
-<script src="js/avatarcrop.js?v=20261023j"></script>
+<link rel="stylesheet" href="style.css?v=20261023k">
+<script src="js/theme.js?v=20261023k"></script>
+<script src="js/lang.js?v=20261023k"></script>
+<script src="js/toast.js?v=20261023k"></script>
+<script src="js/lessons.js?v=20261023k"></script>
+<script src="js/timepicker.js?v=20261023k"></script>
+<script src="js/timefield.js?v=20261023k"></script>
+<script src="js/avatarcrop.js?v=20261023k"></script>
 </head>
 
 <body class="v2-page">
@@ -50,8 +50,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023j"></script>
-<script src="js/auth.js?v=20261023j"></script>
+<script src="js/supabase.js?v=20261023k"></script>
+<script src="js/auth.js?v=20261023k"></script>
 
 <script>
 const esc = Lessons.esc;
@@ -229,6 +229,9 @@ function openForm(x) {
         if (busy && !(await attConfirm({ title: tr("lsn_busy_title"), text: tr("lsn_busy_text").replace("{n}", teacherName).replace("{c}", busy.class).replace("{t}", Lessons.fmt(busy.start_time) + "–" + Lessons.fmt(busy.end_time)), ok: tr("lsn_busy_ok") }))) return;
 
         const row = { class: selClass, day: day, start_time: s, end_time: e, subject: subject, room: fRoom.value.trim() || null, teacher_id: teacherId, teacher_name: teacherName || null, updated_at: new Date().toISOString() };
+        const hm = function (t) { return t ? String(t).slice(0, 5) : null; };
+        if (editing && attSame([row.class, Number(row.day), hm(row.start_time), hm(row.end_time), row.subject, row.room, row.teacher_id, row.teacher_name],
+                               [x.class, Number(x.day), hm(x.start_time), hm(x.end_time), x.subject, x.room || null, x.teacher_id || null, x.teacher_name || null])) { close(); attNoChange(); return; }
         btn.disabled = true;
         const res = editing
             ? await supabaseClient.from("class_schedules").update(row).eq("id", x.id)

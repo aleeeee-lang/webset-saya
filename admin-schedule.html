@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023j">
-<script src="js/theme.js?v=20261023j"></script>
-<script src="js/lang.js?v=20261023j"></script>
-    <script src="js/timepicker.js?v=20261023j"></script>
-<script src="js/toast.js?v=20261023j"></script>
+<link rel="stylesheet" href="style.css?v=20261023k">
+<script src="js/theme.js?v=20261023k"></script>
+<script src="js/lang.js?v=20261023k"></script>
+    <script src="js/timepicker.js?v=20261023k"></script>
+<script src="js/toast.js?v=20261023k"></script>
 </head>
 
 <body>
@@ -205,10 +205,10 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023j"></script>
-<script src="js/auth.js?v=20261023j"></script>
-<script src="js/avatarcrop.js?v=20261023j"></script>
-<script src="js/admin-location.js?v=20261023j"></script>
+<script src="js/supabase.js?v=20261023k"></script>
+<script src="js/auth.js?v=20261023k"></script>
+<script src="js/avatarcrop.js?v=20261023k"></script>
+<script src="js/admin-location.js?v=20261023k"></script>
 
 <script>
 
@@ -295,6 +295,7 @@ function setPeriodEndPreset(preset) {
     input.value = dateStr(d);
 }
 
+let periodSaved = null;
 async function loadPeriod() {
     const { data, error } = await supabaseClient
         .from("attendance_period_settings")
@@ -312,6 +313,7 @@ async function loadPeriod() {
 
     document.getElementById("periodStartInput").value = data.period_start;
     document.getElementById("periodEndInput").value = data.period_end || "";
+    periodSaved = [data.period_start, data.period_end || ""];
 
     const startLabel = dayMonthYearLabel(new Date(data.period_start + "T00:00:00"));
     const endLabel = data.period_end
@@ -335,6 +337,8 @@ async function savePeriod() {
         showToast(translations.toast_end_before_start[lang], "error");
         return;
     }
+
+    if (periodSaved && attSame([value, endValue || ""], periodSaved)) { attNoChange(); return; }
 
     const user = await requireLogin();
     const btn = document.getElementById("savePeriodBtn");
@@ -825,6 +829,14 @@ async function saveSchedule() {
     if (!startTime || !endTime) {
         showToast(translations.toast_select_class_first[lang], "error");
         return;
+    }
+
+    const ex = allSchedules.find(function (s) { return s.class === cls; });
+    const hm = function (t) { return t ? String(t).slice(0, 5) : null; };
+    if (ex && attSame(
+        { d: activeDays.slice().sort(), s: hm(startTime), e: hm(endTime), m: lateMode, l: lateMode === "late" ? hm(lateUntil) : null },
+        { d: (ex.active_days || []).map(Number).sort(), s: hm(ex.start_time), e: hm(ex.end_time), m: ex.late_mode || "block", l: (ex.late_mode === "late") ? hm(ex.late_end_time) : null })) {
+        attNoChange(); return;
     }
 
     const user = await requireLogin();

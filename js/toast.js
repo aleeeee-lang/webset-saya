@@ -18,6 +18,14 @@
         return c;
     }
 
+    // "nothing changed" guard for save buttons: attSame(a, b) compares two plain values;
+    // attNoChange() tells the user nothing was saved
+    window.attSame = function (a, b) { return JSON.stringify(a) === JSON.stringify(b); };
+    window.attNoChange = function () {
+        var id = typeof getLang !== "function" || getLang() === "id";
+        window.showToast(id ? "Belum ada yang diubah." : "Nothing changed.", "info");
+    };
+
     window.showToast = function (message, type) {
         type = type || "info";
 

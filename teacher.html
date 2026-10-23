@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023j">
-<script src="js/theme.js?v=20261023j"></script>
-<script src="js/lang.js?v=20261023j"></script>
-<script src="js/toast.js?v=20261023j"></script>
-<script src="js/champs.js?v=20261023j"></script>
+<link rel="stylesheet" href="style.css?v=20261023k">
+<script src="js/theme.js?v=20261023k"></script>
+<script src="js/lang.js?v=20261023k"></script>
+<script src="js/toast.js?v=20261023k"></script>
+<script src="js/champs.js?v=20261023k"></script>
 </head>
 
 <body>
@@ -143,8 +143,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023j"></script>
-<script src="js/auth.js?v=20261023j"></script>
+<script src="js/supabase.js?v=20261023k"></script>
+<script src="js/auth.js?v=20261023k"></script>
 
 <script>
 
@@ -306,10 +306,11 @@ async function saveTeacherAttendance(studentId, studentName, chosenStatus) {
 
     const { data: existing } = await supabaseClient
         .from("attendance")
-        .select("id")
+        .select("id,status")
         .eq("user_id", studentId)
         .eq("date", today)
         .maybeSingle();
+    if (existing && existing.status === status) { attNoChange(); return; }
 
     const payload = {
         user_id: studentId,
@@ -461,6 +462,10 @@ document.addEventListener("click", async function (e) {
         if (!v("subject") || !v("period") || v("score") === "" || isNaN(score) || score < 0 || score > 100) {
             showToast(translations.toast_enter_valid_score[lang], "error");
             return;
+        }
+        const g0 = myGrades.find(function (x) { return x.id === id; });
+        if (g0 && attSame([v("subject"), v("period"), score, v("note") || null], [g0.subject || "", g0.period || "", Number(g0.score), g0.note || null])) {
+            myGradeEditing = null; renderMyGrades(); attNoChange(); return;
         }
         b.disabled = true;
         const { error } = await supabaseClient.from("student_grades")
@@ -699,7 +704,7 @@ checkTeacher();
 
 </script>
 
-<script src="js/live-sessions.js?v=20261023j"></script>
+<script src="js/live-sessions.js?v=20261023k"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 </html>

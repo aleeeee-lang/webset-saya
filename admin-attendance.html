@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023j">
-<script src="js/theme.js?v=20261023j"></script>
-<script src="js/lang.js?v=20261023j"></script>
-<script src="js/toast.js?v=20261023j"></script>
+<link rel="stylesheet" href="style.css?v=20261023k">
+<script src="js/theme.js?v=20261023k"></script>
+<script src="js/lang.js?v=20261023k"></script>
+<script src="js/toast.js?v=20261023k"></script>
 </head>
 
 <body>
@@ -111,8 +111,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023j"></script>
-<script src="js/auth.js?v=20261023j"></script>
+<script src="js/supabase.js?v=20261023k"></script>
+<script src="js/auth.js?v=20261023k"></script>
 
 <script>
 
@@ -531,10 +531,16 @@ async function saveRecord() {
 
     const { data: existing } = await supabaseClient
         .from("attendance")
-        .select("id")
+        .select("id,status,reason")
         .eq("user_id", userId)
         .eq("date", date)
         .maybeSingle();
+    if (existing && existing.status === status && (existing.reason || "") === reason) {
+        btn.disabled = false;
+        btn.textContent = translations.btn_save_attendance[lang];
+        attNoChange();
+        return;
+    }
 
     const payload = {
         user_id: userId,

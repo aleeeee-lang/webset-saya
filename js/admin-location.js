@@ -47,6 +47,11 @@
             toast(L("Isi titik sekolah dulu (latitude & longitude).", "Fill in the school's point first (latitude & longitude)."), "error");
             return;
         }
+        var radius = Number($("locRadius").value);
+        if (row && attSame({ on: on, lat: lat, lng: lng, r: radius },
+                           { on: !!row.enabled, lat: row.lat == null ? null : Number(row.lat), lng: row.lng == null ? null : Number(row.lng), r: Number(row.radius_m || 80) })) {
+            attNoChange(); return;
+        }
         var btn = $("locSaveBtn");
         btn.disabled = true;
         var s = await supabaseClient.auth.getSession();
@@ -57,6 +62,7 @@
         }, { onConflict: "id" });
         btn.disabled = false;
         if (r.error) { toast(L("Gagal menyimpan: ", "Could not save: ") + r.error.message, "error"); return; }
+        row = Object.assign({}, row || {}, { enabled: on, lat: lat, lng: lng, radius_m: radius });
         toast(on ? L("Lokasi absen aktif. Hadir hanya bisa dari area sekolah.", "Location check on. Hadir only works inside the school area.")
                  : L("Lokasi absen dimatikan.", "Location check turned off."), "success");
     }

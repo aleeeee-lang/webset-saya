@@ -4390,3 +4390,8 @@ html[data-theme="dark"] .ah-more{background:#1C1C1E;color:#D4D4D8}
 .attendance-page .submit-button.pay-save.is-ready{background:#C6F432!important;color:#14162B!important}
 html[data-theme="dark"] .attendance-page .submit-button.pay-save.is-waiting{background:#26262A!important;color:#A1A1AA!important}
 html[data-theme="dark"] .attendance-page .submit-button.pay-save.is-ready{background:#C6F432!important;color:#14162B!important}
+/* Saran & keluhan: filter tabs in the app colours */
+.feedback-filter-btn{background:#F1F2F6!important;color:#5B6078!important;border:0!important;transition:background .15s,color .15s}
+.feedback-filter-btn.on{background:#14162B!important;color:#fff!important}
+html[data-theme="dark"] .attendance-page .feedback-filter-btn{background:#1C1C1E!important;color:#A1A1AA!important}
+html[data-theme="dark"] .attendance-page .feedback-filter-btn.on{background:#C6F432!important;color:#14162B!important}

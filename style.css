@@ -3251,8 +3251,8 @@ html[data-theme="dark"] .attendance-page .bc-keep-note{color:#8E8E93!important}
 .kas-member.on em{color:#4D7C0F}
 .kas-kind{display:flex;gap:8px}
 .kas-kind button{flex:1;height:44px;border-radius:14px;border:1px solid #E2E4EE;background:#fff;display:flex;align-items:center;justify-content:center;gap:6px;font:700 13.5px 'Plus Jakarta Sans',sans-serif;color:#6B7088;cursor:pointer}
-.kas-kind button.on.in{background:#ECFDF3;border-color:#86EFAC;color:#166534}
-.kas-kind button.on.out{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C}
+.kas-kind button.on.in{background:#C6F432;border-color:#C6F432;color:#14162B}
+.kas-kind button.on.out{background:#E5484D;border-color:#E5484D;color:#fff}
 .kas-field{display:flex;flex-direction:column;gap:6px}
 .kas-field>span{font-size:12.5px;font-weight:700;color:#4A4F66}
 .kas-field .am-field{width:100%;box-sizing:border-box;height:46px;padding:0 14px;border:1px solid #E2E8F0;border-radius:12px;background:#FAFAFA;font:500 14px 'Plus Jakarta Sans',sans-serif;color:#14162B}
@@ -3296,8 +3296,8 @@ html[data-theme="dark"] .kas-member.on{background:#22290F;border-color:#3D4A14}
 html[data-theme="dark"] .kas-member.on em{color:#C6F432}
 html[data-theme="dark"] .kas-tick{border-color:#48484A}
 html[data-theme="dark"] .kas-kind button{background:#1C1C1E;border-color:#3A3A3C;color:#8E8E93}
-html[data-theme="dark"] .kas-kind button.on.in{background:#0F2A1A;border-color:#166534;color:#86EFAC}
-html[data-theme="dark"] .kas-kind button.on.out{background:#2A1212;border-color:#7F1D1D;color:#FCA5A5}
+html[data-theme="dark"] .kas-kind button.on.in{background:#C6F432;border-color:#C6F432;color:#14162B}
+html[data-theme="dark"] .kas-kind button.on.out{background:#E5484D;border-color:#E5484D;color:#fff}
 html[data-theme="dark"] .kas-field>span{color:#AEAEB2}
 html[data-theme="dark"] .kas-field .am-field{background:#2C2C2E!important;border-color:#3A3A3C!important;color:#EDEDED!important}
 html[data-theme="dark"] .kas-receipt{border-color:#48484A;color:#8E8E93}

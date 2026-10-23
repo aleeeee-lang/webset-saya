@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023i">
-<script src="js/theme.js?v=20261023i"></script>
-<script src="js/lang.js?v=20261023i"></script>
-<script src="js/money-input.js?v=20261023i"></script>
-<script src="js/toast.js?v=20261023i"></script>
-<script src="js/paymethods.js?v=20261023i"></script>
+<link rel="stylesheet" href="style.css?v=20261023j">
+<script src="js/theme.js?v=20261023j"></script>
+<script src="js/lang.js?v=20261023j"></script>
+<script src="js/money-input.js?v=20261023j"></script>
+<script src="js/toast.js?v=20261023j"></script>
+<script src="js/paymethods.js?v=20261023j"></script>
 </head>
 
 <body>
@@ -42,7 +42,7 @@
                 <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_spp_monthly_amount">Monthly SPP Amount (Rp)</div>
                 <input type="text" data-money id="sppAmountInput" class="am-field" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
             </div>
-            <button type="button" class="submit-button" id="saveSppAmountBtn" data-needs="sppAmountInput" onclick="saveSppAmount()" data-i18n="btn_save_spp_amount">
+            <button type="button" class="submit-button pay-save is-waiting" id="saveSppAmountBtn" onclick="saveSppAmount()" data-i18n="btn_save_spp_amount">
                 Save Amount
             </button>
         </div>
@@ -74,7 +74,7 @@
                 <div style="font-size:12px;color:#888;margin:4px 0 8px" id="sppStudentCurrentLabel">-</div>
                 <input type="text" data-money id="sppStudentAmountInput" class="am-field" min="0" data-i18n-placeholder="placeholder_spp_student_amount" placeholder="Leave empty to use default" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 <div style="display:flex;gap:8px;margin-top:10px">
-                    <button type="button" class="submit-button" id="saveSppStudentAmountBtn" data-needs="sppStudentSelect,sppStudentAmountInput" onclick="saveSppStudentAmount()" style="flex:1;margin-top:0" data-i18n="btn_save_spp_student_amount">Save for This Student</button>
+                    <button type="button" class="submit-button pay-save is-waiting" id="saveSppStudentAmountBtn" onclick="saveSppStudentAmount()" style="flex:1;margin-top:0" data-i18n="btn_save_spp_student_amount">Save for This Student</button>
                     <button type="button" class="am-btn am-btn-danger" onclick="resetSppStudentAmount()" style="border:1px solid #fecaca;background:#fff;border-radius:12px;padding:0 16px;font-size:13px;cursor:pointer;color:#dc2626" data-i18n="btn_reset_spp_student_amount">Use Default</button>
                 </div>
             </div>
@@ -119,8 +119,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023i"></script>
-<script src="js/auth.js?v=20261023i"></script>
+<script src="js/supabase.js?v=20261023j"></script>
+<script src="js/auth.js?v=20261023j"></script>
 
 <script>
 
@@ -201,6 +201,7 @@ async function loadSppAdmin() {
 
     sppAmount = (settingsData && settingsData.amount) || 0;
     document.getElementById("sppAmountInput").value = sppAmount;
+    sppAmountSync();
 
     const { data, error } = await supabaseClient
         .from("spp_payments")
@@ -288,12 +289,39 @@ document.getElementById("paySaveBtn").addEventListener("click", async function (
     showToast(payT("Cara bayar disimpan.", "Saved."), "success");
 });
 
+// the save buttons light up only when the amount differs from what is saved
+function sppLight(id, ok) {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.classList.toggle("is-ready", ok);
+    b.classList.toggle("is-waiting", !ok);
+}
+function sppStudentCustom() {
+    const id = document.getElementById("sppStudentSelect").value;
+    const st = id ? allStudents.find(function (s) { return s.id === id; }) : null;
+    return st && st.spp_custom_amount !== null && st.spp_custom_amount !== undefined ? Number(st.spp_custom_amount) : null;
+}
+function sppAmountSync() {
+    const a = Number(document.getElementById("sppAmountInput").value);
+    sppLight("saveSppAmountBtn", a > 0 && a !== Number(sppAmount || 0));
+    const id = document.getElementById("sppStudentSelect").value;
+    const b = Number(document.getElementById("sppStudentAmountInput").value);
+    sppLight("saveSppStudentAmountBtn", !!id && b > 0 && b !== sppStudentCustom());
+}
+document.addEventListener("input", function (e) {
+    if (e.target && (e.target.id === "sppAmountInput" || e.target.id === "sppStudentAmountInput")) sppAmountSync();
+});
+
 async function saveSppAmount() {
     const lang = getLang();
     const amount = Number(document.getElementById("sppAmountInput").value);
 
     if (!amount || amount <= 0) {
         showToast(translations.toast_enter_valid_spp_amount[lang], "error");
+        return;
+    }
+    if (amount === Number(sppAmount || 0)) {
+        showToast(lang === "id" ? "Jumlahnya masih sama, belum ada yang diubah." : "The amount hasn't changed.", "info");
         return;
     }
 
@@ -320,6 +348,7 @@ async function saveSppAmount() {
     }
 
     sppAmount = amount;
+    sppAmountSync();
     showToast(translations.toast_spp_amount_saved[lang], "success");
 }
 
@@ -349,6 +378,7 @@ function onSppStudentSelectChange() {
 
     document.getElementById("sppStudentAmountInput").value = (custom !== null && custom !== undefined) ? custom : "";
     card.style.display = "block";
+    sppAmountSync();
 }
 
 async function saveSppStudentAmount() {
@@ -361,6 +391,10 @@ async function saveSppStudentAmount() {
 
     if (!raw || !amount || amount <= 0) {
         showToast(translations.toast_enter_valid_spp_amount[lang], "error");
+        return;
+    }
+    if (amount === sppStudentCustom()) {
+        showToast(lang === "id" ? "Jumlahnya masih sama, belum ada yang diubah." : "The amount hasn't changed.", "info");
         return;
     }
 

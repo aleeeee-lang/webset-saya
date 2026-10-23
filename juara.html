@@ -9,12 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023e">
-<script src="js/theme.js?v=20261023e"></script>
-<script src="js/lang.js?v=20261023e"></script>
-<script src="js/toast.js?v=20261023e"></script>
-<script src="js/avatarcrop.js?v=20261023e"></script>
-<script src="js/champs.js?v=20261023e"></script>
+<link rel="stylesheet" href="style.css?v=20261023f">
+<script src="js/theme.js?v=20261023f"></script>
+<script src="js/lang.js?v=20261023f"></script>
+<script src="js/toast.js?v=20261023f"></script>
+<script src="js/avatarcrop.js?v=20261023f"></script>
+<script src="js/champs.js?v=20261023f"></script>
 </head>
 
 <body class="v2-page">
@@ -66,8 +66,8 @@
         <div class="jr-card" id="jrGradeAllCard" hidden>
             <h3 class="jr-h" data-i18n="jr_all_students">All students</h3>
             <div class="jr-list" id="jrGradeList"></div>
-            <button type="button" class="jr-btn" id="jrAnnounce"><span>🏆</span><span data-i18n="jr_announce">Announce the champions</span></button>
-            <small class="jr-hint" data-i18n="jr_announce_hint">Shown on everyone's home page for 7 days, then kept in Awards.</small>
+            <button type="button" class="jr-btn" id="jrAnnounce"><span>🏆</span><span id="jrAnnounceLabel">Announce the champions</span></button>
+            <small class="jr-hint" id="jrAnnounceHint"></small>
         </div>
     </section>
 
@@ -115,8 +115,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023e"></script>
-<script src="js/auth.js?v=20261023e"></script>
+<script src="js/supabase.js?v=20261023f"></script>
+<script src="js/auth.js?v=20261023f"></script>
 
 <script>
 // Each tab fetches fresh data when it opens. If nothing changed, don't redraw the
@@ -288,16 +288,47 @@ async function loadGrades() {
     all.hidden = !isStaff;
     if (isStaff) {
         document.getElementById("jrGradeList").innerHTML = gradeRows.map(function (r) { return row(r.rnk, r.name, String(r.avg_score).replace(".", ","), r.subjects + L(" nilai", " grades"), false, Math.min(1, Number(r.avg_score) / 100), r.avatar_url); }).join("");
-        document.getElementById("jrAnnounce").disabled = !top.length;
+        await checkAnnounced(sel.value, top.length);
     }
+}
+
+// was this class + period already announced? (one announcement each; "announce again" replaces it)
+let announced = null;
+async function checkAnnounced(period, hasTop) {
+    const btn = document.getElementById("jrAnnounce"), label = document.getElementById("jrAnnounceLabel"), hint = document.getElementById("jrAnnounceHint");
+    const r = await supabaseClient.from("achievements").select("id,created_by,created_by_name,achieved_on,created_at")
+        .eq("kind", "rank").eq("class", cls).eq("period", period).order("created_at", { ascending: false });
+    const list = r.error ? [] : (r.data || []);
+    announced = list.length ? list : null;
+    const mineOrAdmin = !announced || prof.role === "admin" || announced.every(function (a) { return a.created_by === me.id; });
+    const when = announced ? new Date(announced[0].created_at).toLocaleDateString(getLang() === "id" ? "id-ID" : "en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
+    if (!announced) {
+        label.textContent = L("Umumkan juara kelas", "Announce the champions");
+        hint.textContent = L("Tampil di beranda selama 7 hari, lalu tersimpan di tab Prestasi.", "Shown on everyone's home page for 7 days, then kept in Awards.");
+    } else {
+        label.textContent = L("Umumkan ulang", "Announce again");
+        hint.textContent = L("Sudah diumumkan ", "Announced ") + when + (announced[0].created_by_name ? L(" oleh ", " by ") + announced[0].created_by_name : "") +
+            (mineOrAdmin ? L(". Umumkan ulang kalau nilainya berubah — pengumuman lama diganti.", ". Announce again if the grades changed — the old one is replaced.")
+                         : L(". Hanya admin atau yang mengumumkan yang bisa mengulang.", ". Only an admin or the person who announced it can redo it."));
+    }
+    btn.disabled = !hasTop || !mineOrAdmin;
 }
 document.getElementById("jrPeriod").addEventListener("change", loadGrades);
 document.getElementById("jrAnnounce").addEventListener("click", async function () {
     const period = document.getElementById("jrPeriod").value;
     const top = gradeRows.filter(function (r) { return r.rnk <= 3; });
     if (!top.length) return;
-    const ok = await attConfirm({ title: L("Umumkan juara kelas?", "Announce the class champions?"), text: L("Kelas ", "Class ") + cls + " · " + period + "\n" + top.map(function (r) { return r.rnk + ". " + r.name; }).join(", "), ok: L("Umumkan", "Announce") });
+    const again = !!announced;
+    const ok = await attConfirm({
+        title: again ? L("Umumkan ulang juara kelas?", "Announce the champions again?") : L("Umumkan juara kelas?", "Announce the class champions?"),
+        text: L("Kelas ", "Class ") + cls + " · " + period + " — " + top.map(function (r) { return r.rnk + ". " + r.name; }).join(", ") +
+              (again ? L(". Pengumuman lama diganti yang baru.", ". The old announcement is replaced.") : ""),
+        ok: again ? L("Umumkan ulang", "Announce again") : L("Umumkan", "Announce"), tone: "primary" });
     if (!ok) return;
+    if (again) {
+        const del = await supabaseClient.from("achievements").delete().in("id", announced.map(function (a) { return a.id; }));
+        if (del.error) { showToast(L("Gagal mengganti pengumuman lama.", "Couldn't replace the old announcement.") + " (" + del.error.message + ")", "error"); return; }
+    }
     const names = top.map(function (r) { return C.MEDAL[r.rnk - 1] + " " + r.name; }).join("  ");
     const res = await supabaseClient.from("achievements").insert({
         kind: "rank", title: names, event_name: L("Peringkat kelas ", "Class ranking ") + period, class: cls, period: period,
@@ -306,6 +337,8 @@ document.getElementById("jrAnnounce").addEventListener("click", async function (
     });
     if (res.error) { showToast(L("Gagal mengumumkan.", "Couldn't announce.") + " (" + res.error.message + ")", "error"); return; }
     showToast(L("Juara diumumkan! Tampil di beranda selama 7 hari.", "Announced! Shown on home pages for 7 days."), "success");
+    checkAnnounced(period, top.length);
+    if (typeof loadAwards === "function") loadAwards();
 });
 
 // ---------- awards ----------

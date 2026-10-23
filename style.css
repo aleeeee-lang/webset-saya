@@ -4256,3 +4256,41 @@ html[data-theme="dark"] .attendance-page #backupHint{color:#8E8E93!important}
 html[data-theme="dark"] .attendance-page .am-group{background:#232327}
 html[data-theme="dark"] .attendance-page .am-group button{color:#A1A1AA!important}
 html[data-theme="dark"] .attendance-page .am-group button.on{background:#C6F432;color:#14162B!important}
+/* Beranda guru: nilai yang diinput guru (teacher_grades.sql) */
+.tg-mine{margin-top:18px;padding-top:14px;border-top:1px solid #EEEEF3}
+.tg-mine-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tg-mine-h b{font-size:14px;font-weight:800;color:#14162B}
+.tg-mine-h small{min-width:22px;padding:2px 7px;border-radius:999px;background:#EEF7D4;color:#3F6212;font-size:11px;font-weight:800;text-align:center}
+.tg-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #EEEEF3}
+.tg-row:last-child{border-bottom:0}
+.tg-score{flex:none;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.tg-score.good{background:#EEF7D4;color:#3F6212}.tg-score.ok{background:#FFF3D6;color:#8A5A00}.tg-score.low{background:#FDE7E7;color:#B42318}
+.tg-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tg-info b{font-size:14px;color:#14162B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-info small{font-size:12px;color:#6B7088;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-info em{font-style:normal;font-size:12px;color:#8A8FA8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-act{display:flex;gap:6px;flex:none}
+.tg-ic{width:34px;height:34px;border-radius:11px;border:0;background:#F3F3F7;color:#3A3F5C;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tg-ic.del{color:#B42318}
+.tg-edit{flex:1;display:flex;flex-direction:column;gap:10px}
+.tg-edit-who{display:flex;align-items:baseline;gap:8px}.tg-edit-who b{font-size:14px;color:#14162B}.tg-edit-who small{font-size:12px;color:#6B7088}
+.tg-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tg-edit-grid label{display:flex;flex-direction:column;gap:4px;min-width:0}.tg-edit-grid label.wide{grid-column:1/-1}
+.tg-edit-grid span{font-size:11px;font-weight:700;color:#6B7088}
+.tg-edit-grid .am-field{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E2E5EE;border-radius:12px;background:#FAFAFC;font-size:14px}
+.tg-edit-act{display:flex;justify-content:flex-end;gap:8px}
+.tg-btn{padding:9px 16px;border-radius:12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;border:0}
+.tg-btn.ghost{background:#F3F3F7;color:#3A3F5C}.tg-btn.solid{background:#14162B;color:#fff}
+.tg-more{margin-top:8px;width:100%;padding:10px;border-radius:12px;border:0;background:#F3F3F7;color:#3A3F5C;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+html[data-theme="dark"] .attendance-page .tg-mine,html[data-theme="dark"] .attendance-page .tg-row{border-color:#242424}
+html[data-theme="dark"] .attendance-page .tg-mine-h b,html[data-theme="dark"] .attendance-page .tg-info b,html[data-theme="dark"] .attendance-page .tg-edit-who b{color:#fff!important}
+html[data-theme="dark"] .attendance-page .tg-info small,html[data-theme="dark"] .attendance-page .tg-edit-who small,html[data-theme="dark"] .attendance-page .tg-edit-grid span{color:#A1A1AA!important}
+html[data-theme="dark"] .attendance-page .tg-info em{color:#8E8E93!important}
+html[data-theme="dark"] .attendance-page .tg-mine-h small{background:rgba(198,244,50,.14);color:#C6F432!important}
+html[data-theme="dark"] .attendance-page .tg-score.good{background:rgba(198,244,50,.14);color:#C6F432!important}
+html[data-theme="dark"] .attendance-page .tg-score.ok{background:rgba(245,180,40,.16);color:#F5C451!important}
+html[data-theme="dark"] .attendance-page .tg-score.low{background:rgba(229,72,77,.16);color:#FF8A8E!important}
+html[data-theme="dark"] .attendance-page .tg-ic,html[data-theme="dark"] .attendance-page .tg-btn.ghost,html[data-theme="dark"] .attendance-page .tg-more{background:#1C1C1E;color:#D4D4D8!important}
+html[data-theme="dark"] .attendance-page .tg-ic.del{color:#FF8A8E!important}
+html[data-theme="dark"] .attendance-page .tg-btn.solid{background:#C6F432;color:#14162B!important}
+html[data-theme="dark"] .attendance-page .tg-edit-grid .am-field{background:#1C1C1E;border-color:#2C2C2E;color:#fff!important}

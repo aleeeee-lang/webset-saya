@@ -10,11 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261023o">
-<script src="js/theme.js?v=20261023o"></script>
-<script src="js/lang.js?v=20261023o"></script>
-<script src="js/money-input.js?v=20261023o"></script>
-<script src="js/toast.js?v=20261023o"></script>
+<link rel="stylesheet" href="style.css?v=20261025a">
+<script src="js/theme.js?v=20261025a"></script>
+<script src="js/lang.js?v=20261025a"></script>
+<script src="js/money-input.js?v=20261025a"></script>
+<script src="js/toast.js?v=20261025a"></script>
+<script src="js/fit.js?v=20261025a" defer></script>
 </head>
 
 <body>
@@ -91,8 +92,8 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261023o"></script>
-<script src="js/auth.js?v=20261023o"></script>
+<script src="js/supabase.js?v=20261025a"></script>
+<script src="js/auth.js?v=20261025a"></script>
 
 <script>
 
@@ -167,8 +168,10 @@ function renderTransactionList() {
                     <strong style="display:block;font-size:14px;color:#20243a">${typeLabel}</strong>
                     <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(d)}${t.note ? " · " + escapeHTML(t.note) : ""}</span>
                 </div>
-                <div class="savings-amount ${t.type}" style="font-size:13px;font-weight:700">${sign}${formatRupiah(t.amount)}</div>
-                <button type="button" onclick="deleteTransaction('${t.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
+                    <div class="savings-amount ${t.type}" style="font-size:13px;font-weight:700;white-space:nowrap">${sign}${formatRupiah(t.amount)}</div>
+                    <button type="button" onclick="deleteTransaction('${t.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:2px 0" data-i18n="btn_delete">Delete</button>
+                </div>
             </div>
         `;
     }).join("");

@@ -1920,7 +1920,7 @@ html[data-theme="dark"] .v2-submit{background:#262628}
 .v2-seg div:first-child{border-radius:999px 4px 4px 999px}.v2-seg div:last-child{border-radius:4px 999px 999px 4px}
 .v2-seg .hadir{background:#14162B}.v2-seg .izin{background:#F59E0B}.v2-seg .sakit{background:#60A5FA}.v2-seg .alpa{background:#B91C1C}
 .v2-dash-counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.v2-dash-counts div{background:#fff;border-radius:16px;padding:10px 12px;min-width:0}
+.v2-dash-counts div{background:#fff;border-radius:16px;padding:10px 9px;min-width:0}
 .v2-dash-counts span{display:block;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v2-dash-counts span.izin{color:#B45309}.v2-dash-counts span.sakit{color:#3A3F5C}.v2-dash-counts span.alpa{color:#B91C1C}
 .v2-dash-counts strong{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800}
@@ -3218,7 +3218,7 @@ html[data-theme="dark"] .attendance-page .bc-keep-note{color:#8E8E93!important}
 .kas-hero-label{font-size:13px;color:#A9ADC7;font-weight:600}
 .kas-hero-big{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:38px;line-height:1.05;font-weight:800;letter-spacing:-.02em;color:#C6F432}
 .kas-hero-row{display:flex;gap:10px;margin-top:8px}
-.kas-hero-row>div{flex:1;background:rgba(255,255,255,.06);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.kas-hero-row>div{flex:1;min-width:0;background:rgba(255,255,255,.06);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
 .kas-hero-row small{font-size:11.5px;color:#A9ADC7}
 .kas-hero-row b{font-size:15px}
 .kas-hero-row b.in{color:#86EFAC}.kas-hero-row b.out{color:#FCA5A5}

@@ -26,6 +26,7 @@ const translations = {
     status_not_selected: { en: "Not selected", id: "Belum dipilih" },
     status_present: { en: "Present", id: "Hadir" },
     status_permission: { en: "Permission", id: "Izin" },
+    status_permission_short: { en: "Excused", id: "Izin" },
     status_sick: { en: "Sick", id: "Sakit" },
     status_absent: { en: "Absent", id: "Alpa" },
     label_reason: { en: "Reason", id: "Alasan" },

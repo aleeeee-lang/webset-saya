@@ -800,6 +800,12 @@ html[data-theme="dark"] .attendance-page .about-version-pill {
 .spp-status-badge.approved {
     background: rgba(34, 197, 94, .25);
 }
+/* light mode on a light card (izin, guru, orang tua, target): white text was unreadable */
+html:not([data-theme="dark"]) :not(.savings-balance-card) > .spp-status-badge { color: #3A3F5C; background: #ECEEF4; }
+html:not([data-theme="dark"]) :not(.savings-balance-card) > .spp-status-badge.unpaid,
+html:not([data-theme="dark"]) :not(.savings-balance-card) > .spp-status-badge.rejected { color: #B91C1C; background: #FEE2E2; }
+html:not([data-theme="dark"]) :not(.savings-balance-card) > .spp-status-badge.pending { color: #92400E; background: #FEF3C7; }
+html:not([data-theme="dark"]) :not(.savings-balance-card) > .spp-status-badge.approved { color: #15803D; background: #DCFCE7; }
 
 .savings-balance-card .savings-balance-label {
     margin: 0;
@@ -1992,8 +1998,9 @@ html[data-theme="dark"] .v2-dash-badge.dash_badge_improve{background:#FBBF24;col
 .v2-my .calendar-arrow{width:34px;height:34px;border-radius:12px;background:#F3F3F7!important;color:#14162B!important;font-size:20px}
 .v2-my .calendar-arrow.on{background:#14162B!important;color:#fff!important}
 .v2-my .calendar-week{font-size:11px;font-weight:700;color:#4A4F6A}
-.v2-my .calendar-days{gap:6px;justify-items:center}
-.v2-my .calendar-days span{width:36px;height:36px;border-radius:50%;font-size:12px;font-weight:700;color:#8A8FA8;background:transparent}
+.v2-my .calendar-days{gap:6px;justify-items:center;grid-template-columns:repeat(7,minmax(0,1fr))}
+.v2-my .calendar-week{grid-template-columns:repeat(7,minmax(0,1fr))}
+.v2-my .calendar-days span{width:36px;max-width:100%;aspect-ratio:1;height:auto;box-sizing:border-box;border-radius:50%;font-size:12px;font-weight:700;color:#8A8FA8;background:transparent}
 .v2-my .calendar-days .hadir-day{background:#14162B;color:#fff}
 .v2-my .calendar-days .izin-day{background:#F59E0B;color:#14162B}
 .v2-my .calendar-days .sakit-day{background:#60A5FA;color:#14162B}
@@ -2402,8 +2409,10 @@ html[data-theme="dark"] .schedule-day-pill:has(input:checked){background:rgba(19
 .v2-time-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#3F6212;background:#EEF7D4;pointer-events:none}
 .v2-time-picker{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;opacity:0;cursor:pointer;border:0;padding:0;margin:0}
 html[data-theme="dark"] .v2-time-btn{color:#C6F432;background:rgba(198,244,50,.12)}
-.v2-time-box{display:flex!important;align-items:center;gap:2px;width:100%;box-sizing:border-box;padding:0 52px 0 12px!important;min-height:46px;cursor:text}
-.v2-time-seg{width:2.4em;border:0!important;background:transparent!important;outline:none;padding:6px 4px!important;margin:0;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:inherit;font-variant-numeric:tabular-nums;border-radius:8px;box-shadow:none!important}
+.v2-time-box{display:flex!important;align-items:center;gap:2px;width:100%;min-width:0;box-sizing:border-box;padding:0 46px 0 10px!important;min-height:46px;cursor:text}
+.v2-time-wrap{min-width:0}
+*:has(> .v2-time-wrap){min-width:0}
+.v2-time-seg{width:2.2em;min-width:0;box-sizing:border-box;flex:0 1 auto;border:0!important;background:transparent!important;outline:none;padding:6px 4px!important;margin:0;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:inherit;font-variant-numeric:tabular-nums;border-radius:8px;box-shadow:none!important}
 .v2-time-seg:focus{background:#EEF7D4!important}
 .v2-time-seg::placeholder{color:#A9ACC6}
 .v2-time-colon{font-weight:800;font-size:16px;color:#8A8FA8}
@@ -2414,9 +2423,9 @@ html[data-theme="dark"] .v2-time-seg::placeholder{color:#636366}
 
 /* Hour : minute boxes (scoped tightly so page/browser input styles can't leak in) */
 .v2-time-wrap{position:relative;width:100%}
-.v2-time-wrap>.v2-time-box{display:flex!important;align-items:center;gap:4px;width:100%;height:48px;box-sizing:border-box;margin:0;padding:0 52px 0 10px!important;border:1px solid #e2e8f0!important;border-radius:12px!important;background:#fafafa!important;cursor:text;transition:border-color .15s,box-shadow .15s}
+.v2-time-wrap>.v2-time-box{display:flex!important;align-items:center;gap:2px;width:100%;min-width:0;height:48px;box-sizing:border-box;margin:0;padding:0 46px 0 8px!important;border:1px solid #e2e8f0!important;border-radius:12px!important;background:#fafafa!important;cursor:text;transition:border-color .15s,box-shadow .15s}
 .v2-time-wrap>.v2-time-box:focus-within{border-color:#14162B!important;box-shadow:0 0 0 3px rgba(20,22,43,.08)!important}
-.v2-time-wrap>.v2-time-box>input.v2-time-seg{flex:0 0 auto!important;width:42px!important;min-width:0!important;height:34px!important;box-sizing:border-box!important;margin:0!important;padding:0!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;outline:none!important;appearance:none;-webkit-appearance:none;font-family:inherit!important;font-size:17px!important;font-weight:700!important;line-height:34px!important;text-align:center!important;color:#14162B!important;font-variant-numeric:tabular-nums}
+.v2-time-wrap>.v2-time-box>input.v2-time-seg{flex:0 1 34px!important;width:34px!important;min-width:20px!important;height:34px!important;box-sizing:border-box!important;margin:0!important;padding:0!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;outline:none!important;appearance:none;-webkit-appearance:none;font-family:inherit!important;font-size:17px!important;font-weight:700!important;line-height:34px!important;text-align:center!important;color:#14162B!important;font-variant-numeric:tabular-nums}
 .v2-time-wrap>.v2-time-box>input.v2-time-seg:focus{background:#EEF7D4!important}
 .v2-time-wrap>.v2-time-box>input.v2-time-seg::placeholder{color:#A9ACC6!important}
 .v2-time-wrap>.v2-time-box>.v2-time-colon{font-size:17px;font-weight:800;color:#8A8FA8;line-height:1}

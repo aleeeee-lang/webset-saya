@@ -2134,6 +2134,7 @@ html[data-theme="dark"] .attendance-page .v2-teach-quick a.sand svg *{color:#FCD
 .v2-par-rate-num{font-family:'Bricolage Grotesque',sans-serif;font-size:52px;font-weight:800;line-height:1;letter-spacing:-.03em;margin-top:4px}
 .v2-par-rate-sub{font-size:12px;color:#3A3F5C;margin-top:6px;line-height:1.5}
 .v2-par-rate-sub b{color:#14162B}
+.v2-par-rate-sub .nw{white-space:nowrap}
 .v2-par-today{background:#fff;border-radius:18px;padding:10px 12px;text-align:center;display:flex;flex-direction:column;flex-shrink:0;min-width:74px}
 .v2-par-today span{font-size:11px;font-weight:700;color:#15803D}
 .v2-par-today strong{font-size:15px;font-weight:800}

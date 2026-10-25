@@ -894,6 +894,7 @@ Object.assign(translations, {
     teach_homeroom: { en: "Homeroom", id: "Wali kelas" },
     teach_leave_sick: { en: "Leave / sick", id: "Izin / sakit" },
     teach_not_yet: { en: "Not checked in", id: "Belum absen" },
+    par_no_school: { en: "No school", id: "Libur" },
     teach_spp_class: { en: "Class SPP status", id: "Status SPP kelas" },
     par_semester_attendance: { en: "Attendance", id: "Kehadiran" },
     par_today: { en: "Today", id: "Hari ini" },

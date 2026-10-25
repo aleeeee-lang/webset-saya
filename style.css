@@ -2128,7 +2128,7 @@ html[data-theme="dark"] .attendance-page .v2-teach-quick a.sand svg *{color:#FCD
 .v2-par-child-av{width:44px;height:44px;border-radius:14px;background:#C6F432;color:#14162B;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;flex-shrink:0}
 .v2-par-child select{flex:1;min-width:0;appearance:none;-webkit-appearance:none;border:0;background:transparent;color:#fff;font-family:inherit;font-size:15px;font-weight:700;outline:none;cursor:pointer;padding:0}
 .v2-par-child select option{color:#14162B}
-.v2-par-rate{background:#EEF7D4;border-radius:28px;padding:18px;display:flex;align-items:center;gap:14px}
+.v2-par-rate{background:#EEF7D4;border-radius:28px;padding:18px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
 .v2-par-rate-main{flex:1;min-width:0}
 .v2-par-rate-label{font-size:13px;font-weight:700}
 .v2-par-rate-num{font-family:'Bricolage Grotesque',sans-serif;font-size:52px;font-weight:800;line-height:1;letter-spacing:-.03em;margin-top:4px}
@@ -2140,6 +2140,7 @@ html[data-theme="dark"] .attendance-page .v2-teach-quick a.sand svg *{color:#FCD
 .v2-par-today strong{font-size:15px;font-weight:800}
 .v2-par-today small{font-size:11px;color:#4A4F6A}
 .v2-par-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v2-par-tiles+.pay-box{margin-top:12px}
 .v2-par-tile{border-radius:24px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
 .v2-par-tile.lime{background:#EEF7D4}.v2-par-tile.sand{background:#F4EED9}
 .v2-par-tile>span:first-child{font-size:12px;font-weight:700}

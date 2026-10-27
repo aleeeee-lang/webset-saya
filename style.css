@@ -4575,3 +4575,18 @@ html.att-simple .att-status-label,html.att-simple .v2-status-grid{display:none!i
 .v3-leave-link .v3-leave-go{color:#8A8FA8}
 html[data-theme="dark"] .v3-leave-link{background:#121212;border-color:#2C2C2E;color:#EDEDED}
 html.att-co-out .v3-leave-link,html.att-co-done .v3-leave-link,html.att-teacher .v3-leave-link{display:none}
+/* ---- settings (☰) in the 2026 style ---- */
+.v3-settings .attendance-intro h2{font-size:24px;font-weight:800;letter-spacing:-.02em;color:#14162B}
+.v3-settings .attendance-card{background:#fff!important;border:1px solid #ECEEF2!important;border-radius:22px!important;box-shadow:none!important;margin-bottom:14px}
+.v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>a,.v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>div,.v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>button{padding:14px 0!important;min-height:24px}
+.v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>*+*{border-top:1px solid #ECEEF2}
+.v3-settings .attendance-card span[style*="font-size:13px"]{font-size:15px!important;font-weight:600;color:#14162B}
+.v3-settings .attendance-card span[style*="color:#dc3545"]{color:#B42318!important;font-weight:700}
+.v3-settings .attendance-card>a>svg:first-child,.v3-settings .attendance-card>div>svg:first-child,.v3-settings .attendance-card>button>svg:first-child{width:20px;height:20px;color:#14162B}
+.v3-settings .attendance-card span[style*="color:#aaa"]{color:#8A8FA8!important;font-size:20px!important}
+.v3-settings .card-label{font-size:12px;font-weight:700;color:#5B6075;letter-spacing:.06em;text-transform:uppercase}
+html[data-theme="dark"] .v3-settings .attendance-intro h2{color:#F2F2F2}
+html[data-theme="dark"] .v3-settings .attendance-card{background:#121212!important;border-color:#242424!important}
+html[data-theme="dark"] .v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>*+*{border-top-color:#242424}
+html[data-theme="dark"] .v3-settings .attendance-card span[style*="font-size:13px"],html[data-theme="dark"] .v3-settings .attendance-card>a>svg:first-child,html[data-theme="dark"] .v3-settings .attendance-card>div>svg:first-child{color:#EDEDED!important}
+html[data-theme="dark"] .v3-settings .attendance-card span[style*="color:#dc3545"]{color:#FCA5A5!important}

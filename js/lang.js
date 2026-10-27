@@ -90,7 +90,7 @@ const translations = {
     quick_action_text: { en: "Don't forget to record your attendance.", id: "Jangan lupa catat absensimu." },
     quick_action_btn: { en: "Attendance →", id: "Absensi →" },
 
-    page_history: { en: "Savings", id: "Tabungan" },
+    page_history: { en: "Money", id: "Uang" },
     label_month: { en: "MONTH", id: "BULAN" },
     label_status_filter: { en: "STATUS", id: "STATUS" },
     all_months: { en: "All Months", id: "Semua Bulan" },

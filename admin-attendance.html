@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027m">
-<script src="js/theme.js?v=20261027m"></script>
-<script src="js/lang.js?v=20261027m"></script>
-<script src="js/toast.js?v=20261027m"></script>
+<link rel="stylesheet" href="style.css?v=20261027o">
+<script src="js/theme.js?v=20261027o"></script>
+<script src="js/lang.js?v=20261027o"></script>
+<script src="js/toast.js?v=20261027o"></script>
 </head>
 
 <body class="v2-page">
@@ -52,12 +52,12 @@
 </main>
 
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027m"></script>
+<script src="js/nav.js?v=20261027o"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
-<script src="js/teacher-core.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
+<script src="js/teacher-core.js?v=20261027o"></script>
 
 <script>
 const L = TC.L;
@@ -68,6 +68,7 @@ document.getElementById("aaQ").placeholder = L("Cari nama", "Search name");
 document.getElementById("aaTrendH").textContent = L("Tren 14 hari", "Last 14 days");
 
 let me = null, students = [], teachers = [], recs = {}, scope = "all", day = "", focus = "", q = "", shown = 60;
+let openBy = {};   // class -> is the chosen day a check-in day for it (weekend / agenda day off)
 const DAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const DAY_L = ID ? ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] : DAYS_EN;
 const MON_L = ID ? ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -108,6 +109,10 @@ async function loadDay() {
     document.getElementById("aaDate").value = day;
     document.getElementById("aaNext").disabled = day >= localDateStr();
     const { data } = await supabaseClient.from("attendance").select("*").eq("date", day);
+    const keys = Array.from(new Set(students.map(x => x.class).filter(Boolean).concat(teachers.length ? ["Guru"] : [])));
+    const rules = await Promise.all(keys.map(k => attDayRules(k)));
+    openBy = {};
+    keys.forEach((k, i) => { openBy[k] = attDayOpen(day, rules[i]); });
     recs = {};
     (data || []).forEach(r => { recs[r.user_id] = r; });
     shown = 60;
@@ -118,8 +123,10 @@ function render() {
     document.querySelectorAll("#aaClasses button").forEach(b => { const on = b.dataset.c === scope; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
     const list = people();
     const cnt = { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0, none: 0 };
-    list.forEach(p => { const r = recs[p.id]; if (!r) cnt.none++; else if (cnt[r.status] != null) cnt[r.status]++; });
-    const tiles = [["Hadir", ST.Hadir, cnt.Hadir, ""], ["Izin", ST.Izin, cnt.Izin, ""], ["Sakit", ST.Sakit, cnt.Sakit, ""], ["none", L("Belum", "Not yet"), cnt.none, cnt.none ? "no" : ""]];
+    const isOff = p => openBy[p.class] === false;
+    list.forEach(p => { const r = recs[p.id]; if (!r) { if (!isOff(p)) cnt.none++; } else if (cnt[r.status] != null) cnt[r.status]++; });
+    const allOff = list.length && list.every(isOff);
+    const tiles = [["Hadir", ST.Hadir, cnt.Hadir, ""], ["Izin", ST.Izin, cnt.Izin, ""], ["Sakit", ST.Sakit, cnt.Sakit, ""], allOff ? ["off", L("Libur", "Day off"), "–", ""] : ["none", L("Belum", "Not yet"), cnt.none, cnt.none ? "no" : ""]];
     if (cnt.Alpa) tiles.splice(3, 0, ["Alpa", ST.Alpa, cnt.Alpa, "no"]);
     const st = document.getElementById("aaStats");
     st.style.setProperty("--n", tiles.length);
@@ -133,7 +140,8 @@ function render() {
     const needle = q.toLowerCase();
     let rows = list.filter(p => {
         const r = recs[p.id];
-        if (focus === "none" && r) return false;
+        if (focus === "none" && (r || isOff(p))) return false;
+        if (focus === "off") return false;
         if (focus && focus !== "none" && (!r || r.status !== focus)) return false;
         return !needle || (p.name || "").toLowerCase().includes(needle);
     });
@@ -145,7 +153,7 @@ function render() {
     box.innerHTML = rows.slice(0, shown).map(p => {
         const r = recs[p.id];
         const sub = [scope === "all" ? p.class : "", r && r.time ? hm(r.time) + (r.checkout_time ? " → " + hm(r.checkout_time) : "") : "", r && r.reason ? r.reason : "", r && r.checkout_reason ? r.checkout_reason : ""].filter(Boolean).join(" · ");
-        const pill = !r ? `<span class="tc-pill">${L("Belum", "Not yet")}</span>` : `<span class="tc-pill ${r.status === "Hadir" ? "ok" : r.status === "Izin" ? "izin" : "no"}">${escapeHTML(ST[r.status] || r.status || "-")}</span>`;
+        const pill = !r ? `<span class="tc-pill">${isOff(p) ? L("Libur", "Day off") : L("Belum", "Not yet")}</span>` : `<span class="tc-pill ${r.status === "Hadir" ? "ok" : r.status === "Izin" ? "izin" : "no"}">${escapeHTML(ST[r.status] || r.status || "-")}</span>`;
         const pics = r ? [r.photo_url ? `<span class="aa-pic" data-p="${escapeHTML(r.photo_url)}"></span>` : "", r.proof_url ? `<span class="aa-pic doc" data-p="${escapeHTML(r.proof_url)}"></span>` : ""].join("") : "";
         return `<button type="button" class="ts-row aa-row" data-u="${p.id}"><div class="ts-row-t"><b>${escapeHTML(p.name || "-")}</b>${sub ? `<small>${escapeHTML(sub)}</small>` : ""}</div>${pics}${pill}</button>`;
     }).join("");
@@ -201,7 +209,8 @@ async function edit(p) {
 /* reminder to the ones missing today */
 async function remind() {
     const btn = document.getElementById("aaRemind");
-    const missing = people().filter(p => !recs[p.id]);
+    // never remind on a day off
+    const missing = people().filter(p => !recs[p.id] && openBy[p.class] !== false);
     if (!missing.length) return;
     const ok = await attConfirmSafe(L("Kirim pengingat ke " + missing.length + " orang?", "Remind " + missing.length + " people?"), L("Mereka akan dapat notifikasi untuk absen.", "They get a notification to check in."));
     if (!ok) return;
@@ -220,7 +229,7 @@ function csv() {
     const lines = [["Name", "Class", "Date", "Day", "Time", "Status", "Reason", "Check-out", "Check-out note"].join(",")];
     people().forEach(p => {
         const r = recs[p.id] || {};
-        lines.push([p.name, p.class, day, r.day || DAYS_EN[new Date(day + "T00:00:00").getDay()], r.time ? String(r.time).slice(0, 5) : "", r.status ? (ST[r.status] || r.status) : L("Belum absen", "Not checked in"), r.reason, r.checkout_time ? String(r.checkout_time).slice(0, 5) : "", r.checkout_reason].map(e).join(","));
+        lines.push([p.name, p.class, day, r.day || DAYS_EN[new Date(day + "T00:00:00").getDay()], r.time ? String(r.time).slice(0, 5) : "", r.status ? (ST[r.status] || r.status) : (openBy[p.class] === false ? L("Libur", "Day off") : L("Belum absen", "Not checked in")), r.reason, r.checkout_time ? String(r.checkout_time).slice(0, 5) : "", r.checkout_reason].map(e).join(","));
     });
     const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
@@ -259,6 +268,6 @@ document.getElementById("aaCsv").addEventListener("click", csv);
 window.addEventListener("tabshow", () => { if (me) loadDay(); });
 start();
 </script>
-<script src="js/avatarcrop.js?v=20261027m"></script>
+<script src="js/avatarcrop.js?v=20261027o"></script>
 </body>
 </html>

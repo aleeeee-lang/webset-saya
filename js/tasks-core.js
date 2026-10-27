@@ -41,6 +41,16 @@
         return { when: when, rel: rel };
     }
 
+    // when the account was made (profiles.created_at), asked once per page
+    var _joined = {};
+    function joinedAt(client, userId) {
+        if (!_joined[userId]) _joined[userId] = client.from("profiles").select("created_at").eq("id", userId).maybeSingle()
+            .then(function (r) { return r && r.data && r.data.created_at ? new Date(r.data.created_at) : null; }, function () { return null; });
+        return _joined[userId];
+    }
+    // did this student already exist when the task was due? (teachers' "x / y done")
+    function wasThere(student, task) { return !student || !student.created_at || new Date(student.created_at) <= new Date(task.due_at); }
+
     // Tasks visible to me (personal + my class), each with .done = true/false.
     async function fetchMine(client, userId, cls) {
         var q = client.from("tasks").select("*");
@@ -55,8 +65,11 @@
             (d.data || []).forEach(function (r) { done[r.task_id] = r; });
         }
         tasks.forEach(function (t) { var r = done[t.id]; t.done = !!r; t.done_at = r ? r.done_at : null; t.hidden = !!(r && r.hidden_at); t.photo_paths = r ? r.photo_paths || null : null; });
+        // a class task whose deadline passed before this student joined was never theirs
+        // (a new student must not start with "overdue" tasks); one still open stays
+        var joined = await joinedAt(client, userId);
         // finished tasks the student put in the trash are no longer shown to them
-        return { tasks: tasks.filter(function (t) { return !t.hidden; }) };
+        return { tasks: tasks.filter(function (t) { return !t.hidden && !(joined && t.class && t.user_id !== userId && !t.done && new Date(t.due_at) < joined); }) };
     }
 
     function localISO(dateStr, timeStr) {
@@ -66,5 +79,5 @@
     function toDateInput(d) { d = new Date(d); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
     function toTimeInput(d) { d = new Date(d); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
 
-    window.Tasks = { bucket: bucket, dueLabel: dueLabel, fetchMine: fetchMine, localISO: localISO, toDateInput: toDateInput, toTimeInput: toTimeInput, dayDiff: dayDiff };
+    window.Tasks = { bucket: bucket, dueLabel: dueLabel, fetchMine: fetchMine, wasThere: wasThere, localISO: localISO, toDateInput: toDateInput, toTimeInput: toTimeInput, dayDiff: dayDiff };
 })();

@@ -10,16 +10,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027m">
+<link rel="stylesheet" href="style.css?v=20261027o">
 <script>
 // old links (search results, notifications) opened a student here: that page is its own now
 (function () { var s = new URLSearchParams(location.search).get("student"); if (s) location.replace("teacher-student.html?id=" + encodeURIComponent(s)); })();
 </script>
-<script src="js/theme.js?v=20261027m"></script>
-<script src="js/lang.js?v=20261027m"></script>
-<script src="js/toast.js?v=20261027m"></script>
-<script src="js/fit.js?v=20261027m" defer></script>
-<script src="js/champs.js?v=20261027m"></script>
+<script src="js/theme.js?v=20261027o"></script>
+<script src="js/lang.js?v=20261027o"></script>
+<script src="js/toast.js?v=20261027o"></script>
+<script src="js/fit.js?v=20261027o" defer></script>
+<script src="js/champs.js?v=20261027o"></script>
 </head>
 
 <body class="v2-page">
@@ -84,13 +84,13 @@
 </div>
 
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027m"></script>
+<script src="js/nav.js?v=20261027o"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
-<script src="js/notification.js?v=20261027m"></script>
-<script src="js/teacher-core.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
+<script src="js/notification.js?v=20261027o"></script>
+<script src="js/teacher-core.js?v=20261027o"></script>
 
 <script>
 const L = TC.L;
@@ -125,10 +125,13 @@ async function loadClass() {
     }
     const studs = await TC.students([ctx.homeroom]);
     const ids = studs.map(s => s.id);
-    const [rec, leave] = await Promise.all([TC.today(ids), TC.pendingLeave()]);
+    const [rec, leave, rules] = await Promise.all([TC.today(ids), TC.pendingLeave(), attDayRules(ctx.homeroom)]);
+    // not a school day for this class (weekend / agenda day off): nobody is "missing"
+    const today = localDateStr();
+    const open = attDayOpen(today, rules);
     const hadir = studs.filter(s => rec[s.id] && rec[s.id].status === "Hadir").length;
     const izin = studs.filter(s => rec[s.id] && (rec[s.id].status === "Izin" || rec[s.id].status === "Sakit")).length;
-    const miss = studs.filter(s => !rec[s.id]);
+    const miss = open ? studs.filter(s => !rec[s.id]) : [];
     document.getElementById("tcHadir").textContent = hadir;
     document.getElementById("tcOf").textContent = " / " + studs.length + " " + L("hadir", "present");
     requestAnimationFrame(() => { document.getElementById("tcBar").style.width = (studs.length ? Math.round(hadir / studs.length * 100) : 0) + "%"; });
@@ -139,6 +142,13 @@ async function loadClass() {
 
     const head = document.getElementById("tcMissHead"), list = document.getElementById("tcMiss");
     head.hidden = false; list.hidden = false;
+    if (!open) {
+        const ag = rules.agenda[today];
+        document.getElementById("tcChips").innerHTML = '<span>' + escapeHTML(L("Hari ini libur", "No school today") + (ag && ag.label ? " · " + ag.label : "")) + '</span>';
+        document.getElementById("tcMissTitle").textContent = L("Kelasmu", "Your class");
+        list.innerHTML = '<div class="tc-empty">' + L("Hari ini bukan hari absen untuk kelas ini", "Today isn't a check-in day for this class") + '</div>';
+        return;
+    }
     document.getElementById("tcMissTitle").textContent = studs.length ? L("Belum absen · ", "Not checked in · ") + miss.length : L("Kelasmu", "Your class");
     if (!studs.length) { list.innerHTML = '<div class="tc-empty">' + L("Belum ada siswa di kelas ini", "No students in this class yet") + '</div>'; return; }
     if (!miss.length) { list.innerHTML = '<div class="tc-empty ok">' + L("Semua siswa sudah tercatat hari ini", "Everyone is recorded today") + '</div>'; return; }
@@ -160,7 +170,7 @@ window.addEventListener("tabshow", function () { if (ctx) { loadClass(); loadLea
 start();
 </script>
 
-<script src="js/live-sessions.js?v=20261027m"></script>
+<script src="js/live-sessions.js?v=20261027o"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 </html>

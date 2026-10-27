@@ -33,7 +33,7 @@ function attMyProfile(uid) {
     if (!_attProfP) {
         _attProfP = supabaseClient
             .from("profiles")
-            .select("status, role, name, class, avatar_url, left_date")
+            .select("status, role, name, class, avatar_url, left_date, created_at")
             .eq("id", uid)
             .maybeSingle()
             .then(function (r) { return (r && r.data) || null; }, function () { return null; });
@@ -261,7 +261,6 @@ async function attCountable(user, attendanceData, period, profileOverride) {
     var first = dates.length ? dates[0] : null;
     var anchor = period.start && first ? (period.start > first ? period.start : first) : (period.start || first);
     if (!anchor) return { rows: rows, autoAlpa: 0 };
-
     var start = new Date(anchor + "T00:00:00");
     var now = attNow();
     var today = new Date(now); today.setHours(0, 0, 0, 0);
@@ -272,6 +271,18 @@ async function attCountable(user, attendanceData, period, profileOverride) {
         var hm = close.split(":").map(Number), te = new Date(today);
         te.setHours(hm[0], hm[1] || 0, 0, 0);
         includeToday = now >= te;
+    }
+    // never before the account was made: a new student has no missed days before joining,
+    // and not the day they joined either if check-in had already closed by then
+    if (profile.created_at) {
+        var jd = new Date(profile.created_at);
+        var j0 = new Date(jd); j0.setHours(0, 0, 0, 0);
+        if (close) {
+            var jc = close.split(":").map(Number), jEnd = new Date(j0);
+            jEnd.setHours(jc[0], jc[1] || 0, 0, 0);
+            if (jd > jEnd) j0.setDate(j0.getDate() + 1);
+        }
+        if (j0 > start) start = j0;
     }
     var end = new Date(today);
     end.setDate(end.getDate() - (includeToday ? 0 : 1));

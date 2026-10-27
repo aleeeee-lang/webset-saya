@@ -10,13 +10,13 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027m">
-<script src="js/theme.js?v=20261027m"></script>
-<script src="js/lang.js?v=20261027m"></script>
-<script src="js/toast.js?v=20261027m"></script>
-<script src="js/fit.js?v=20261027m" defer></script>
-<script src="js/transition.js?v=20261027m"></script>
-<script src="js/scroll-pop.js?v=20261027m"></script>
+<link rel="stylesheet" href="style.css?v=20261027o">
+<script src="js/theme.js?v=20261027o"></script>
+<script src="js/lang.js?v=20261027o"></script>
+<script src="js/toast.js?v=20261027o"></script>
+<script src="js/fit.js?v=20261027o" defer></script>
+<script src="js/transition.js?v=20261027o"></script>
+<script src="js/scroll-pop.js?v=20261027o"></script>
 </head>
 
 <body class="v2-page">
@@ -137,14 +137,14 @@
 
 <!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027m"></script>
+<script src="js/nav.js?v=20261027o"></script>
 
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
-<script src="js/my-notes.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
+<script src="js/my-notes.js?v=20261027o"></script>
 
 <script>
 function tr(key) {
@@ -244,7 +244,7 @@ function renderScore(data) {
     const alpa = data.filter(i => i.status === "Alpa").length;
     const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
 
-    document.getElementById("scorePercent").textContent = percent + "%";
+    document.getElementById("scorePercent").textContent = total > 0 ? percent + "%" : "–";
     document.getElementById("scoreProgressFill").style.width = percent + "%";
     document.getElementById("myHadir").textContent = hadir;
     document.getElementById("myIzin").textContent = izin;

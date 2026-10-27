@@ -29,7 +29,7 @@
 
     async function students(classes) {
         if (!classes || !classes.length) return [];
-        var r = await supabaseClient.from("profiles").select("id, name, class, nis, status, avatar_url, left_date")
+        var r = await supabaseClient.from("profiles").select("id, name, class, nis, status, avatar_url, left_date, created_at")
             .eq("role", "murid").in("class", classes).order("name", { ascending: true });
         return ((r && r.data) || []).filter(function (s) { return s.status !== "inactive"; });
     }

@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027m">
-<script src="js/theme.js?v=20261027m"></script>
-<script src="js/lang.js?v=20261027m"></script>
-<script src="js/toast.js?v=20261027m"></script>
-<script src="js/fit.js?v=20261027m" defer></script>
-<script src="js/paymethods.js?v=20261027m"></script>
+<link rel="stylesheet" href="style.css?v=20261027o">
+<script src="js/theme.js?v=20261027o"></script>
+<script src="js/lang.js?v=20261027o"></script>
+<script src="js/toast.js?v=20261027o"></script>
+<script src="js/fit.js?v=20261027o" defer></script>
+<script src="js/paymethods.js?v=20261027o"></script>
 </head>
 
 <body class="v2-page">
@@ -86,9 +86,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
-<script src="js/notification.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
+<script src="js/notification.js?v=20261027o"></script>
 
 <script>
 
@@ -200,7 +200,7 @@ function renderPAttendance(all, autoAlpa, period, counted) {
     const alpa = data.filter(i => i.status === "Alpa").length + autoAlpa;
     const percent = total > 0 ? Math.round((hadir / total) * 100) : 0;
 
-    document.getElementById("pScorePercent").textContent = percent + "%";
+    document.getElementById("pScorePercent").textContent = total > 0 ? percent + "%" : "–";
     document.getElementById("pScoreProgressFill").style.width = percent + "%";
     document.getElementById("pHadir").textContent = hadir;
     document.getElementById("pIzin").textContent = izin;
@@ -331,7 +331,7 @@ async function loadChildData() {
     const childId = selectedChildId;
     const [period, childRes, user] = await Promise.all([
         getAttendancePeriod(),
-        supabaseClient.from("profiles").select("class, status, left_date").eq("id", childId).maybeSingle(),
+        supabaseClient.from("profiles").select("role, class, status, left_date, created_at").eq("id", childId).maybeSingle(),
         requireLogin()
     ]);
     const inPeriod = rows.filter(function (r) {

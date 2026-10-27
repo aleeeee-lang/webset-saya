@@ -19,16 +19,16 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261027m"
+        href="style.css?v=20261027o"
     >
-<script src="js/theme.js?v=20261027m"></script>
-    <script src="js/lang.js?v=20261027m"></script>
-<script src="js/lessons.js?v=20261027m"></script>
-<script src="js/tasks-core.js?v=20261027m"></script>
-<script src="js/champs.js?v=20261027m"></script>
-    <script src="js/toast.js?v=20261027m"></script>
-<script src="js/fit.js?v=20261027m" defer></script>
-    <script src="js/transition.js?v=20261027m"></script>
+<script src="js/theme.js?v=20261027o"></script>
+    <script src="js/lang.js?v=20261027o"></script>
+<script src="js/lessons.js?v=20261027o"></script>
+<script src="js/tasks-core.js?v=20261027o"></script>
+<script src="js/champs.js?v=20261027o"></script>
+    <script src="js/toast.js?v=20261027o"></script>
+<script src="js/fit.js?v=20261027o" defer></script>
+    <script src="js/transition.js?v=20261027o"></script>
 
 </head>
 
@@ -105,15 +105,15 @@
     ========================== -->
 
     <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027m"></script>
+<script src="js/nav.js?v=20261027o"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
 
-<script src="js/notification.js?v=20261027m"></script>
-<script src="js/live-sessions.js?v=20261027m"></script>
-<script src="js/admin-home.js?v=20261027m"></script>
+<script src="js/notification.js?v=20261027o"></script>
+<script src="js/live-sessions.js?v=20261027o"></script>
+<script src="js/admin-home.js?v=20261027o"></script>
 
 <script>
 function homeT(key) {
@@ -156,7 +156,7 @@ function renderHomeHeader() {
     g.textContent = homeT(homeGreetingKey());
 }
 
-function renderHomeStatus(todayRecord, schedule, holidayToday) {
+function renderHomeStatus(todayRecord, schedule, holidayToday, dayRulesChecked) {
     const title = document.getElementById("homeTitle");
     const chips = document.getElementById("homeChips");
     const cta = document.getElementById("homeCta");
@@ -184,7 +184,9 @@ function renderHomeStatus(todayRecord, schedule, holidayToday) {
         const end = (schedule.end_time || "").slice(0, 5);
         const lateEnd = schedule.late_mode === "late" ? (schedule.late_end_time || "").slice(0, 5) : "";
 
-        if (activeDays.length && activeDays.indexOf(isoDay) === -1) {
+        // (the school-day rule already ran when there is a class: an agenda day switched
+        //  ON on a weekend must not show "day off" here)
+        if (!dayRulesChecked && activeDays.length && activeDays.indexOf(isoDay) === -1) {
             titleKey = "home_day_off";
             cta.href = "calendar.html";
             ctaLabel.setAttribute("data-i18n", "link_view_academic_calendar");
@@ -217,7 +219,8 @@ function renderHomeStats(data, autoAlpa) {
     const total = data.length + autoAlpa;
     const hadir = data.filter(function (i) { return i.status === "Hadir"; }).length;
     const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
-    document.getElementById("homePercent").textContent = pct + "%";
+    // nothing counted yet (a new student): "–", not a misleading 0%
+    document.getElementById("homePercent").textContent = total > 0 ? pct + "%" : "–";
     const ring = document.getElementById("homeRing");
     if (ring) ring.setAttribute("stroke-dasharray", (226.2 * pct / 100).toFixed(1) + " 226.2");
     const bar = document.getElementById("homeBar");
@@ -373,8 +376,19 @@ async function loadHome() {
         schedule = res.data || null;
     }
     const todayRecord = attendance.find(function (r) { return r.date === today; }) || null;
-    const holidayToday = events.find(function (e) { return e.date === today && (e.type || "holiday") === "holiday"; }) || null;
-    renderHomeStatus(todayRecord, schedule, holidayToday);
+    // a school day or not: the same rule as the check-in page and the database
+    // (agenda switched off/on, then the class's active days)
+    let holidayToday = null;
+    if (profile.class) {
+        const rules = await attDayRules(profile.class);
+        if (!attDayOpen(today, rules)) {
+            const ag = rules.agenda[today];
+            holidayToday = { label: ag && ag.label ? ag.label : "" };
+        }
+    } else {
+        holidayToday = events.find(function (e) { return e.date === today && (e.type || "holiday") === "holiday"; }) || null;
+    }
+    renderHomeStatus(todayRecord, schedule, holidayToday, !!profile.class);
 
     const counted = await attCountable(user, attendance, results[4]);
     renderHomeStats(counted.rows, counted.autoAlpa);

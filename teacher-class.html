@@ -9,10 +9,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027m">
-<script src="js/theme.js?v=20261027m"></script>
-<script src="js/lang.js?v=20261027m"></script>
-<script src="js/toast.js?v=20261027m"></script>
+<link rel="stylesheet" href="style.css?v=20261027o">
+<script src="js/theme.js?v=20261027o"></script>
+<script src="js/lang.js?v=20261027o"></script>
+<script src="js/toast.js?v=20261027o"></script>
 </head>
 
 <body class="v2-page">
@@ -36,18 +36,18 @@
 </main>
 
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027m"></script>
+<script src="js/nav.js?v=20261027o"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027m"></script>
-<script src="js/auth.js?v=20261027m"></script>
-<script src="js/teacher-core.js?v=20261027m"></script>
+<script src="js/supabase.js?v=20261027o"></script>
+<script src="js/auth.js?v=20261027o"></script>
+<script src="js/teacher-core.js?v=20261027o"></script>
 <script>
 const L = TC.L;
 document.getElementById("tcTitle").textContent = L("Kelas", "Classes");
 document.getElementById("tcQ").placeholder = L("Cari siswa", "Search students");
 
-let ctx = null, all = [], rec = {}, leave = {}, cur = "", q = "";
+let ctx = null, all = [], rec = {}, leave = {}, cur = "", q = "", dayOff = false;
 try { cur = sessionStorage.getItem("tc-class") || ""; } catch (e) {}
 
 async function start() {
@@ -65,7 +65,9 @@ async function start() {
     all = await TC.students(ctx.classes);
     if (ctx.homeroom) {
         const ids = all.filter(s => s.class === ctx.homeroom).map(s => s.id);
-        [rec, leave] = await Promise.all([TC.today(ids), TC.pendingLeave()]);
+        let rules;
+        [rec, leave, rules] = await Promise.all([TC.today(ids), TC.pendingLeave(), attDayRules(ctx.homeroom)]);
+        dayOff = !attDayOpen(localDateStr(), rules);
     }
     render();
 }
@@ -77,11 +79,11 @@ function render() {
     const needle = q.toLowerCase();
     const list = needle ? inClass.filter(s => (s.name || "").toLowerCase().includes(needle) || String(s.nis || "").includes(needle)) : inClass;
     const hadir = inClass.filter(s => rec[s.id] && rec[s.id].status === "Hadir").length;
-    document.getElementById("tcSum").textContent = inClass.length + " " + L("siswa", "students") + (mine ? " · " + hadir + " " + L("hadir hari ini", "present today") : " · " + L("kelas yang kamu ajar", "a class you teach"));
+    document.getElementById("tcSum").textContent = inClass.length + " " + L("siswa", "students") + (mine ? (dayOff ? " · " + L("hari ini libur", "no school today") : " · " + hadir + " " + L("hadir hari ini", "present today")) : " · " + L("kelas yang kamu ajar", "a class you teach"));
     const box = document.getElementById("tcList");
     if (!list.length) { box.innerHTML = '<div class="tc-empty">' + (needle ? L("Tidak ada siswa bernama itu", "No student by that name") : L("Belum ada siswa di kelas ini", "No students in this class yet")) + '</div>'; return; }
     const chev = '<svg class="tc-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-    box.innerHTML = list.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${mine ? TC.badge(rec[s.id], leave[s.id]) : chev}</a>`).join("");
+    box.innerHTML = list.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${mine ? (dayOff && !rec[s.id] ? '<span class="tc-pill">' + L("Libur", "Day off") + '</span>' : TC.badge(rec[s.id], leave[s.id])) : chev}</a>`).join("");
 }
 
 document.getElementById("tcClasses").addEventListener("click", function (e) {

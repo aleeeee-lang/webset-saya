@@ -4549,3 +4549,18 @@ html[data-theme="dark"] .v3-pill-link{background:#121212;border-color:#2C2C2E;co
 .bottom-nav.v3-nav a.v3-fab>span:first-child{height:26px!important}
 .bottom-nav.v3-nav{padding-top:8px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
 .bottom-nav.v3-nav a>span:first-child,.bottom-nav.v3-nav a.active>span:first-child{color:inherit!important}
+/* SPP tile: status as a soft pill + a short hint */
+.v3-tile .v2-tile-status{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:6px 12px 6px 10px;border-radius:99px;font-size:13px!important;font-weight:800!important;line-height:1.2;background:#DCFCE7;color:#15803D}
+.v3-tile .v2-tile-status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.v3-tile .v2-tile-status.pending{background:#FEF3C7;color:#92400E}
+.v3-tile .v2-tile-status.unpaid,.v3-tile .v2-tile-status.rejected{background:#FEE2E2;color:#B91C1C}
+.v3-tile-hint{font-size:12px;color:#5B6075;line-height:1.35}
+html[data-theme="dark"] .v3-tile .v2-tile-status{background:rgba(34,197,94,.15);color:#86EFAC}
+html[data-theme="dark"] .v3-tile .v2-tile-status.pending{background:rgba(251,191,36,.15);color:#FCD34D}
+html[data-theme="dark"] .v3-tile .v2-tile-status.unpaid,html[data-theme="dark"] .v3-tile .v2-tile-status.rejected{background:rgba(239,68,68,.15);color:#FCA5A5}
+html[data-theme="dark"] .v3-tile-hint{color:#9A9A9F}
+/* lesson schedule: no coloured stripe on the side */
+.lsn-item::before{display:none!important}
+/* "Saya": the menu button is a plain icon */
+.v2-my-gear{background:transparent!important;border:0!important;box-shadow:none!important}
+.v3-tile .v2-tile-status{white-space:nowrap}

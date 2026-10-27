@@ -46,8 +46,8 @@
         <button type="button" class="v3-icon" data-v3-search aria-label="Cari">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
         </button>
-        <a href="settings.html" class="v3-icon" id="menuButton" aria-label="Menu">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <a href="inbox.html" class="v3-icon" id="notifButton" aria-label="Notifikasi">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
             <span class="notification-dot" id="notificationDot"></span>
         </a>
     </header>
@@ -87,6 +87,7 @@
             <a href="history.html" class="v2-tile v3-tile">
                 <span class="v3-tile-label" id="homeSppLabel">SPP</span>
                 <div class="v2-tile-status" id="homeSppStatus">-</div>
+                <div class="v3-tile-hint" id="homeSppHint">&nbsp;</div>
             </a>
         </div>
 
@@ -238,8 +239,10 @@ function renderHomeSpp(record) {
     document.getElementById("homeSppLabel").textContent = "SPP " + monthNameOf(now.getMonth());
     const status = record ? record.status : "unpaid";
     const el = document.getElementById("homeSppStatus");
-    el.textContent = homeT("tile_spp_" + status);
+    el.textContent = homeT(status === "pending" ? "v3_spp_pending" : "tile_spp_" + status);
     el.className = "v2-tile-status " + status;
+    const hint = document.getElementById("homeSppHint");
+    if (hint) hint.textContent = homeT("v3_spp_hint_" + status);
 }
 
 function renderHomeAgenda(events) {

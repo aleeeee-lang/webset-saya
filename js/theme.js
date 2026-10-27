@@ -42,6 +42,13 @@ window.attSnapClean = function (root) {
         if (n.tagName === "A") n.removeAttribute("href");
     });
 };
+// the app version (style.css?v=...): a picture saved by an older version of the app has the
+// old layout, so it is never shown after an update
+window.attAppVer = function () {
+    var l = document.querySelector('link[rel="stylesheet"][href*="style.css"]');
+    var m = l && /[?&]v=([^&]+)/.exec(l.getAttribute("href") || "");
+    return m ? m[1] : "";
+};
 window.attSnapGhost = function (href, label) {
     var g = document.createElement("div");
     g.className = "att-swipe-ghost";
@@ -49,6 +56,7 @@ window.attSnapGhost = function (href, label) {
     var snap = null;
     try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
     if (snap && (!snap.t || new Date(snap.t).toDateString() !== new Date().toDateString())) snap = null;
+    if (snap && (snap.v || "") !== window.attAppVer()) snap = null;
     // saved in the other colour mode (light <-> dark): charts and inline colours would be wrong
     var theme = document.documentElement.getAttribute("data-theme") || "light";
     if (snap && (snap.theme || "light") !== theme) snap = null;
@@ -221,7 +229,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261027j";
+    w.src = "js/swipe.js?v=20261027k";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -229,7 +237,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261027j";
+    s.src = "js/sidebar.js?v=20261027k";
     s.defer = true;
     document.head.appendChild(s);
 })();

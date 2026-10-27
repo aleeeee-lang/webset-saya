@@ -201,7 +201,8 @@
             localStorage.setItem(SNAP + page, JSON.stringify({
                 html: html, cls: document.body.className, bg: cs.backgroundColor,
                 pad: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(" "),
-                theme: document.documentElement.getAttribute("data-theme") || "light", t: Date.now()
+                theme: document.documentElement.getAttribute("data-theme") || "light", t: Date.now(),
+                v: window.attAppVer ? window.attAppVer() : ""
             }));
         } catch (e) {}
     }
@@ -214,9 +215,17 @@
     function ghostFor(href, label) { return window.attSnapGhost(href, label); }
 
     function initPages() {
+        // the menu can be redrawn after the page opens (js/nav.js, once the role is known):
+        // read it again at every swipe instead of keeping the first one
         var info = navLinks();
-        if (!info) return;
-        document.documentElement.classList.add("att-swipe-page");
+        if (!document.querySelector(".bottom-nav")) return;
+        function refresh() {
+            info = navLinks();
+            document.documentElement.classList.toggle("att-swipe-page", !!info);
+            return info;
+        }
+        refresh();
+        window.addEventListener("attendreem-profile", function () { setTimeout(function () { refresh(); ready = {}; (window.requestIdleCallback || function (f) { return setTimeout(f, 300); })(warm); }, 0); });
         var ghost = null, dir = 0, target = null, movers = [], pend = null, raf = 0;
         var x = 0, base = 0, anim = null, committing = false, active = false;
         var root = document.documentElement;
@@ -253,13 +262,16 @@
         }
         // parse the neighbours' snapshots ahead of time
         function warm() {
+            if (!info) return;
             [info.links[info.idx - 1], info.links[info.idx + 1]].forEach(function (a) {
                 if (a) prepare(a.getAttribute("href").split(/[?#]/)[0], (a.textContent || "").trim());
             });
         }
         (window.requestIdleCallback || function (f) { return setTimeout(f, 1200); })(warm);
-        gesture(document.body, {
-            enabled: function () { return !committing && !document.querySelector(".att-tabswipe-on"); },
+        // the whole screen takes the swipe, also the empty part below a short page
+        // (that part is outside <body>, so listening on <body> missed it)
+        gesture(document.documentElement, {
+            enabled: function () { return !committing && !document.querySelector(".att-tabswipe-on") && !document.documentElement.classList.contains("tc-sheet-open") && (active || !!refresh()); },
             skip: function (t) { return !!(t.closest && t.closest("[data-swipe-tabs]")); },
             start: function (d) {
                 if (committing) return false;

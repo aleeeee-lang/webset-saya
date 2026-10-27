@@ -9,12 +9,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261025d">
-<script src="js/theme.js?v=20261025d"></script>
-<script src="js/lang.js?v=20261025d"></script>
-<script src="js/toast.js?v=20261025d"></script>
-<script src="js/fit.js?v=20261025d" defer></script>
-<script src="js/lessons.js?v=20261025d"></script>
+<link rel="stylesheet" href="style.css?v=20261027a">
+<script src="js/theme.js?v=20261027a"></script>
+<script src="js/lang.js?v=20261027a"></script>
+<script src="js/toast.js?v=20261027a"></script>
+<script src="js/fit.js?v=20261027a" defer></script>
+<script src="js/lessons.js?v=20261027a"></script>
 </head>
 
 <body class="v2-page">
@@ -29,6 +29,7 @@
         </div>
         <select id="lsnClassSelect" class="lsn-class-select" hidden aria-label="Class"></select>
         <a href="admin-lessons.html" id="lsnManageBtn" class="lsn-manage" hidden data-i18n="lsn_manage">Manage</a>
+        <a href="calendar.html" class="v3-pill-link lsn-cal-link"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span data-i18n="nav_calendar">Kalender</span></a>
     </header>
 
     <section class="lsn-now" id="lsnNow" aria-live="polite"></section>
@@ -41,9 +42,12 @@
 
 </main>
 
+<nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027a"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261025d"></script>
-<script src="js/auth.js?v=20261025d"></script>
+<script src="js/supabase.js?v=20261027a"></script>
+<script src="js/auth.js?v=20261027a"></script>
 
 <script>
 const IC = {

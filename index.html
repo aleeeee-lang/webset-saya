@@ -19,52 +19,40 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261025d"
+        href="style.css?v=20261027a"
     >
-<script src="js/theme.js?v=20261025d"></script>
-    <script src="js/lang.js?v=20261025d"></script>
-<script src="js/lessons.js?v=20261025d"></script>
-<script src="js/tasks-core.js?v=20261025d"></script>
-<script src="js/champs.js?v=20261025d"></script>
-    <script src="js/toast.js?v=20261025d"></script>
-<script src="js/fit.js?v=20261025d" defer></script>
-    <script src="js/transition.js?v=20261025d"></script>
+<script src="js/theme.js?v=20261027a"></script>
+    <script src="js/lang.js?v=20261027a"></script>
+<script src="js/lessons.js?v=20261027a"></script>
+<script src="js/tasks-core.js?v=20261027a"></script>
+<script src="js/champs.js?v=20261027a"></script>
+    <script src="js/toast.js?v=20261027a"></script>
+<script src="js/fit.js?v=20261027a" defer></script>
+    <script src="js/transition.js?v=20261027a"></script>
 
 </head>
 
 
 <body class="v2-page">
 
-<div class="v2-home">
+<div class="v2-home v3-home">
 
-    <section class="v2-hero">
+    <header class="v2-hero-top v3-top">
+        <a href="my-attendance.html" class="v2-avatar" id="homeAvatar" aria-label="Profil">?</a>
+        <div class="v2-hero-who">
+            <span id="homeGreeting" data-i18n="greet_morning">Good morning</span>
+            <strong id="homeName">&nbsp;</strong>
+        </div>
+        <button type="button" class="v3-icon" data-v3-search aria-label="Cari">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        </button>
+        <a href="settings.html" class="v3-icon" id="menuButton" aria-label="Menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <span class="notification-dot" id="notificationDot"></span>
+        </a>
+    </header>
 
-        <header class="v2-hero-top">
-            <a href="settings.html" class="v2-avatar" id="homeAvatar" aria-label="Pengaturan">?</a>
-            <div class="v2-hero-who">
-                <span id="homeGreeting" data-i18n="greet_morning">Good morning</span>
-                <strong id="homeName">&nbsp;</strong>
-            </div>
-
-            <div class="top-actions">
-                <button type="button" class="top-action-button v2-icon-btn" id="notificationButton" aria-label="Notifications">
-                    <span class="top-notification-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 10C18 6.7 15.8 4 12 4C8.2 4 6 6.7 6 10V14L4.5 17H19.5L18 14V10Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M10 20H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        </svg>
-                        <span class="notification-dot" id="notificationDot"></span>
-                    </span>
-                </button>
-                <div class="notification-panel" id="notificationPanel">
-                    <h3 data-i18n="notifications_title">Notifications</h3>
-                    <div id="notificationList">
-                        <p class="notification-empty" id="notificationEmpty" data-i18n="no_new_notifications">No new notifications.</p>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+    <section class="v2-hero v3-hero">
         <div>
             <p class="v2-hero-date" id="homeDate">&nbsp;</p>
             <h1 class="v2-hero-title" id="homeTitle" aria-busy="true"></h1>
@@ -73,68 +61,38 @@
         <div class="v2-hero-chips" id="homeChips"></div>
 
         <a href="attendance.html" class="v2-cta is-loading" id="homeCta">
+            <span class="v3-cta-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11v3"/><path d="M8.5 7.5a5 5 0 0 1 8.5 3.5v2"/><path d="M7 11v2a5 5 0 0 0 1 3"/><path d="M12 6a6.9 6.9 0 0 0-2 .3"/><path d="M15 18a5 5 0 0 0 1-3"/></svg></span>
             <span id="homeCtaLabel" data-i18n="check_in">Check in</span>
             <span class="v2-cta-arrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
-
     </section>
 
     <main class="v2-home-main">
 
-        <div class="v2-bento">
+        <div class="v2-home-left">
+        <h2 class="v3-h" id="homeTodayHead" data-i18n="v3_today">Hari ini</h2>
+        <div class="v3-today" id="homeToday">
+            <a href="schedule.html" class="v2-lesson" id="homeLesson" hidden></a>
+            <a href="tasks.html" class="v2-taskcard" id="homeTasks" hidden></a>
+        </div>
 
-            <a href="dashboard.html" class="v2-tile v2-tile-lime v2-tile-tall">
-                <div class="v2-tile-head"><span data-i18n="tile_attendance">Attendance</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></div>
-                <svg class="v2-ring" viewBox="0 0 92 92" aria-hidden="true">
-                    <circle cx="46" cy="46" r="36" fill="none" stroke-width="10" class="v2-ring-track"></circle>
-                    <circle cx="46" cy="46" r="36" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 226.2" transform="rotate(-90 46 46)" class="v2-ring-fill" id="homeRing"></circle>
-                </svg>
-                <div>
-                    <div class="v2-big" id="homePercent">0%</div>
-                    <div class="v2-tile-sub" id="homePercentSub">&nbsp;</div>
-                </div>
+        <div class="v2-bento v3-bento">
+            <a href="my-attendance.html" class="v2-tile v3-tile">
+                <span class="v3-tile-label" data-i18n="v3_att_month">Kehadiran bulan ini</span>
+                <div class="v2-big" id="homePercent">0%</div>
+                <div class="v3-bar"><i id="homeBar"></i></div>
+                <div class="v2-tile-sub" id="homePercentSub" hidden>&nbsp;</div>
+                <span hidden><span id="homeStreak">0</span><small id="homeStreakUnit"></small></span>
             </a>
-
-            <a href="my-attendance.html" class="v2-tile v2-tile-sand">
-                <div class="v2-tile-head"><span data-i18n="tile_streak">Streak</span><span class="v2-tile-ic-amber"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span></div>
-                <div class="v2-mid"><span id="homeStreak">0</span> <small id="homeStreakUnit">days</small></div>
-            </a>
-
-            <a href="history.html" class="v2-tile v2-tile-lime">
-                <div class="v2-tile-head"><span id="homeSppLabel">SPP</span><span class="v2-tile-ic-green"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg></span></div>
+            <a href="history.html" class="v2-tile v3-tile">
+                <span class="v3-tile-label" id="homeSppLabel">SPP</span>
                 <div class="v2-tile-status" id="homeSppStatus">-</div>
             </a>
-
         </div>
 
-        <div class="v2-home-left">
-        <a href="schedule.html" class="v2-lesson" id="homeLesson" hidden></a>
-        <a href="tasks.html" class="v2-taskcard" id="homeTasks" hidden></a>
         <div class="jr-home-wrap" id="homeChamps" hidden></div>
 
-        <div class="v2-section-head">
-            <h2 data-i18n="home_agenda">Agenda</h2>
-            <a href="calendar.html" data-i18n="link_calendar">Calendar</a>
-        </div>
-        <div class="v2-agenda" id="homeAgenda">
-            <p class="v2-empty" data-i18n="text_no_upcoming_events">No upcoming events.</p>
-        </div>
-        </div>
-
-        <div class="v2-home-right">
-        <div class="v2-section-head">
-            <h2 data-i18n="home_more_menu">More</h2>
-        </div>
-        <div class="v2-more">
-            <a href="tasks.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span data-i18n="menu_tasks">Tasks</span></a>
-            <a href="juara.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span data-i18n="jr_title">Champions</span></a>
-            <a href="kas.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span data-i18n="kas_link_title">Class cash</span></a>
-            <a href="schedule.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M7 14h4M7 17h7"/></svg><span data-i18n="menu_lessons">Lessons</span></a>
-            <a href="information.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span data-i18n="menu_information">Information</span></a>
-            <a href="piket.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg><span data-i18n="menu_piket">Duty Roster</span></a>
-            <a href="leave.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span data-i18n="home_menu_leave">Leave</span></a>
-            <a href="goals.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span data-i18n="home_menu_goals">Goals</span></a>
-        </div>
+        <div class="v2-agenda v3-agenda" id="homeAgenda"></div>
         </div>
 
     </main>
@@ -145,217 +103,16 @@
          BOTTOM NAVIGATION
     ========================== -->
 
-    <nav class="bottom-nav">
-
-
-        <!-- HOME -->
-
-        <a
-            href="index.html"
-            class="active"
-        >
-
-            <span class="nav-home-icon">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <path
-                        d="M4 10.5L12 4L20 10.5V19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19V10.5Z"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linejoin="round"
-                    />
-
-                    <path
-                        d="M9 21V15H15V21"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linejoin="round"
-                    />
-
-                </svg>
-
-            </span>
-
-           
-
-        <small data-i18n="nav_home">
-    Home
-</small>
-        </a>
-
-
-
-        <!-- ATTENDANCE -->
-
-        <a
-            href="attendance.html"
-        >
-
-            <span class="nav-camera-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 15.5a3.5 3.5 0 0 1-.5-1.8V12a3.5 3.5 0 0 1 7 0v.6"/><path d="M12 12v1.5a5 5 0 0 1-1 3"/><path d="M15.5 15a6 6 0 0 1-.6 1.8"/></svg>
-
-            </span>
-
-           <small data-i18n="nav_attendance">
-    Attendance
-</small>
-        </a>
-
-
-
-        <!-- DASHBOARD -->
-
-        <a
-            href="dashboard.html"
-        >
-
-            <span class="nav-dashboard-icon">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <rect
-                        x="4"
-                        y="4"
-                        width="16"
-                        height="16"
-                        rx="2.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M7.5 9H10"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                    <path
-                        d="M14 9H16.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                    <path
-                        d="M7.5 13H11.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                    <path
-                        d="M14 13H16.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                    <path
-                        d="M7.5 17H10"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                    <path
-                        d="M14 17H16.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                </svg>
-
-            </span>
-
-           <small data-i18n="nav_dashboard">
-    Dashboard
-</small>
-        </a>
-
-
-
-        <!-- HISTORY -->
-
-        <a
-            href="history.html"
-        >
-
-            <span class="nav-history-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="M3 10H21" stroke="currentColor" stroke-width="1.8"/>
-                    <path d="M7 7V5.5C7 4.7 7.7 4 8.5 4H17C18.1 4 19 4.9 19 6V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                    <circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/>
-                </svg>
-            </span>
-
-<small data-i18n="nav_history">
-    Savings
-</small>
-
-        </a>
-
-
-
-        <!-- MY -->
-
-        <a
-            href="my-attendance.html"
-        >
-
-            <span class="nav-person-icon">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <circle
-                        cx="12"
-                        cy="7"
-                        r="3.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M5 21C5.8 16.8 8.1 14.5 12 14.5C15.9 14.5 18.2 16.8 19 21"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-
-                </svg>
-
-            </span>
-
-           <small data-i18n="nav_my">
-    My
-</small>
-
-        </a>
-
-
-    </nav>
+    <nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027a"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261025d"></script>
-<script src="js/auth.js?v=20261025d"></script>
+<script src="js/supabase.js?v=20261027a"></script>
+<script src="js/auth.js?v=20261027a"></script>
 
-<script src="js/notification.js?v=20261025d"></script>
-<script src="js/live-sessions.js?v=20261025d"></script>
-<script src="js/admin-home.js?v=20261025d"></script>
+<script src="js/notification.js?v=20261027a"></script>
+<script src="js/live-sessions.js?v=20261027a"></script>
+<script src="js/admin-home.js?v=20261027a"></script>
 
 <script>
 function homeT(key) {
@@ -460,7 +217,10 @@ function renderHomeStats(data, autoAlpa) {
     const hadir = data.filter(function (i) { return i.status === "Hadir"; }).length;
     const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
     document.getElementById("homePercent").textContent = pct + "%";
-    document.getElementById("homeRing").setAttribute("stroke-dasharray", (226.2 * pct / 100).toFixed(1) + " 226.2");
+    const ring = document.getElementById("homeRing");
+    if (ring) ring.setAttribute("stroke-dasharray", (226.2 * pct / 100).toFixed(1) + " 226.2");
+    const bar = document.getElementById("homeBar");
+    if (bar) bar.style.width = pct + "%";
     document.getElementById("homePercentSub").textContent = homeT("tile_days_of").replace("{a}", hadir).replace("{b}", total);
 
     const sorted = data.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
@@ -485,14 +245,14 @@ function renderHomeSpp(record) {
 function renderHomeAgenda(events) {
     const box = document.getElementById("homeAgenda");
     if (!events.length) return;
-    const shown = events.slice(0, window.innerWidth >= 1024 ? 4 : 2);
+    const shown = events.slice(0, window.innerWidth >= 1024 ? 3 : 1);
     box.innerHTML = shown.map(function (e) {
         const d = new Date(e.date + "T00:00:00");
         const typeKey = { holiday: "type_holiday", spp: "type_spp", exam: "type_exam", event: "type_event" }[e.type] || "type_holiday";
         const mon = monthNameOf(d.getMonth()).slice(0, 3).toUpperCase();
         return '<a href="calendar.html" class="v2-agenda-item">' +
             '<span class="v2-agenda-date"><b>' + d.getDate() + '</b><small>' + mon + '</small></span>' +
-            '<span class="v2-agenda-text"><strong></strong><small>' + homeT(typeKey) + '</small></span></a>';
+            '<span class="v2-agenda-text"><strong></strong><small>' + homeT(typeKey) + ' · ' + dayMonthLabel(d) + '</small></span></a>';
     }).join("");
     box.querySelectorAll(".v2-agenda-text strong").forEach(function (el, i) { el.textContent = shown[i].label || homeT("type_holiday"); });
 }

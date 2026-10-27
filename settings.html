@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261025d">
-<script src="js/theme.js?v=20261025d"></script>
-<script src="js/avatarcrop.js?v=20261025d"></script>
-<script src="js/lang.js?v=20261025d"></script>
-<script src="js/toast.js?v=20261025d"></script>
-<script src="js/fit.js?v=20261025d" defer></script>
+<link rel="stylesheet" href="style.css?v=20261027a">
+<script src="js/theme.js?v=20261027a"></script>
+<script src="js/avatarcrop.js?v=20261027a"></script>
+<script src="js/lang.js?v=20261027a"></script>
+<script src="js/toast.js?v=20261027a"></script>
+<script src="js/fit.js?v=20261027a" defer></script>
 </head>
 
 <body>
@@ -30,6 +30,27 @@
         </button>
         <h2 style="margin:0" data-i18n="page_settings">Settings</h2>
     </section>
+
+    <a href="inbox.html" class="v3-notif-row" id="inboxRow">
+        <span class="v3-notif-row-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span>
+        <span class="v3-notif-row-t" data-i18n="notifications_title">Notifikasi</span>
+        <span class="v3-badge" id="inboxBadge" hidden></span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="v3-notif-row-go"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+    <script>
+    (function () {
+        // unread count from the notification list kept on this phone (js/notification.js)
+        var n = 0;
+        try {
+            for (var i = 0; i < localStorage.length; i++) {
+                var k = localStorage.key(i);
+                if (k && k.indexOf("attendreem-notifications-") === 0) n += (JSON.parse(localStorage.getItem(k) || "[]") || []).filter(function (x) { return !x.read; }).length;
+            }
+        } catch (e) {}
+        var b = document.getElementById("inboxBadge");
+        if (n && b) { b.hidden = false; b.textContent = n + " " + ((typeof getLang === "function" && getLang() === "en") ? "new" : "baru"); }
+    })();
+    </script>
 
     <section class="attendance-card" id="accountInfoCard">
         <div class="card-label" data-i18n="label_account_info">Account Info</div>
@@ -238,9 +259,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261025d"></script>
-<script src="js/auth.js?v=20261025d"></script>
-<script src="js/fingerprint.js?v=20261025d"></script>
+<script src="js/supabase.js?v=20261027a"></script>
+<script src="js/auth.js?v=20261027a"></script>
+<script src="js/fingerprint.js?v=20261027a"></script>
 
 <script>
 

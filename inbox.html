@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Notifikasi - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261027a">
+<script src="js/theme.js?v=20261027a"></script>
+<script src="js/lang.js?v=20261027a"></script>
+<script src="js/toast.js?v=20261027a"></script>
+<script src="js/fit.js?v=20261027a" defer></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v3-page">
+
+    <header class="v2-head v3-head">
+        <button type="button" class="v2-back v3-back" onclick="goBack()" aria-label="Kembali"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h1 data-i18n="notifications_title">Notifikasi</h1>
+        <a href="notifications.html" class="v3-head-link" data-i18n="v3_notif_settings">Atur</a>
+    </header>
+
+    <div id="inboxList"><div class="v3-empty"><p>&nbsp;</p></div></div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261027a"></script>
+<script src="js/auth.js?v=20261027a"></script>
+<script src="js/notification.js?v=20261027a"></script>
+<script>
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = "settings.html";
+}
+requireLogin();
+</script>
+</body>
+</html>

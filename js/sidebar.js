@@ -387,6 +387,12 @@
         ["main.attendance-page > .attendance-intro", "append", "light"]
     ];
     function mountMobileButton() {
+        // 2026 layout: the page has its own search button(s) in the header
+        var own = document.querySelectorAll("[data-v3-search]");
+        if (own.length) {
+            Array.prototype.forEach.call(own, function (b) { if (!b.__v3s) { b.__v3s = true; b.addEventListener("click", function (e) { e.preventDefault(); openSheet(); }); } });
+            return;
+        }
         if (document.querySelector(".v2-msearch")) return;
         if (!/^(index|teacher|parent)\.html$/.test(page)) return;   // phone: only on each role's home
         if (document.querySelector(".v2-teach-top")) {
@@ -439,6 +445,16 @@
             var rh = rec.length ? '<div class="v2-sr-head">' + (id ? "Terakhir dibuka" : "Recently opened") + '</div><div class="v2-sr-group">' + rec.map(function (r) {
                 return '<a class="v2-mrec" href="' + esc(r.h) + '" data-title="' + esc(r.t) + '">' + ic("clock", 2) + '<span>' + esc(r.t) + '</span></a>';
             }).join("") + '</div>' : "";
+            // every menu that is not already in the bottom menu, as a grid
+            var inNav = Array.prototype.map.call(document.querySelectorAll(".bottom-nav a[href]"), function (a) { return a.getAttribute("href"); });
+            var all = (MENUS[role] || []).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1 && m[0] !== "dashboard.html"; });
+            if (all.length) {
+                var grid = all.map(function (m) {
+                    return '<a class="v3-mtile" href="' + m[0] + '" data-title="' + esc(id ? m[3] : m[2]) + '">' + ic(m[1], 1.8) + '<span>' + esc(id ? m[3] : m[2]) + '</span></a>';
+                }).join("");
+                body.innerHTML = rh + '<div class="v2-sr-head">' + (id ? "Semua menu" : "All menus") + '</div><div class="v3-mgrid">' + grid + '</div>';
+                return;
+            }
             body.innerHTML = '<div class="v2-sr-head">' + (id ? "Pintasan" : "Shortcuts") + '</div><div class="v2-mchips">' + sc + '</div>' + rh;
         }
         function run() {
@@ -474,6 +490,7 @@
         if (!fromPop) { try { if (history.state && history.state.v2search) history.back(); } catch (e) {} }
     }
     window.addEventListener("popstate", function () { closeSheet(true); });
+    window.attOpenSearch = function () { openSheet(); };
     window.addEventListener("pageshow", function () { if (sheet) { sheet.classList.remove("open"); document.documentElement.classList.remove("v2-msheet-lock"); } });
 
     // gentle reminder for accounts that still use a short/weak password

@@ -185,6 +185,41 @@ function markNotificationsRead(userId) {
     hideNotificationDot();
 }
 
+function unreadNotificationCount(userId) {
+    return loadStoredNotifications(userId).filter(function (item) { return !item.read; }).length;
+}
+
+// inbox.html: the list grouped by day, newest first
+function renderInbox(userId) {
+    const box = document.getElementById("inboxList");
+    if (!box) return;
+    const list = loadStoredNotifications(userId);
+    const lang = getLang();
+    const t = function (k, en, id) { return translations[k] ? translations[k][lang] : (lang === "id" ? id : en); };
+    if (!list.length) {
+        box.innerHTML = '<div class="v3-empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><p>' + t("no_new_notifications", "No notifications yet.", "Belum ada notifikasi.") + '</p></div>';
+        return;
+    }
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const groups = [];
+    list.forEach(function (item, index) {
+        const d = new Date(item.time); const day = new Date(d); day.setHours(0, 0, 0, 0);
+        const diff = Math.round((today - day) / 86400000);
+        const label = diff <= 0 ? (lang === "id" ? "Hari ini" : "Today") : diff === 1 ? (lang === "id" ? "Kemarin" : "Yesterday") : dayMonthLabel(d);
+        let g = groups[groups.length - 1];
+        if (!g || g.label !== label) { g = { label: label, items: [] }; groups.push(g); }
+        g.items.push({ item: item, index: index, time: String(d.getHours()).padStart(2, "0") + "." + String(d.getMinutes()).padStart(2, "0") });
+    });
+    const del = translations.btn_delete ? translations.btn_delete[lang] : "Delete";
+    box.innerHTML = groups.map(function (g) {
+        return '<h2 class="v3-sec">' + escapeHTML(g.label) + '</h2><div class="v3-list">' + g.items.map(function (x) {
+            return '<div class="v3-notif' + (x.item.read ? '' : ' unread') + '"><span class="v3-notif-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span>' +
+                '<div class="v3-notif-body"><p>' + escapeHTML(x.item.text) + '</p><small>' + x.time + '</small></div>' +
+                '<button type="button" class="v3-notif-del" aria-label="' + del + '" onclick="deleteNotification(\'' + userId + '\', ' + x.index + ', event); renderInbox(\'' + userId + '\')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+        }).join("") + '</div>';
+    }).join("");
+}
+
 function hasUnreadNotifications(userId) {
     const notifications = loadStoredNotifications(userId);
     return notifications.some(function (item) { return !item.read; });
@@ -390,8 +425,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const notificationButton = document.getElementById("notificationButton");
     const notificationPanel = document.getElementById("notificationPanel");
+    // 2026 layout: a red dot on the menu button (any page) and the list on inbox.html
+    const inboxPage = !!document.getElementById("inboxList");
 
-    if (!notificationButton || !notificationPanel) return;
+    if (!document.getElementById("notificationDot") && !notificationPanel && !inboxPage) return;
 
     document.addEventListener(
         "click",
@@ -435,6 +472,8 @@ document.addEventListener("DOMContentLoaded", function () {
             showNotificationDot();
         }
 
+        if (inboxPage) { renderInbox(user.id); markNotificationsRead(user.id); }
+        if (!notificationButton || !notificationPanel) return;
         notificationButton.addEventListener("click", function () {
             notificationPanel.classList.toggle("active");
 

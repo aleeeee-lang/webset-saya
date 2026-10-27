@@ -144,24 +144,8 @@
             var m = document.createElement("div"); m.id = "ahMain"; m.className = "ah"; m.hidden = true;
             main.insertBefore(m, main.firstChild);
         }
-        var nav = document.querySelector(".bottom-nav");
-        if (nav) {
-            var set = function (from, to, label) {
-                var a = nav.querySelector('a[href="' + from + '"]');
-                if (!a) return;
-                if (!to) { a.style.display = "none"; return; }
-                a.setAttribute("href", to);
-                var sm = a.querySelector("small"); if (sm) { sm.removeAttribute("data-i18n"); sm.textContent = label; }
-            };
-            set("attendance.html", "admin-attendance.html", L("Absensi", "Attendance"));
-            set("dashboard.html", "qr-send.html", "QR");
-            var qa = nav.querySelector('a[href="qr-send.html"] span');
-            if (qa) qa.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + IC.qr + '</svg>';
-            set("history.html", null);
-            set("my-attendance.html", "settings.html", L("Panel", "Panel"));
-            var pa = nav.querySelector('a[href="settings.html"] span');
-            if (pa) pa.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>';
-        }
+        // the bottom menu for admins is drawn by js/nav.js
+        if (window.attNavDraw) window.attNavDraw();
     }
 
     async function start(user, profile) {

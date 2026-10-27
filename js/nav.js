@@ -56,10 +56,10 @@
     nav.style.setProperty("--n", items.length);
     nav.innerHTML = items.map(function (it) {
         var on = it[0] === page || (it[5] || []).indexOf(page) !== -1;
-        var svg = '<svg viewBox="0 0 24 24" width="' + (it[6] ? 26 : 22) + '" height="' + (it[6] ? 26 : 22) + '" fill="none" stroke="currentColor" stroke-width="' + (on || it[6] ? 2 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[it[1]] + '</svg>';
+        var svg = '<svg viewBox="0 0 24 24" width="' + (it[6] ? 26 : 24) + '" height="' + (it[6] ? 26 : 24) + '" fill="none" stroke="currentColor" stroke-width="' + (on || it[6] ? 2 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[it[1]] + '</svg>';
         var label = id ? it[2] : it[3];
         if (it[6]) return '<a href="' + it[0] + '" class="v3-fab' + (on ? ' active' : '') + '" aria-label="' + label + '"' + (on ? ' aria-current="page"' : '') + '><span>' + svg + '</span></a>';
-        return '<a href="' + it[0] + '"' + (on ? ' class="active" aria-current="page"' : '') + '><span>' + svg + '</span><small>' + label + '</small></a>';
+        return '<a href="' + it[0] + '" aria-label="' + label + '"' + (on ? ' class="active" aria-current="page"' : '') + '><span>' + svg + '</span><small>' + label + '</small></a>';
     }).join("");
     nav.dataset.role = role || "murid";
   }

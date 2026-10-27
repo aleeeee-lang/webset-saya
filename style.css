@@ -4564,3 +4564,7 @@ html[data-theme="dark"] .v3-tile-hint{color:#9A9A9F}
 /* "Saya": the menu button is a plain icon */
 .v2-my-gear{background:transparent!important;border:0!important;box-shadow:none!important}
 .v3-tile .v2-tile-status{white-space:nowrap}
+/* bottom menu: icons only (the label stays for screen readers) */
+.bottom-nav.v3-nav a small{position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap}
+.bottom-nav.v3-nav a{padding:10px 0}
+.bottom-nav.v3-nav a>span:first-child{height:26px!important}

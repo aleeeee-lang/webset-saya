@@ -10,11 +10,11 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027c">
-<script src="js/theme.js?v=20261027c"></script>
-<script src="js/lang.js?v=20261027c"></script>
-<script src="js/toast.js?v=20261027c"></script>
-<script src="js/fit.js?v=20261027c" defer></script>
+<link rel="stylesheet" href="style.css?v=20261027d">
+<script src="js/theme.js?v=20261027d"></script>
+<script src="js/lang.js?v=20261027d"></script>
+<script src="js/toast.js?v=20261027d"></script>
+<script src="js/fit.js?v=20261027d" defer></script>
 </head>
 
 <body>
@@ -93,9 +93,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027c"></script>
-<script src="js/auth.js?v=20261027c"></script>
-<script src="js/att-proof.js?v=20261027c"></script>
+<script src="js/supabase.js?v=20261027d"></script>
+<script src="js/auth.js?v=20261027d"></script>
+<script src="js/att-proof.js?v=20261027d"></script>
 
 <script>
 
@@ -166,7 +166,7 @@ function renderLeaveRequests() {
             <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
                 <div style="flex:1;min-width:0">
                     <strong style="display:block;font-size:13px;color:#20243a">${typeLabel}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dateRange}${r.reason ? " · " + escapeHTML(r.reason) : ""}${r.proof_url ? " · " + (lang === "id" ? "📎 ada surat" : "📎 letter attached") : ""}</span>
+                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dateRange}${r.reason ? " · " + escapeHTML(r.reason) : ""}${r.proof_url ? " · " + (lang === "id" ? "📎 ada surat" : "📎 letter attached") : ""}${r.status !== "pending" && r.reviewed_by_name ? " · " + (lang === "id" ? "oleh " : "by ") + escapeHTML(r.reviewed_by_name) : ""}</span>
                 </div>
                 <span class="spp-status-badge ${r.status}">${statusLabel}</span>
                 ${canDeleteLeave(r) ? `<button type="button" onclick="deleteLeaveRequest('${r.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ""}

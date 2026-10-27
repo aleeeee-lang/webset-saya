@@ -4590,3 +4590,62 @@ html[data-theme="dark"] .v3-settings .attendance-card{background:#121212!importa
 html[data-theme="dark"] .v3-settings .attendance-card:not(#accountInfoCard):not(#adminSettingsSection)>*+*{border-top-color:#242424}
 html[data-theme="dark"] .v3-settings .attendance-card span[style*="font-size:13px"],html[data-theme="dark"] .v3-settings .attendance-card>a>svg:first-child,html[data-theme="dark"] .v3-settings .attendance-card>div>svg:first-child{color:#EDEDED!important}
 html[data-theme="dark"] .v3-settings .attendance-card span[style*="color:#dc3545"]{color:#FCA5A5!important}
+/* ---- teacher: Izin / Sakit requests (teacher-leave.html) ---- */
+.tl-tabs{display:flex;gap:6px;padding:4px;margin:4px 0 14px;background:#F1F2F6;border-radius:16px}
+.tl-tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:0;background:transparent;border-radius:12px;padding:10px;font:inherit;font-size:14px;font-weight:700;color:#5B6075;cursor:pointer}
+.tl-tabs button.on{background:#fff;color:#14162B;box-shadow:0 1px 3px rgba(20,22,43,.08)}
+.tl-tabs b{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E5484D;color:#fff;font-size:11px;line-height:20px;box-sizing:border-box}
+.tl-card{background:#fff;border:1px solid #ECEEF2;border-radius:22px;padding:16px;margin-bottom:12px;transition:opacity .25s,transform .25s}
+.tl-card.leaving{opacity:0;transform:translateX(24px)}
+.tl-top{display:flex;align-items:center;gap:12px}
+.tl-av{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:#EEF7D4;color:#3F6212;display:flex;align-items:center;justify-content:center;font-weight:800}
+.tl-who{flex:1;min-width:0}
+.tl-who b{display:block;font-size:15px;color:#14162B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-who small{font-size:12px;color:#8A8FA8}
+.tl-type{flex-shrink:0;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800}
+.tl-type.sick{background:#FDECEC;color:#B42318}
+.tl-type.izin{background:#FEF3D6;color:#93370D}
+.tl-date{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:700;color:#14162B}
+.tl-date svg{color:#8A8FA8;flex-shrink:0}
+.tl-reason{margin:8px 0 0;padding:10px 12px;border-radius:14px;background:#F6F7F9;font-size:14px;line-height:1.45;color:#2B2F45;overflow-wrap:anywhere}
+.tl-photo{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:6px;border:1px solid #ECEEF2;border-radius:14px;background:#fff;font:inherit;font-size:13px;font-weight:700;color:#14162B;cursor:zoom-in;text-align:left}
+.tl-photo img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:#F1F2F6}
+.tl-photo img:not([src]){visibility:hidden}
+.tl-nophoto{margin-top:10px;font-size:12px;color:#8A8FA8}
+.tl-act{display:flex;gap:10px;margin-top:14px}
+.tl-act button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border-radius:14px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.tl-no{background:#fff;border:1.5px solid #E4E6EC;color:#B42318}
+.tl-no.sure{background:#B42318;border-color:#B42318;color:#fff}
+.tl-yes{background:#C6F432;border:0;color:#14162B}
+.tl-act button:disabled{opacity:.55;cursor:default}
+.tl-act button.busy{opacity:1}
+.tl-done{margin-top:12px;font-size:13px;font-weight:700}
+.tl-done.ok{color:#3F6212}
+.tl-done.no{color:#B42318}
+.tl-viewer{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:24px}
+.tl-viewer[hidden]{display:none}
+.tl-viewer img{max-width:100%;max-height:100%;border-radius:12px}
+.tl-viewer-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center}
+html[data-theme="dark"] .tl-tabs{background:#1C1C1E}
+html[data-theme="dark"] .tl-tabs button{color:#9A9A9F}
+html[data-theme="dark"] .tl-tabs button.on{background:#2C2C2E;color:#F2F2F2}
+html[data-theme="dark"] .tl-card{background:#121212;border-color:#242424}
+html[data-theme="dark"] .tl-who b,html[data-theme="dark"] .tl-date{color:#EDEDED}
+html[data-theme="dark"] .tl-av{background:rgba(198,244,50,.12);color:#C6F432}
+html[data-theme="dark"] .tl-type.sick{background:rgba(229,72,77,.16);color:#FCA5A5}
+html[data-theme="dark"] .tl-type.izin{background:rgba(245,176,65,.16);color:#FCD34D}
+html[data-theme="dark"] .tl-reason{background:#1C1C1E;color:#D6D6D8}
+html[data-theme="dark"] .tl-photo{background:#121212;border-color:#2C2C2E;color:#EDEDED}
+html[data-theme="dark"] .tl-no{background:transparent;border-color:#3A3A3C;color:#FCA5A5}
+html[data-theme="dark"] .tl-no.sure{background:#B42318;color:#fff}
+html[data-theme="dark"] .tl-done.ok{color:#C6F432}
+html[data-theme="dark"] .tl-done.no{color:#FCA5A5}
+/* teacher home: requests waiting */
+.tl-banner{display:flex;align-items:center;gap:12px;margin:14px 0 8px;padding:14px 16px;border-radius:20px;background:#14162B;color:#fff;text-decoration:none}
+.tl-banner[hidden]{display:none}
+.tl-banner-ic{width:40px;height:40px;flex-shrink:0;border-radius:12px;background:#23263F;color:#C6F432;display:flex;align-items:center;justify-content:center}
+.tl-banner-t{flex:1;min-width:0}
+.tl-banner-t b{display:block;font-size:15px}
+.tl-banner-t small{display:block;margin-top:2px;font-size:12px;color:#B9BDD0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-banner-go{color:#B9BDD0}
+html[data-theme="dark"] .tl-banner{background:#121212;border:1px solid #242424}

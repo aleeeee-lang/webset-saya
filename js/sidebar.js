@@ -58,6 +58,7 @@
         ],
         guru: [
             ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
+            ["teacher-leave.html", "doc", "Leave & sick", "Izin & sakit siswa"],
             ["attendance.html", "checkin", "Check in", "Absen saya"],
             ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
             ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
@@ -163,6 +164,7 @@
         "my-attendance.html": "nilai score grade rapor kalender rekap riwayat kegiatan aktivitas",
         "goals.html": "target tujuan goal belajar",
         "leave.html": "izin cuti sakit surat",
+        "teacher-leave.html": "izin sakit surat siswa setujui tolak persetujuan",
         "calendar.html": "kalender libur ujian event acara",
         "information.html": "info pengumuman berita",
         "piket.html": "piket jadwal kebersihan",

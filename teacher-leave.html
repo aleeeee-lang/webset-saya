@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Izin &amp; Sakit - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261027d">
+<script src="js/theme.js?v=20261027d"></script>
+<script src="js/lang.js?v=20261027d"></script>
+<script src="js/toast.js?v=20261027d"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v3-page tl-page">
+
+    <header class="v2-head v3-head">
+        <button type="button" class="v2-back v3-back" onclick="goBack()" aria-label="Kembali"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h1 id="tlTitle">Izin &amp; Sakit</h1>
+    </header>
+
+    <div class="tl-tabs" role="tablist">
+        <button type="button" role="tab" class="on" data-tab="pending" aria-selected="true"><span id="tlTabPending">Menunggu</span> <b id="tlCount" hidden>0</b></button>
+        <button type="button" role="tab" data-tab="done" aria-selected="false" id="tlTabDone">Riwayat</button>
+    </div>
+
+    <div id="tlList"><div class="v3-empty"><p>&nbsp;</p></div></div>
+
+</main>
+
+<!-- full-size letter photo -->
+<div class="tl-viewer" id="tlViewer" hidden>
+    <button type="button" class="tl-viewer-x" id="tlViewerX" aria-label="Tutup"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <img id="tlViewerImg" alt="">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261027d"></script>
+<script src="js/auth.js?v=20261027d"></script>
+<script>
+const ID = getLang() === "id";
+const L = (id, en) => ID ? id : en;
+let me = null, rows = [], tab = "pending", photos = {};
+
+document.getElementById("tlTitle").textContent = L("Izin & Sakit", "Leave & sick");
+document.getElementById("tlTabPending").textContent = L("Menunggu", "Waiting");
+document.getElementById("tlTabDone").textContent = L("Riwayat", "History");
+
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = "teacher.html";
+}
+
+const DAY = ID ? ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MON = ID ? ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"] : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function fmt(s) { const d = new Date(s + "T00:00:00"); return DAY[d.getDay()] + ", " + d.getDate() + " " + MON[d.getMonth()]; }
+function span(r) {
+    const a = r.start_date, b = r.end_date || r.start_date;
+    const n = Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5) + 1;
+    return (a === b ? fmt(a) : fmt(a) + " – " + fmt(b)) + " · " + n + " " + L("hari", n > 1 ? "days" : "day");
+}
+function ago(ts) {
+    const m = Math.max(0, Math.round((Date.now() - new Date(ts)) / 60000));
+    if (m < 1) return L("baru saja", "just now");
+    if (m < 60) return m + L(" mnt lalu", " min ago");
+    const h = Math.round(m / 60);
+    if (h < 24) return h + L(" jam lalu", " h ago");
+    const d = Math.round(h / 24);
+    return d + L(" hari lalu", " d ago");
+}
+
+async function start() {
+    const user = await requireLogin();
+    if (!user) return;
+    me = user;
+    const prof = await attMyProfile(user.id);
+    if (!prof || (prof.role !== "guru" && prof.role !== "admin")) { location.replace("index.html"); return; }
+    await load();
+}
+
+async function load() {
+    const { data, error } = await supabaseClient
+        .from("leave_requests")
+        .select("*")
+        .neq("user_id", me.id)
+        .order("created_at", { ascending: false })
+        .limit(150);
+    if (error) { showToast(error.message, "error"); return; }
+    rows = data || [];
+    render();
+    signPhotos();
+}
+
+function card(r) {
+    const sick = r.type === "Sakit";
+    const letter = (r.name || "?").trim().charAt(0).toUpperCase();
+    const photo = r.proof_url
+        ? `<button type="button" class="tl-photo" data-proof="${escapeHTML(r.proof_url)}" aria-label="${L("Lihat foto surat", "View letter photo")}"><img alt="" ${photos[r.proof_url] ? `src="${photos[r.proof_url]}"` : ""}><span>${L("Foto surat", "Letter photo")}</span></button>`
+        : `<div class="tl-nophoto">${L("Tanpa foto surat", "No letter photo")}</div>`;
+    let foot;
+    if (r.status === "pending") {
+        foot = `<div class="tl-act">
+            <button type="button" class="tl-no" data-id="${r.id}">${L("Tolak", "Reject")}</button>
+            <button type="button" class="tl-yes" data-id="${r.id}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>${L("Setujui", "Approve")}</button>
+        </div>`;
+    } else {
+        const ok = r.status === "approved";
+        foot = `<div class="tl-done ${ok ? "ok" : "no"}">${ok ? L("Disetujui", "Approved") : L("Ditolak", "Rejected")}${r.reviewed_by_name ? " " + L("oleh", "by") + " " + escapeHTML(r.reviewed_by_name) : ""}${r.reviewed_at ? " · " + ago(r.reviewed_at) : ""}</div>`;
+    }
+    return `<article class="tl-card" data-row="${r.id}">
+        <div class="tl-top">
+            <span class="tl-av">${escapeHTML(letter)}</span>
+            <div class="tl-who"><b>${escapeHTML(r.name || "-")}</b><small>${escapeHTML(r.class || "-")} · ${ago(r.created_at)}</small></div>
+            <span class="tl-type ${sick ? "sick" : "izin"}">${sick ? L("Sakit", "Sick") : L("Izin", "Leave")}</span>
+        </div>
+        <div class="tl-date"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>${span(r)}</div>
+        ${r.reason ? `<p class="tl-reason">${escapeHTML(r.reason)}</p>` : ""}
+        ${photo}
+        ${foot}
+    </article>`;
+}
+
+function render() {
+    const pending = rows.filter(r => r.status === "pending");
+    const done = rows.filter(r => r.status !== "pending");
+    const c = document.getElementById("tlCount");
+    c.textContent = pending.length; c.hidden = !pending.length;
+    const list = tab === "pending" ? pending : done;
+    const box = document.getElementById("tlList");
+    if (!list.length) {
+        box.innerHTML = `<div class="v3-empty"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 15l2 2 4-4"/></svg><p>${tab === "pending" ? L("Tidak ada pengajuan yang menunggu", "Nothing waiting") : L("Belum ada riwayat", "No history yet")}</p></div>`;
+        return;
+    }
+    box.innerHTML = list.map(card).join("");
+}
+
+// letter photos are private: a link that works for an hour
+async function signPhotos() {
+    const paths = [...new Set(rows.map(r => r.proof_url).filter(p => p && !photos[p]))];
+    for (const p of paths) {
+        const { data } = await supabaseClient.storage.from("attendance-photos").createSignedUrl(p, 3600);
+        if (!data || !data.signedUrl) continue;
+        photos[p] = data.signedUrl;
+        document.querySelectorAll('.tl-photo[data-proof="' + CSS.escape(p) + '"] img').forEach(i => { i.src = data.signedUrl; });
+    }
+}
+
+async function review(id, decision, btn) {
+    const cardEl = btn.closest(".tl-card");
+    cardEl.querySelectorAll("button").forEach(b => b.disabled = true);
+    btn.classList.add("busy");
+    const { data, error } = await supabaseClient.rpc("review_leave", { p_id: id, p_decision: decision });
+    if (error) {
+        cardEl.querySelectorAll("button").forEach(b => b.disabled = false);
+        btn.classList.remove("busy");
+        const m = error.message || "";
+        if (/LEAVE_ALREADY/.test(m)) { showToast(L("Pengajuan ini sudah diproses", "Already reviewed"), "error"); load(); return; }
+        if (/LEAVE_NOT_ALLOWED/.test(m)) { showToast(L("Siswa ini bukan dari kelasmu", "Not your student"), "error"); return; }
+        if (/review_leave|PGRST202|function/i.test(m)) { showToast(L("Fitur ini belum aktif di database (leave_teacher.sql)", "Not set up yet (leave_teacher.sql)"), "error"); return; }
+        showToast(m, "error");
+        return;
+    }
+    const r = rows.find(x => x.id === id);
+    if (r) { r.status = decision; r.reviewed_at = new Date().toISOString(); r.reviewed_by_name = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).name || ""; }
+    showToast(decision === "approved"
+        ? L("Disetujui · absen " + ((data && data.days) || 1) + " hari tercatat " + (r && r.type === "Sakit" ? "Sakit" : "Izin"), "Approved")
+        : L("Pengajuan ditolak", "Rejected"), "success");
+    cardEl.classList.add("leaving");
+    setTimeout(render, 260);
+}
+
+document.getElementById("tlList").addEventListener("click", function (e) {
+    const yes = e.target.closest(".tl-yes"), no = e.target.closest(".tl-no"), ph = e.target.closest(".tl-photo");
+    if (yes) review(yes.dataset.id, "approved", yes);
+    else if (no) {
+        // second tap confirms
+        if (no.dataset.sure) review(no.dataset.id, "rejected", no);
+        else { no.dataset.sure = "1"; no.textContent = L("Yakin tolak?", "Reject?"); no.classList.add("sure"); setTimeout(() => { if (no.isConnected && !no.disabled) { delete no.dataset.sure; no.textContent = L("Tolak", "Reject"); no.classList.remove("sure"); } }, 3500); }
+    } else if (ph) {
+        const src = photos[ph.dataset.proof];
+        if (!src) return;
+        document.getElementById("tlViewerImg").src = src;
+        document.getElementById("tlViewer").hidden = false;
+    }
+});
+function closeViewer() { document.getElementById("tlViewer").hidden = true; }
+document.getElementById("tlViewer").addEventListener("click", closeViewer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeViewer(); });
+
+document.querySelector(".tl-tabs").addEventListener("click", function (e) {
+    const b = e.target.closest("button[data-tab]");
+    if (!b) return;
+    tab = b.dataset.tab;
+    this.querySelectorAll("button").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-selected", x === b); });
+    render();
+});
+
+start();
+</script>
+</body>
+</html>

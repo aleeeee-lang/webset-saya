@@ -91,50 +91,12 @@ function formatNotifTime(timestamp) {
     return dayMonthLabel(date) + ", " + hh + ":" + mm;
 }
 
-function renderNotificationList(userId) {
-    const listEl = document.getElementById("notificationList");
-    if (!listEl) return;
-
-    const notifications = loadStoredNotifications(userId);
-    const lang = getLang();
-
-    if (!notifications.length) {
-        listEl.innerHTML =
-            '<p class="notification-empty" id="notificationEmpty" data-i18n="no_new_notifications">' +
-            (translations.no_new_notifications ? translations.no_new_notifications[lang] : "No new notifications.") +
-            "</p>";
-        return;
-    }
-
-    const deleteLabel = translations.btn_delete ? translations.btn_delete[lang] : "Delete";
-
-    listEl.innerHTML = notifications
-        .map(function (item, index) {
-            const unreadClass = item.read ? "" : " unread";
-            const dot = item.read ? "" : '<span class="notification-item-dot"></span>';
-            return (
-                '<div class="notification-item' + unreadClass + '">' +
-                dot +
-                '<div class="notification-item-body">' +
-                '<p class="notification-item-text">' + escapeHTML(item.text) + "</p>" +
-                '<p class="notification-item-time">' + formatNotifTime(item.time) + "</p>" +
-                "</div>" +
-                '<button type="button" class="notification-item-delete" aria-label="' + deleteLabel + '" onclick="deleteNotification(\'' + userId + '\', ' + index + ', event)">' +
-                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 7H19M9 7V5C9 4.4 9.4 4 10 4H14C14.6 4 15 4.4 15 5V7M17 7V18C17 19.1 16.1 20 15 20H9C7.9 20 7 19.1 7 18V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-                "</button>" +
-                "</div>"
-            );
-        })
-        .join("");
-}
-
 function deleteNotification(userId, index, event) {
     if (event) event.stopPropagation();
 
     const notifications = loadStoredNotifications(userId);
     notifications.splice(index, 1);
     saveStoredNotifications(userId, notifications);
-    renderNotificationList(userId);
 
     if (!hasUnreadNotifications(userId)) {
         hideNotificationDot();
@@ -151,7 +113,6 @@ function addNotification(userId, text) {
     });
 
     saveStoredNotifications(userId, notifications.slice(0, NOTIF_MAX_STORED));
-    renderNotificationList(userId);
     showNotificationDot();
     playNotifSound();
 }
@@ -179,7 +140,6 @@ function markNotificationsRead(userId) {
 
     if (changed) {
         saveStoredNotifications(userId, notifications);
-        renderNotificationList(userId);
     }
 
     hideNotificationDot();
@@ -423,12 +383,10 @@ function subscribeTaskNotifications(userId, userClass) {
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const notificationButton = document.getElementById("notificationButton");
-    const notificationPanel = document.getElementById("notificationPanel");
     // 2026 layout: a red dot on the menu button (any page) and the list on inbox.html
     const inboxPage = !!document.getElementById("inboxList");
 
-    if (!document.getElementById("notificationDot") && !notificationPanel && !inboxPage) return;
+    if (!document.getElementById("notificationDot") && !inboxPage) return;
 
     document.addEventListener(
         "click",
@@ -448,8 +406,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let role = "";
         try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
         if (role === "orangtua" && await parentAlerts(user.id, inboxPage)) return;
-
-        renderNotificationList(user.id);
 
         if (hasUnreadNotifications(user.id)) {
             showNotificationDot();
@@ -478,14 +434,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (inboxPage) { renderInbox(user.id); markNotificationsRead(user.id); }
-        if (!notificationButton || !notificationPanel) return;
-        notificationButton.addEventListener("click", function () {
-            notificationPanel.classList.toggle("active");
-
-            if (notificationPanel.classList.contains("active")) {
-                markNotificationsRead(user.id);
-            }
-        });
     });
 
 });

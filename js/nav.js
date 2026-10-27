@@ -50,7 +50,7 @@
             ["schedule.html", "cal", "Jadwal", "Schedule", "", ["calendar.html"]],
             ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", [], true],
             ["history.html", "money", "Uang", "Money", "", ["kas.html"]],
-            ["my-attendance.html", "me", "Saya", "Me", "nav_my", ["dashboard.html"]]
+            ["my-attendance.html", "me", "Saya", "Me", "nav_my"]
         ];
     }
     nav.classList.add("v3-nav");

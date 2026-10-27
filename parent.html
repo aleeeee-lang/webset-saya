@@ -10,25 +10,25 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027g">
-<script src="js/theme.js?v=20261027g"></script>
-<script src="js/lang.js?v=20261027g"></script>
-<script src="js/toast.js?v=20261027g"></script>
-<script src="js/fit.js?v=20261027g" defer></script>
-<script src="js/paymethods.js?v=20261027g"></script>
+<link rel="stylesheet" href="style.css?v=20261027h">
+<script src="js/theme.js?v=20261027h"></script>
+<script src="js/lang.js?v=20261027h"></script>
+<script src="js/toast.js?v=20261027h"></script>
+<script src="js/fit.js?v=20261027h" defer></script>
+<script src="js/paymethods.js?v=20261027h"></script>
 </head>
 
 <body class="v2-page">
 
-<main class="my-attendance-main v2-wrap v2-par">
+<main class="my-attendance-main v2-wrap v2-par v3-par">
 
-    <header class="v2-par-head">
-        <div>
+    <header class="v2-par-head v3-par-head">
+        <div class="v3-par-who">
             <span data-i18n="page_parent_portal">Parent Portal</span>
-            <h1 data-fit><span data-i18n="teach_hello">Hello</span>, <span id="parentName">&nbsp;</span></h1>
+            <h1><span data-i18n="teach_hello">Hello</span>, <span id="parentName">&nbsp;</span></h1>
         </div>
-        <a href="calendar.html" class="v2-back" aria-label="Academic Calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></a>
-        <a href="settings.html" id="settingsGearBtn" class="v2-back" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
+        <a href="inbox.html" class="v3-icon" id="notifButton" aria-label="Notifikasi"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="notification-dot" id="notificationDot"></span></a>
+        <a href="settings.html" id="settingsGearBtn" class="v3-icon" aria-label="Pengaturan"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
     </header>
 
     <!-- CHILD SELECTOR -->
@@ -52,63 +52,43 @@
 
     <div id="childDataWrap" style="display:none">
 
-        <section class="v2-par-rate">
-            <div class="v2-par-rate-main">
-                <div class="v2-par-rate-label" data-i18n="par_semester_attendance">Attendance</div>
-                <div class="v2-par-rate-num" id="pScorePercent">0%</div>
-                <div class="v2-par-rate-sub"><span class="nw"><span data-i18n="status_present">Present</span> <b id="pHadir">0</b></span> · <span class="nw"><span data-i18n="status_permission">Permission</span> <b id="pIzin">0</b></span> · <span class="nw"><span data-i18n="status_sick">Sick</span> <b id="pSakit">0</b></span> · <span class="nw"><span data-i18n="status_absent">Absent</span> <b id="pAlpa">0</b></span></div>
+        <section class="v2-hero v3-hero pv-hero">
+            <p class="ah-lab" id="pTodayLab">&nbsp;</p>
+            <h2 class="pv-state" id="pTodayStatus">&nbsp;</h2>
+            <div class="ah-sub pv-sub">
+                <div><span id="pInLab">Masuk</span><b class="in" id="pTodayTime">–</b></div>
+                <div><span id="pOutLab">Pulang</span><b id="pTodayOut">–</b></div>
             </div>
-            <div class="v2-par-today">
-                <span data-i18n="par_today">Today</span>
-                <strong id="pTodayStatus">-</strong>
-                <small id="pTodayTime">&nbsp;</small>
-            </div>
-            <div hidden><span id="pScoreDesc"></span><div id="pScoreProgressFill"></div><span id="pDevAverageDesc"></span></div>
         </section>
 
-        <div class="v2-par-tiles">
-            <div class="v2-par-tile lime">
-                <span id="pSppMonthLabel">SPP</span>
-                <strong id="pSppAmount">Rp0</strong>
-                <span class="spp-status-badge" id="pSppStatusBadge">-</span>
-            </div>
-            <div class="v2-par-tile sand">
-                <span data-i18n="dash_avg_grade">Average grade</span>
-                <strong id="pDevAverageScore">-</strong>
-            </div>
+        <div class="ts-stats pv-stats" style="--n:3">
+            <a class="ts-stat" href="#pBreak"><span id="pRateLab">Kehadiran</span><b id="pScorePercent">0%</b></a>
+            <a class="ts-stat" href="#pGradesH"><span id="pAvgLab">Rata nilai</span><b id="pDevAverageScore">-</b></a>
+            <div class="ts-stat"><span id="pSppMonthLabel">SPP</span><b id="pSppStatusBadge">-</b><small id="pSppAmount" hidden>Rp0</small></div>
         </div>
+        <p class="pv-break" id="pBreak"><span class="nw"><span data-i18n="status_present">Present</span> <b id="pHadir">0</b></span> · <span class="nw"><span data-i18n="status_permission">Permission</span> <b id="pIzin">0</b></span> · <span class="nw"><span data-i18n="status_sick">Sick</span> <b id="pSakit">0</b></span> · <span class="nw"><span data-i18n="status_absent">Absent</span> <b id="pAlpa">0</b></span></p>
+        <div hidden><span id="pScoreDesc"></span><div id="pScoreProgressFill"></div><span id="pDevAverageDesc"></span></div>
 
         <section class="pay-box" id="pSppPayBox" hidden></section>
 
-        <a href="schedule.html" class="v2-par-link" id="pLessonsLink"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_lessons">Lesson schedule</span><svg class="go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+        <a href="schedule.html" class="v3-leave-link" id="pLessonsLink"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_lessons">Lesson schedule</span><svg class="v3-leave-go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
 
-        <!-- RECENT GRADES -->
-        <div class="my-attendance-section-header" style="margin-top:28px">
-            <div><span data-i18n="label_grades_label">GRADES</span><h2 data-i18n="label_grades">Grades</h2></div>
-        </div>
-        <section class="attendance-activity" id="pGradesList"></section>
-        <section class="history-empty" id="pGradesEmpty" style="display:none">
-            <h2 data-i18n="no_grades_title">No grades yet</h2>
-            <p data-i18n="no_grades_text">Your grades will appear here once added by the school.</p>
-        </section>
+        <h2 class="v3-sec" id="pGradesH">Nilai terbaru</h2>
+        <section class="tc-list" id="pGradesList"></section>
+        <section class="tc-list" id="pGradesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_grades_title">No grades yet</div></section>
 
-        <!-- RECENT ACTIVITIES -->
-        <div class="my-attendance-section-header" style="margin-top:28px">
-            <div><span data-i18n="label_activities_label">ACTIVITIES & NOTES</span><h2 data-i18n="label_activities_notes">Activities & Notes</h2></div>
-        </div>
-        <section class="attendance-activity" id="pActivitiesList"></section>
-        <section class="history-empty" id="pActivitiesEmpty" style="display:none">
-            <h2 data-i18n="no_activities_title">No activities or notes yet</h2>
-            <p data-i18n="no_activities_text">Activities, achievements and notes from your school will appear here.</p>
-        </section>
+        <h2 class="v3-sec" id="pActH">Catatan dari sekolah</h2>
+        <section class="tc-list" id="pActivitiesList"></section>
+        <section class="tc-list" id="pActivitiesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_activities_title">No activities or notes yet</div></section>
 
     </div>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027g"></script>
-<script src="js/auth.js?v=20261027g"></script>
+<script src="js/supabase.js?v=20261027h"></script>
+<script src="js/auth.js?v=20261027h"></script>
+<script src="js/notification.js?v=20261027h"></script>
 
 <script>
 
@@ -120,6 +100,18 @@ const activityTypeIcon = {
     catatan: activityIconSvg('<path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>')
 };
 const activityTypeKeyMap = { kegiatan: "type_kegiatan", prestasi: "type_prestasi", pelanggaran: "type_pelanggaran", catatan: "type_catatan" };
+
+const PL = (id, en) => getLang() === "id" ? id : en;
+document.getElementById("pInLab").textContent = PL("Masuk", "In");
+document.getElementById("pOutLab").textContent = PL("Pulang", "Out");
+document.getElementById("pRateLab").textContent = PL("Kehadiran", "Attendance");
+document.getElementById("pAvgLab").textContent = PL("Rata nilai", "Avg. grade");
+document.getElementById("pGradesH").textContent = PL("Nilai terbaru", "Latest grades");
+document.getElementById("pActH").textContent = PL("Catatan dari sekolah", "Notes from school");
+(function () {
+    const n = attNow(), D = PL("Minggu Senin Selasa Rabu Kamis Jumat Sabtu", "Sunday Monday Tuesday Wednesday Thursday Friday Saturday").split(" "), M = PL("Jan Feb Mar Apr Mei Jun Jul Agu Sep Okt Nov Des", "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec").split(" ");
+    document.getElementById("pTodayLab").textContent = PL("Hari ini · ", "Today · ") + D[n.getDay()] + ", " + n.getDate() + " " + M[n.getMonth()];
+})();
 
 let myChildren = [];
 let selectedChildId = "";
@@ -218,8 +210,14 @@ function renderPAttendance(all, autoAlpa, period, counted) {
     const today = localDateStr();
     const rec = all.find(function (r) { return r.date === today; });
     const statusKey = rec ? ({ Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[rec.status] || "") : "";
-    document.getElementById("pTodayStatus").textContent = statusKey ? tr(statusKey) : tr("teach_not_yet");
-    document.getElementById("pTodayTime").textContent = rec && rec.time ? rec.time.slice(0, 5).replace(":", ".") : "";
+    const stateTxt = { Hadir: PL("Sudah di sekolah", "At school"), Izin: PL("Izin hari ini", "On leave today"), Sakit: PL("Sakit hari ini", "Sick today"), Alpa: PL("Tidak masuk", "Absent") };
+    const pts = document.getElementById("pTodayStatus");
+    pts.textContent = rec ? (stateTxt[rec.status] || (statusKey ? tr(statusKey) : rec.status)) : PL("Belum absen", "Not checked in yet");
+    pts.className = "pv-state " + (rec ? String(rec.status || "").toLowerCase() : "none");
+    const hasTime = rec && rec.time && rec.status === "Hadir";
+    document.querySelector(".pv-sub").hidden = !!rec && rec.status !== "Hadir";
+    document.getElementById("pTodayTime").textContent = hasTime ? rec.time.slice(0, 5).replace(":", ".") : "–";
+    document.getElementById("pTodayOut").textContent = hasTime ? (rec.checkout_time ? String(rec.checkout_time).slice(0, 5).replace(":", ".") : PL("Belum", "Not yet")) : "–";
 
     const descEl = document.getElementById("pScoreDesc");
     if (total === 0) descEl.textContent = tr("score_no_data");
@@ -247,7 +245,7 @@ async function renderPSpp(childId) {
     const period = currentSppPeriod();
     const record = (paymentsRes.data || []).find(function (r) { return r.period === period; }) || null;
 
-    document.getElementById("pSppMonthLabel").textContent = "SPP " + new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long" });
+    document.getElementById("pSppMonthLabel").textContent = "SPP " + new Date(period + "-01T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "short" }).replace(".", "");
     document.getElementById("pSppAmount").textContent = formatRupiah(amount);
 
     // parents often pay: show where to, while this month isn't paid yet
@@ -258,13 +256,9 @@ async function renderPSpp(childId) {
     });
 
     const badge = document.getElementById("pSppStatusBadge");
-    if (!record) {
-        badge.textContent = tr("badge_spp_unpaid");
-        badge.className = "spp-status-badge unpaid";
-    } else {
-        badge.textContent = tr("badge_spp_" + record.status);
-        badge.className = "spp-status-badge " + record.status;
-    }
+    const st = record ? record.status : "unpaid";
+    badge.textContent = { approved: PL("Lunas", "Paid"), pending: PL("Diperiksa", "Checking"), rejected: PL("Ditolak", "Rejected"), unpaid: PL("Belum", "Unpaid") }[st] || tr("badge_spp_" + st);
+    badge.className = { approved: "ok", pending: "wait", rejected: "no", unpaid: "no" }[st] || "";
 }
 
 async function renderPDevelopment(childId) {
@@ -302,7 +296,10 @@ async function renderPDevelopment(childId) {
 
         const sorted = grades.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5);
 
-        gradesListEl.innerHTML = sorted.map(function (g) { return gradeCardHTML(g, ""); }).join("");
+        gradesListEl.innerHTML = sorted.map(function (g) {
+            const sc = Number(g.score);
+            return '<div class="ts-row"><div class="ts-row-t"><b>' + escapeHTML(g.subject || "-") + '</b><small>' + escapeHTML([g.period, g.note].filter(Boolean).join(" · ")) + '</small></div><span class="ts-score ' + (sc >= 85 ? "good" : sc < 70 ? "low" : "") + '">' + escapeHTML(Number.isInteger(sc) ? String(sc) : String(sc).replace(".", getLang() === "id" ? "," : ".")) + '</span></div>';
+        }).join("");
     }
 
     const actListEl = document.getElementById("pActivitiesList");
@@ -316,15 +313,7 @@ async function renderPDevelopment(childId) {
         const sorted = activities.slice().sort(function (a, b) { return new Date(b.date) - new Date(a.date); }).slice(0, 5);
 
         actListEl.innerHTML = sorted.map(function (item) {
-            return `
-                <div class="activity-card">
-                    <div class="activity-status-icon ${item.type}">${activityTypeIcon[item.type] || "•"}</div>
-                    <div class="activity-content">
-                        <strong>${escapeHTML(item.title)}</strong>
-                        <span>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}</span>
-                    </div>
-                </div>
-            `;
+            return `<div class="ts-row"><span class="pv-ic ${item.type}">${activityTypeIcon[item.type] || "•"}</span><div class="ts-row-t"><b>${escapeHTML(item.title)}</b><small>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}${item.description ? " · " + escapeHTML(item.description) : ""}</small></div></div>`;
         }).join("");
     }
 }
@@ -358,7 +347,9 @@ async function loadChildData() {
             if (childId === selectedChildId && !attDayOpen(localDateStr(), rules)) {
                 const a = rules.agenda[localDateStr()];
                 document.getElementById("pTodayStatus").textContent = tr("par_no_school");
-                document.getElementById("pTodayTime").textContent = a && a.label ? a.label : "";
+                document.getElementById("pTodayStatus").className = "pv-state off";
+                document.querySelector(".pv-sub").hidden = true;
+                if (a && a.label) document.getElementById("pTodayLab").textContent += " · " + a.label;
             }
         } catch (e) { /* keep "Not checked in" */ }
     }

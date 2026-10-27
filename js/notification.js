@@ -444,6 +444,11 @@ document.addEventListener("DOMContentLoaded", function () {
     getCurrentUser().then(async function (user) {
         if (!user) return;
 
+        // parents: only the important alerts, kept in the database (parent_alerts.sql)
+        let role = "";
+        try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
+        if (role === "orangtua" && await parentAlerts(user.id, inboxPage)) return;
+
         renderNotificationList(user.id);
 
         if (hasUnreadNotifications(user.id)) {
@@ -484,3 +489,44 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+
+// ===== Parents (parent_alerts.sql): child not checked in / Alpa, SPP unpaid or proof rejected, announcements =====
+const PA_IC = {
+    not_in: ['warn', '<path d="M10.3 4.2 2.6 17.6A2 2 0 0 0 4.3 20.6h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/>'],
+    absent: ['warn', '<path d="M10.3 4.2 2.6 17.6A2 2 0 0 0 4.3 20.6h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/>'],
+    spp_unpaid: ['money', '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/>'],
+    spp_rejected: ['warn', '<path d="M6 6l12 12M18 6 6 18"/>'],
+    announce: ['', '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>']
+};
+async function parentAlerts(userId, inboxPage) {
+    if (typeof supabaseClient === "undefined") return false;
+    const { data, error } = await supabaseClient.from("parent_alerts").select("id, kind, title, body, created_at, read_at").eq("parent_id", userId).order("created_at", { ascending: false }).limit(40);
+    if (error) return false;   // table not there yet: the usual in-app notifications
+    const list = data || [];
+    if (list.some(function (a) { return !a.read_at; })) showNotificationDot(); else hideNotificationDot();
+    if (!inboxPage) return true;
+    const box = document.getElementById("inboxList");
+    const L = function (id, en) { return getLang() === "id" ? id : en; };
+    const sub = document.getElementById("inboxSub");
+    if (sub) { sub.textContent = L("Hanya yang penting tentang anak Anda", "Only what matters about your child"); sub.hidden = false; }
+    const foot = '<p class="pa-foot">' + escapeHTML(L("Kabar harian (jam masuk, pulang, nilai) tetap bisa dilihat di halaman utama, tanpa notifikasi.", "Daily news (check-in, check-out, grades) stays on the home page, without notifications.")) + '</p>';
+    if (!list.length) {
+        box.innerHTML = '<div class="v3-empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><p>' + escapeHTML(L("Tidak ada yang perlu diperhatikan", "Nothing needs your attention")) + '</p></div>' + foot;
+        return true;
+    }
+    const today = localDateStr();
+    const groups = [[L("Hari ini", "Today"), []], [L("Sebelumnya", "Earlier"), []]];
+    list.forEach(function (a) { groups[localDateStr(new Date(a.created_at)) === today ? 0 : 1][1].push(a); });
+    box.innerHTML = groups.filter(function (g) { return g[1].length; }).map(function (g) {
+        return '<h2 class="v3-sec">' + escapeHTML(g[0]) + '</h2><div class="v3-list">' + g[1].map(function (a) {
+            const ic = PA_IC[a.kind] || PA_IC.announce;
+            return '<div class="v3-notif pa-' + ic[0] + (a.read_at ? "" : " unread") + '"><span class="v3-notif-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ic[1] + '</svg></span>' +
+                '<div class="v3-notif-body"><p>' + escapeHTML(a.title) + '</p>' + (a.body ? '<span class="pa-body">' + escapeHTML(a.body) + '</span>' : '') + '<small>' + escapeHTML(formatNotifTime(a.created_at)) + '</small></div>' +
+                (a.read_at ? '' : '<i class="pa-dot" aria-hidden="true"></i>') + '</div>';
+        }).join("") + '</div>';
+    }).join("") + foot;
+    const unread = list.filter(function (a) { return !a.read_at; }).map(function (a) { return a.id; });
+    if (unread.length) supabaseClient.from("parent_alerts").update({ read_at: new Date().toISOString() }).in("id", unread).then(function () { hideNotificationDot(); });
+    return true;
+}

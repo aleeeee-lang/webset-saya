@@ -4568,3 +4568,10 @@ html[data-theme="dark"] .v3-tile-hint{color:#9A9A9F}
 .bottom-nav.v3-nav a small{position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap}
 .bottom-nav.v3-nav a{padding:10px 0}
 .bottom-nav.v3-nav a>span:first-child{height:26px!important}
+/* ---- check-in: just "Hadir"; Izin / Sakit through a link ---- */
+html.att-simple .att-status-label,html.att-simple .v2-status-grid{display:none!important}
+.v3-leave-link{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:13px 14px;border-radius:16px;background:#fff;border:1px solid #E4E6EC;color:#14162B;text-decoration:none;font-size:14px;font-weight:700}
+.v3-leave-link span{flex:1}
+.v3-leave-link .v3-leave-go{color:#8A8FA8}
+html[data-theme="dark"] .v3-leave-link{background:#121212;border-color:#2C2C2E;color:#EDEDED}
+html.att-co-out .v3-leave-link,html.att-co-done .v3-leave-link,html.att-teacher .v3-leave-link{display:none}

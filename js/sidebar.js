@@ -42,7 +42,6 @@
         murid: [
             ["index.html", "home", "Home", "Beranda"],
             ["attendance.html", "checkin", "Check in", "Absensi"],
-            ["dashboard.html", "bar", "Dashboard", "Dasbor"],
             ["history.html", "wallet", "Savings", "Tabungan"],
             ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
             null,

@@ -19,16 +19,16 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261027i"
+        href="style.css?v=20261027j"
     >
-<script src="js/theme.js?v=20261027i"></script>
-    <script src="js/lang.js?v=20261027i"></script>
-<script src="js/lessons.js?v=20261027i"></script>
-<script src="js/tasks-core.js?v=20261027i"></script>
-<script src="js/champs.js?v=20261027i"></script>
-    <script src="js/toast.js?v=20261027i"></script>
-<script src="js/fit.js?v=20261027i" defer></script>
-    <script src="js/transition.js?v=20261027i"></script>
+<script src="js/theme.js?v=20261027j"></script>
+    <script src="js/lang.js?v=20261027j"></script>
+<script src="js/lessons.js?v=20261027j"></script>
+<script src="js/tasks-core.js?v=20261027j"></script>
+<script src="js/champs.js?v=20261027j"></script>
+    <script src="js/toast.js?v=20261027j"></script>
+<script src="js/fit.js?v=20261027j" defer></script>
+    <script src="js/transition.js?v=20261027j"></script>
 
 </head>
 
@@ -105,15 +105,15 @@
     ========================== -->
 
     <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027i"></script>
+<script src="js/nav.js?v=20261027j"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027i"></script>
-<script src="js/auth.js?v=20261027i"></script>
+<script src="js/supabase.js?v=20261027j"></script>
+<script src="js/auth.js?v=20261027j"></script>
 
-<script src="js/notification.js?v=20261027i"></script>
-<script src="js/live-sessions.js?v=20261027i"></script>
-<script src="js/admin-home.js?v=20261027i"></script>
+<script src="js/notification.js?v=20261027j"></script>
+<script src="js/live-sessions.js?v=20261027j"></script>
+<script src="js/admin-home.js?v=20261027j"></script>
 
 <script>
 function homeT(key) {
@@ -384,20 +384,7 @@ loadHome();
 </script>
 
     <script>
-let touchStartX = 0;
-let touchEndX = 0;
-
-document.addEventListener("touchstart", e => {
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-document.addEventListener("touchend", e => {
-    touchEndX = e.changedTouches[0].screenX;
-
-    if (touchEndX - touchStartX < -80) {
-        window.location.href = document.documentElement.classList.contains("is-admin-home") ? "admin-attendance.html" : "attendance.html";
-    }
-});
+// (the old swipe-to-page code is gone: js/swipe.js follows the bottom menu)
 </script>
 </body>
 

@@ -1,600 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Manage Attendance - Attendreem</title>
+<title>Absensi - Attendreem</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027f">
-<script src="js/theme.js?v=20261027f"></script>
-<script src="js/lang.js?v=20261027f"></script>
-<script src="js/toast.js?v=20261027f"></script>
-<script src="js/fit.js?v=20261027f" defer></script>
+<link rel="stylesheet" href="style.css?v=20261027g">
+<script src="js/theme.js?v=20261027g"></script>
+<script src="js/lang.js?v=20261027g"></script>
+<script src="js/toast.js?v=20261027g"></script>
 </head>
 
-<body>
+<body class="v2-page">
 
-<main class="attendance-page">
+<main class="v2-wrap v3-page tc-page aa-page">
 
-    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
-        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </button>
-        <h2 style="margin:0" data-i18n="page_manage_attendance">Manage Attendance</h2>
-    </section>
+    <header class="v2-head v3-head aa-head">
+        <h1 id="aaTitle">Absensi</h1>
+        <button type="button" class="aa-dl" id="aaCsv"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span id="aaCsvT">Unduh</span></button>
+    </header>
 
-    <!-- TODAY'S ATTENDANCE -->
-    <section class="attendance-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px">
-            <div class="card-label" data-i18n="label_today_attendance" style="margin:0">Today's Attendance</div>
-            <button type="button" id="remindAttendanceBtn" class="am-btn" onclick="sendAttendanceReminder()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#3F6212;display:flex;align-items:center;gap:6px;white-space:nowrap">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" fill="currentColor"/><path d="M18 16V11C18 7.9 16.4 5.3 13.5 4.6V4C13.5 3.2 12.8 2.5 12 2.5C11.2 2.5 10.5 3.2 10.5 4V4.6C7.6 5.3 6 7.9 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                <span data-i18n="btn_remind_missing_attendance">Remind Who's Missing</span>
-            </button>
-        </div>
-        <div class="am-group" id="todayGroup" role="tablist"><button type="button" class="on" data-g="murid" data-i18n="label_students_group">Siswa</button><button type="button" data-g="guru" data-i18n="opt_group_teachers">Guru</button></div>
-        <div id="todayList" style="display:flex;flex-direction:column;gap:8px"></div>
-    </section>
+    <div class="aa-date">
+        <button type="button" id="aaPrev" aria-label="Hari sebelumnya"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <label class="aa-date-mid"><span id="aaDateT">&nbsp;</span><input type="date" id="aaDate" aria-label="Tanggal"></label>
+        <button type="button" id="aaNext" aria-label="Hari berikutnya"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
 
-    <!-- ATTENDANCE TREND -->
-    <section class="attendance-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <div class="card-label" data-i18n="label_attendance_trend" style="margin:0">Attendance Trend (Last 14 Days)</div>
-            <span id="trendRangeLabel" style="font-size:11px;color:#999">-</span>
-        </div>
-        <svg id="trendChartSvg" viewBox="0 0 280 110" style="width:100%;height:110px;display:block;margin-top:8px"></svg>
-        <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap">
-            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block"></i><span data-i18n="trend_legend_good">90%+</span></span>
-            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></i><span data-i18n="trend_legend_ok">75-89%</span></span>
-            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#777"><i style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block"></i><span data-i18n="trend_legend_low">&lt;75%</span></span>
-        </div>
-    </section>
+    <div class="tc-classes" id="aaClasses" role="tablist"></div>
 
-    <!-- FILTER + HISTORY -->
-    <section class="attendance-card">
+    <div class="aa-stats" id="aaStats"></div>
 
-        <div class="card-label" data-i18n="label_filter_records">Filter Records</div>
+    <div class="aa-tools">
+        <label class="tc-search"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="aaQ" autocomplete="off" spellcheck="false" placeholder="Cari nama"></label>
+        <button type="button" class="aa-remind" id="aaRemind" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span id="aaRemindT"></span></button>
+    </div>
 
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-            <select id="filterClass" class="am-field" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
-                <option value="all" data-i18n="option_all_classes">All Classes</option>
-            </select>
+    <div class="tc-list" id="aaList"><div class="tc-empty">&nbsp;</div></div>
+    <button type="button" class="ah-more aa-more" id="aaMore" hidden></button>
 
-            <input type="date" id="filterDate" class="am-field" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:13px">
-        </div>
-
-        <button type="button" id="exportCsvBtn" class="am-btn" onclick="exportFilteredCsv()" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#14162B;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 4V15M12 15L8 11M12 15L16 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17V18.5C5 19.33 5.67 20 6.5 20H17.5C18.33 20 19 19.33 19 18.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <span data-i18n="btn_export_csv">Export to CSV</span>
-        </button>
-
-        <div id="filteredList" style="display:flex;flex-direction:column;gap:8px"></div>
-
-    </section>
-
-    <!-- ADD / CORRECT ATTENDANCE -->
-    <section class="attendance-card">
-
-        <div class="card-label" data-i18n="label_add_correct_attendance">Add or Correct Attendance</div>
-
-        <div style="display:flex;flex-direction:column;gap:10px">
-
-           <select id="studentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="" data-i18n="option_select_student">Select student...</option>
-            </select>
-
-                       <input type="date" id="recordDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-
-           <select id="recordStatus" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="Hadir" data-i18n="status_present">Present</option>
-                <option value="Izin" data-i18n="status_permission">Permission</option>
-                <option value="Sakit" data-i18n="status_sick">Sick</option>
-                <option value="Alpa" data-i18n="status_absent">Absent</option>
-            </select>
-
-           <textarea id="recordReason" class="am-field" rows="2" data-i18n-placeholder="placeholder_reason_optional" placeholder="Reason (optional for Present)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px;font-family:inherit"></textarea>
-
-            <button type="button" class="submit-button" id="saveRecordBtn" data-needs="studentSelect,recordDate" onclick="saveRecord()" style="margin-top:2px" data-i18n="btn_save_attendance">
-                Save Attendance
-            </button>
-
-        </div>
-
+    <h2 class="v3-sec" id="aaTrendH">Tren 14 hari</h2>
+    <section class="ts-card aa-trend">
+        <svg id="trendChartSvg" viewBox="0 0 280 110" style="width:100%;height:110px;display:block"></svg>
+        <div class="aa-legend"><span><i style="background:#22c55e"></i>90%+</span><span><i style="background:#f59e0b"></i>75–89%</span><span><i style="background:#ef4444"></i>&lt;75%</span><small id="trendRangeLabel"></small></div>
     </section>
 
 </main>
 
+<nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027g"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027f"></script>
-<script src="js/auth.js?v=20261027f"></script>
+<script src="js/supabase.js?v=20261027g"></script>
+<script src="js/auth.js?v=20261027g"></script>
+<script src="js/teacher-core.js?v=20261027g"></script>
 
 <script>
+const L = TC.L;
+const ID = getLang() === "id";
+document.getElementById("aaTitle").textContent = L("Absensi", "Attendance");
+document.getElementById("aaCsvT").textContent = L("Unduh", "Download");
+document.getElementById("aaQ").placeholder = L("Cari nama", "Search name");
+document.getElementById("aaTrendH").textContent = L("Tren 14 hari", "Last 14 days");
 
-let allStudents = [];
-let allTeachers = [];   // teachers check in too (teacher_attendance.sql), as the group "Guru"
-let todayGroup = "murid";
+let me = null, students = [], teachers = [], recs = {}, scope = "all", day = "", focus = "", q = "", shown = 60;
+const DAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAY_L = ID ? ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] : DAYS_EN;
+const MON_L = ID ? ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const ST = { Hadir: L("Hadir", "Present"), Izin: L("Izin", "Leave"), Sakit: L("Sakit", "Sick"), Alpa: L("Alpa", "Absent") };
 
-function todayStr() {
-    const now = new Date();
-    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
-}
+function addDays(s, n) { const d = new Date(s + "T00:00:00"); d.setDate(d.getDate() + n); return localDateStr(d); }
+function hm(t) { return t ? String(t).slice(0, 5).replace(":", ".") : ""; }
 
-function weekdayOf(dateStr) {
-    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { weekday: "long" });
-}
-
-const statusIconSvg = {
-    Hadir: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M5 13L9.5 17.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    Izin: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8V13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>',
-    Sakit: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
-    Alpa: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
-};
-
-const unknownIconSvg =
-    '<svg viewBox="0 0 24 24" width="17" height="17" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.3C9.7 8 10.8 7 12 7C13.4 7 14.5 8.1 14.5 9.4C14.5 10.9 12 11 12 13.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.2" r="1" fill="currentColor"/></svg>';
-
-const statusKeyMap = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" };
-function statusLabelOf(status) {
-    const entry = translations[statusKeyMap[status]];
-    return (entry ? entry[getLang()] : "") || status || "";
-}
-async function checkAdmin() {
+async function start() {
     const user = await requireLogin();
     if (!user) return;
-
-    const { data: profile, error } = await supabaseClient
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-    if (error || !profile || profile.role !== "admin") {
-        alert(translations.alert_admin_only[getLang()]);
-        window.location.href = "index.html";
-        return;
-    }
-
-    await loadStudents();
-    document.getElementById("filterDate").value = todayStr();
-    document.getElementById("recordDate").value = todayStr();
-    await loadToday();
-    await loadFiltered();
-    await loadTrendChart();
+    const prof = await attMyProfile(user.id);
+    if (!prof || prof.role !== "admin") { location.replace("index.html"); return; }
+    me = user;
+    const [s, t] = await Promise.all([
+        supabaseClient.from("profiles").select("id, name, class, status").eq("role", "murid").order("name", { ascending: true }),
+        supabaseClient.from("profiles").select("id, name, status").eq("role", "guru").order("name", { ascending: true })
+    ]);
+    students = ((s.data) || []).filter(x => x.status !== "inactive");
+    teachers = ((t.data) || []).filter(x => x.status !== "inactive").map(x => ({ id: x.id, name: x.name, class: "Guru" }));
+    const classes = Array.from(new Set(students.map(x => x.class).filter(c => c && c !== "Guru"))).sort((a, b) => a.localeCompare(b, "id", { numeric: true }));
+    const chips = [["all", L("Semua kelas", "All classes")]].concat(classes.map(c => [c, c])).concat(teachers.length ? [["Guru", L("Guru", "Teachers")]] : []);
+    document.getElementById("aaClasses").innerHTML = chips.map(c => `<button type="button" role="tab" data-c="${escapeHTML(c[0])}">${escapeHTML(c[1])}</button>`).join("");
+    day = new URLSearchParams(location.search).get("date") || localDateStr();
+    await loadDay();
+    loadTrend();
 }
 
-async function loadStudents() {
-
-    const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("id, name, class")
-        .eq("role", "murid")
-        .order("name", { ascending: true });
-
-    if (error) {
-        console.error(error);
-        return;
-    }
-
-    allStudents = data;
-    const { data: tData } = await supabaseClient.from("profiles").select("id, name, class, status").eq("role", "guru").order("name", { ascending: true });
-    allTeachers = (tData || []).filter(function (t) { return t.status !== "inactive"; }).map(function (t) { return { id: t.id, name: t.name, class: "Guru" }; });
-
-    const classSet = new Set(data.map(s => s.class).filter(Boolean));
-    const classSelect = document.getElementById("filterClass");
-    classSet.forEach(function (c) {
-        if (c === "Guru") return;
-        const opt = document.createElement("option");
-        opt.value = c;
-        opt.textContent = c;
-        classSelect.appendChild(opt);
-    });
-    if (allTeachers.length) {
-        const opt = document.createElement("option");
-        opt.value = "Guru";
-        opt.textContent = translations.opt_group_teachers[getLang()];
-        classSelect.appendChild(opt);
-    }
-
-    const studentSelect = document.getElementById("studentSelect");
-    data.forEach(function (s) {
-        const opt = document.createElement("option");
-        opt.value = s.id;
-        opt.textContent = s.name + (s.class ? " (" + s.class + ")" : "");
-        studentSelect.appendChild(opt);
-    });
-    if (allTeachers.length) {
-        const grp = document.createElement("optgroup");
-        grp.label = translations.opt_group_teachers[getLang()];
-        allTeachers.forEach(function (t) {
-            const opt = document.createElement("option");
-            opt.value = t.id;
-            opt.textContent = t.name;
-            grp.appendChild(opt);
-        });
-        studentSelect.appendChild(grp);
-    } else {
-        document.getElementById("todayGroup").hidden = true;
-    }
-    document.getElementById("todayGroup").addEventListener("click", function (e) {
-        const b = e.target.closest("button[data-g]");
-        if (!b || b.dataset.g === todayGroup) return;
-        todayGroup = b.dataset.g;
-        this.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
-        loadToday();
-    });
-
-    classSelect.addEventListener("change", loadFiltered);
-    classSelect.addEventListener("change", loadTrendChart);
-    document.getElementById("filterDate").addEventListener("change", loadFiltered);
+function people() {
+    if (scope === "Guru") return teachers;
+    if (scope === "all") return students;
+    return students.filter(x => x.class === scope);
 }
 
-/* REMINDER: STUDENTS MISSING TODAY'S ATTENDANCE */
-
-async function sendAttendanceReminder() {
-    const lang = getLang();
-    const user = await requireLogin();
-    if (!user) return;
-
-    const btn = document.getElementById("remindAttendanceBtn");
-    const today = todayStr();
-
-    const { data: records, error: recErr } = await supabaseClient
-        .from("attendance")
-        .select("user_id")
-        .eq("date", today);
-
-    if (recErr) {
-        showToast(translations.toast_reminder_failed[lang] + recErr.message, "error");
-        return;
-    }
-
-    const checkedInIds = new Set((records || []).map(function (r) { return r.user_id; }));
-    const missing = (todayGroup === "guru" ? allTeachers : allStudents).filter(function (s) { return !checkedInIds.has(s.id); });
-
-    if (missing.length === 0) {
-        showToast(translations.toast_nobody_to_remind[lang], "success");
-        return;
-    }
-
-    btn.disabled = true;
-
-    const message = translations.text_attendance_reminder_message[lang];
-    const rows = missing.map(function (s) {
-        return { message: message, target_type: "student", target_value: s.id, created_by: user.id };
-    });
-
-    const { error } = await supabaseClient.from("broadcasts").insert(rows);
-
-    btn.disabled = false;
-
-    if (error) {
-        showToast(translations.toast_reminder_failed[lang] + error.message, "error");
-        return;
-    }
-
-    showToast(translations.toast_reminder_sent[lang].replace("{count}", missing.length), "success");
+async function loadDay() {
+    const d = new Date(day + "T00:00:00");
+    document.getElementById("aaDateT").textContent = DAY_L[d.getDay()] + ", " + d.getDate() + " " + MON_L[d.getMonth()] + (d.getFullYear() !== attNow().getFullYear() ? " " + d.getFullYear() : "");
+    document.getElementById("aaDate").value = day;
+    document.getElementById("aaNext").disabled = day >= localDateStr();
+    const { data } = await supabaseClient.from("attendance").select("*").eq("date", day);
+    recs = {};
+    (data || []).forEach(r => { recs[r.user_id] = r; });
+    shown = 60;
+    render();
 }
 
-/* ATTENDANCE TREND CHART (last 14 days) */
+function render() {
+    document.querySelectorAll("#aaClasses button").forEach(b => { const on = b.dataset.c === scope; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+    const list = people();
+    const cnt = { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0, none: 0 };
+    list.forEach(p => { const r = recs[p.id]; if (!r) cnt.none++; else if (cnt[r.status] != null) cnt[r.status]++; });
+    const tiles = [["Hadir", ST.Hadir, cnt.Hadir, ""], ["Izin", ST.Izin, cnt.Izin, ""], ["Sakit", ST.Sakit, cnt.Sakit, ""], ["none", L("Belum", "Not yet"), cnt.none, cnt.none ? "no" : ""]];
+    if (cnt.Alpa) tiles.splice(3, 0, ["Alpa", ST.Alpa, cnt.Alpa, "no"]);
+    const st = document.getElementById("aaStats");
+    st.style.setProperty("--n", tiles.length);
+    st.innerHTML = tiles.map(t => `<button type="button" class="ts-stat${focus === t[0] ? " on" : ""}" data-f="${t[0]}"><span>${t[1]}</span><b class="${t[3]}">${t[2]}</b></button>`).join("");
 
-function trendBarColor(pct) {
-    if (pct >= 90) return "#22c55e";
-    if (pct >= 75) return "#f59e0b";
-    return "#ef4444";
-}
+    const today = day === localDateStr();
+    const rb = document.getElementById("aaRemind");
+    rb.hidden = !(today && cnt.none);
+    document.getElementById("aaRemindT").textContent = L("Ingatkan " + cnt.none, "Remind " + cnt.none);
 
-async function loadTrendChart() {
-    const selectedClass = document.getElementById("filterClass").value;
-    const scopedStudents = selectedClass === "Guru" ? allTeachers : selectedClass === "all" ? allStudents : allStudents.filter(function (s) { return s.class === selectedClass; });
-    const totalStudents = scopedStudents.length;
-
-    const days = [];
-    for (let i = 13; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        days.push(d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"));
-    }
-
-    let query = supabaseClient
-        .from("attendance")
-        .select("user_id,date,status")
-        .gte("date", days[0])
-        .lte("date", days[days.length - 1]);
-
-    const { data, error } = await query;
-    const records = (error || !data) ? [] : data;
-
-    const scopedIds = new Set(scopedStudents.map(function (s) { return s.id; }));
-    const byDate = {};
-    days.forEach(function (d) { byDate[d] = 0; });
-
-    records.forEach(function (r) {
-        if (!scopedIds.has(r.user_id)) return;   // "all" = every student; teachers only under "Guru"
-        if (r.status === "Hadir" && byDate.hasOwnProperty(r.date)) byDate[r.date]++;
+    const needle = q.toLowerCase();
+    let rows = list.filter(p => {
+        const r = recs[p.id];
+        if (focus === "none" && r) return false;
+        if (focus && focus !== "none" && (!r || r.status !== focus)) return false;
+        return !needle || (p.name || "").toLowerCase().includes(needle);
     });
-
-    const svg = document.getElementById("trendChartSvg");
-    const barWidth = 14;
-    const gap = 6;
-    const chartHeight = 90;
-    const baseY = 100;
-
-    const bars = days.map(function (d, i) {
-        const pct = totalStudents > 0 ? Math.round((byDate[d] / totalStudents) * 100) : 0;
-        const barHeight = Math.max(2, (pct / 100) * chartHeight);
-        const x = i * (barWidth + gap) + 4;
-        const y = baseY - barHeight;
-        const color = trendBarColor(pct);
-        const dateLabel = new Date(d + "T00:00:00").getDate();
-
-        return `
-            <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3" fill="${color}">
-                <title>${d}: ${pct}%</title>
-            </rect>
-            <text x="${x + barWidth / 2}" y="108" text-anchor="middle" font-size="7" fill="#aaa">${dateLabel}</text>
-        `;
+    // not checked in first on today, then by name
+    if (today && !focus) rows.sort((a, b) => (recs[a.id] ? 1 : 0) - (recs[b.id] ? 1 : 0) || (a.name || "").localeCompare(b.name || "", "id"));
+    const box = document.getElementById("aaList");
+    const more = document.getElementById("aaMore");
+    if (!rows.length) { box.innerHTML = `<div class="tc-empty">${needle ? L("Tidak ada nama itu", "No match") : L("Tidak ada data", "Nothing here")}</div>`; more.hidden = true; return; }
+    box.innerHTML = rows.slice(0, shown).map(p => {
+        const r = recs[p.id];
+        const sub = [scope === "all" ? p.class : "", r && r.time ? hm(r.time) + (r.checkout_time ? " → " + hm(r.checkout_time) : "") : "", r && r.reason ? r.reason : "", r && r.checkout_reason ? r.checkout_reason : ""].filter(Boolean).join(" · ");
+        const pill = !r ? `<span class="tc-pill">${L("Belum", "Not yet")}</span>` : `<span class="tc-pill ${r.status === "Hadir" ? "ok" : r.status === "Izin" ? "izin" : "no"}">${escapeHTML(ST[r.status] || r.status || "-")}</span>`;
+        const pics = r ? [r.photo_url ? `<span class="aa-pic" data-p="${escapeHTML(r.photo_url)}"></span>` : "", r.proof_url ? `<span class="aa-pic doc" data-p="${escapeHTML(r.proof_url)}"></span>` : ""].join("") : "";
+        return `<button type="button" class="ts-row aa-row" data-u="${p.id}"><div class="ts-row-t"><b>${escapeHTML(p.name || "-")}</b>${sub ? `<small>${escapeHTML(sub)}</small>` : ""}</div>${pics}${pill}</button>`;
     }).join("");
-
-    svg.innerHTML = bars;
-
-    const rangeLabel = dayMonthLabel(new Date(days[0] + "T00:00:00")) + " - " + dayMonthLabel(new Date(days[days.length - 1] + "T00:00:00"));
-    document.getElementById("trendRangeLabel").textContent = rangeLabel;
+    more.hidden = rows.length <= shown;
+    more.textContent = L("Tampilkan lagi (" + (rows.length - shown) + ")", "Show more (" + (rows.length - shown) + ")");
+    signPics();
 }
 
-async function renderRow(item, showDate) {
-    const cls = (item.status || "").toLowerCase();
-    const idl = getLang() === "id";
-    // check-out (attendance_checkout.sql): "07:02 → 14:05"
-    const timeTxt = item.time ? String(item.time).slice(0, 5) + (item.checkout_time ? " → " + String(item.checkout_time).slice(0, 5) : "") : "";
-    const outNote = item.checkout_reason ? " · " + item.checkout_reason : "";
-    const sub = (showDate ? item.date + " · " : "") + (timeTxt ? timeTxt + " · " : "") + (item.reason || statusLabelOf(item.status) || "-") + outNote;
-
-    let photoHtml = "";
-
-    if (item.photo_url) {
-        const { data: signedData } = await supabaseClient.storage
-            .from("attendance-photos")
-            .createSignedUrl(item.photo_url, 3600);
-
-        if (signedData && signedData.signedUrl) {
-            const url = signedData.signedUrl;
-            photoHtml = `<img src="${safeURL(url)}" onclick="window.open('${safeURL(url)}', '_blank')" style="width:38px;height:38px;border-radius:10px;object-fit:cover;cursor:pointer;flex:none">`;
-        }
+// selfie / letter thumbnails, private files with a 1-hour link
+const picCache = {};
+async function signPics() {
+    const els = Array.from(document.querySelectorAll(".aa-pic[data-p]"));
+    const need = Array.from(new Set(els.map(e => e.dataset.p).filter(p => !picCache[p])));
+    const bucket = supabaseClient.storage.from("attendance-photos");
+    if (need.length && bucket.createSignedUrls) {
+        const { data } = await bucket.createSignedUrls(need, 3600);
+        (data || []).forEach(x => { if (x && x.signedUrl && x.path) picCache[x.path] = x.signedUrl; });
+    } else {
+        for (const p of need) { const { data } = await bucket.createSignedUrl(p, 3600); if (data && data.signedUrl) picCache[p] = data.signedUrl; }
     }
-
-    // Izin / Sakit: photo of the letter (attendance_proof.sql)
-    if (item.proof_url) {
-        const { data: pd } = await supabaseClient.storage.from("attendance-photos").createSignedUrl(item.proof_url, 3600);
-        if (pd && pd.signedUrl) {
-            const pu = safeURL(pd.signedUrl);
-            photoHtml += `<a class="am-proof" href="${pu}" target="_blank" rel="noopener" title="${getLang() === "id" ? "Foto surat" : "Letter photo"}"><img src="${pu}" alt=""><i>${getLang() === "id" ? "Surat" : "Letter"}</i></a>`;
-        }
-    }
-
-    return `
-        <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px">
-            <div class="history-status-icon am-icon ${cls}" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex:none">${statusIconSvg[item.status] || unknownIconSvg}</div>
-            <div style="flex:1;min-width:0">
-                <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(item.name || "-")}</strong>
-                <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(item.class || "-")} · ${escapeHTML(sub)}</span>
-            </div>
-            ${photoHtml}
-        </div>
-    `;
-}
-async function loadToday() {
-
-    const today = todayStr();
-
-    const { data: records } = await supabaseClient
-        .from("attendance")
-        .select("*")
-        .eq("date", today);
-
-    const byUser = {};
-    (records || []).forEach(function (r) { byUser[r.user_id] = r; });
-
-    const container = document.getElementById("todayList");
-
-    const rows = [];
-
-    for (const s of (todayGroup === "guru" ? allTeachers : allStudents)) {
-        const r = byUser[s.id];
-
-        if (r) {
-            rows.push(await renderRow(r, false));
-            continue;
-        }
-
-        rows.push(`
-            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8f8ff;border-radius:12px;opacity:.6">
-                <div class="am-icon" style="width:38px;height:38px;border-radius:13px;background:#eee;display:flex;align-items:center;justify-content:center;color:#94a3b8">${unknownIconSvg}</div>
-                <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(s.name)}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(s.class || "-")} · ${translations.text_not_checked_in[getLang()]}</span>
-                </div>
-            </div>
-        `);
-    }
-
-    container.innerHTML = rows.join("") || "<p style='color:#888;font-size:13px'>" + translations.text_no_students[getLang()] + "</p>";
+    els.forEach(e => { const u = picCache[e.dataset.p]; if (u) e.style.backgroundImage = "url('" + u.replace(/'/g, "%27") + "')"; else e.remove(); });
 }
 
-let currentFilteredData = [];
-
-async function loadFiltered() {
-
-    const cls = document.getElementById("filterClass").value;
-    const date = document.getElementById("filterDate").value;
-
-    let query = supabaseClient.from("attendance").select("*").eq("date", date);
-    if (cls !== "all") query = query.eq("class", cls);
-    else query = query.or("class.is.null,class.neq.Guru");   // teachers only under "Guru"
-
-    const { data, error } = await query.order("time", { ascending: true });
-
-    const container = document.getElementById("filteredList");
-
-    if (error) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_failed_to_load[getLang()] + "</p>";
-        currentFilteredData = [];
-        return;
-    }
-
-    currentFilteredData = data || [];
-
-    if (!data || data.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_records_filter[getLang()] + "</p>";
-        return;
-    }
-
-      const rows = [];
-    for (const r of data) {
-        rows.push(await renderRow(r, false));
-    }
-
-    container.innerHTML = rows.join("");
-}
-
-function csvEscape(value) {
-    const str = (value === null || value === undefined) ? "" : String(value);
-    if (/[",\n]/.test(str)) {
-        return '"' + str.replace(/"/g, '""') + '"';
-    }
-    return str;
-}
-
-function exportFilteredCsv() {
-
-    if (!currentFilteredData || currentFilteredData.length === 0) {
-        showToast(translations.toast_no_records_export[getLang()], "error");
-        return;
-    }
-
-    const headers = ["Name", "Class", "Date", "Day", "Time", "Status", "Reason", "Check-out", "Check-out note"];
-
-    const lines = [headers.join(",")];
-
-    currentFilteredData.forEach(function (r) {
-        lines.push([
-            csvEscape(r.name),
-            csvEscape(r.class),
-            csvEscape(r.date),
-            csvEscape(r.day),
-            csvEscape(r.time),
-            csvEscape(statusLabelOf(r.status)),
-            csvEscape(r.reason),
-            csvEscape(r.checkout_time ? String(r.checkout_time).slice(0, 5) : ""),
-            csvEscape(r.checkout_reason)
-        ].join(","));
+/* correct one person's day */
+async function edit(p) {
+    const r = recs[p.id];
+    const pics = r ? [r.photo_url, r.proof_url].filter(Boolean) : [];
+    const v = await TC.sheet({
+        title: p.name || "-",
+        sub: (p.class || "") + " · " + document.getElementById("aaDateT").textContent + (r && r.time ? " · " + L("absen ", "in ") + hm(r.time) : ""),
+        ok: L("Simpan", "Save"), noFocus: true,
+        danger: pics.length ? L("Lihat foto", "Photo") : "",
+        fields: [
+            { name: "status", label: L("Status", "Status"), type: "seg", value: r ? r.status : "", options: [["Hadir", ST.Hadir], ["Izin", ST.Izin], ["Sakit", ST.Sakit], ["Alpa", ST.Alpa]] },
+            { name: "reason", label: L("Keterangan", "Note"), value: r ? (r.reason || "") : "", optional: true }
+        ],
+        check: v => v.status ? "" : L("Pilih statusnya dulu", "Pick a status")
     });
-
-    const csvContent = "﻿" + lines.join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    const cls = document.getElementById("filterClass").value;
-    const date = document.getElementById("filterDate").value || "all-dates";
-    const fileName = "attendance_" + date + (cls !== "all" ? "_" + cls : "") + ".csv";
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    showToast(translations.toast_csv_exported[getLang()], "success");
-}
-
-
-async function saveRecord() {
-
-    const userId = document.getElementById("studentSelect").value;
-    const date = document.getElementById("recordDate").value;
-    const status = document.getElementById("recordStatus").value;
-    const reason = document.getElementById("recordReason").value.trim();
-    const btn = document.getElementById("saveRecordBtn");
-
-    const lang = getLang();
-
-    if (!userId || !date) {
-        showToast(translations.toast_select_student_date[lang], "error");
+    if (!v) return;
+    if (v.__danger) {
+        await signPics();
+        pics.forEach(x => { const u = picCache[x]; if (u) window.open(u, "_blank", "noopener"); });
         return;
     }
+    if (r && r.status === v.status && (r.reason || "") === v.reason) { attNoChange(); return; }
+    const payload = { user_id: p.id, name: p.name || "-", class: p.class || null, date: day, day: DAYS_EN[new Date(day + "T00:00:00").getDay()], status: v.status, reason: v.reason };
+    const res = r ? await supabaseClient.from("attendance").update(payload).eq("id", r.id) : await supabaseClient.from("attendance").insert([payload]);
+    if (res.error) { showToast(L("Gagal menyimpan: ", "Could not save: ") + res.error.message, "error"); return; }
+    showToast(r ? L("Absen diperbaiki", "Attendance corrected") : L("Absen ditambahkan", "Attendance added"), "success");
+    await loadDay();
+}
 
-    const student = allStudents.find(s => s.id === userId) || allTeachers.find(s => s.id === userId);
-
+/* reminder to the ones missing today */
+async function remind() {
+    const btn = document.getElementById("aaRemind");
+    const missing = people().filter(p => !recs[p.id]);
+    if (!missing.length) return;
+    const ok = await attConfirmSafe(L("Kirim pengingat ke " + missing.length + " orang?", "Remind " + missing.length + " people?"), L("Mereka akan dapat notifikasi untuk absen.", "They get a notification to check in."));
+    if (!ok) return;
     btn.disabled = true;
-    btn.textContent = translations.btn_saving[lang];
-
-    const { data: existing } = await supabaseClient
-        .from("attendance")
-        .select("id,status,reason")
-        .eq("user_id", userId)
-        .eq("date", date)
-        .maybeSingle();
-    if (existing && existing.status === status && (existing.reason || "") === reason) {
-        btn.disabled = false;
-        btn.textContent = translations.btn_save_attendance[lang];
-        attNoChange();
-        return;
-    }
-
-    const payload = {
-        user_id: userId,
-        name: student ? student.name : "-",
-        class: student ? student.class : null,
-        date: date,
-        day: weekdayOf(date),
-        status: status,
-        reason: reason
-    };
-
-    let error;
-
-    if (existing) {
-        const res = await supabaseClient.from("attendance").update(payload).eq("id", existing.id);
-        error = res.error;
-    } else {
-        const res = await supabaseClient.from("attendance").insert([payload]);
-        error = res.error;
-    }
-
+    const msg = translations.text_attendance_reminder_message[getLang()];
+    const { error } = await supabaseClient.from("broadcasts").insert(missing.map(s => ({ message: msg, target_type: "student", target_value: s.id, created_by: me.id })));
     btn.disabled = false;
-    btn.textContent = translations.btn_save_attendance[lang];
+    if (error) { showToast(L("Gagal: ", "Failed: ") + error.message, "error"); return; }
+    showToast(L("Pengingat terkirim ke " + missing.length + " orang", "Sent to " + missing.length), "success");
+}
+function attConfirmSafe(title, text) { return window.attConfirm ? attConfirm({ title: title, text: text, ok: L("Kirim", "Send") }) : Promise.resolve(confirm(title)); }
 
-    if (error) {
-        showToast(translations.toast_save_record_failed[lang] + error.message, "error");
-        return;
-    }
-
-    showToast(existing ? translations.toast_attendance_corrected[lang] : translations.toast_attendance_added[lang], "success");
-    document.getElementById("recordReason").value = "";
-
-    await loadToday();
-    await loadFiltered();
+/* CSV of the day, in the chosen scope (with who has no record) */
+function csv() {
+    const e = v => { const s = v == null ? "" : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const lines = [["Name", "Class", "Date", "Day", "Time", "Status", "Reason", "Check-out", "Check-out note"].join(",")];
+    people().forEach(p => {
+        const r = recs[p.id] || {};
+        lines.push([p.name, p.class, day, r.day || DAYS_EN[new Date(day + "T00:00:00").getDay()], r.time ? String(r.time).slice(0, 5) : "", r.status ? (ST[r.status] || r.status) : L("Belum absen", "Not checked in"), r.reason, r.checkout_time ? String(r.checkout_time).slice(0, 5) : "", r.checkout_reason].map(e).join(","));
+    });
+    const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = ("absensi_" + day + (scope !== "all" ? "_" + scope : "") + ".csv").replace(/[^a-zA-Z0-9._-]/g, "_");
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    showToast(L("File CSV diunduh", "CSV downloaded"), "success");
 }
 
-checkAdmin();
-
-function goBack() {
-    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-        history.back();
-    } else {
-        window.location.href = "settings.html";
-    }
+/* last 14 days (Hadir share of the chosen scope) */
+async function loadTrend() {
+    const scoped = people(), total = scoped.length, ids = new Set(scoped.map(x => x.id));
+    const days = []; for (let i = 13; i >= 0; i--) days.push(addDays(localDateStr(), -i));
+    const { data } = await supabaseClient.from("attendance").select("user_id,date,status").gte("date", days[0]).lte("date", days[13]);
+    const by = {}; days.forEach(d => by[d] = 0);
+    (data || []).forEach(r => { if (ids.has(r.user_id) && r.status === "Hadir" && by[r.date] != null) by[r.date]++; });
+    const col = p => p >= 90 ? "#22c55e" : p >= 75 ? "#f59e0b" : "#ef4444";
+    document.getElementById("trendChartSvg").innerHTML = days.map((d, i) => {
+        const p = total ? Math.round(by[d] / total * 100) : 0, h = Math.max(2, p / 100 * 90), x = i * 20 + 4;
+        return `<rect x="${x}" y="${100 - h}" width="14" height="${h}" rx="3" fill="${col(p)}"><title>${d}: ${p}%</title></rect><text x="${x + 7}" y="108" text-anchor="middle" font-size="7" fill="#9A9DB0">${new Date(d + "T00:00:00").getDate()}</text>`;
+    }).join("");
+    document.getElementById("trendRangeLabel").textContent = dayMonthLabel(new Date(days[0] + "T00:00:00")) + " – " + dayMonthLabel(new Date(days[13] + "T00:00:00"));
 }
 
+document.getElementById("aaClasses").addEventListener("click", e => { const b = e.target.closest("button[data-c]"); if (!b) return; scope = b.dataset.c; focus = ""; shown = 60; render(); loadTrend(); });
+document.getElementById("aaStats").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if (!b) return; focus = focus === b.dataset.f ? "" : b.dataset.f; render(); });
+document.getElementById("aaQ").addEventListener("input", function () { q = this.value.trim(); render(); });
+document.getElementById("aaList").addEventListener("click", e => { const b = e.target.closest("[data-u]"); if (!b) return; const p = people().find(x => x.id === b.dataset.u); if (p) edit(p); });
+document.getElementById("aaMore").addEventListener("click", () => { shown += 100; render(); });
+document.getElementById("aaPrev").addEventListener("click", () => { day = addDays(day, -1); loadDay(); });
+document.getElementById("aaNext").addEventListener("click", () => { if (day < localDateStr()) { day = addDays(day, 1); loadDay(); } });
+document.getElementById("aaDate").addEventListener("change", function () { if (this.value) { day = this.value > localDateStr() ? localDateStr() : this.value; loadDay(); } });
+document.getElementById("aaRemind").addEventListener("click", remind);
+document.getElementById("aaCsv").addEventListener("click", csv);
+window.addEventListener("tabshow", () => { if (me) loadDay(); });
+start();
 </script>
-
+<script src="js/avatarcrop.js?v=20261027g"></script>
 </body>
 </html>

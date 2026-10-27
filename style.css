@@ -4858,3 +4858,83 @@ html[data-theme="dark"].is-admin-home .ah-card{border:1px solid #242424}
 .am-n{flex-shrink:0;font-size:14px;font-weight:700;color:#8A8FA8}
 .am-page .v3-sec:first-of-type{margin-top:4px}
 html[data-theme="dark"] .am-ic{background:#1C1C1E;color:#EDEDED}
+/* ---- admin: Absensi (admin-attendance.html) ---- */
+.aa-head{justify-content:space-between}
+.aa-dl{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;color:#14162B;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.aa-date{display:grid;grid-template-columns:48px 1fr 48px;gap:8px;margin-bottom:12px}
+.aa-date>button{height:48px;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;color:#14162B;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.aa-date>button:disabled{opacity:.35;cursor:default}
+.aa-date-mid{position:relative;height:48px;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#14162B;cursor:pointer;overflow:hidden}
+.aa-date-mid input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.aa-date-mid input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.aa-stats{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:8px;margin:12px 0}
+.aa-stats .ts-stat{font:inherit;text-align:left;cursor:pointer;padding:10px 12px}
+.aa-stats .ts-stat b{font-size:22px}
+.aa-stats .ts-stat.on{background:#14162B;border-color:#14162B}
+.aa-stats .ts-stat.on span,.aa-stats .ts-stat.on b{color:#fff}
+.aa-stats .ts-stat.on b.no{color:#FCA5A5}
+.aa-tools{display:flex;gap:8px;margin-bottom:12px}
+.aa-tools .tc-search{flex:1;min-width:0;height:48px}
+.aa-remind{flex-shrink:0;display:flex;align-items:center;gap:6px;height:48px;padding:0 14px;border-radius:16px;border:1.5px solid #E4E6EC;background:#fff;color:#3F6212;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.aa-remind[hidden]{display:none}
+.aa-row{min-height:64px}
+.aa-pic{width:36px;height:36px;flex-shrink:0;border-radius:10px;background:#F1F2F6 center/cover no-repeat}
+.aa-pic.doc{outline:2px solid #F5C451;outline-offset:-2px}
+.aa-more{margin:-4px 0 12px}
+.aa-trend{padding:14px}
+.aa-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:8px;font-size:12px;color:#5B6075}
+.aa-legend span{display:inline-flex;align-items:center;gap:5px}
+.aa-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.aa-legend small{margin-left:auto;color:#8A8FA8}
+html[data-theme="dark"] .aa-dl,html[data-theme="dark"] .aa-date>button,html[data-theme="dark"] .aa-date-mid,html[data-theme="dark"] .aa-remind{background:#121212;border-color:#2C2C2E;color:#EDEDED}
+html[data-theme="dark"] .aa-remind{color:#C6F432}
+html[data-theme="dark"] .aa-date-mid input{color-scheme:dark}
+html[data-theme="dark"] .aa-stats .ts-stat.on{background:#C6F432;border-color:#C6F432}
+html[data-theme="dark"] .aa-stats .ts-stat.on span,html[data-theme="dark"] .aa-stats .ts-stat.on b{color:#111}
+html[data-theme="dark"] .aa-pic{background-color:#1C1C1E}
+html[data-theme="dark"] .aa-legend{color:#9A9A9F}
+/* ---- admin: Keuangan (admin-spp.html + tabs on savings / class cash) ---- */
+.fin-tabs{margin-top:0}
+.fin-tabs a{flex:1;display:flex;align-items:center;justify-content:center;border-radius:12px;padding:10px;font-size:14px;font-weight:700;color:#5B6075;text-decoration:none}
+.fin-tabs a.on{background:#fff;color:#14162B;box-shadow:0 1px 3px rgba(20,22,43,.08)}
+html[data-theme="dark"] .fin-tabs a{color:#9A9A9F}
+html[data-theme="dark"] .fin-tabs a.on{background:#2C2C2E;color:#F2F2F2}
+html.fin-admin .attendance-page .fin-tabs{margin:-8px 0 18px}
+.fin-hero{margin:0 0 18px!important;border-radius:28px!important;padding:22px!important;gap:12px!important}
+.fin-hero .ah-lab{margin:0}
+.fin-sub{margin:0;font-size:14px;line-height:1.5;color:#A9ACC6}
+.fin-sub b{color:#fff}
+html[data-theme="dark"] .fin-hero{border:1px solid #242424}
+.fin-h{margin-top:4px}
+.fin-row{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 4px}
+.fin-row+.fin-row{border-top:1px solid #ECEEF2}
+.fin-row-t{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:4px 12px;border:0;background:transparent;font:inherit;text-align:left;color:#14162B;cursor:pointer;border-radius:12px}
+.fin-row-t:active{background:#F6F7F9}
+.fin-row-t b{font-size:15px;font-weight:700}
+.fin-row-t small{font-size:13px;color:#5B6075;overflow-wrap:anywhere}
+.fin-see{font-size:12px;font-weight:700;color:#3F6212}
+.fin-no{width:48px;height:48px;flex-shrink:0;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;color:#B42318;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fin-yes{height:48px;flex-shrink:0;padding:0 18px;border-radius:14px;border:0;background:#14162B;color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.fin-yes:disabled{opacity:.5}
+.fin-remind{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;margin:0 0 18px;border-radius:18px;border:1.5px solid #E4E6EC;background:#fff;color:#14162B;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.fin-remind[hidden]{display:none}
+.fin-page .tc-list{margin-bottom:12px}
+.fin-page .tc-head a{font-size:13px}
+.fin-set{margin-top:8px;border-radius:22px;background:#fff;border:1px solid #ECEEF2;overflow:hidden}
+.fin-set summary{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;list-style:none;font-size:15px;font-weight:800;color:#14162B}
+.fin-set summary::-webkit-details-marker{display:none}
+.fin-set summary small{margin-left:auto;font-size:13px;font-weight:700;color:#8A8FA8}
+.fin-set[open] summary{border-bottom:1px solid #ECEEF2}
+.fin-set .attendance-card{margin:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;border:0!important}
+.fin-set .attendance-card+.attendance-card{border-top:1px solid #ECEEF2!important}
+html[data-theme="dark"] .fin-row+.fin-row{border-top-color:#242424}
+html[data-theme="dark"] .fin-row-t{color:#EDEDED}
+html[data-theme="dark"] .fin-row-t:active{background:#1C1C1E}
+html[data-theme="dark"] .fin-row-t small{color:#9A9A9F}
+html[data-theme="dark"] .fin-see{color:#C6F432}
+html[data-theme="dark"] .fin-no{background:transparent;border-color:#3A3A3C;color:#FCA5A5}
+html[data-theme="dark"] .fin-yes{background:#C6F432;color:#111}
+html[data-theme="dark"] .fin-remind,html[data-theme="dark"] .fin-set{background:#121212;border-color:#242424;color:#EDEDED}
+html[data-theme="dark"] .fin-set summary{color:#EDEDED}
+html[data-theme="dark"] .fin-set[open] summary,html[data-theme="dark"] .fin-set .attendance-card+.attendance-card{border-color:#242424!important}
+.ts-row:focus:not(:focus-visible),.fin-row-t:focus:not(:focus-visible){outline:none}

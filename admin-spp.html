@@ -10,44 +10,58 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027f">
-<script src="js/theme.js?v=20261027f"></script>
-<script src="js/lang.js?v=20261027f"></script>
-<script src="js/money-input.js?v=20261027f"></script>
-<script src="js/toast.js?v=20261027f"></script>
-<script src="js/fit.js?v=20261027f" defer></script>
-<script src="js/paymethods.js?v=20261027f"></script>
+<link rel="stylesheet" href="style.css?v=20261027g">
+<script src="js/theme.js?v=20261027g"></script>
+<script src="js/lang.js?v=20261027g"></script>
+<script src="js/money-input.js?v=20261027g"></script>
+<script src="js/toast.js?v=20261027g"></script>
+<script src="js/fit.js?v=20261027g" defer></script>
+<script src="js/paymethods.js?v=20261027g"></script>
 </head>
 
-<body>
+<body class="v2-page">
 
-<main class="attendance-page">
+<main class="v2-wrap v3-page tc-page fin-page">
 
-    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
-        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </button>
-        <h2 style="margin:0" data-i18n="page_manage_spp">Manage SPP</h2>
+    <header class="v2-head v3-head">
+        <h1 id="finTitle">Keuangan</h1>
+    </header>
+    <nav class="tl-tabs fin-tabs" aria-label="Keuangan">
+        <a href="admin-spp.html" class="on" aria-current="page">SPP</a>
+        <a href="admin-savings.html" id="finTabSav">Tabungan</a>
+        <a href="kas.html" id="finTabKas">Kas kelas</a>
+    </nav>
+
+    <section class="v2-hero v3-hero fin-hero" id="finHero">
+        <p class="ah-lab" id="finLab">&nbsp;</p>
+        <div class="tc-count"><b id="finPaid">–</b><span id="finOf">&nbsp;</span></div>
+        <div class="tc-bar"><i id="finBar"></i></div>
+        <p class="fin-sub" id="finSub">&nbsp;</p>
     </section>
+
+    <div class="tc-head fin-h"><h2 id="finPendH">Bukti perlu dicek</h2></div>
+    <div class="tc-list" id="sppPendingList"><div class="tc-empty">&nbsp;</div></div>
+    <button type="button" class="ah-more aa-more" id="sppPendingMore" hidden></button>
+
+    <button type="button" class="fin-remind" id="remindSppBtn" onclick="sendSppReminder()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span id="finRemindT">Ingatkan yang belum bayar</span></button>
+
+    <div class="tc-head fin-h"><h2 id="finRevH">Sudah diperiksa</h2><a href="#" id="finCsv" onclick="exportSppCsv();return false">CSV</a></div>
+    <div class="tc-list" id="sppReviewedList"><div class="tc-empty">&nbsp;</div></div>
+
+    <details class="fin-set" id="finSet">
+        <summary><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span id="finSetT">Pengaturan SPP</span><small id="finSetS"></small></summary>
 
     <!-- SPP AMOUNT SETTINGS -->
     <section class="attendance-card">
-
         <div class="card-label" data-i18n="label_spp_settings">SPP Amount Settings</div>
         <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_spp_settings">The fixed monthly SPP amount every student needs to pay.</p>
-
         <div style="display:flex;flex-direction:column;gap:10px">
             <div>
                 <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_spp_monthly_amount">Monthly SPP Amount (Rp)</div>
                 <input type="text" data-money id="sppAmountInput" class="am-field" min="0" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
             </div>
-            <button type="button" class="submit-button pay-save is-waiting" id="saveSppAmountBtn" onclick="saveSppAmount()" data-i18n="btn_save_spp_amount">
-                Save Amount
-            </button>
+            <button type="button" class="submit-button pay-save is-waiting" id="saveSppAmountBtn" onclick="saveSppAmount()" data-i18n="btn_save_spp_amount">Save Amount</button>
         </div>
-
     </section>
 
     <!-- WHERE TO PAY -->
@@ -60,17 +74,13 @@
     </section>
 
     <!-- PER-STUDENT SPP OVERRIDE -->
-    <section class="attendance-card" style="margin-top:22px">
-
+    <section class="attendance-card">
         <div class="card-label" data-i18n="label_spp_per_student">Per-Student SPP Amount</div>
         <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_spp_per_student">Set a different SPP amount for a specific student, overriding the default above.</p>
-
         <div style="display:flex;flex-direction:column;gap:10px">
-
             <select id="sppStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
                 <option value="" data-i18n="option_choose_student">Choose a student...</option>
             </select>
-
             <div id="sppStudentOverrideCard" style="display:none">
                 <div style="font-size:12px;color:#888;margin:4px 0 8px" id="sppStudentCurrentLabel">-</div>
                 <input type="text" data-money id="sppStudentAmountInput" class="am-field" min="0" data-i18n-placeholder="placeholder_spp_student_amount" placeholder="Leave empty to use default" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
@@ -79,49 +89,24 @@
                     <button type="button" class="am-btn am-btn-danger" onclick="resetSppStudentAmount()" style="border:1px solid #fecaca;background:#fff;border-radius:12px;padding:0 16px;font-size:13px;cursor:pointer;color:#dc2626" data-i18n="btn_reset_spp_student_amount">Use Default</button>
                 </div>
             </div>
-
             <div style="margin-top:6px">
                 <div style="font-size:12px;color:#888;margin-bottom:8px" data-i18n="label_spp_active_overrides">Students with a custom amount</div>
                 <div id="sppOverrideList" style="display:flex;flex-direction:column;gap:8px"></div>
             </div>
-
         </div>
-
     </section>
-
-    <!-- SPP PENDING REVIEW -->
-    <section class="attendance-card" style="margin-top:22px">
-
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-            <div class="card-label" data-i18n="label_spp_pending_review" style="margin:0">Pending SPP Verification</div>
-            <button type="button" id="remindSppBtn" class="am-btn" onclick="sendSppReminder()" style="border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#3F6212;display:flex;align-items:center;gap:6px;white-space:nowrap">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" fill="currentColor"/><path d="M18 16V11C18 7.9 16.4 5.3 13.5 4.6V4C13.5 3.2 12.8 2.5 12 2.5C11.2 2.5 10.5 3.2 10.5 4V4.6C7.6 5.3 6 7.9 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                <span data-i18n="btn_remind_missing_spp">Remind Who Hasn't Paid</span>
-            </button>
-        </div>
-        <div id="sppPendingList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
-
-    </section>
-
-    <!-- SPP RECENT REVIEWS -->
-    <section class="attendance-card" style="margin-top:22px">
-
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-            <div class="card-label" data-i18n="label_spp_recent_reviews" style="margin:0">Recently Reviewed</div>
-            <button type="button" onclick="exportSppCsv()" style="border:none;background:none;color:#3F6212;font-size:12px;font-weight:600;cursor:pointer;padding:4px;display:flex;align-items:center;gap:5px">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 4V15M12 15L8 11M12 15L16 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17V18.5C5 19.33 5.67 20 6.5 20H17.5C18.33 20 19 19.33 19 18.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                <span data-i18n="btn_export_csv">Export to CSV</span>
-            </button>
-        </div>
-        <div id="sppReviewedList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
-
-    </section>
+    </details>
 
 </main>
 
+<nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027g"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027f"></script>
-<script src="js/auth.js?v=20261027f"></script>
+<script src="js/supabase.js?v=20261027g"></script>
+<script src="js/auth.js?v=20261027g"></script>
+<script src="js/teacher-core.js?v=20261027g"></script>
+<script src="js/avatarcrop.js?v=20261027g"></script>
 
 <script>
 
@@ -152,13 +137,13 @@ async function checkAdmin() {
 async function loadStudents() {
     const { data, error } = await supabaseClient
         .from("profiles")
-        .select("id,name,class,spp_custom_amount")
+        .select("id,name,class,spp_custom_amount,status")
         .eq("role", "murid")
         .order("name", { ascending: true });
 
     if (error || !data) return;
 
-    allStudents = data;
+    allStudents = data.filter(function (x) { return x.status !== "inactive"; });
 
     const select = document.getElementById("sppStudentSelect");
     allStudents.forEach(function (s) {
@@ -215,8 +200,39 @@ async function loadSppAdmin() {
         sppAllPayments = data;
     }
 
+    renderSppSummary();
     renderSppPending();
     renderSppReviewed();
+}
+
+const FL = (id, en) => getLang() === "id" ? id : en;
+document.getElementById("finTitle").textContent = FL("Keuangan", "Money");
+document.getElementById("finTabSav").textContent = FL("Tabungan", "Savings");
+document.getElementById("finTabKas").textContent = FL("Kas kelas", "Class cash");
+document.getElementById("finRevH").textContent = FL("Sudah diperiksa", "Reviewed");
+document.getElementById("finSetT").textContent = FL("Pengaturan SPP", "SPP settings");
+
+function sppDue(s) { return (s.spp_custom_amount !== null && s.spp_custom_amount !== undefined) ? Number(s.spp_custom_amount) : Number(sppAmount || 0); }
+
+// the dark card: how many paid this month, what came in, what is still open
+function renderSppSummary() {
+    const period = currentSppPeriodAdmin();
+    const ids = new Set(allStudents.map(function (s) { return s.id; }));
+    const mine = sppAllPayments.filter(function (p) { return p.period === period && ids.has(p.user_id); });
+    const paid = new Set(mine.filter(function (p) { return p.status === "approved"; }).map(function (p) { return p.user_id; }));
+    const wait = new Set(mine.filter(function (p) { return p.status === "pending" && !paid.has(p.user_id); }).map(function (p) { return p.user_id; }));
+    const inSum = mine.filter(function (p) { return p.status === "approved"; }).reduce(function (a, p) { return a + Number(p.amount || 0); }, 0);
+    const unpaid = allStudents.length - paid.size - wait.size;
+    document.getElementById("finLab").textContent = "SPP " + monthYearLabel(new Date(period + "-01T00:00:00")) + (sppAmount ? " · " + formatRupiah(sppAmount) + " / " + FL("siswa", "student") : "");
+    document.getElementById("finPaid").textContent = paid.size;
+    document.getElementById("finOf").textContent = " " + FL("dari", "of") + " " + allStudents.length + " " + FL("lunas", "paid");
+    requestAnimationFrame(function () { document.getElementById("finBar").style.width = (allStudents.length ? Math.round(paid.size / allStudents.length * 100) : 0) + "%"; });
+    document.getElementById("finSub").innerHTML = FL("Masuk ", "In ") + "<b>" + escapeHTML(formatRupiah(inSum)) + "</b> · " + wait.size + " " + FL("menunggu dicek", "to check") + " · " + Math.max(0, unpaid) + " " + FL("belum bayar", "unpaid");
+    const rb = document.getElementById("remindSppBtn");
+    rb.hidden = unpaid <= 0;
+    document.getElementById("finRemindT").textContent = FL("Ingatkan " + unpaid + " yang belum bayar", "Remind " + unpaid + " unpaid");
+    document.getElementById("finSetS").textContent = sppAmount ? formatRupiah(sppAmount) : FL("belum diatur", "not set");
+    if (!sppAmount) document.getElementById("finSet").open = true;
 }
 
 // ---------- where to pay (spp_settings.pay_methods, spp_pay_methods.sql) ----------
@@ -576,34 +592,36 @@ async function viewSppProof(path) {
     window.open(data.signedUrl, "_blank");
 }
 
+let sppPendingShown = 3;
 function renderSppPending() {
-    const lang = getLang();
     const container = document.getElementById("sppPendingList");
     const pending = sppAllPayments.filter(function (p) { return p.status === "pending"; });
-
+    document.getElementById("finPendH").textContent = FL("Bukti perlu dicek", "Proofs to check") + (pending.length ? " · " + pending.length : "");
+    const more = document.getElementById("sppPendingMore");
     if (pending.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_spp_pending[lang] + "</p>";
+        container.innerHTML = '<div class="tc-empty ok">' + FL("Tidak ada bukti yang menunggu", "Nothing to check") + '</div>';
+        more.hidden = true;
         return;
     }
-
-    container.innerHTML = pending.map(function (p) {
+    container.innerHTML = pending.slice(0, sppPendingShown).map(function (p) {
+        const s = allStudents.find(function (st) { return st.id === p.user_id; }) || {};
         const d = new Date(p.submitted_at);
-        return `
-            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
-                <div style="flex:1;min-width:140px">
-                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(studentLabel(p.user_id))}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)} · ${dayMonthYearLabel(d)}</span>
-                    ${p.note ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(p.note)}</span>` : ""}
-                </div>
-                <div style="display:flex;gap:6px;flex-shrink:0">
-                    <button type="button" class="am-btn" onclick="viewSppProof('${safeURL(p.proof_url)}')" style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#20243a">${translations.btn_view_proof[lang]}</button>
-                    <button type="button" class="am-btn am-btn-success" onclick="approveSpp('${p.id}')" style="border:1px solid #bbf7d0;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#16a34a">${translations.btn_approve[lang]}</button>
-                    <button type="button" class="am-btn am-btn-danger" onclick="rejectSpp('${p.id}')" style="border:1px solid #fecaca;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:#dc2626">${translations.btn_reject[lang]}</button>
-                </div>
-            </div>
-        `;
+        return `<div class="fin-row" data-id="${p.id}">
+            <button type="button" class="fin-row-t" data-view="${escapeHTML(p.proof_url || "")}"><b>${escapeHTML(s.name || "-")}</b><small>${escapeHTML([s.class, p.period !== currentSppPeriodAdmin() ? sppPeriodLabelAdmin(p.period) : "", formatRupiah(p.amount), dayMonthLabel(d)].filter(Boolean).join(" · "))}${p.note ? " · " + escapeHTML(p.note) : ""}</small><span class="fin-see">${FL("Lihat bukti", "View proof")}</span></button>
+            <button type="button" class="fin-no" data-rej="${p.id}" aria-label="${FL("Tolak", "Reject")}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            <button type="button" class="fin-yes" data-ok="${p.id}">${FL("Terima", "Approve")}</button>
+        </div>`;
     }).join("");
+    more.hidden = pending.length <= sppPendingShown;
+    more.textContent = FL("Lihat " + (pending.length - sppPendingShown) + " lainnya", "Show " + (pending.length - sppPendingShown) + " more");
 }
+document.getElementById("sppPendingMore").addEventListener("click", function () { sppPendingShown += 20; renderSppPending(); });
+document.getElementById("sppPendingList").addEventListener("click", function (e) {
+    const v = e.target.closest("[data-view]"), ok = e.target.closest("[data-ok]"), rj = e.target.closest("[data-rej]");
+    if (ok) { ok.disabled = true; approveSpp(ok.dataset.ok); }
+    else if (rj) rejectSpp(rj.dataset.rej);
+    else if (v && v.dataset.view) viewSppProof(v.dataset.view);
+});
 
 function renderSppReviewed() {
     const lang = getLang();
@@ -614,7 +632,7 @@ function renderSppReviewed() {
         .slice(0, 15);
 
     if (reviewed.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_spp_reviews[lang] + "</p>";
+        container.innerHTML = '<div class="tc-empty">' + translations.text_no_spp_reviews[lang] + '</div>';
         return;
     }
 
@@ -629,17 +647,11 @@ function renderSppReviewed() {
             </button>`
             : "";
 
-        return `
-            <div class="am-row" style="display:flex;align-items:center;gap:10px;padding:12px;background:#f8f8ff;border-radius:12px;flex-wrap:wrap">
-                <div style="flex:1;min-width:140px">
-                    <strong style="display:block;font-size:14px;color:#20243a">${escapeHTML(studentLabel(p.user_id))}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${sppPeriodLabelAdmin(p.period)} · ${formatRupiah(p.amount)}</span>
-                    ${p.reject_reason ? `<span style="display:block;margin-top:2px;font-size:12px;color:#888">${escapeHTML(p.reject_reason)}</span>` : ""}
-                </div>
-                <span style="font-size:12px;font-weight:700;color:${badgeColor}">${badgeLabel}</span>
+        return `<div class="ts-row">
+                <div class="ts-row-t"><b>${escapeHTML(studentLabel(p.user_id))}</b><small>${escapeHTML(sppPeriodLabelAdmin(p.period) + " · " + formatRupiah(p.amount) + (p.reject_reason ? " · " + p.reject_reason : ""))}</small></div>
+                <span class="tc-pill ${isApproved ? "ok" : "no"}">${badgeLabel}</span>
                 ${deleteBtn}
-            </div>
-        `;
+            </div>`;
     }).join("");
 }
 
@@ -697,8 +709,12 @@ async function approveSpp(id) {
 
 async function rejectSpp(id) {
     const lang = getLang();
-    const reason = prompt(translations.prompt_reject_reason[lang]);
-    if (reason === null) return;
+    const p0 = sppAllPayments.find(function (x) { return x.id === id; });
+    const st = p0 ? allStudents.find(function (x) { return x.id === p0.user_id; }) : null;
+    const v = await TC.sheet({ title: FL("Tolak bukti SPP?", "Reject this proof?"), sub: st ? st.name : "", ok: FL("Tolak", "Reject"),
+        fields: [{ name: "reason", label: FL("Alasan (dilihat siswa)", "Reason (the student sees it)"), optional: true, placeholder: FL("mis. Foto buram, nominal kurang", "e.g. blurry photo, wrong amount") }] });
+    if (!v) return;
+    const reason = v.reason;
 
     const user = await requireLogin();
     if (!user) return;

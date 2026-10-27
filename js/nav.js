@@ -33,7 +33,7 @@
             ["index.html", "home", "Beranda", "Home", "nav_home"],
             ["admin-attendance.html", "check", "Absensi", "Attendance", ""],
             ["qr-send.html", "qr", "QR", "QR", "", [], true],
-            ["admin-spp.html", "money", "Keuangan", "Money", "", ["admin-savings.html"]],
+            ["admin-spp.html", "money", "Keuangan", "Money", "", ["admin-savings.html", "kas.html"]],
             ["admin-menu.html", "grid", "Kelola", "Manage", "", ["settings.html"]]
         ];
     } else if (role === "guru") {

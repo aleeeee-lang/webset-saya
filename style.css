@@ -4824,3 +4824,37 @@ html[data-theme="dark"] .tc-btn.solid{background:#C6F432;color:#111}
 html[data-theme="dark"] .tc-btn.danger{background:transparent;border-color:#3A3A3C;color:#FCA5A5}
 .ts-stat b.ok,.ts-stat b.wait,.ts-stat b.no{font-size:15px;line-height:26px;text-overflow:clip}
 .ts-stat{padding:12px}
+/* ---- admin home, 2026 ---- */
+html.is-admin-home #homeTitle,html.is-admin-home #homeDate,html.is-admin-home #homeCta{display:none!important}
+html.is-admin-home .v3-home .v2-avatar{background:#C6F432;color:#14162B;border-radius:16px;font-weight:800}
+html.is-admin-home .v3-hero{gap:0!important}
+.ah-lab{margin:0 0 6px;font-size:14px;font-weight:600;color:#A9ACC6}
+.ah-hero .ah-num{margin-bottom:12px}
+.ah-hero .ah-num b{color:#fff;font-size:52px;letter-spacing:-.03em}
+.ah-hero .ah-num span{font-size:20px;font-weight:700;color:#A9ACC6}
+.ah-hero .ah-bar{height:8px;margin-bottom:14px}
+.ah-sub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ah-sub div{background:#23263F;border-radius:16px;padding:10px 12px;min-width:0}
+.ah-sub span{display:block;font-size:12px;font-weight:600;color:#A9ACC6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ah-sub b{display:block;margin-top:2px;font-size:20px;font-weight:800;color:#fff}
+.ah-sub b.warn{color:#FCD34D}
+.ah-sub b.bad{color:#FCA5A5}
+html.is-admin-home .ah{display:flex;flex-direction:column;gap:16px}
+html.is-admin-home .ah .tc-list,html.is-admin-home .ah .tc-tiles{margin-bottom:0}
+html.is-admin-home .ah .tc-head{margin:4px 2px -4px}
+.ah-n{width:40px;height:40px;flex-shrink:0;border-radius:12px;background:#F1F2F6;color:#8A8FA8;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
+.ah-n.has{background:#FEF3D6;color:#93370D}
+.ah-todo2 .tc-row svg{color:#B0B4C5;flex-shrink:0}
+html.is-admin-home .ah-card{border:1px solid #ECEEF2}
+html[data-theme="dark"] .ah-sub div{background:#1C1C1E}
+html[data-theme="dark"] .ah-n{background:#1C1C1E;color:#8E8E93}
+html[data-theme="dark"] .ah-n.has{background:rgba(245,176,65,.16);color:#FCD34D}
+html[data-theme="dark"] html.is-admin-home .ah-card{border-color:#242424}
+html[data-theme="dark"].is-admin-home .ah-card{border:1px solid #242424}
+/* admin menu (Kelola) */
+.am-page .v3-head{justify-content:space-between}
+.am-list{margin-bottom:4px}
+.am-ic{width:36px;height:36px;flex-shrink:0;border-radius:11px;background:#F1F2F6;color:#14162B;display:flex;align-items:center;justify-content:center}
+.am-n{flex-shrink:0;font-size:14px;font-weight:700;color:#8A8FA8}
+.am-page .v3-sec:first-of-type{margin-top:4px}
+html[data-theme="dark"] .am-ic{background:#1C1C1E;color:#EDEDED}

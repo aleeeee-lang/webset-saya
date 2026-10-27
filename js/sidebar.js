@@ -81,7 +81,7 @@
             { label: ["General", "Menu umum"] },
             ["index.html", "home", "Home", "Beranda"],
             { label: ["Manage", "Kelola"] },
-            ["settings.html", "grid", "Admin Panel", "Panel admin"],
+            ["admin-menu.html", "grid", "Admin Panel", "Kelola"],
             ["admin-students.html", "users", "Students", "Kelola siswa"],
             ["admin-teachers.html", "user", "Teachers", "Kelola guru"],
             ["admin-parents.html", "users", "Parents", "Akun orang tua"],

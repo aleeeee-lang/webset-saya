@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kelola - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261027f">
+<script src="js/theme.js?v=20261027f"></script>
+<script src="js/lang.js?v=20261027f"></script>
+<script src="js/toast.js?v=20261027f"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v3-page tc-page am-page">
+    <header class="v2-head v3-head">
+        <h1 id="amTitle">Kelola</h1>
+        <button type="button" class="v3-icon" data-v3-search aria-label="Cari"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </header>
+    <div id="amGroups"></div>
+</main>
+
+<nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027f"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261027f"></script>
+<script src="js/auth.js?v=20261027f"></script>
+<script>
+const ID = getLang() === "id";
+const L = (id, en) => ID ? id : en;
+document.getElementById("amTitle").textContent = L("Kelola", "Manage");
+
+const I = {
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15.5 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    home: '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/>',
+    grad: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 1.8"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/>',
+    broom: '<path d="M14 3l-4 9M7 12h7l3 9H4z"/><path d="M8 16v5M12 16v5"/>',
+    cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+    msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    doc: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 15l2 2 4-4"/>',
+    trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/>',
+    db: '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/><path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5"/><path d="M17 15v6M14.5 18.5 17 21l2.5-2.5"/>',
+    log: '<path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+};
+// [href, icon, label id, label en, key for a number on the right]
+const GROUPS = [
+    [L("Orang", "People"), [
+        ["admin-students.html", "users", "Siswa", "Students", "murid"],
+        ["admin-teachers.html", "user", "Guru", "Teachers", "guru"],
+        ["admin-parents.html", "home", "Orang tua", "Parents", "orangtua"],
+        ["admin-development.html", "grad", "Perkembangan siswa", "Student progress"]
+    ]],
+    [L("Sekolah", "School"), [
+        ["admin-schedule.html", "clock", "Jam absen & hari libur", "Check-in hours & holidays"],
+        ["admin-lessons.html", "book", "Jadwal pelajaran", "Lesson schedule"],
+        ["admin-piket.html", "broom", "Jadwal piket", "Duty roster"],
+        ["calendar.html", "cal", "Kalender akademik", "Academic calendar"],
+        ["admin-information.html", "info", "Informasi sekolah", "School information"],
+        ["juara.html", "trophy", "Juara", "Champions"]
+    ]],
+    [L("Komunikasi", "Communication"), [
+        ["admin-broadcast.html", "bell", "Pengumuman & notifikasi", "Announcements"],
+        ["admin-leave.html", "doc", "Persetujuan izin", "Leave requests", "leave"],
+        ["admin-feedback.html", "msg", "Saran & keluhan", "Suggestions", "feedback"]
+    ]],
+    [L("Data", "Data"), [
+        ["settings.html#backupBtn", "db", "Backup semua data", "Back up all data"],
+        ["admin-audit-log.html", "log", "Riwayat aktivitas", "Activity log"]
+    ]],
+    [L("Akun", "Account"), [
+        ["settings.html", "gear", "Pengaturan", "Settings"]
+    ]]
+];
+
+function draw(n) {
+    n = n || {};
+    const chev = '<svg class="tc-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+    document.getElementById("amGroups").innerHTML = GROUPS.map(g => `<h2 class="v3-sec">${escapeHTML(g[0])}</h2><div class="tc-list am-list">` +
+        g[1].map(x => {
+            const k = x[4], v = k ? n[k] : null;
+            let right = chev;
+            if (v != null && (k === "leave" || k === "feedback")) right = v ? `<span class="tc-pill izin">${v} ${L("baru", "new")}</span>` : chev;
+            else if (v != null) right = `<span class="am-n">${Number(v).toLocaleString(L("id-ID", "en-US"))}</span>`;
+            return `<a class="tc-row" href="${x[0]}"><span class="am-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[x[1]]}</svg></span><b>${escapeHTML(ID ? x[2] : x[3])}</b>${right}</a>`;
+        }).join("") + `</div>`).join("");
+}
+draw();
+
+async function counts() {
+    const user = await requireLogin();
+    if (!user) return;
+    const prof = await attMyProfile(user.id);
+    if (!prof || prof.role !== "admin") { location.replace("settings.html"); return; }
+    const c = (q) => q.then(r => (r && !r.error) ? (r.count || 0) : null, () => null);
+    const head = { count: "exact", head: true };
+    const [murid, guru, ortu, leave, fb] = await Promise.all([
+        c(supabaseClient.from("profiles").select("id", head).eq("role", "murid").or("status.is.null,status.neq.inactive")),
+        c(supabaseClient.from("profiles").select("id", head).eq("role", "guru")),
+        c(supabaseClient.from("profiles").select("id", head).eq("role", "orangtua")),
+        c(supabaseClient.from("leave_requests").select("id", head).eq("status", "pending")),
+        c(supabaseClient.from("feedback").select("id", head).or("status.is.null,status.eq.new"))
+    ]);
+    draw({ murid, guru, orangtua: ortu, leave, feedback: fb });
+}
+counts();
+window.addEventListener("tabshow", counts);
+</script>
+</body>
+</html>

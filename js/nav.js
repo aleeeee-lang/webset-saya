@@ -34,7 +34,7 @@
             ["admin-attendance.html", "check", "Absensi", "Attendance", ""],
             ["qr-send.html", "qr", "QR", "QR", "", [], true],
             ["admin-spp.html", "money", "Keuangan", "Money", "", ["admin-savings.html"]],
-            ["settings.html", "grid", "Kelola", "Manage", ""]
+            ["admin-menu.html", "grid", "Kelola", "Manage", "", ["settings.html"]]
         ];
     } else if (role === "guru") {
         items = [

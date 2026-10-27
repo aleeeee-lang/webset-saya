@@ -16,7 +16,8 @@
         db: '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/><path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5"/><path d="M17 15v6M14.5 18.5 17 21l2.5-2.5"/>',
         users: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.4 2.6-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.9c1.5.7 2.3 2.4 2.6 5.1"/>',
         go: '<path d="M9 6l6 6-6 6"/>',
-        ok: '<path d="M20 6 9 17l-5-5"/>'
+        ok: '<path d="M20 6 9 17l-5-5"/>',
+        down: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'
     };
     function ic(k, s) { return '<svg viewBox="0 0 24 24" width="' + (s || 18) + '" height="' + (s || 18) + '" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>'; }
 
@@ -30,44 +31,36 @@
     // the top of the page: how many students and teachers are in today
     function hero(d) {
         var s = d.students || {}, t = d.teachers || {};
-        var pct = n(s.total) ? Math.round(n(s.hadir) / n(s.total) * 100) : 0;
         var title = document.getElementById("homeTitle");
         title.removeAttribute("aria-busy");
-        title.textContent = d.school_day ? L("Kehadiran hari ini", "Attendance today") : L("Hari ini tidak ada absen", "No check-in today");
+        title.textContent = L("Kehadiran hari ini", "Attendance today");
         var box = document.getElementById("ahHero");
+        var subs = [
+            [L("Izin/Sakit", "Leave/sick"), fmt(n(s.izin) + n(s.sakit)), ""],
+            [L("Belum", "Not yet"), fmt(s.belum), n(s.belum) ? "warn" : ""]
+        ];
+        if (n(t.total)) subs.push([L("Guru hadir", "Teachers in"), fmt(t.hadir) + "/" + fmt(t.total), ""]);
+        else subs.push(["Alpa", fmt(s.alpa), n(s.alpa) ? "bad" : ""]);
         box.innerHTML =
-            '<div class="ah-num"><b>' + fmt(s.hadir) + '</b><span>/ ' + fmt(s.total) + ' ' + esc(L("siswa hadir", "students in")) + '</span><em>' + pct + '%</em></div>' +
+            '<p class="ah-lab">' + esc(d.school_day ? L("Kehadiran sekolah hari ini", "School attendance today") : L("Hari ini tidak ada jadwal absen", "No check-in scheduled today")) + '</p>' +
+            '<div class="ah-num"><b>' + fmt(s.hadir) + '</b><span>/ ' + fmt(s.total) + ' ' + esc(L("siswa", "students")) + '</span></div>' +
             seg(s) +
-            '<div class="ah-legend">' +
-                '<span><i class="hadir"></i>' + esc(L("Hadir", "Present")) + ' ' + fmt(s.hadir) + '</span>' +
-                '<span><i class="izin"></i>Izin ' + fmt(s.izin) + '</span>' +
-                '<span><i class="sakit"></i>Sakit ' + fmt(s.sakit) + '</span>' +
-                '<span><i class="alpa"></i>Alpa ' + fmt(s.alpa) + '</span>' +
-                '<span><i class="belum"></i>' + esc(L("Belum", "Not yet")) + ' ' + fmt(s.belum) + '</span>' +
-            '</div>' +
-            (n(t.total) ? '<div class="ah-teach">' + ic("users", 16) + '<span>' + esc(L("Guru", "Teachers")) + ' <b>' + fmt(t.hadir) + ' / ' + fmt(t.total) + '</b> ' + esc(L("hadir", "in")) +
-                (n(t.belum) ? ' · ' + fmt(t.belum) + ' ' + esc(L("belum absen", "not yet")) : '') + '</span></div>' : '');
+            '<div class="ah-sub">' + subs.map(function (x) { return '<div><span>' + esc(x[0]) + '</span><b class="' + x[2] + '">' + esc(x[1]) + '</b></div>'; }).join("") + '</div>';
         box.hidden = false;
-        var cta = document.getElementById("homeCta");
-        cta.href = "admin-attendance.html";
-        cta.classList.remove("is-loading");
-        var lab = document.getElementById("homeCtaLabel");
-        lab.removeAttribute("data-i18n");
-        lab.textContent = L("Kelola absensi", "Manage attendance");
     }
 
     function todo(p) {
         var items = [
-            ["admin-leave.html", "leave", L("Izin menunggu", "Leave to approve"), n(p.leave)],
-            ["admin-spp.html", "spp", L("Bukti SPP", "SPP proofs"), n(p.spp)],
-            ["admin-feedback.html", "msg", L("Saran baru", "New suggestions"), n(p.feedback)]
+            ["admin-leave.html", L("Pengajuan izin menunggu", "Leave requests waiting"), n(p.leave)],
+            ["admin-spp.html", L("Bukti SPP perlu dicek", "SPP proofs to check"), n(p.spp)],
+            ["admin-feedback.html", L("Saran baru dari siswa", "New suggestions"), n(p.feedback)]
         ];
-        var all0 = items.every(function (x) { return !x[3]; });
-        return '<section class="ah-card"><div class="ah-head"><h2>' + esc(L("Perlu tindakan", "To do")) + '</h2>' +
+        var all0 = items.every(function (x) { return !x[2]; });
+        return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2>' +
             (all0 ? '<span class="ah-done">' + ic("ok", 14) + esc(L("Semua beres", "All clear")) + '</span>' : '') + '</div>' +
-            '<div class="ah-todo">' + items.map(function (x) {
-                return '<a href="' + x[0] + '" class="' + (x[3] ? "has" : "") + '"><span class="ah-todo-ic">' + ic(x[1]) + '</span><b>' + fmt(x[3]) + '</b><small>' + esc(x[2]) + '</small></a>';
-            }).join("") + '</div></section>';
+            '<div class="tc-list ah-todo2">' + items.map(function (x) {
+                return '<a class="tc-row" href="' + x[0] + '"><span class="ah-n' + (x[2] ? " has" : "") + '">' + fmt(x[2]) + '</span><b>' + esc(x[1]) + '</b>' + ic("go", 18) + '</a>';
+            }).join("") + '</div>';
     }
 
     var showAllClasses = false;
@@ -102,10 +95,9 @@
     }
 
     function quick() {
-        var q = [["qr-send.html", "qr", L("Kirim QR absen", "Send check-in QR")], ["admin-broadcast.html", "bell", L("Kirim pengumuman", "Send announcement")],
-                 ["admin-schedule.html", "clock", L("Jadwal absen", "Check-in hours")], ["settings.html", "db", L("Backup data", "Back up data")]];
-        return '<section class="ah-quick-wrap"><div class="v2-section-head"><h2>' + esc(L("Aksi cepat", "Quick actions")) + '</h2></div><div class="v2-more ah-quick">' +
-            q.map(function (x) { return '<a href="' + x[0] + '">' + ic(x[1]) + '<span>' + esc(x[2]) + '</span></a>'; }).join("") + '</div></section>';
+        var q = [["admin-broadcast.html", "bell", L("Buat pengumuman", "New announcement")], ["admin-attendance.html", "down", L("Unduh rekap absen", "Download attendance")],
+                 ["qr-send.html", "qr", L("Kirim QR absen", "Send check-in QR")], ["admin-schedule.html", "clock", L("Jam absen", "Check-in hours")]];
+        return '<div class="tc-tiles">' + q.map(function (x) { return '<a href="' + x[0] + '">' + ic(x[1], 24) + '<span>' + esc(x[2]) + '</span></a>'; }).join("") + '</div>';
     }
 
     var last = null, mounted = false;
@@ -132,6 +124,17 @@
         var home = document.querySelector(".v2-home");
         if (home) home.classList.add("is-admin");
         ["homeChips"].forEach(function (id) { var e = document.getElementById(id); if (e) e.innerHTML = ""; });
+        // header: the date above the name (2026 design); the avatar opens the admin menu
+        var g = document.getElementById("homeGreeting");
+        if (g) {
+            var D = L("Minggu Senin Selasa Rabu Kamis Jumat Sabtu", "Sunday Monday Tuesday Wednesday Thursday Friday Saturday").split(" ");
+            var M = L("Jan Feb Mar Apr Mei Jun Jul Agu Sep Okt Nov Des", "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec").split(" ");
+            var now = typeof attNow === "function" ? attNow() : new Date();
+            g.removeAttribute("data-i18n");
+            g.textContent = D[now.getDay()] + ", " + now.getDate() + " " + M[now.getMonth()];
+        }
+        var av = document.getElementById("homeAvatar");
+        if (av) av.href = "admin-menu.html";
         var title = document.getElementById("homeTitle");
         if (title && !title.textContent) { title.textContent = L("Kehadiran hari ini", "Attendance today"); }
         var hero = document.querySelector(".v2-hero");

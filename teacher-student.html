@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Siswa - Attendreem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#14162B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=20261027e">
+<script src="js/theme.js?v=20261027e"></script>
+<script src="js/lang.js?v=20261027e"></script>
+<script src="js/toast.js?v=20261027e"></script>
+<script src="js/avatarcrop.js?v=20261027e"></script>
+</head>
+
+<body class="v2-page">
+
+<main class="v2-wrap v3-page tc-page ts-page">
+
+    <header class="v2-head v3-head ts-head">
+        <button type="button" class="v2-back v3-back" onclick="goBack()" aria-label="Kembali"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <div class="ts-who"><h1 id="tsName">&nbsp;</h1><small id="tsSub">&nbsp;</small></div>
+    </header>
+
+    <section class="ts-card" id="tsToday" hidden>
+        <div class="ts-card-h"><b id="tsTodayT">Absen hari ini</b><small id="tsTodayNote"></small></div>
+        <div class="ts-seg" id="tsSeg" role="radiogroup"></div>
+    </section>
+
+    <div class="ts-stats" id="tsStats"></div>
+
+    <div class="tl-tabs ts-tabs" id="tsTabs" role="tablist"></div>
+
+    <div class="tc-list ts-list" id="tsList"><div class="tc-empty">&nbsp;</div></div>
+
+    <div class="ts-add-wrap"><button type="button" class="ts-add" id="tsAdd" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span id="tsAddT"></span></button></div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=20261027e"></script>
+<script src="js/auth.js?v=20261027e"></script>
+<script src="js/teacher-core.js?v=20261027e"></script>
+<script>
+const L = TC.L;
+const sid = new URLSearchParams(location.search).get("id") || "";
+let ctx = null, stu = null, mine = false, tab = "grades", rec = null;
+let grades = [], notes = [], goals = [], subjects = [];
+
+function tr(key) { const l = getLang(); return (translations[key] && translations[key][l]) || key; }
+function goBack() {
+    if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
+    else location.href = "teacher-class.html";
+}
+function num(n) { return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(".", getLang() === "id" ? "," : "."); }
+
+async function start() {
+    ctx = await TC.init();
+    if (!ctx) return;
+    const studs = await TC.students(ctx.classes);
+    stu = studs.find(s => s.id === sid);
+    if (!stu) {
+        document.getElementById("tsName").textContent = L("Siswa tidak ditemukan", "Student not found");
+        document.getElementById("tsSub").textContent = L("Siswa ini bukan dari kelas yang kamu ajar", "Not in a class you teach");
+        document.getElementById("tsList").innerHTML = "";
+        return;
+    }
+    mine = stu.class === ctx.homeroom;
+    document.title = (stu.name || "Siswa") + " - Attendreem";
+    document.getElementById("tsName").textContent = stu.name || "-";
+    document.getElementById("tsSub").textContent = [stu.class, stu.nis ? "NIS " + stu.nis : ""].filter(Boolean).join(" · ");
+    const tabs = [["grades", L("Nilai", "Grades")]].concat(mine ? [["notes", L("Catatan", "Notes")], ["goals", L("Target", "Goals")]] : []);
+    const tb = document.getElementById("tsTabs");
+    tb.hidden = tabs.length < 2;
+    tb.innerHTML = tabs.map(t => `<button type="button" role="tab" data-tab="${t[0]}">${t[1]}</button>`).join("");
+    if (mine) { document.getElementById("tsToday").hidden = false; loadToday(); }
+    await Promise.all([loadGrades(), mine ? loadNotes() : null, mine ? loadGoals() : null, loadSubjects()]);
+    loadStats();
+    render();
+}
+
+/* ---------- today ---------- */
+async function loadToday() {
+    const r = await TC.today([stu.id]);
+    rec = r[stu.id] || null;
+    drawToday();
+}
+function drawToday() {
+    document.getElementById("tsTodayT").textContent = L("Absen hari ini", "Today");
+    const opts = [["Hadir", L("Hadir", "Present")], ["Izin", L("Izin", "Leave")], ["Sakit", L("Sakit", "Sick")], ["Alpa", L("Alpa", "Absent")]];
+    const cur = rec ? rec.status : "";
+    document.getElementById("tsSeg").innerHTML = opts.map(o => `<button type="button" role="radio" aria-checked="${cur === o[0]}" data-s="${o[0]}" class="${o[0].toLowerCase()}${cur === o[0] ? " on" : ""}">${o[1]}</button>`).join("");
+    let note = "";
+    if (!rec) note = L("Belum absen", "Not checked in yet");
+    else if (rec.time && rec.method) note = L("Absen sendiri ", "Checked in ") + String(rec.time).slice(0, 5).replace(":", ".");
+    document.getElementById("tsTodayNote").textContent = note;
+}
+document.getElementById("tsSeg").addEventListener("click", async function (e) {
+    const b = e.target.closest("button[data-s]");
+    if (!b || b.disabled) return;
+    const s = b.dataset.s;
+    if (rec && rec.status === s) return;
+    this.querySelectorAll("button").forEach(x => x.disabled = true);
+    const res = await TC.setStatus(stu, s);
+    this.querySelectorAll("button").forEach(x => x.disabled = false);
+    if (res.error) { showToast(L("Gagal menyimpan: ", "Could not save: ") + res.error.message, "error"); return; }
+    rec = Object.assign({}, rec || {}, { status: s, method: rec && rec.method });
+    drawToday();
+    showToast(L("Absen " + stu.name + " dicatat " + s, "Saved: " + s), "success");
+    loadStats();
+});
+
+/* ---------- stats ---------- */
+async function loadStats() {
+    const tiles = [];
+    const avg = grades.length ? grades.reduce((a, g) => a + Number(g.score || 0), 0) / grades.length : null;
+    if (mine) {
+        let rate = "–";
+        try {
+            const [{ data }, period] = await Promise.all([
+                supabaseClient.from("attendance").select("date, status").eq("user_id", stu.id),
+                getAttendancePeriod()
+            ]);
+            const inP = (data || []).filter(r => (!period.start || r.date >= period.start) && (!period.end || r.date <= period.end));
+            const c = await attCountable(ctx.user, inP, period, { role: "murid", class: stu.class, status: stu.status, left_date: stu.left_date });
+            const total = c.rows.length + c.autoAlpa;
+            if (total) rate = Math.round(c.rows.filter(r => r.status === "Hadir").length / total * 100) + "%";
+        } catch (e) {}
+        tiles.push([L("Kehadiran", "Attendance"), rate, ""]);
+    }
+    tiles.push([L("Rata nilai", "Avg. grade"), avg == null ? "–" : num(Math.round(avg * 10) / 10), ""]);
+    if (mine) {
+        const now = attNow();
+        const per = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+        const MON = getLang() === "id" ? ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"] : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const { data } = await supabaseClient.from("spp_payments").select("status").eq("user_id", stu.id).eq("period", per).maybeSingle();
+        const st = data ? data.status : "unpaid";
+        const lab = { approved: [L("Lunas", "Paid"), "ok"], pending: [L("Diperiksa", "Checking"), "wait"], rejected: [L("Ditolak", "Rejected"), "no"], unpaid: [L("Belum", "Unpaid"), "no"] }[st] || ["–", ""];
+        tiles.push(["SPP " + MON[now.getMonth()], lab[0], lab[1]]);
+    }
+    document.getElementById("tsStats").style.setProperty("--n", tiles.length);
+    document.getElementById("tsStats").innerHTML = tiles.map(t => `<div class="ts-stat"><span>${escapeHTML(t[0])}</span><b class="${t[2]}">${escapeHTML(t[1])}</b></div>`).join("");
+}
+
+/* ---------- lists ---------- */
+async function loadGrades() {
+    const { data } = await supabaseClient.from("student_grades").select("id, subject, period, score, note, created_by, created_at").eq("user_id", stu.id).order("created_at", { ascending: false });
+    grades = data || [];
+}
+async function loadNotes() {
+    const { data } = await supabaseClient.from("student_activities").select("id, type, title, description, date, created_at").eq("user_id", stu.id).order("date", { ascending: false });
+    notes = data || [];
+}
+async function loadGoals() {
+    const { data } = await supabaseClient.from("learning_goals").select("*").eq("user_id", stu.id).order("created_at", { ascending: false });
+    goals = data || [];
+}
+async function loadSubjects() {
+    const { data } = await supabaseClient.from("class_schedules").select("subject").eq("teacher_id", ctx.user.id);
+    subjects = Array.from(new Set((data || []).map(r => r.subject).concat(grades.map(g => g.subject)).filter(Boolean))).sort();
+}
+
+function render() {
+    document.querySelectorAll("#tsTabs button").forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+    const box = document.getElementById("tsList");
+    const add = document.getElementById("tsAdd");
+    add.hidden = false;
+    document.getElementById("tsAddT").textContent = { grades: L("Tambah nilai", "Add grade"), notes: L("Tambah catatan", "Add note"), goals: L("Beri target", "Give a goal") }[tab];
+    const empty = t => `<div class="tc-empty">${t}</div>`;
+    if (tab === "grades") {
+        box.innerHTML = grades.length ? grades.map(g => {
+            const sc = Number(g.score), own = g.created_by === ctx.user.id;
+            const tone = sc >= 85 ? "good" : sc >= 70 ? "" : "low";
+            return `<${own ? "button type=\"button\"" : "div"} class="ts-row${own ? " own" : ""}" data-g="${g.id}">
+                <div class="ts-row-t"><b>${escapeHTML(g.subject || "-")}</b><small>${escapeHTML([g.period, g.note].filter(Boolean).join(" · "))}</small></div>
+                <span class="ts-score ${tone}">${escapeHTML(num(sc))}</span></${own ? "button" : "div"}>`;
+        }).join("") : empty(L("Belum ada nilai", "No grades yet"));
+    } else if (tab === "notes") {
+        box.innerHTML = notes.length ? notes.map(n => `<div class="ts-row">
+                <div class="ts-row-t"><b>${escapeHTML(n.title || "-")}</b><small>${escapeHTML([TC.dateShort(n.date || n.created_at), n.description].filter(Boolean).join(" · "))}</small></div>
+                <span class="ts-type ${escapeHTML(n.type || "")}">${escapeHTML(tr("type_" + (n.type || "catatan")))}</span></div>`).join("") : empty(L("Belum ada catatan", "No notes yet"));
+    } else {
+        box.innerHTML = goals.length ? goals.map(g => {
+            const own = g.created_by === ctx.user.id;
+            const pct = Math.max(0, Math.min(100, Number(g.progress_percent) || 0));
+            return `<div class="ts-row ts-goal">
+                <div class="ts-row-t"><b>${escapeHTML(g.title || "-")}</b><small>${escapeHTML([tr("period_" + g.period), tr("status_" + g.status), g.target_date ? L("s.d. ", "by ") + TC.dateShort(g.target_date) : ""].filter(Boolean).join(" · "))}</small>
+                <div class="v3-bar"><i style="width:${pct}%"></i></div></div>
+                <span class="ts-pct">${pct}%</span>
+                ${own ? `<button type="button" class="ts-del" data-goal="${g.id}" aria-label="${L("Hapus", "Delete")}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>` : ""}</div>`;
+        }).join("") : empty(L("Belum ada target", "No goals yet"));
+    }
+}
+
+/* ---------- add / edit ---------- */
+function scoreOk(v) { const s = Number(String(v.score).replace(",", ".")); return v.subject && v.period && v.score !== "" && !isNaN(s) && s >= 0 && s <= 100; }
+const gradeFields = g => [
+    { name: "subject", label: L("Mata pelajaran", "Subject"), value: g ? g.subject : (subjects.length === 1 ? subjects[0] : ""), list: subjects, placeholder: L("mis. Matematika", "e.g. Maths") },
+    { name: "period", label: L("Penilaian", "Assessment"), value: g ? g.period : "", half: true, list: ["UH 1", "UH 2", "Tugas 1", "Tugas 2", "UTS", "UAS"], placeholder: "UTS" },
+    { name: "score", label: L("Nilai", "Score"), value: g ? g.score : "", type: "number", half: true, placeholder: "0–100" },
+    { name: "note", label: L("Catatan", "Note"), value: g ? g.note : "", optional: true }
+];
+
+document.getElementById("tsAdd").addEventListener("click", async function () {
+    if (tab === "grades") {
+        const v = await TC.sheet({ title: L("Tambah nilai", "Add grade"), sub: stu.name, fields: gradeFields(null), ok: L("Simpan nilai", "Save grade"), check: v => scoreOk(v) ? "" : L("Isi mapel, penilaian, dan nilai 0–100", "Fill in subject, assessment and a 0–100 score") });
+        if (!v) return;
+        const { error } = await supabaseClient.from("student_grades").insert({ user_id: stu.id, subject: v.subject, period: v.period, score: Number(v.score.replace(",", ".")), note: v.note || null, created_by: ctx.user.id });
+        if (error) { showToast(L("Gagal menyimpan: ", "Could not save: ") + error.message, "error"); return; }
+        showToast(L("Nilai tersimpan", "Grade saved"), "success");
+        await loadGrades(); loadSubjects(); loadStats(); render();
+    } else if (tab === "notes") {
+        const v = await TC.sheet({ title: L("Tambah catatan", "Add note"), sub: stu.name, ok: L("Simpan", "Save"),
+            fields: [
+                { name: "type", label: L("Jenis", "Type"), type: "seg", value: "catatan", options: [["catatan", tr("type_catatan")], ["prestasi", tr("type_prestasi")], ["kegiatan", tr("type_kegiatan")], ["pelanggaran", tr("type_pelanggaran")]] },
+                { name: "title", label: L("Judul", "Title"), placeholder: L("mis. Juara 2 lomba pidato", "e.g. 2nd place, speech contest") },
+                { name: "description", label: L("Keterangan", "Details"), type: "area", optional: true },
+                { name: "date", label: L("Tanggal", "Date"), type: "date", value: localDateStr() }
+            ], noFocus: true, check: v => v.title ? "" : L("Isi judulnya dulu", "Add a title") });
+        if (!v) return;
+        const { error } = await supabaseClient.from("student_activities").insert({ user_id: stu.id, type: v.type || "catatan", title: v.title, description: v.description || null, date: v.date || localDateStr(), created_by: ctx.user.id });
+        if (error) { showToast(L("Gagal menyimpan: ", "Could not save: ") + error.message, "error"); return; }
+        showToast(L("Catatan tersimpan", "Note saved"), "success");
+        await loadNotes(); render();
+    } else {
+        const v = await TC.sheet({ title: L("Beri target", "Give a goal"), sub: stu.name, ok: L("Beri target", "Give goal"),
+            fields: [
+                { name: "title", label: L("Target", "Goal"), placeholder: L("mis. Hafal perkalian 1–10", "e.g. Learn times tables") },
+                { name: "period", label: L("Jangka", "Period"), type: "seg", value: "weekly", options: [["weekly", tr("period_weekly")], ["monthly", tr("period_monthly")], ["yearly", tr("period_yearly")]] },
+                { name: "target_date", label: L("Batas waktu", "Due"), type: "date", optional: true },
+                { name: "description", label: L("Keterangan", "Details"), type: "area", optional: true }
+            ], check: v => v.title ? "" : L("Isi targetnya dulu", "Add the goal") });
+        if (!v) return;
+        const { error } = await supabaseClient.from("learning_goals").insert({ user_id: stu.id, name: stu.name, class: stu.class, period: v.period || "weekly", title: v.title, description: v.description || null, target_date: v.target_date || null, is_shared: true, created_by: ctx.user.id });
+        if (error) { showToast(L("Gagal menyimpan: ", "Could not save: ") + error.message, "error"); return; }
+        showToast(L("Target diberikan", "Goal given"), "success");
+        await loadGoals(); render();
+    }
+});
+
+document.getElementById("tsList").addEventListener("click", async function (e) {
+    const del = e.target.closest("[data-goal]");
+    if (del) {
+        const ok = await attConfirm({ title: L("Hapus target ini?", "Delete this goal?"), ok: L("Hapus", "Delete") });
+        if (!ok) return;
+        const { error } = await supabaseClient.from("learning_goals").delete().eq("id", del.dataset.goal);
+        if (error) { showToast(error.message, "error"); return; }
+        showToast(L("Target dihapus", "Goal deleted"), "success");
+        await loadGoals(); render();
+        return;
+    }
+    const row = e.target.closest(".ts-row.own[data-g]");
+    if (!row) return;
+    const g = grades.find(x => x.id === row.dataset.g);
+    if (!g) return;
+    const v = await TC.sheet({ title: L("Ubah nilai", "Edit grade"), sub: stu.name, fields: gradeFields(g), danger: L("Hapus", "Delete"), noFocus: true, check: v => scoreOk(v) ? "" : L("Isi mapel, penilaian, dan nilai 0–100", "Fill in subject, assessment and a 0–100 score") });
+    if (!v) return;
+    if (v.__danger) {
+        const ok = await attConfirm({ title: L("Hapus nilai ini?", "Delete this grade?"), text: g.subject + " · " + g.period + " · " + g.score, ok: L("Hapus", "Delete") });
+        if (!ok) return;
+        const { error } = await supabaseClient.from("student_grades").delete().eq("id", g.id);
+        if (error) { showToast(error.message, "error"); return; }
+        showToast(L("Nilai dihapus", "Grade deleted"), "success");
+    } else {
+        const score = Number(v.score.replace(",", "."));
+        if (g.subject === v.subject && g.period === v.period && Number(g.score) === score && (g.note || "") === v.note) return;
+        const { error } = await supabaseClient.from("student_grades").update({ subject: v.subject, period: v.period, score: score, note: v.note || null }).eq("id", g.id);
+        if (error) { showToast(error.message, "error"); return; }
+        showToast(L("Nilai diperbarui", "Grade updated"), "success");
+    }
+    await loadGrades(); loadStats(); render();
+});
+
+document.getElementById("tsTabs").addEventListener("click", function (e) {
+    const b = e.target.closest("button[data-tab]");
+    if (!b) return;
+    tab = b.dataset.tab;
+    render();
+});
+
+if (!sid) location.replace("teacher-class.html");
+else start();
+</script>
+</body>
+</html>

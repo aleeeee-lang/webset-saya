@@ -2,7 +2,7 @@
 // Put  <nav class="bottom-nav" id="mainNav"></nav><script src="js/nav.js"></script>
 // right where the menu goes: it fills the nav at once, so swipe.js and the rest see the links.
 //   students:  Beranda · Jadwal · [Absen] · Uang · Saya
-//   teachers:  Beranda · Jadwal · [Absen] · Saya        (their home is teacher.html)
+//   teachers:  Beranda · Kelas · [Absen] · Jadwal · Saya (their home is teacher.html)
 //   admins:    Beranda · Absensi · [QR] · Keuangan · Kelola
 (function () {
   function draw() {
@@ -23,6 +23,7 @@
         me: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         check: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/>',
         qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/>',
+        users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15.5 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>',
         grid: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'
     };
     // [href, icon, id label, en label, i18n key, also-active pages, fab?]
@@ -37,9 +38,10 @@
         ];
     } else if (role === "guru") {
         items = [
-            ["teacher.html", "home", "Beranda", "Home", "nav_home", ["index.html"]],
-            ["schedule.html", "cal", "Jadwal", "Schedule", "", ["calendar.html"]],
+            ["teacher.html", "home", "Beranda", "Home", "nav_home", ["index.html", "teacher-leave.html"]],
+            ["teacher-class.html", "users", "Kelas", "Classes", "", ["teacher-student.html"]],
             ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", [], true],
+            ["schedule.html", "cal", "Jadwal", "Schedule", "", ["calendar.html"]],
             ["settings.html", "me", "Saya", "Me", "nav_my"]
         ];
     } else {

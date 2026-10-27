@@ -58,6 +58,7 @@
         ],
         guru: [
             ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
+            ["teacher-class.html", "users", "Classes", "Kelas & siswa"],
             ["teacher-leave.html", "doc", "Leave & sick", "Izin & sakit siswa"],
             ["attendance.html", "checkin", "Check in", "Absen saya"],
             ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
@@ -165,6 +166,7 @@
         "goals.html": "target tujuan goal belajar",
         "leave.html": "izin cuti sakit surat",
         "teacher-leave.html": "izin sakit surat siswa setujui tolak persetujuan",
+        "teacher-class.html": "kelas siswa daftar absen kelas nilai catatan target murid",
         "calendar.html": "kalender libur ujian event acara",
         "information.html": "info pengumuman berita",
         "piket.html": "piket jadwal kebersihan",
@@ -184,7 +186,7 @@
     };
     var SHORTCUTS = {
         murid: [["attendance.html", "Absen", "Check in", "lime", "checkin"], ["schedule.html", "Jadwal", "Lessons", "", "book"], ["tasks.html", "Tugas", "Tasks", "amber", "task"], ["my-attendance.html#devTabs", "Nilai saya", "My scores", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["history.html", "Tabungan", "Savings", "", "wallet"], ["leave.html", "Ajukan izin", "Leave", "red", "doc"]],
-        guru: [["attendance.html", "Absen saya", "My check-in", "lime", "checkin"], ["teacher.html", "Absen kelas", "Class check-in", "lime", "checkin"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["tasks.html", "Beri tugas", "Give a task", "amber", "task"], ["teacher.html#secGrade", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
+        guru: [["attendance.html", "Absen saya", "My check-in", "lime", "checkin"], ["teacher-class.html", "Absen kelas", "Class check-in", "lime", "checkin"], ["schedule.html", "Jadwal mengajar", "Teaching", "", "book"], ["tasks.html", "Beri tugas", "Give a task", "amber", "task"], ["teacher-class.html", "Input nilai", "Add score", "cyan", "grad"], ["goals.html", "Target", "Goals", "amber", "target"], ["calendar.html", "Kalender", "Calendar", "", "cal"]],
         orangtua: [["parent.html", "Portal anak", "Child portal", "lime", "home"], ["calendar.html", "Kalender", "Calendar", "", "cal"], ["information.html", "Informasi", "Information", "cyan", "info"]],
         admin: [["admin-students.html", "Kelola siswa", "Students", "lime", "users"], ["admin-lessons.html", "Jadwal pelajaran", "Lessons", "cyan", "book"], ["admin-schedule.html", "Jadwal absen", "Schedule", "", "clock"], ["admin-spp.html", "Kelola SPP", "SPP", "amber", "wallet"], ["admin-leave.html", "Persetujuan izin", "Leave", "red", "doc"], ["admin-broadcast.html", "Kirim notifikasi", "Notify", "cyan", "bell"]]
     };
@@ -243,7 +245,7 @@
                 tasks.push(pq.then(function (r) {
                     var lab = { murid: id ? "Siswa" : "Student", guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent" };
                     return { title: id ? "Orang" : "People", items: (r.data || []).map(function (p) {
-                        var href = role === "guru" ? "teacher.html?student=" + p.id : p.role === "murid" ? "admin-development.html?student=" + p.id : p.role === "guru" ? "admin-teachers.html" : "admin-parents.html";
+                        var href = role === "guru" ? "teacher-student.html?id=" + p.id : p.role === "murid" ? "admin-development.html?student=" + p.id : p.role === "guru" ? "admin-teachers.html" : "admin-parents.html";
                         return { href: href, letter: (p.name || "?").trim().charAt(0).toUpperCase(), tone: p.role === "murid" ? "lime" : p.role === "guru" ? "navy" : "amber", title: p.name, sub: [lab[p.role], p.class].filter(Boolean).join(" · ") };
                     }) };
                 }));

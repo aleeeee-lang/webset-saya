@@ -1,729 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Teacher Dashboard - Attendreem</title>
+<title>Beranda Guru - Attendreem</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=3">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027d">
-<script src="js/theme.js?v=20261027d"></script>
-<script src="js/lang.js?v=20261027d"></script>
-<script src="js/toast.js?v=20261027d"></script>
-<script src="js/fit.js?v=20261027d" defer></script>
-<script src="js/champs.js?v=20261027d"></script>
+<link rel="stylesheet" href="style.css?v=20261027e">
+<script>
+// old links (search results, notifications) opened a student here: that page is its own now
+(function () { var s = new URLSearchParams(location.search).get("student"); if (s) location.replace("teacher-student.html?id=" + encodeURIComponent(s)); })();
+</script>
+<script src="js/theme.js?v=20261027e"></script>
+<script src="js/lang.js?v=20261027e"></script>
+<script src="js/toast.js?v=20261027e"></script>
+<script src="js/fit.js?v=20261027e" defer></script>
+<script src="js/champs.js?v=20261027e"></script>
 </head>
 
-<body>
+<body class="v2-page">
 
-<main class="attendance-page v2-teach">
+<div class="v3-home tc-home">
 
-    <section class="v2-teach-hero">
-        <div class="v2-teach-top">
-            <div class="v2-teach-who">
-                <span id="teacherClassLabel">-</span>
-                <h1 data-fit><span data-i18n="teach_hello">Hello</span>, <span id="teacherName">&nbsp;</span></h1>
-            </div>
-            <a href="goals.html" class="v2-teach-ic" aria-label="My Goals"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></a>
-            <a href="calendar.html" class="v2-teach-ic" aria-label="Academic Calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></a>
-            <a href="settings.html" class="v2-teach-ic" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
+    <header class="v2-hero-top v3-top">
+        <a href="settings.html" class="v2-avatar" id="tcAvatar" aria-label="Saya">?</a>
+        <div class="v2-hero-who">
+            <span id="tcRole">&nbsp;</span>
+            <strong id="tcName">&nbsp;</strong>
         </div>
-        <div class="v2-teach-stats">
-            <div class="lime"><strong><span id="tchHadir">0</span><small>/<span id="tchTotal">0</span></small></strong><span data-i18n="status_present">Present</span></div>
-            <div><strong id="tchIzinSakit">0</strong><span data-i18n="teach_leave_sick">Leave / sick</span></div>
-            <div><strong id="tchBelum" class="amber">0</strong><span data-i18n="teach_not_yet">Not checked in</span></div>
-        </div>
+        <button type="button" class="v3-icon" data-v3-search aria-label="Cari">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        </button>
+        <a href="inbox.html" class="v3-icon" id="notifButton" aria-label="Notifikasi">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            <span class="notification-dot" id="notificationDot"></span>
+        </a>
+    </header>
+
+    <section class="v2-hero v3-hero tc-hero">
+        <p class="v2-hero-date" id="tcDate">&nbsp;</p>
+        <div class="tc-count"><b id="tcHadir">–</b><span id="tcOf">&nbsp;</span></div>
+        <div class="tc-bar"><i id="tcBar"></i></div>
+        <div class="tc-chips" id="tcChips"></div>
+        <a href="qr-send.html" class="v2-cta tc-cta">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></svg>
+            <span id="tcQrLabel">Kirim QR absen</span>
+        </a>
     </section>
 
-    <div class="jr-home-wrap" id="teachChamps" hidden></div>
+    <main class="tc-main">
 
-    <!-- Izin / Sakit waiting for this teacher (teacher-leave.html, leave_teacher.sql) -->
-    <a href="teacher-leave.html" class="tl-banner" id="tlBanner" hidden>
-        <span class="tl-banner-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg></span>
-        <span class="tl-banner-t"><b id="tlBannerT"></b><small id="tlBannerS"></small></span>
-        <svg class="tl-banner-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-    </a>
+        <!-- Izin / Sakit waiting (teacher-leave.html, leave_teacher.sql) -->
+        <a href="teacher-leave.html" class="tl-banner" id="tlBanner" hidden>
+            <span class="tl-banner-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg></span>
+            <span class="tl-banner-t"><b id="tlBannerT"></b><small id="tlBannerS"></small></span>
+            <svg class="tl-banner-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
 
-    <!-- TODAY'S ATTENDANCE -->
-    <h2 class="v2-teach-h" data-i18n="label_todays_attendance">Today's Attendance</h2>
-    <section class="v2-teach-list" id="teacherAttendanceList"></section>
+        <!-- live recap of the lessons going on now (js/live-sessions.js) -->
+        <section id="liveSessions" hidden></section>
 
-    <h2 class="v2-teach-h" data-i18n="teach_quick">Quick actions</h2>
-    <!-- live recap of the lessons going on now (js/live-sessions.js) -->
-    <section id="liveSessions" hidden></section>
-
-    <div class="v2-teach-quick">
-        <a href="attendance.html" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg><span data-i18n="teach_my_checkin">My check-in</span></a>
-        <a href="teacher-leave.html" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 15l2 2 4-4"/></svg><span data-i18n="tl_title">Leave &amp; sick</span></a>
-        <a href="qr-send.html" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></svg><span data-i18n="menu_qr_send">Send check-in QR</span></a>
-        <a href="#secGrade" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i18n="label_add_grade">Add Grade</span></a>
-        <a href="#secActivity" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/></svg><span data-i18n="label_add_activity">Add Activity or Note</span></a>
-        <a href="#secGoal" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span data-i18n="label_assign_goal">Assign a Goal</span></a>
-        <a href="#secSpp" class="grey"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg><span data-i18n="teach_spp_class">Class SPP status</span></a>
-        <a href="tasks.html" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span data-i18n="page_tasks_teacher">Class tasks</span></a>
-        <a href="juara.html" class="sand"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span data-i18n="jr_title">Champions</span></a>
-        <a href="kas.html" class="lime"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span data-i18n="kas_link_title">Class cash</span></a>
-        <a href="schedule.html" class="grey"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_teaching">Teaching schedule</span></a>
-    </div>
-
-    <!-- ADD GRADE -->
-    <section class="attendance-card" id="secGrade" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_add_grade">Add Grade</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-            <select id="gradeStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="" data-i18n="option_choose_student">Choose a student...</option>
-            </select>
-            <input type="text" id="gradeSubject" class="am-field" data-i18n-placeholder="placeholder_subject" placeholder="Subject (e.g. Mathematics)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="gradePeriod" class="am-field" data-i18n-placeholder="placeholder_period" placeholder="Period (e.g. UTS 1, Semester 1)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="number" id="gradeScore" class="am-field" min="0" max="100" data-i18n-placeholder="placeholder_score" placeholder="Score (0-100)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="gradeNote" class="am-field" data-i18n-placeholder="placeholder_grade_note" placeholder="Note (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <button type="button" class="submit-button" id="addGradeBtn" data-needs="gradeStudentSelect,gradeSubject,gradePeriod,gradeScore" onclick="addTeacherGrade()" data-i18n="btn_add_grade">
-                Add Grade
-            </button>
+        <div class="tc-head" id="tcMissHead" hidden>
+            <h2 id="tcMissTitle">&nbsp;</h2>
+            <a href="teacher-class.html" id="tcAllLink">Lihat semua siswa</a>
         </div>
-        <!-- the grades this teacher entered: change or delete (teacher_grades.sql) -->
-        <div class="tg-mine" id="myGradesBox" hidden>
-            <div class="tg-mine-h"><b data-i18n="tg_mine_title">Grades you entered</b><small id="myGradesCount"></small></div>
-            <div id="myGradesList"></div>
-            <button type="button" class="tg-more" id="myGradesMore" hidden data-i18n="tg_more">Show more</button>
+        <div class="tc-list" id="tcMiss" hidden></div>
+
+        <div class="tc-tiles">
+            <a href="tasks.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span id="tcT1">Beri tugas</span></a>
+            <a href="schedule.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span id="tcT2">Jadwal mengajar</span></a>
+            <a href="kas.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span id="tcT3">Kas kelas</span></a>
+            <a href="juara.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span id="tcT4">Juara kelas</span></a>
         </div>
-    </section>
 
-    <!-- ADD ACTIVITY / NOTE -->
-    <section class="attendance-card" id="secActivity" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_add_activity">Add Activity or Note</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-            <select id="activityStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="" data-i18n="option_choose_student">Choose a student...</option>
-            </select>
-            <select id="activityType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="kegiatan" data-i18n="type_kegiatan">Activity</option>
-                <option value="prestasi" data-i18n="type_prestasi">Achievement</option>
-                <option value="pelanggaran" data-i18n="type_pelanggaran">Violation</option>
-                <option value="catatan" data-i18n="type_catatan">Note</option>
-            </select>
-            <input type="text" id="activityTitle" class="am-field" data-i18n-placeholder="placeholder_activity_title" placeholder="Title" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="activityDesc" class="am-field" data-i18n-placeholder="placeholder_activity_desc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="date" id="activityDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <button type="button" class="submit-button" id="addActivityBtn" data-needs="activityStudentSelect,activityTitle" onclick="addTeacherActivity()" data-i18n="btn_add_activity">
-                Add
-            </button>
-        </div>
-    </section>
+        <div class="jr-home-wrap" id="teachChamps" hidden></div>
 
-    <!-- SPP STATUS -->
-    <section class="attendance-card" id="secSpp" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_spp_status">SPP Status</div>
-        <div id="teacherSppList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
-    </section>
+    </main>
 
-    <!-- ASSIGN A GOAL -->
-    <section class="attendance-card" id="secGoal" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_assign_goal">Assign a Goal</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-            <select id="goalStudentSelect" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="" data-i18n="option_choose_student">Choose a student...</option>
-            </select>
-            <select id="goalPeriodTeacher" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                <option value="weekly" data-i18n="period_weekly">Weekly</option>
-                <option value="monthly" data-i18n="period_monthly">Monthly</option>
-                <option value="yearly" data-i18n="period_yearly">Yearly</option>
-            </select>
-            <input type="text" id="goalTitleTeacher" class="am-field" data-i18n-placeholder="placeholder_goal_title" placeholder="Goal title (e.g. Finish 5 chapters)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="text" id="goalDescriptionTeacher" class="am-field" data-i18n-placeholder="placeholder_goal_desc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <input type="date" id="goalTargetDateTeacher" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            <button type="button" class="submit-button" id="assignGoalBtn" data-needs="goalStudentSelect,goalTitleTeacher" onclick="assignGoal()" data-i18n="btn_assign_goal">
-                Assign Goal
-            </button>
-        </div>
-    </section>
+</div>
 
-    <!-- STUDENT GOALS -->
-    <section class="attendance-card" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_student_goals">Student Goals</div>
-        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_student_goals">Goals you assigned, plus goals students chose to share with you.</p>
-        <div id="studentGoalsList" style="display:flex;flex-direction:column;gap:8px"></div>
-    </section>
-
-</main>
+<nav class="bottom-nav" id="mainNav"></nav>
+<script src="js/nav.js?v=20261027e"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027d"></script>
-<script src="js/auth.js?v=20261027d"></script>
+<script src="js/supabase.js?v=20261027e"></script>
+<script src="js/auth.js?v=20261027e"></script>
+<script src="js/notification.js?v=20261027e"></script>
+<script src="js/teacher-core.js?v=20261027e"></script>
 
 <script>
+const L = TC.L;
+document.getElementById("tcQrLabel").textContent = L("Kirim QR absen", "Send check-in QR");
+document.getElementById("tcAllLink").textContent = L("Lihat semua siswa", "All students");
+[["tcT1", "Beri tugas", "Give a task"], ["tcT2", "Jadwal mengajar", "Teaching schedule"], ["tcT3", "Kas kelas", "Class cash"], ["tcT4", "Juara kelas", "Champions"]].forEach(function (x) { document.getElementById(x[0]).textContent = L(x[1], x[2]); });
 
-let myClass = "";
-let classStudents = [];
-let gradeStudents = [];   // students of every class this teacher teaches (grades only)
-let currentUser = null;
+let ctx = null;
 
-function tr(key) {
-    const lang = getLang();
-    return (translations[key] && translations[key][lang]) || key;
+async function start() {
+    ctx = await TC.init();
+    if (!ctx) return;
+    const p = ctx.profile;
+    const av = document.getElementById("tcAvatar");
+    if (p.avatar_url) av.innerHTML = '<img src="' + escapeHTML(p.avatar_url) + '" alt="">';
+    else av.textContent = ((p.name || "?").trim().charAt(0) || "?").toUpperCase();
+    document.getElementById("tcName").textContent = p.name || "";
+    document.getElementById("tcRole").textContent = ctx.homeroom ? L("Wali kelas ", "Homeroom ") + ctx.homeroom : L("Guru", "Teacher");
+    if (window.Champs) Champs.home(document.getElementById("teachChamps"), { userId: ctx.user.id, cls: ctx.homeroom });
+    await Promise.all([loadClass(), loadLeaveBanner()]);
 }
 
-function weekdayOf(dateStr) {
-    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    return days[new Date(dateStr + "T00:00:00").getDay()];
-}
-
-async function checkTeacher() {
-    const user = await requireLogin();
-    if (!user) return;
-    currentUser = user;
-
-    const { data: profile, error } = await supabaseClient
-        .from("profiles")
-        .select("role, class, name")
-        .eq("id", user.id)
-        .single();
-
-    if (error || !profile || profile.role !== "guru") {
-        window.location.href = "index.html";
+async function loadClass() {
+    document.getElementById("tcDate").textContent = (ctx.homeroom ? L("Absensi ", "Attendance ") + ctx.homeroom + " · " : "") + TC.dateLong();
+    if (!ctx.homeroom) {
+        // no class of their own: nothing to count, the QR and the lists still work
+        document.getElementById("tcHadir").textContent = ctx.classes.length;
+        document.getElementById("tcOf").textContent = " " + L("kelas diajar", ctx.classes.length === 1 ? "class taught" : "classes taught");
+        document.querySelector(".tc-bar").hidden = true;
+        document.getElementById("tcAllLink").textContent = L("Lihat kelas", "Classes");
         return;
     }
+    const studs = await TC.students([ctx.homeroom]);
+    const ids = studs.map(s => s.id);
+    const [rec, leave] = await Promise.all([TC.today(ids), TC.pendingLeave()]);
+    const hadir = studs.filter(s => rec[s.id] && rec[s.id].status === "Hadir").length;
+    const izin = studs.filter(s => rec[s.id] && (rec[s.id].status === "Izin" || rec[s.id].status === "Sakit")).length;
+    const miss = studs.filter(s => !rec[s.id]);
+    document.getElementById("tcHadir").textContent = hadir;
+    document.getElementById("tcOf").textContent = " / " + studs.length + " " + L("hadir", "present");
+    requestAnimationFrame(() => { document.getElementById("tcBar").style.width = (studs.length ? Math.round(hadir / studs.length * 100) : 0) + "%"; });
+    const chips = [];
+    if (izin) chips.push('<span>' + izin + " " + L("izin / sakit", "leave / sick") + '</span>');
+    if (miss.length) chips.push('<span class="warn">' + miss.length + " " + L("belum absen", "not checked in") + '</span>');
+    document.getElementById("tcChips").innerHTML = chips.join("");
 
-    myClass = profile.class || "";
-    document.getElementById("teacherClassLabel").textContent = myClass ? tr("teach_homeroom") + " " + myClass : "-";
-    document.getElementById("teacherName").textContent = profile.name || "";
-
-    if (window.Champs) Champs.home(document.getElementById("teachChamps"), { userId: user.id, cls: myClass });
-    await loadClassStudents();
-    await Promise.all([loadTodaysAttendance(), loadSppStatus(), loadStudentGoals(), loadMyGrades(), loadLeaveBanner()]);
+    const head = document.getElementById("tcMissHead"), list = document.getElementById("tcMiss");
+    head.hidden = false; list.hidden = false;
+    document.getElementById("tcMissTitle").textContent = studs.length ? L("Belum absen · ", "Not checked in · ") + miss.length : L("Kelasmu", "Your class");
+    if (!studs.length) { list.innerHTML = '<div class="tc-empty">' + L("Belum ada siswa di kelas ini", "No students in this class yet") + '</div>'; return; }
+    if (!miss.length) { list.innerHTML = '<div class="tc-empty ok">' + L("Semua siswa sudah tercatat hari ini", "Everyone is recorded today") + '</div>'; return; }
+    const shown = miss.slice(0, 6);
+    list.innerHTML = shown.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${TC.badge(null, leave[s.id])}</a>`).join("") +
+        (miss.length > shown.length ? `<a class="tc-row more" href="teacher-class.html">${L("+" + (miss.length - shown.length) + " siswa lagi", "+" + (miss.length - shown.length) + " more")}</a>` : "");
 }
 
 async function loadLeaveBanner() {
-    const { data } = await supabaseClient.from("leave_requests").select("name, type").eq("status", "pending").neq("user_id", currentUser.id).order("created_at", { ascending: false }).limit(50);
+    const { data } = await supabaseClient.from("leave_requests").select("name, type").eq("status", "pending").neq("user_id", ctx.user.id).order("created_at", { ascending: false }).limit(50);
     const b = document.getElementById("tlBanner");
     if (!data || !data.length) { b.hidden = true; return; }
-    const id = getLang() === "id";
-    document.getElementById("tlBannerT").textContent = data.length + (id ? " pengajuan izin menunggu" : (data.length > 1 ? " leave requests waiting" : " leave request waiting"));
-    document.getElementById("tlBannerS").textContent = data.slice(0, 3).map(function (r) { return (r.name || "-") + " · " + (r.type === "Sakit" ? (id ? "Sakit" : "Sick") : (id ? "Izin" : "Leave")); }).join(", ") + (data.length > 3 ? "…" : "");
+    document.getElementById("tlBannerT").textContent = data.length + L(" pengajuan izin menunggu", data.length > 1 ? " leave requests waiting" : " leave request waiting");
+    document.getElementById("tlBannerS").textContent = data.slice(0, 3).map(r => (r.name || "-") + " · " + (r.type === "Sakit" ? L("Sakit", "Sick") : L("Izin", "Leave"))).join(", ") + (data.length > 3 ? "…" : "");
     b.hidden = false;
 }
 
-async function loadClassStudents() {
-    const { data } = await supabaseClient
-        .from("profiles")
-        .select("id,name,class")
-        .eq("role", "murid")
-        .eq("class", myClass)
-        .order("name", { ascending: true });
-
-    classStudents = data || [];
-
-    // classes taught: the class they lead + the classes in their lesson schedule
-    const { data: taught } = await supabaseClient.from("class_schedules").select("class").eq("teacher_id", currentUser.id);
-    const classes = Array.from(new Set([myClass].concat((taught || []).map(function (r) { return r.class; })).filter(Boolean)));
-    if (classes.length) {
-        const { data: gs } = await supabaseClient.from("profiles").select("id,name,class,status")
-            .eq("role", "murid").in("class", classes).order("name", { ascending: true });
-        gradeStudents = (gs || []).filter(function (x) { return x.status !== "inactive"; });
-    }
-
-    const gradeSelect = document.getElementById("gradeStudentSelect");
-    const activitySelect = document.getElementById("activityStudentSelect");
-    const goalSelect = document.getElementById("goalStudentSelect");
-
-    [activitySelect, goalSelect].forEach(function (sel) {
-        classStudents.forEach(function (s) {
-            const opt = document.createElement("option");
-            opt.value = s.id;
-            opt.textContent = s.name;
-            sel.appendChild(opt);
-        });
-    });
-
-    document.getElementById("activityDate").value = localDateStr();
-
-    // grades: students of every class this teacher teaches, grouped by class
-    const byClass = {};
-    gradeStudents.forEach(function (s) { (byClass[s.class] = byClass[s.class] || []).push(s); });
-    Object.keys(byClass).sort(function (a, b) { return a.localeCompare(b, "id", { numeric: true }); }).forEach(function (c) {
-        const grp = document.createElement("optgroup");
-        grp.label = c;
-        byClass[c].forEach(function (s) {
-            const opt = document.createElement("option");
-            opt.value = s.id;
-            opt.textContent = s.name;
-            grp.appendChild(opt);
-        });
-        gradeSelect.appendChild(grp);
-    });
-
-    const pre = new URLSearchParams(location.search).get("student");
-    if (pre && classStudents.some(function (s) { return s.id === pre; })) {
-        [gradeSelect, activitySelect, goalSelect].forEach(function (sel) { sel.value = pre; sel.dispatchEvent(new Event("change")); });
-        const target = document.getElementById("secGrade");
-        if (target) setTimeout(function () { target.scrollIntoView({ behavior: "smooth", block: "start" }); }, 300);
-    }
-}
-
-async function loadTodaysAttendance() {
-    const container = document.getElementById("teacherAttendanceList");
-    const ids = classStudents.map(function (s) { return s.id; });
-
-    if (ids.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
-        return;
-    }
-
-    const today = localDateStr();
-
-    const { data } = await supabaseClient
-        .from("attendance")
-        .select("*")
-        .eq("date", today)
-        .in("user_id", ids);
-
-    const byStudent = {};
-    (data || []).forEach(function (a) { byStudent[a.user_id] = a; });
-
-    teacherAttendanceByStudent = byStudent;
-    renderTeacherRows();
-}
-
-let teacherAttendanceByStudent = {};
-
-function renderTeacherRows() {
-    const container = document.getElementById("teacherAttendanceList");
-    const opts = [["Hadir", "H", "status_present"], ["Izin", "I", "status_permission"], ["Sakit", "S", "status_sick"], ["Alpa", "A", "status_absent"]];
-    container.innerHTML = classStudents.map(function (s) {
-        const rec = teacherAttendanceByStudent[s.id];
-        const cur = rec ? rec.status : "";
-        const safeName = escapeHTML(JSON.stringify(s.name || ""));
-        return '<div class="v2-teach-row"><strong></strong><div class="v2-seg-btns" role="radiogroup">' +
-            opts.map(function (o) {
-                return '<button type="button" role="radio" aria-checked="' + (cur === o[0]) + '" title="' + tr(o[2]) + '" class="' + o[0].toLowerCase() + (cur === o[0] ? " on" : "") + '" onclick="saveTeacherAttendance(\'' + s.id + '\', ' + safeName + ', \'' + o[0] + '\')">' + o[1] + '</button>';
-            }).join("") + '</div></div>';
-    }).join("");
-    container.querySelectorAll(".v2-teach-row strong").forEach(function (el, k) { el.textContent = classStudents[k].name; });
-
-    const vals = classStudents.map(function (s) { return teacherAttendanceByStudent[s.id] ? teacherAttendanceByStudent[s.id].status : ""; });
-    document.getElementById("tchTotal").textContent = classStudents.length;
-    document.getElementById("tchHadir").textContent = vals.filter(function (v) { return v === "Hadir"; }).length;
-    document.getElementById("tchIzinSakit").textContent = vals.filter(function (v) { return v === "Izin" || v === "Sakit"; }).length;
-    document.getElementById("tchBelum").textContent = vals.filter(function (v) { return !v; }).length;
-}
-
-async function saveTeacherAttendance(studentId, studentName, chosenStatus) {
-    const lang = getLang();
-    const status = chosenStatus || "";
-
-    if (!status) {
-        showToast(translations.toast_select_status[lang], "error");
-        return;
-    }
-
-    const today = localDateStr();
-    const student = classStudents.find(function (s) { return s.id === studentId; });
-
-    const { data: existing } = await supabaseClient
-        .from("attendance")
-        .select("id,status")
-        .eq("user_id", studentId)
-        .eq("date", today)
-        .maybeSingle();
-    if (existing && existing.status === status) { attNoChange(); return; }
-
-    const payload = {
-        user_id: studentId,
-        name: studentName,
-        class: student ? student.class : myClass,
-        date: today,
-        day: weekdayOf(today),
-        status: status,
-        reason: ""
-    };
-
-    let error;
-    if (existing) {
-        const res = await supabaseClient.from("attendance").update(payload).eq("id", existing.id);
-        error = res.error;
-    } else {
-        const res = await supabaseClient.from("attendance").insert([payload]);
-        error = res.error;
-    }
-
-    if (error) {
-        showToast(translations.toast_save_failed[lang] + error.message, "error");
-        return;
-    }
-
-    teacherAttendanceByStudent[studentId] = Object.assign({}, teacherAttendanceByStudent[studentId] || {}, { status: status });
-    renderTeacherRows();
-    showToast(translations.toast_attendance_saved[lang], "success");
-}
-
-async function addTeacherGrade() {
-    const lang = getLang();
-    const studentId = document.getElementById("gradeStudentSelect").value;
-    const subject = document.getElementById("gradeSubject").value.trim();
-    const period = document.getElementById("gradePeriod").value.trim();
-    const score = Number(document.getElementById("gradeScore").value);
-    const note = document.getElementById("gradeNote").value.trim();
-    const btn = document.getElementById("addGradeBtn");
-
-    if (!studentId) {
-        showToast(translations.toast_select_student_first[lang], "error");
-        return;
-    }
-
-    if (!subject || !period || document.getElementById("gradeScore").value === "" || isNaN(score) || score < 0 || score > 100) {
-        showToast(translations.toast_enter_valid_score[lang], "error");
-        return;
-    }
-
-    btn.disabled = true;
-
-    const { error } = await supabaseClient
-        .from("student_grades")
-        .insert({
-            user_id: studentId,
-            subject: subject,
-            period: period,
-            score: score,
-            note: note || null,
-            created_by: currentUser.id
-        });
-
-    btn.disabled = false;
-
-    if (error) {
-        showToast(translations.toast_save_failed[lang] + error.message, "error");
-        return;
-    }
-
-    document.getElementById("gradeSubject").value = "";
-    document.getElementById("gradePeriod").value = "";
-    document.getElementById("gradeScore").value = "";
-    document.getElementById("gradeNote").value = "";
-
-    showToast(translations.toast_grade_added[lang], "success");
-    loadMyGrades();
-}
-
-/* ---------- the grades this teacher entered (change / delete) ---------- */
-let myGrades = [], myGradesShown = 10, myGradeEditing = null;
-
-async function loadMyGrades() {
-    if (!currentUser) return;
-    const { data, error } = await supabaseClient.from("student_grades")
-        .select("id,user_id,subject,period,score,note,created_at")
-        .eq("created_by", currentUser.id).order("created_at", { ascending: false }).limit(200);
-    if (error) return;
-    myGrades = data || [];
-    // names for students no longer in a class this teacher teaches
-    const known = new Set(gradeStudents.map(function (s) { return s.id; }));
-    const missing = Array.from(new Set(myGrades.map(function (g) { return g.user_id; }).filter(function (id) { return !known.has(id); })));
-    if (missing.length) {
-        const { data: ps } = await supabaseClient.from("profiles").select("id,name,class").in("id", missing);
-        (ps || []).forEach(function (p) { gradeStudents.push({ id: p.id, name: p.name, class: p.class, gone: true }); });
-    }
-    renderMyGrades();
-}
-
-function renderMyGrades() {
-    const box = document.getElementById("myGradesBox");
-    const list = document.getElementById("myGradesList");
-    box.hidden = myGrades.length === 0;
-    document.getElementById("myGradesCount").textContent = myGrades.length ? String(myGrades.length) : "";
-    const who = {};
-    gradeStudents.forEach(function (s) { who[s.id] = s; });
-    const lang = getLang();
-    list.innerHTML = myGrades.slice(0, myGradesShown).map(function (g) {
-        const st = who[g.user_id] || {};
-        const sc = Number(g.score);
-        const tone = sc >= 85 ? "good" : sc >= 70 ? "ok" : "low";
-        const scoreTxt = Number.isInteger(sc) ? String(sc) : String(sc).replace(".", lang === "id" ? "," : ".");
-        if (myGradeEditing === g.id) {
-            return `<div class="tg-row editing" data-id="${g.id}">
-                <div class="tg-edit">
-                    <div class="tg-edit-who"><b>${escapeHTML(st.name || "-")}</b><small>${escapeHTML(st.class || "")}</small></div>
-                    <div class="tg-edit-grid">
-                        <label><span>${escapeHTML(tr("tg_subject"))}</span><input class="am-field" data-f="subject" value="${escapeHTML(g.subject || "")}"></label>
-                        <label><span>${escapeHTML(tr("tg_period"))}</span><input class="am-field" data-f="period" value="${escapeHTML(g.period || "")}"></label>
-                        <label><span>${escapeHTML(tr("tg_score"))}</span><input class="am-field" data-f="score" type="number" min="0" max="100" inputmode="decimal" value="${escapeHTML(String(g.score))}"></label>
-                        <label class="wide"><span>${escapeHTML(tr("tg_note"))}</span><input class="am-field" data-f="note" value="${escapeHTML(g.note || "")}"></label>
-                    </div>
-                    <div class="tg-edit-act"><button type="button" class="tg-btn ghost" data-act="cancel">${escapeHTML(tr("tg_cancel"))}</button><button type="button" class="tg-btn solid" data-act="save">${escapeHTML(tr("tg_save"))}</button></div>
-                </div>
-            </div>`;
-        }
-        return `<div class="tg-row" data-id="${g.id}">
-            <span class="tg-score ${tone}">${escapeHTML(scoreTxt)}</span>
-            <div class="tg-info"><b>${escapeHTML(st.name || "-")}</b><small>${escapeHTML((g.subject || "-") + " · " + (g.period || "-") + (st.class ? " · " + st.class : ""))}</small>${g.note ? `<em>${escapeHTML(g.note)}</em>` : ""}</div>
-            <div class="tg-act">
-                <button type="button" class="tg-ic" data-act="edit" aria-label="${escapeHTML(tr("tg_edit"))}" title="${escapeHTML(tr("tg_edit"))}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-                <button type="button" class="tg-ic del" data-act="delete" aria-label="${escapeHTML(tr("tg_delete"))}" title="${escapeHTML(tr("tg_delete"))}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
-            </div>
-        </div>`;
-    }).join("");
-    document.getElementById("myGradesMore").hidden = myGrades.length <= myGradesShown;
-}
-
-document.addEventListener("click", async function (e) {
-    if (e.target.closest("#myGradesMore")) { myGradesShown += 20; renderMyGrades(); return; }
-    const b = e.target.closest("#myGradesList [data-act]");
-    if (!b) return;
-    const row = b.closest(".tg-row"), id = row.getAttribute("data-id"), act = b.getAttribute("data-act");
-    const lang = getLang();
-    if (act === "edit") { myGradeEditing = id; renderMyGrades(); const f = document.querySelector('#myGradesList .tg-row.editing input[data-f="score"]'); if (f) f.focus(); return; }
-    if (act === "cancel") { myGradeEditing = null; renderMyGrades(); return; }
-    if (act === "save") {
-        const v = function (f) { return row.querySelector('[data-f="' + f + '"]').value.trim(); };
-        const score = Number(v("score").replace(",", "."));
-        if (!v("subject") || !v("period") || v("score") === "" || isNaN(score) || score < 0 || score > 100) {
-            showToast(translations.toast_enter_valid_score[lang], "error");
-            return;
-        }
-        const g0 = myGrades.find(function (x) { return x.id === id; });
-        if (g0 && attSame([v("subject"), v("period"), score, v("note") || null], [g0.subject || "", g0.period || "", Number(g0.score), g0.note || null])) {
-            myGradeEditing = null; renderMyGrades(); attNoChange(); return;
-        }
-        b.disabled = true;
-        const { error } = await supabaseClient.from("student_grades")
-            .update({ subject: v("subject"), period: v("period"), score: score, note: v("note") || null }).eq("id", id);
-        b.disabled = false;
-        if (error) { showToast(translations.toast_save_failed[lang] + error.message, "error"); return; }
-        myGradeEditing = null;
-        showToast(tr("tg_saved"), "success");
-        loadMyGrades();
-        return;
-    }
-    if (act === "delete") {
-        const g = myGrades.find(function (x) { return x.id === id; });
-        const ok = await attConfirm({ title: tr("tg_delete_q"), text: g ? (g.subject + " · " + g.period + " · " + g.score) : "", ok: tr("tg_delete") });
-        if (!ok) return;
-        const { error } = await supabaseClient.from("student_grades").delete().eq("id", id);
-        if (error) { showToast(translations.toast_save_failed[lang] + error.message, "error"); return; }
-        showToast(tr("tg_deleted"), "success");
-        loadMyGrades();
-    }
-});
-
-async function addTeacherActivity() {
-    const lang = getLang();
-    const studentId = document.getElementById("activityStudentSelect").value;
-    const type = document.getElementById("activityType").value;
-    const title = document.getElementById("activityTitle").value.trim();
-    const description = document.getElementById("activityDesc").value.trim();
-    const date = document.getElementById("activityDate").value || localDateStr();
-    const btn = document.getElementById("addActivityBtn");
-
-    if (!studentId) {
-        showToast(translations.toast_select_student_first[lang], "error");
-        return;
-    }
-
-    if (!title) {
-        showToast(translations.toast_fill_activity_title[lang], "error");
-        return;
-    }
-
-    btn.disabled = true;
-
-    const { error } = await supabaseClient
-        .from("student_activities")
-        .insert({
-            user_id: studentId,
-            type: type,
-            title: title,
-            description: description || null,
-            date: date,
-            created_by: currentUser.id
-        });
-
-    btn.disabled = false;
-
-    if (error) {
-        showToast(translations.toast_save_failed[lang] + error.message, "error");
-        return;
-    }
-
-    document.getElementById("activityTitle").value = "";
-    document.getElementById("activityDesc").value = "";
-    document.getElementById("activityDate").value = localDateStr();
-
-    showToast(translations.toast_activity_added[lang], "success");
-}
-
-function currentSppPeriodTeacher() {
-    const now = new Date();
-    return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
-}
-
-async function loadSppStatus() {
-    const container = document.getElementById("teacherSppList");
-    const ids = classStudents.map(function (s) { return s.id; });
-
-    if (ids.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
-        return;
-    }
-
-    const period = currentSppPeriodTeacher();
-
-    const { data } = await supabaseClient
-        .from("spp_payments")
-        .select("*")
-        .eq("period", period)
-        .in("user_id", ids);
-
-    const byStudent = {};
-    (data || []).forEach(function (r) { byStudent[r.user_id] = r; });
-
-    container.innerHTML = classStudents.map(function (s) {
-        const record = byStudent[s.id];
-        const statusClass = record ? record.status : "unpaid";
-        const statusKey = "badge_spp_" + statusClass;
-        return `
-            <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
-                <strong style="font-size:13px;color:#20243a">${escapeHTML(s.name)}</strong>
-                <span class="spp-status-badge ${statusClass}">${tr(statusKey)}</span>
-            </div>
-        `;
-    }).join("");
-}
-
-function tr(key) {
-    const lang = getLang();
-    return (translations[key] && translations[key][lang]) || key;
-}
-
-function periodLabelTeacher(period) {
-    return tr("period_" + period);
-}
-
-async function loadStudentGoals() {
-    const container = document.getElementById("studentGoalsList");
-    const ids = classStudents.map(function (s) { return s.id; });
-
-    if (ids.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_students_in_class") + "</p>";
-        return;
-    }
-
-    const { data } = await supabaseClient
-        .from("learning_goals")
-        .select("*")
-        .in("user_id", ids)
-        .order("created_at", { ascending: false });
-
-    const goals = data || [];
-
-    if (goals.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + tr("text_no_student_goals") + "</p>";
-        return;
-    }
-
-    container.innerHTML = goals.map(function (g) {
-        const student = classStudents.find(function (s) { return s.id === g.user_id; });
-        const statusKey = "status_" + g.status;
-        return `
-            <div class="am-row" style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;background:#f8f8ff;border-radius:12px">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-                    <strong style="font-size:13px;color:#20243a">${escapeHTML(student ? student.name : "-")}</strong>
-                    <div style="display:flex;align-items:center;gap:6px">
-                        <span class="goal-period-chip" style="padding:2px 8px;border-radius:8px;background:#EEF7D4;color:#3F6212;font-size:11px;font-weight:700">${periodLabelTeacher(g.period)}</span>
-                        ${g.created_by === currentUser.id ? `<button type="button" onclick="deleteAssignedGoal('${g.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ""}
-                    </div>
-                </div>
-                <span style="font-size:13px;color:#20243a">${escapeHTML(g.title)}</span>
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-                    <span class="spp-status-badge ${g.status === "achieved" ? "approved" : g.status === "in_progress" ? "pending" : "unpaid"}" style="margin:0">${tr(statusKey)}</span>
-                    <span style="font-size:12px;color:#888">${g.progress_percent}%</span>
-                </div>
-            </div>
-        `;
-    }).join("");
-}
-
-async function deleteAssignedGoal(id) {
-    const lang = getLang();
-    if (!confirm(translations.confirm_delete_goal[lang])) return;
-
-    const { data, error } = await supabaseClient
-        .from("learning_goals")
-        .delete()
-        .eq("id", id)
-        .select("id");
-
-    if (error) {
-        showToast(translations.toast_delete_failed[lang] + error.message, "error");
-        return;
-    }
-    if (!data || data.length === 0) {
-        showToast(translations.toast_delete_not_allowed[lang], "error");
-        return;
-    }
-
-    showToast(translations.toast_goal_deleted[lang], "success");
-    await loadStudentGoals();
-}
-
-async function assignGoal() {
-    const lang = getLang();
-    const studentId = document.getElementById("goalStudentSelect").value;
-    const period = document.getElementById("goalPeriodTeacher").value;
-    const title = document.getElementById("goalTitleTeacher").value.trim();
-    const description = document.getElementById("goalDescriptionTeacher").value.trim();
-    const targetDate = document.getElementById("goalTargetDateTeacher").value;
-    const btn = document.getElementById("assignGoalBtn");
-
-    if (!studentId) {
-        showToast(translations.toast_select_student_first[lang], "error");
-        return;
-    }
-
-    if (!title) {
-        showToast(translations.toast_fill_goal_title[lang], "error");
-        return;
-    }
-
-    const student = classStudents.find(function (s) { return s.id === studentId; });
-
-    btn.disabled = true;
-
-    const { error } = await supabaseClient
-        .from("learning_goals")
-        .insert({
-            user_id: studentId,
-            name: student ? student.name : null,
-            class: student ? student.class : myClass,
-            period: period,
-            title: title,
-            description: description || null,
-            target_date: targetDate || null,
-            is_shared: true,
-            created_by: currentUser.id
-        });
-
-    btn.disabled = false;
-
-    if (error) {
-        showToast(translations.toast_save_failed[lang] + error.message, "error");
-        return;
-    }
-
-    document.getElementById("goalTitleTeacher").value = "";
-    document.getElementById("goalDescriptionTeacher").value = "";
-    document.getElementById("goalTargetDateTeacher").value = "";
-
-    showToast(translations.toast_goal_added[lang], "success");
-    await loadStudentGoals();
-}
-
-checkTeacher();
-
+window.addEventListener("tabshow", function () { if (ctx) { loadClass(); loadLeaveBanner(); } });
+start();
 </script>
 
-<script src="js/live-sessions.js?v=20261027d"></script>
+<script src="js/live-sessions.js?v=20261027e"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 </html>

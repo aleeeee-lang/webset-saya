@@ -93,7 +93,6 @@
             if (typeof attMethod === "function" && attMethod() === "qr") { var fb = document.querySelector('#attMethod button[data-m="fp"]:not([hidden])') || document.querySelector('#attMethod button[data-m="face"]'); if (fb) fb.click(); }
             var hadir = document.querySelector('input[name="status"][value="Hadir"]');
             if (hadir) hadir.checked = true;
-            $("proofBox") && ($("proofBox").hidden = true);
             syncEarly();
             window.dispatchEvent(new Event("resize"));   // repaint the fingerprint panel text
         }

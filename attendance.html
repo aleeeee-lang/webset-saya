@@ -19,14 +19,14 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=20261027o"
+        href="style.css?v=20261027p"
     >
-    <script src="js/theme.js?v=20261027o"></script>
-    <script src="js/lang.js?v=20261027o"></script>
-    <script src="js/toast.js?v=20261027o"></script>
-<script src="js/fit.js?v=20261027o" defer></script>
-    <script src="js/transition.js?v=20261027o"></script>
-    <script src="js/avatarcrop.js?v=20261027o"></script>
+    <script src="js/theme.js?v=20261027p"></script>
+    <script src="js/lang.js?v=20261027p"></script>
+    <script src="js/toast.js?v=20261027p"></script>
+<script src="js/fit.js?v=20261027p" defer></script>
+    <script src="js/transition.js?v=20261027p"></script>
+    <script src="js/avatarcrop.js?v=20261027p"></script>
 
     
 </head>
@@ -51,55 +51,17 @@
 
         <a href="leave.html" class="v3-leave-link" id="attLeaveLink"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6"/></svg><span data-i18n="v3_cant_come">Tidak bisa hadir? Ajukan izin / sakit</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="v3-leave-go"><path d="M9 6l6 6-6 6"/></svg></a>
 
-        <h2 class="v2-label att-status-label" data-i18n="label_status_today">Today's status</h2>
-        <div class="v2-status-grid" role="radiogroup" aria-label="Status">
-            <button type="button" class="v2-status" role="radio" aria-checked="false" data-value="Hadir">
-                <span data-i18n="status_present">Present</span>
-                <span class="v2-status-ic hadir"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
-            </button>
-            <button type="button" class="v2-status izin" role="radio" aria-checked="false" data-value="Izin">
-                <span data-i18n="status_permission">Permission</span>
-                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
-            </button>
-            <button type="button" class="v2-status sakit" role="radio" aria-checked="false" data-value="Sakit">
-                <span data-i18n="status_sick">Sick</span>
-                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
-            </button>
-            <button type="button" class="v2-status alpa" role="radio" aria-checked="false" data-value="Alpa">
-                <span data-i18n="status_absent">Absent</span>
-                <span class="v2-status-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
-            </button>
-        </div>
-
+        <!-- 2026: checking in is only "Hadir" (Izin / Sakit go through leave.html);
+             the scripts still read the status from this one radio -->
         <div class="hidden-status-inputs" hidden>
-            <input type="radio" name="status" value="Hadir">
-            <input type="radio" name="status" value="Izin">
-            <input type="radio" name="status" value="Sakit">
-            <input type="radio" name="status" value="Alpa">
+            <input type="radio" name="status" value="Hadir" checked>
         </div>
 
+        <!-- shown only when checking out early (js/att-checkout.js) -->
         <label class="v2-reason" id="reasonBox" hidden>
             <span data-i18n="label_reason">Reason</span>
             <textarea id="reason" rows="5" placeholder="Why are you absent?" data-i18n-placeholder="reason_placeholder"></textarea>
         </label>
-
-        <!-- Izin / Sakit: photo of a letter (js/att-proof.js) -->
-        <section class="v2-proof" id="proofBox" hidden>
-            <div class="v2-proof-head"><b id="proofTitle">Foto surat / bukti</b><small id="proofHint"></small></div>
-            <div class="v2-proof-empty" id="proofEmpty">
-                <button type="button" class="v2-proof-btn" id="proofCam"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span id="proofCamTxt">Ambil foto</span></button>
-                <button type="button" class="v2-proof-btn" id="proofGal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg><span id="proofGalTxt">Dari galeri</span></button>
-            </div>
-            <div class="v2-proof-full" id="proofFull" hidden>
-                <img id="proofImg" alt="">
-                <div class="v2-proof-act">
-                    <button type="button" class="v2-proof-link" id="proofChange">Ganti</button>
-                    <button type="button" class="v2-proof-x" id="proofRemove"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
-                </div>
-            </div>
-            <input type="file" id="proofCamIn" accept="image/*" capture="environment" hidden>
-            <input type="file" id="proofGalIn" accept="image/*" hidden>
-        </section>
         </div>
 
         <div class="v2-method" id="attMethod" role="tablist">
@@ -181,7 +143,7 @@
     ====================================== -->
 
     <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027o"></script>
+<script src="js/nav.js?v=20261027p"></script>
 
 
 
@@ -191,21 +153,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js?v=20261027o"></script>
+    <script src="js/supabase.js?v=20261027p"></script>
     
-    <script src="js/auth.js?v=20261027o"></script>
+    <script src="js/auth.js?v=20261027p"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script src="js/camera.js?v=20261027o"></script>
+    <script src="js/camera.js?v=20261027p"></script>
 
-    <script src="js/fingerprint.js?v=20261027o"></script>
-    <script src="js/att-method.js?v=20261027o"></script>
+    <script src="js/fingerprint.js?v=20261027p"></script>
+    <script src="js/att-method.js?v=20261027p"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-    <script src="js/att-qr.js?v=20261027o"></script>
-    <script src="js/att-proof.js?v=20261027o"></script>
-    <script src="js/att-checkout.js?v=20261027o"></script>
-    <script src="js/attendance.js?v=20261027o"></script>
+    <script src="js/att-qr.js?v=20261027p"></script>
+    <script src="js/att-checkout.js?v=20261027p"></script>
+    <script src="js/attendance.js?v=20261027p"></script>
 
 
 
@@ -301,29 +262,13 @@
         setInterval(updateDateTime, 1000);
         loadSchedule();
 
-        // STATUS PICKER
-        const statusButtons = document.querySelectorAll(".v2-status");
-        const statusInputs = document.querySelectorAll('input[name="status"]');
-
-        function selectStatus(value) {
-            statusButtons.forEach(function (btn) {
-                const on = btn.dataset.value === value;
-                btn.classList.toggle("selected", on);
-                btn.setAttribute("aria-checked", on ? "true" : "false");
-            });
-            statusInputs.forEach(function (input) { input.checked = input.value === value; });
-            document.getElementById("reasonBox").hidden = !value || value === "Hadir";
-            if (window.attProofShow) attProofShow(value);
+        // the status is always "Hadir" now (see the hidden radio above)
+        function selectStatus() {
+            const r = document.querySelector('input[name="status"][value="Hadir"]');
+            if (r) r.checked = true;
         }
-
-        statusButtons.forEach(function (btn) {
-            btn.addEventListener("click", function () { selectStatus(btn.dataset.value); });
-        });
-
-        // 2026: checking in is just "Hadir"; Izin / Sakit go through leave.html (link under the window)
-        const attSimple = true;
-        if (attSimple) { document.documentElement.classList.add("att-simple"); selectStatus("Hadir"); }
-        window.resetStatusPicker = function () { selectStatus(attSimple ? "Hadir" : ""); };
+        selectStatus();
+        window.resetStatusPicker = selectStatus;
 
         // the submit button looks "waiting" until a status is picked and the photo / fingerprint is done
         (function () {
@@ -335,7 +280,6 @@
                 btn.classList.toggle("is-waiting", !ready);
             }
             document.addEventListener("click", function () { setTimeout(sync, 60); }, true);
-            document.getElementById("reason").addEventListener("input", sync);
             setInterval(sync, 500);
             sync();
         })();

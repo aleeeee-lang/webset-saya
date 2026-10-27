@@ -54,7 +54,9 @@ window.attSnapGhost = function (href, label) {
     g.className = "att-swipe-ghost";
     g.setAttribute("aria-hidden", "true");
     var snap = null;
-    try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
+    // the check-in page changes the moment you check in (and has a live camera): never show an old picture of it
+    if (href === "attendance.html") { try { localStorage.removeItem("att-snap:attendance.html"); } catch (e) {} }
+    else try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
     if (snap && (!snap.t || new Date(snap.t).toDateString() !== new Date().toDateString())) snap = null;
     if (snap && (snap.v || "") !== window.attAppVer()) snap = null;
     // saved in the other colour mode (light <-> dark): charts and inline colours would be wrong
@@ -229,7 +231,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261027o";
+    w.src = "js/swipe.js?v=20261027p";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -237,7 +239,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261027o";
+    s.src = "js/sidebar.js?v=20261027p";
     s.defer = true;
     document.head.appendChild(s);
 })();

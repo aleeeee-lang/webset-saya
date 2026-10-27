@@ -73,8 +73,8 @@
 
     async function go() {
         if (st.sending || !st.pass) return;
-        var h = document.querySelector('.v2-status[data-value="Hadir"]');
-        if (h && !document.querySelector('input[name="status"][value="Hadir"]').checked) h.click();
+        var h = document.querySelector('input[name="status"][value="Hadir"]');
+        if (h) h.checked = true;
         st.sending = true; $("qrGo").disabled = true;
         $("qrPass").classList.add("busy");
         $("qrGo").textContent = T("qr_going");
@@ -94,8 +94,8 @@
         st.on = e.detail === "qr";
         document.body.classList.toggle("qr-mode", st.on);     // the QR button sends it: no separate send button
         if (st.on) {
-            var h = document.querySelector('.v2-status[data-value="Hadir"]');
-            if (h && !document.querySelector('input[name="status"][value="Hadir"]').checked) h.click();
+            var h = document.querySelector('input[name="status"][value="Hadir"]');
+            if (h) h.checked = true;
             load();
         }
     });

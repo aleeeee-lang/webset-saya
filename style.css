@@ -1695,15 +1695,6 @@ html[data-theme="dark"] .v2-agenda-date{background:#262628}
 .v2-window.closed .v2-window-text svg{color:#FCA5A5}
 .v2-window-count{background:#C6F432;color:#14162B;border-radius:14px;padding:8px 12px;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
 .v2-window-count[hidden]{display:none}
-.v2-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.v2-status{height:64px;border-radius:20px;border:2px solid transparent;background:#EEF7D4;color:#14162B;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 16px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s}
-.v2-status.izin{background:#F4EED9}.v2-status.sakit{background:#E7E9F3}.v2-status.alpa{background:#ECEDF2}
-.v2-status-ic{display:flex;color:#3F6212}
-.v2-status.izin .v2-status-ic{color:#92400E}.v2-status.sakit .v2-status-ic{color:#3A3F5C}.v2-status.alpa .v2-status-ic{color:#B91C1C}
-.v2-status-ic.hadir{width:30px;height:30px;border-radius:50%;background:#fff;align-items:center;justify-content:center}
-.v2-status.selected{background:#14162B;color:#fff;border-color:#14162B}
-.v2-status.selected .v2-status-ic{color:#C6F432}
-.v2-status.selected .v2-status-ic.hadir{background:#C6F432;color:#14162B}
 .v2-reason{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700}
 .v2-reason[hidden]{display:none}
 .v2-reason textarea,.v2-field{border-radius:18px;border:1.5px solid #E4E5EC;background:#fff;padding:14px;font-family:inherit;font-size:14px;line-height:1.5;color:#14162B;resize:vertical;outline:none;box-sizing:border-box;width:100%}
@@ -1731,18 +1722,6 @@ html[data-theme="dark"] .v2-agenda-date{background:#262628}
 html[data-theme="dark"] .v2-head-sub{color:#9A9A9F}
 html[data-theme="dark"] .v2-back,html[data-theme="dark"] .v2-btn-soft{background:#121212;color:#EDEDED}
 html[data-theme="dark"] .v2-window{background:#121212;border:1px solid #242424}
-html[data-theme="dark"] .v2-status{color:#EDEDED;background:rgba(198,244,50,.12)}
-html[data-theme="dark"] .v2-status.izin{background:rgba(251,191,36,.13)}
-html[data-theme="dark"] .v2-status.sakit{background:#1C1C1E}
-html[data-theme="dark"] .v2-status.alpa{background:rgba(248,113,113,.13)}
-html[data-theme="dark"] .v2-status-ic{color:#C6F432}
-html[data-theme="dark"] .v2-status.izin .v2-status-ic{color:#FCD34D}
-html[data-theme="dark"] .v2-status.sakit .v2-status-ic{color:#B8B8BD}
-html[data-theme="dark"] .v2-status.alpa .v2-status-ic{color:#FCA5A5}
-html[data-theme="dark"] .v2-status-ic.hadir{background:#262628}
-html[data-theme="dark"] .v2-status.selected{background:#C6F432;color:#14162B;border-color:#C6F432}
-html[data-theme="dark"] .v2-status.selected .v2-status-ic{color:#14162B}
-html[data-theme="dark"] .v2-status.selected .v2-status-ic.hadir{background:#14162B;color:#C6F432}
 html[data-theme="dark"] .v2-reason textarea,html[data-theme="dark"] .v2-field{background:#0A0A0A;border-color:#2C2C2E;color:#EDEDED}
 html[data-theme="dark"] .v2-reason textarea:focus,html[data-theme="dark"] .v2-field:focus{border-color:#C6F432}
 html[data-theme="dark"] .v2-cam{background:#121212;border:1px solid #242424}
@@ -2086,7 +2065,6 @@ html[data-theme="dark"] .v2-my-hero .v2-my-stats strong.lime{color:#C6F432!impor
   body.has-side.fp-docked main.v2-wrap>.v2-submit{display:flex!important}
   body.has-side .v2-fp-round{border-color:transparent!important}
   body.has-side.fp-docked #toastContainer,body.has-side.fp-changing #toastContainer{bottom:96px}
-  body.has-side .v2-status{height:72px}
 
   /* Dasbor */
   body.has-side .v2-dash{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,.7fr);gap:16px;align-items:stretch}
@@ -4253,7 +4231,6 @@ html[data-theme="dark"] .attendance-page .feedback-filter-btn.on{background:#C6F
 .co-line{flex:1;height:3px;border-radius:9px;background:#E6E8EF;min-width:20px}
 .co-line.done{background:#C6F432}
 .co-note{margin:12px 0 0;font-size:13px;color:#5B6078}
-html.att-co-out .v2-label,html.att-co-out .v2-status-grid,html.att-co-out #proofBox{display:none!important}
 html.att-co-done .att-side,html.att-co-done #attMethod,html.att-co-done #qrArea,html.att-co-done #faceArea,html.att-co-done #fpPanel,html.att-co-done .v2-submit,html.att-co-done #fpChangeBar{display:none!important}
 html.att-co-done body.fp-docked main.v2-wrap{padding-bottom:0}
 html[data-theme="dark"] .co-card{background:#121212}
@@ -4401,7 +4378,6 @@ html[data-theme="dark"] .v3-tile-hint{color:#9A9A9F}
 .bottom-nav.v3-nav a{padding:10px 0}
 .bottom-nav.v3-nav a>span:first-child{height:26px!important}
 /* ---- check-in: just "Hadir"; Izin / Sakit through a link ---- */
-html.att-simple .att-status-label,html.att-simple .v2-status-grid{display:none!important}
 .v3-leave-link{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:13px 14px;border-radius:16px;background:#fff;border:1px solid #E4E6EC;color:#14162B;text-decoration:none;font-size:14px;font-weight:700}
 .v3-leave-link span{flex:1}
 .v3-leave-link .v3-leave-go{color:#8A8FA8}

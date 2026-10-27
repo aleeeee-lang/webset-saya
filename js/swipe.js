@@ -190,7 +190,7 @@
         return !n || (!n.inflight && (!n.ever || Date.now() - n.quietAt > 300));
     }
     function saveSnapshot() {
-        if (!navLinks() || !settled()) return;
+        if (!navLinks() || !settled() || /attendance\.html$/.test(location.pathname)) return;
         try {
             var c = document.body.cloneNode(true);
             trim(document.body, c, window.innerHeight * 1.3);

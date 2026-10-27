@@ -80,7 +80,7 @@ end $$;
 revoke all on function public.parent_alert(uuid, text, text, text, text, text, boolean, uuid[]) from public, anon, authenticated;
 
 create or replace function public.parent_first_name(n text) returns text
-language sql immutable as $$ select coalesce(nullif(split_part(trim(coalesce(n, '')), ' ', 1), ''), 'Anak') $$;
+language sql immutable set search_path = public as $$ select coalesce(nullif(split_part(trim(coalesce(n, '')), ' ', 1), ''), 'Anak') $$;
 
 -- recorded Alpa (by a teacher / the admin / the end-of-day rule)
 create or replace function public.queue_parent_absent() returns trigger
@@ -234,3 +234,9 @@ begin
     end if;
     perform cron.schedule('attendreem-parent-alerts-cleanup', '20 18 * * *', 'select public.parent_alerts_cleanup()');
 end $$;
+
+-- nobody calls these through the API (they run from triggers and the schedule)
+revoke execute on function public.parent_alerts_cleanup() from public, anon, authenticated;
+revoke execute on function public.queue_parent_absent() from public, anon, authenticated;
+revoke execute on function public.queue_parent_announce() from public, anon, authenticated;
+revoke execute on function public.queue_parent_spp_rejected() from public, anon, authenticated;

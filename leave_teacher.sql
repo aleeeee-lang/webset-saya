@@ -149,3 +149,4 @@ end $$;
 drop trigger if exists queue_teacher_leave_push on public.leave_requests;
 create trigger queue_teacher_leave_push after insert on public.leave_requests
     for each row execute function public.queue_teacher_leave_push();
+revoke execute on function public.queue_teacher_leave_push() from public, anon, authenticated;

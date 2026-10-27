@@ -4842,3 +4842,6 @@ html[data-theme="dark"] .lv-seg button{background:#121212;border-color:#2C2C2E;c
 html[data-theme="dark"] .lv-seg button.on{background:#C6F432;border-color:#C6F432;color:#111}
 html[data-theme="dark"] .lv-proof{border-color:#3A3A3C!important}
 html[data-theme="dark"] .lv-hint{color:#9A9A9F}
+/* dark mode: the type picker text (Jadwal absen -> hari libur) was nearly invisible */
+html[data-theme="dark"] button.filter-select span:not(.filter-dot),html[data-theme="dark"] .filter-select span:not(.filter-dot){color:#EDEDED!important}
+html[data-theme="dark"] #holidayList span[style*="background:#d0d0d0"]{color:#3A3D52!important}

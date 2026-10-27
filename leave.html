@@ -10,94 +10,81 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027h">
-<script src="js/theme.js?v=20261027h"></script>
-<script src="js/lang.js?v=20261027h"></script>
-<script src="js/toast.js?v=20261027h"></script>
-<script src="js/fit.js?v=20261027h" defer></script>
+<link rel="stylesheet" href="style.css?v=20261027i">
+<script src="js/theme.js?v=20261027i"></script>
+<script src="js/lang.js?v=20261027i"></script>
+<script src="js/toast.js?v=20261027i"></script>
+<script src="js/fit.js?v=20261027i" defer></script>
 </head>
 
-<body>
+<body class="v2-page">
 
-<main class="attendance-page">
+<main class="v2-wrap v3-page lv-page">
 
-    <section class="attendance-intro" style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
-        <button type="button" onclick="goBack()" aria-label="Back" style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:#20243a;cursor:pointer;padding:0">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </button>
-        <h2 style="margin:0" data-i18n="page_leave_request">Leave Request</h2>
-    </section>
+    <header class="v2-head v3-head">
+        <button type="button" class="v2-back v3-back" onclick="goBack()" aria-label="Kembali"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h1 id="lvTitle">Izin &amp; sakit</h1>
+    </header>
 
-    <!-- SUBMIT LEAVE REQUEST -->
-    <section class="attendance-card">
-
-        <div class="card-label" data-i18n="label_submit_leave_request">Submit Leave Request</div>
-        <p style="font-size:12px;color:#888;margin:4px 0 14px" data-i18n="hint_leave_request">Submit this ahead of time for a future absence. Your admin will review and approve it.</p>
-
-        <div style="display:flex;flex-direction:column;gap:10px">
-
-            <div>
-                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_leave_type">Type</div>
-                <select id="leaveType" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-                    <option value="Izin" data-i18n="status_permission">Permission</option>
-                    <option value="Sakit" data-i18n="status_sick">Sick</option>
-                </select>
-            </div>
-
-            <div>
-                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_start_date">Start Date</div>
-                <input type="date" id="leaveStartDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            </div>
-
-            <div>
-                <div style="font-size:12px;color:#888;margin-bottom:6px" data-i18n="label_end_date">End Date</div>
-                <input type="date" id="leaveEndDate" class="am-field" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-            </div>
-
-            <input type="text" id="leaveReason" class="am-field" data-i18n-placeholder="placeholder_leave_reason" placeholder="Reason" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;font-size:14px">
-
-            <!-- photo of a letter (js/att-proof.js) -->
-            <section class="v2-proof" id="proofBox" hidden>
-                <div class="v2-proof-head"><b id="proofTitle">Foto surat / bukti</b><small id="proofHint"></small></div>
-                <div class="v2-proof-empty" id="proofEmpty">
-                    <button type="button" class="v2-proof-btn" id="proofCam"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span id="proofCamTxt">Ambil foto</span></button>
-                    <button type="button" class="v2-proof-btn" id="proofGal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg><span id="proofGalTxt">Dari galeri</span></button>
-                </div>
-                <div class="v2-proof-full" id="proofFull" hidden>
-                    <img id="proofImg" alt="">
-                    <div class="v2-proof-act">
-                        <button type="button" class="v2-proof-link" id="proofChange">Ganti</button>
-                        <button type="button" class="v2-proof-x" id="proofRemove"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
-                    </div>
-                </div>
-                <input type="file" id="proofCamIn" accept="image/*" capture="environment" hidden>
-                <input type="file" id="proofGalIn" accept="image/*" hidden>
-            </section>
-
-            <button type="button" class="submit-button" id="submitLeaveBtn" data-needs="leaveStartDate,leaveEndDate,leaveReason" onclick="submitLeaveRequest()" style="margin-top:4px" data-i18n="btn_submit_leave_request">
-                Submit Request
-            </button>
-
+    <section class="ts-card lv-card">
+        <select id="leaveType" hidden aria-hidden="true" tabindex="-1">
+            <option value="Izin">Izin</option>
+            <option value="Sakit">Sakit</option>
+        </select>
+        <div class="lv-seg" id="lvSeg" role="radiogroup">
+            <button type="button" role="radio" data-v="Izin" class="on" aria-checked="true" data-i18n="status_permission">Izin</button>
+            <button type="button" role="radio" data-v="Sakit" aria-checked="false" data-i18n="status_sick">Sakit</button>
         </div>
 
+        <div class="lv-dates">
+            <label class="tc-field"><span id="lvFrom">Dari</span><input type="date" id="leaveStartDate"></label>
+            <label class="tc-field"><span id="lvTo">Sampai</span><input type="date" id="leaveEndDate"></label>
+        </div>
+
+        <label class="tc-field"><span id="lvWhy">Alasan</span><textarea id="leaveReason" rows="3" placeholder="Contoh: demam sejak semalam"></textarea></label>
+
+        <!-- photo of a letter (js/att-proof.js) -->
+        <section class="v2-proof lv-proof" id="proofBox" hidden>
+            <div class="v2-proof-head"><b id="proofTitle">Foto surat / bukti</b><small id="proofHint"></small></div>
+            <div class="v2-proof-empty" id="proofEmpty">
+                <button type="button" class="v2-proof-btn" id="proofCam"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span id="proofCamTxt">Ambil foto</span></button>
+                <button type="button" class="v2-proof-btn" id="proofGal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg><span id="proofGalTxt">Dari galeri</span></button>
+            </div>
+            <div class="v2-proof-full" id="proofFull" hidden>
+                <img id="proofImg" alt="">
+                <div class="v2-proof-act">
+                    <button type="button" class="v2-proof-link" id="proofChange">Ganti</button>
+                    <button type="button" class="v2-proof-x" id="proofRemove"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
+                </div>
+            </div>
+            <input type="file" id="proofCamIn" accept="image/*" capture="environment" hidden>
+            <input type="file" id="proofGalIn" accept="image/*" hidden>
+        </section>
+
+        <p class="lv-hint" data-i18n="hint_leave_request">Bisa untuk hari ini atau hari lain.</p>
     </section>
 
-    <!-- MY LEAVE REQUESTS -->
-    <section class="attendance-card" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_my_leave_requests">My Leave Requests</div>
-        <div id="leaveRequestsList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
-    </section>
+    <h2 class="v3-sec" id="lvMineH">Pengajuan saya</h2>
+    <div class="tc-list" id="leaveRequestsList"><div class="tc-empty">&nbsp;</div></div>
+
+    <div class="ts-add-wrap"><button type="button" class="ts-add" id="submitLeaveBtn" onclick="submitLeaveRequest()" data-i18n="btn_submit_leave_request">Kirim pengajuan</button></div>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027h"></script>
-<script src="js/auth.js?v=20261027h"></script>
-<script src="js/att-proof.js?v=20261027h"></script>
+<script src="js/supabase.js?v=20261027i"></script>
+<script src="js/auth.js?v=20261027i"></script>
+<script src="js/att-proof.js?v=20261027i"></script>
 
 <script>
+
+const LV = (id, en) => getLang() === "id" ? id : en;
+document.getElementById("lvTitle").textContent = LV("Izin & sakit", "Leave & sick");
+document.getElementById("lvFrom").textContent = LV("Dari", "From");
+document.getElementById("lvTo").textContent = LV("Sampai", "To");
+document.getElementById("lvWhy").textContent = LV("Alasan", "Reason");
+document.getElementById("lvMineH").textContent = LV("Pengajuan saya", "My requests");
+document.getElementById("leaveReason").placeholder = LV("Contoh: acara keluarga di luar kota", "e.g. family event out of town");
 
 let currentUser = null;
 let myProfile = null;
@@ -116,9 +103,9 @@ async function checkUser() {
 
     myProfile = profile;
 
+    // usually it is just today (sick this morning): both dates start on today
     document.getElementById("leaveStartDate").value = localDateStr();
-    // the end date is left empty on purpose: the button only works once the student picks it
-    document.getElementById("leaveEndDate").value = "";
+    document.getElementById("leaveEndDate").value = localDateStr();
     syncLeaveEndMin();
 
     await loadMyLeaveRequests();
@@ -154,24 +141,19 @@ function renderLeaveRequests() {
     const container = document.getElementById("leaveRequestsList");
 
     if (myLeaveRequests.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_leave_requests[lang] + "</p>";
+        container.innerHTML = '<div class="tc-empty">' + translations.text_no_leave_requests[lang] + '</div>';
         return;
     }
 
+    const MON = LV("Jan Feb Mar Apr Mei Jun Jul Agu Sep Okt Nov Des", "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec").split(" ");
+    const dm = function (x) { const d = new Date(x + "T00:00:00"); return d.getDate() + " " + MON[d.getMonth()]; };
     container.innerHTML = myLeaveRequests.map(function (r) {
         const typeLabel = r.type === "Sakit" ? translations.status_sick[lang] : translations.status_permission[lang];
         const statusLabel = translations["badge_leave_" + r.status][lang];
-        const dateRange = r.start_date === r.end_date ? r.start_date : (r.start_date + " - " + r.end_date);
-        return `
-            <div class="am-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
-                <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:13px;color:#20243a">${typeLabel}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dateRange}${r.reason ? " · " + escapeHTML(r.reason) : ""}${r.proof_url ? " · " + (lang === "id" ? "📎 ada surat" : "📎 letter attached") : ""}${r.status !== "pending" && r.reviewed_by_name ? " · " + (lang === "id" ? "oleh " : "by ") + escapeHTML(r.reviewed_by_name) : ""}</span>
-                </div>
-                <span class="spp-status-badge ${r.status}">${statusLabel}</span>
-                ${canDeleteLeave(r) ? `<button type="button" onclick="deleteLeaveRequest('${r.id}')" aria-label="Delete" class="trash-btn" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#ef4444;cursor:pointer;padding:0"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M5 7H19M10 11V17M14 11V17M6 7L7 19C7 20 7.8 21 9 21H15C16.2 21 17 20 17 19L18 7M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ""}
-            </div>
-        `;
+        const range = (!r.end_date || r.start_date === r.end_date) ? dm(r.start_date) : dm(r.start_date) + " – " + dm(r.end_date);
+        const sub = [r.reason, r.proof_url ? LV("📎 ada surat", "📎 letter") : "", r.status !== "pending" && r.reviewed_by_name ? LV("oleh ", "by ") + r.reviewed_by_name : ""].filter(Boolean).join(" · ");
+        const tone = r.status === "approved" ? "ok" : r.status === "rejected" ? "no" : "izin";
+        return `<div class="ts-row"><div class="ts-row-t"><b>${escapeHTML(typeLabel + " · " + range)}</b>${sub ? `<small>${escapeHTML(sub)}</small>` : ""}</div><span class="tc-pill ${tone}">${escapeHTML(statusLabel)}</span>${canDeleteLeave(r) ? `<button type="button" class="ts-del" onclick="deleteLeaveRequest('${r.id}')" aria-label="${LV("Hapus", "Delete")}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>` : ""}</div>`;
     }).join("");
 }
 
@@ -199,11 +181,14 @@ async function deleteLeaveRequest(id) {
 }
 
 // the end date can't be before the start date
+let lvPrevStart = "";
 function syncLeaveEndMin() {
     const st = document.getElementById("leaveStartDate").value;
     const en = document.getElementById("leaveEndDate");
     en.min = st || "";
-    if (st && en.value && en.value < st) en.value = "";
+    // a one-day request follows the start date; an end before the start moves along
+    if (st && (!en.value || en.value < st || en.value === lvPrevStart)) en.value = st;
+    lvPrevStart = st;
     syncLeaveBtn();
 }
 // the button can only be pressed once both dates are chosen and a reason is written
@@ -217,6 +202,15 @@ document.getElementById("leaveReason").addEventListener("input", function () { s
 // photo of a letter: shown for both types, the hint follows the type
 function syncProof() { if (window.attProofShow) attProofShow(document.getElementById("leaveType").value); }
 document.getElementById("leaveType").addEventListener("change", syncProof);
+document.getElementById("lvSeg").addEventListener("click", function (e) {
+    const b = e.target.closest("button[data-v]");
+    if (!b) return;
+    this.querySelectorAll("button").forEach(function (x) { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-checked", on); });
+    const sel = document.getElementById("leaveType");
+    sel.value = b.dataset.v;
+    sel.dispatchEvent(new Event("change"));
+    document.getElementById("leaveReason").placeholder = b.dataset.v === "Sakit" ? LV("Contoh: demam sejak semalam", "e.g. fever since last night") : LV("Contoh: acara keluarga di luar kota", "e.g. family event out of town");
+});
 syncProof();
 document.getElementById("leaveStartDate").addEventListener("change", syncLeaveEndMin);
 document.getElementById("leaveStartDate").addEventListener("input", syncLeaveEndMin);
@@ -291,7 +285,9 @@ async function submitLeaveRequest() {
     }
 
     document.getElementById("leaveReason").value = "";
-    document.getElementById("leaveEndDate").value = "";   // next request: choose the end date again
+    document.getElementById("leaveStartDate").value = localDateStr();
+    document.getElementById("leaveEndDate").value = localDateStr();
+    syncLeaveEndMin();
     if (window.attProofReset) attProofReset();
     syncLeaveBtn();
 

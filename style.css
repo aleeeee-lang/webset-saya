@@ -4846,3 +4846,30 @@ html[data-theme="dark"] .hm-quick button{background:#2C2C2E;color:#F2F2F2}
 /* back arrow: a little closer to the title, and level with the title line when a subtitle sits under it */
 .v3-head > .v2-back.v3-back{margin-right:-6px}
 .v3-head:has(h1 + p:not([hidden]), h1 + small:not([hidden])) > .v2-back.v3-back{align-self:flex-start;margin-top:-3px}
+/* ---- settings: one simple list (2026) ---- */
+.st-list{background:#fff;border:1px solid #ECEEF2;border-radius:22px;padding:2px 16px;margin-bottom:14px}
+.st-row{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:10px 0;box-sizing:border-box;color:#14162B;text-decoration:none;border:0;background:none;font:inherit;text-align:left;cursor:pointer}
+.st-row[hidden]{display:none!important}
+.st-list>.st-row:not([hidden])~.st-row:not([hidden]){border-top:1px solid #F0F1F5}
+.st-ic{width:36px;height:36px;border-radius:11px;background:#F1F3F7;color:#14162B;display:grid;place-items:center;flex:none}
+.st-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.st-txt b{font-size:15px;font-weight:700}
+.st-txt small{font-size:12px;color:#8A8FA8;line-height:1.35}
+.st-txt small:empty{display:none}
+.st-go{color:#9A9DB0;flex:none}
+.st-lang{display:flex;gap:6px;flex:none}
+.st-out b{color:#B42318}
+.st-out .st-ic{background:#FEE4E2;color:#B42318}
+html[data-theme="dark"] .st-list{background:#121212;border-color:#242424}
+html[data-theme="dark"] .st-list>.st-row:not([hidden])~.st-row:not([hidden]){border-top-color:#242424}
+html[data-theme="dark"] .st-row{color:#F2F2F2}
+html[data-theme="dark"] .st-ic{background:#232326;color:#F2F2F2}
+html[data-theme="dark"] .st-out b{color:#FCA5A5}
+html[data-theme="dark"] .st-out .st-ic{background:#3A1A1A;color:#FCA5A5}
+.v3-settings #settingsName{font-size:17px!important;font-weight:800;color:#14162B!important}html[data-theme="dark"] .v3-settings #settingsName{color:#F2F2F2!important}
+html[data-theme="dark"] .v3-settings .st-txt small{color:#8E8E93!important}
+html[data-theme="dark"] .v3-settings .st-out b{color:#FCA5A5!important}
+html[data-theme="dark"] .v3-settings .st-txt b{color:#F2F2F2}
+html[data-theme="dark"] .v3-settings .av-link{color:#C6F432!important}
+html[data-theme="dark"] .v3-settings #settingsEmail,html[data-theme="dark"] .v3-settings #settingsClass{color:#8E8E93!important}
+html[data-theme="dark"] .v3-settings .lang-btn.active{background:#C6F432!important;border-color:#C6F432!important;color:#14162B!important}

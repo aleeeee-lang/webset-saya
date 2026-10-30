@@ -243,3 +243,28 @@ function setTheme(theme) {
     s.defer = true;
     document.head.appendChild(s);
 })();
+
+// A slow connection makes the app open the copy of a page kept on the phone, which may be
+// from an older version (old menu, old screens). Ask the internet for the page once it has
+// loaded; if it is newer, keep that copy on the phone and reload once.
+(function () {
+    if (location.protocol === "file:" || window.self !== window.top || !window.fetch) return;
+    function check() {
+        if (navigator.onLine === false) return;
+        var href = location.href.split("#")[0];
+        fetch(href, { cache: "no-store", credentials: "same-origin" }).then(function (res) {
+            if (!res.ok) return;
+            return res.clone().text().then(function (html) {
+                var m = html.match(/style\.css\?v=([^"'&]+)/);
+                var nv = m ? m[1] : "";
+                if (!nv || nv === window.attAppVer()) return;
+                var key = "att-upd:" + nv;
+                try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) { return; }
+                var save = window.caches ? caches.open("attendreem-files-v1").then(function (c) { return c.put(new Request(href), res); }).catch(function () {}) : Promise.resolve();
+                save.then(function () { location.reload(); });
+            });
+        }).catch(function () {});
+    }
+    if (document.readyState === "complete") setTimeout(check, 400);
+    else window.addEventListener("load", function () { setTimeout(check, 400); });
+})();

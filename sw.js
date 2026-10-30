@@ -84,6 +84,7 @@ self.addEventListener("fetch", function (event) {
     if (req.method !== "GET") return;
     var url = new URL(req.url);
     if (!keepable(url)) return;
+    if (req.cache === "no-store") return;          // the page asking "is there a newer version?" (js/theme.js)
     if (req.mode === "navigate") { event.respondWith(page(event)); return; }
     event.respondWith(file(event));
 });

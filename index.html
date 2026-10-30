@@ -308,11 +308,11 @@ function hmQuickSave() {
         '<div class="tc-sheet-grip"></div><h2>' + esc(L("Tabungan pribadi", "Personal savings")) + '</h2>' +
         '<p class="tc-sheet-sub">' + esc(L("Saldo sekarang ", "Balance now ") + formatRupiah(hmPersonalBal)) + '</p>' +
         '<form novalidate>' +
-        '<div class="tc-seg hm-seg" data-name="type"><button type="button" data-v="setor" class="on">' + esc(L("Masukkan", "Put in")) + '</button><button type="button" data-v="tarik">' + esc(L("Tarik", "Take out")) + '</button></div>' +
+        '<div class="tc-seg hm-seg" data-name="type"><button type="button" data-v="setor" class="on"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>' + esc(homeT("type_setor")) + '</button><button type="button" data-v="tarik"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>' + esc(homeT("type_tarik")) + '</button></div>' +
         '<label class="tc-field"><span>' + esc(L("Jumlah", "Amount")) + '</span><div class="hm-amt"><b>Rp</b><input name="amount" type="text" inputmode="numeric" placeholder="10.000" autocomplete="off"></div></label>' +
         '<div class="hm-quick">' + [5000, 10000, 20000, 50000].map(function (n) { return '<button type="button" data-n="' + n + '">' + esc(formatRupiah(n).replace(/^Rp\s?/, "")) + '</button>'; }).join("") + '</div>' +
         '<label class="tc-field"><span>' + esc(L("Catatan", "Note")) + ' <i>' + esc(L("(opsional)", "(optional)")) + '</i></span><input name="note" type="text" placeholder="' + esc(L("misal: uang saku sisa", "e.g. leftover pocket money")) + '" autocomplete="off"></label>' +
-        '<div class="tc-sheet-act"><button type="submit" class="tc-btn solid">' + esc(L("Simpan", "Save")) + '</button></div></form></div>';
+        '<div class="tc-sheet-act"><button type="submit" class="tc-btn solid">' + esc(homeT("type_setor")) + '</button></div></form></div>';
     document.body.appendChild(wrap);
     document.documentElement.classList.add("tc-sheet-open");
     requestAnimationFrame(function () { wrap.classList.add("in"); });
@@ -329,7 +329,7 @@ function hmQuickSave() {
     wrap.addEventListener("click", function (e) {
         if (e.target === wrap) return close();
         const sb = e.target.closest(".hm-seg button");
-        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("on", x === sb); }); btn.textContent = type === "tarik" ? L("Tarik uang", "Take out") : L("Simpan", "Save"); }
+        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("on", x === sb); }); btn.textContent = type === "tarik" ? homeT("type_tarik") : homeT("type_setor"); }
         const q = e.target.closest(".hm-quick button");
         if (q) { show(Number(q.dataset.n)); amt.focus(); }
     });
@@ -345,7 +345,7 @@ function hmQuickSave() {
         const { error } = await supabaseClient.from("personal_savings").insert({ student_id: hmUid, type: type, amount: n, note: note || null });
         busy = false; btn.disabled = false;
         if (error) { showToast(L("Gagal menyimpan: ", "Couldn't save: ") + error.message, "error"); return; }
-        showToast(type === "tarik" ? L("Uang ditarik ", "Taken out ") + formatRupiah(n) : L("Tersimpan ", "Saved ") + formatRupiah(n), "success");
+        showToast(homeT(type === "tarik" ? "type_tarik" : "type_setor") + " " + formatRupiah(n) + L(" berhasil", " done"), "success");
         close();
         loadHomeMoney(hmUid);
     });

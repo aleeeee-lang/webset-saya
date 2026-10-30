@@ -36,10 +36,8 @@
             <div class="att-app-text"><span data-i18n="push_title">Task reminders on this device</span><small id="pushHint"></small></div>
             <label class="att-switch"><input type="checkbox" id="pushToggle"><span></span></label>
         </div>
-    </section>
-
-        <section class="attendance-card att-app-card" id="pushKinds" hidden style="padding:8px 16px">
-            <div class="card-label" data-i18n="notif_kinds_head" style="margin:10px 0 2px">Jenis notifikasi</div>
+        <div id="pushKinds" hidden>
+            <div class="card-label" data-i18n="notif_kinds_head" style="margin:12px 0 2px;padding-top:12px;border-top:1px solid var(--line,rgba(32,36,58,.08))">Jenis notifikasi</div>
             <div class="att-app-row att-app-kind" id="prefGeneralRow">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
                 <div class="att-app-text"><span data-i18n="notif_kind_general">Announcements &amp; attendance</span><small data-i18n="notif_kind_general_hint">New announcements, and when a teacher records your attendance.</small></div>
@@ -88,7 +86,8 @@
                 <label class="att-switch"><input type="checkbox" id="prefAdminFp" checked><span></span></label>
             </div>
             </div>
-        </section>
+        </div>
+    </section>
 
 </main>
 

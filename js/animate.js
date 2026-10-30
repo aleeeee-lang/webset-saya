@@ -61,7 +61,7 @@
         var first = typeof el._attVal !== "number";
         var from = first ? 0 : el._attVal;
         el._attVal = p.n;
-        if (first && replay) return;          // revisit: show the value as it is
+        if (first && replay && !el.hasAttribute("data-count-always")) return;   // revisit: show the value as it is (except numbers that should always count up)
         if (from === p.n) return;
         if (el._attRaf) cancelAnimationFrame(el._attRaf);
         var t0 = performance.now();
@@ -109,7 +109,7 @@
         }).observe(document.body, { subtree: true, childList: true, characterData: true });
         growBars(document);
         // values that were already filled in before this script loaded
-        if (!replay) Array.prototype.forEach.call(document.querySelectorAll(COUNT), function (el) {
+        Array.prototype.forEach.call(document.querySelectorAll(replay ? "[data-count-always]" : COUNT), function (el) {
             var p = parse(el.textContent);
             if (p && p.n !== 0) run(el);
         });

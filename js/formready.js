@@ -1,6 +1,7 @@
 // Form buttons look "waiting" (dim) until the fields they need are filled,
 // then switch to "ready". Buttons opt in with data-needs="fieldId,fieldId".
-// The button is never disabled: tapping early still shows the usual hint.
+// The button is never disabled (tapping early still shows the usual hint), except with
+// data-strict: then it can only be tapped once the fields are filled.
 (function () {
     function filled(el) {
         if (!el) return true;                                   // field not on this page/state
@@ -18,6 +19,7 @@
             var ok = b.getAttribute("data-needs").split(",").every(function (id) { return filled(document.getElementById(id.trim())); });
             b.classList.toggle("is-ready", ok);
             b.classList.toggle("is-waiting", !ok);
+            if (b.hasAttribute("data-strict")) b.disabled = !ok;   // these can't be tapped at all until filled
         }
     }
     var queued = false;

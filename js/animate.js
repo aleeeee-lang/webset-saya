@@ -32,7 +32,7 @@
         "#scorePercent", "#myHadir", "#myIzin", "#mySakit", "#myAlpa",
         "#pScorePercent", "#pHadir", "#pIzin", "#pSakit", "#pAlpa", "#pSppAmount",
         "#savingsBalance", "#savingsTotalSetor", "#savingsTotalTarik", "#personalBalance", "#personalTotalSetor", "#personalTotalTarik", "#sppAmountLabel",
-        "#studentBalance", "#kasBalance", "#kasInMonth", "#kasOutMonth",
+        "#studentBalance", "#kasBalance", "#kasInMonth", "#kasOutMonth", "#hmSchool", "#hmPersonal", "#hmSub",
         "[data-count]"
     ].join(",");
     var DUR = 900;

@@ -4873,3 +4873,4 @@ html[data-theme="dark"] .v3-settings .st-txt b{color:#F2F2F2}
 html[data-theme="dark"] .v3-settings .av-link{color:#C6F432!important}
 html[data-theme="dark"] .v3-settings #settingsEmail,html[data-theme="dark"] .v3-settings #settingsClass{color:#8E8E93!important}
 html[data-theme="dark"] .v3-settings .lang-btn.active{background:#C6F432!important;border-color:#C6F432!important;color:#14162B!important}
+.st-sheet[hidden]{display:none!important}.st-in-sheet{margin:14px 0 0!important;border:none!important;padding:0!important;background:transparent!important}

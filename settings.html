@@ -55,20 +55,11 @@
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
             <span class="st-txt"><b data-i18n="menu_change_password">Change Password</b></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </a>
-        <div class="st-row">
-            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></span>
-            <span class="st-txt"><b data-i18n="label_dark_mode">Dark Mode</b></span>
-            <label style="position:relative;width:44px;height:26px;flex-shrink:0">
-                <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0">
-                <span id="darkModeSlider" style="position:absolute;inset:0;background:#e2e8f0;border-radius:20px;transition:0.2s;cursor:pointer"></span>
-                <span id="darkModeKnob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);pointer-events:none"></span>
-            </label>
-        </div>
-        <div class="st-row">
-            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></svg></span>
-            <span class="st-txt"><b data-i18n="label_language">Language</b></span>
-            <span class="st-lang"><button type="button" class="lang-btn" id="langIdBtn">ID</button><button type="button" class="lang-btn" id="langEnBtn">EN</button></span>
-        </div>
+        <!-- dark mode, language and installing the app: one row that opens a small sheet -->
+        <button type="button" class="st-row" id="lookRow">
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg></span>
+            <span class="st-txt"><b id="lookTitle">Tampilan &amp; aplikasi</b><small id="lookHint"></small></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
         <div class="st-row" id="shareGoalsRow" hidden>
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>
             <span class="st-txt"><b data-i18n="set_share_goals">Share learning goals with teacher</b><small data-i18n="set_share_goals_hint">Applies to all goals you made.</small></span>
@@ -83,13 +74,6 @@
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18.5A9 9 0 0 1 4 12a8 8 0 0 1 16 0v1"/><path d="M8 12a4 4 0 0 1 8 0v1.5a10 10 0 0 1-1.2 4.8"/><path d="M12 12v2a12 12 0 0 1-2 6.5"/></svg></span>
             <span class="st-txt"><b data-i18n="fp_tip_link">Tambah / ganti jari</b><small data-i18n="set_fp_tip_hint"></small></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </button>
-        <!-- only until the app is installed -->
-        <div class="st-row" id="installRow" hidden>
-            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M12 7v7M9 11l3 3 3-3"/></svg></span>
-            <span class="st-txt"><b data-i18n="push_install_title">Install the app</b><small id="installHint"></small></span>
-            <button type="button" class="att-app-btn" id="installBtn" hidden data-i18n="push_install_btn">Install</button>
-            <span class="att-app-ok" id="installOk" hidden>✓</span>
-        </div>
         <a href="feedback.html" class="st-row">
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C4 4.7 4.7 4 5.5 4h13c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5H9l-4 3.5V16h-.5C3.7 16 4 15.3 4 14.5z"/><path d="M8 9.5h8M8 12.5h5"/></svg></span>
             <span class="st-txt"><b data-i18n="menu_feedback">Suggestions &amp; Complaints</b></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
@@ -103,6 +87,37 @@
             <span class="st-txt"><b data-i18n="btn_logout">Logout</b></span>
         </button>
     </section>
+
+    <!-- the "Tampilan & aplikasi" sheet -->
+    <div class="tc-sheet-wrap st-sheet" id="lookSheet" hidden>
+        <div class="tc-sheet" role="dialog" aria-modal="true" aria-labelledby="lookSheetTitle">
+            <div class="tc-sheet-grip"></div>
+            <h2 id="lookSheetTitle">Tampilan &amp; aplikasi</h2>
+            <div class="st-list st-in-sheet">
+        <div class="st-row">
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></span>
+            <span class="st-txt"><b data-i18n="label_dark_mode">Dark Mode</b></span>
+            <label style="position:relative;width:44px;height:26px;flex-shrink:0">
+                <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0">
+                <span id="darkModeSlider" style="position:absolute;inset:0;background:#e2e8f0;border-radius:20px;transition:0.2s;cursor:pointer"></span>
+                <span id="darkModeKnob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);pointer-events:none"></span>
+            </label>
+        </div>
+        <div class="st-row">
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></svg></span>
+            <span class="st-txt"><b data-i18n="label_language">Language</b></span>
+            <span class="st-lang"><button type="button" class="lang-btn" id="langIdBtn">ID</button><button type="button" class="lang-btn" id="langEnBtn">EN</button></span>
+        </div>
+        <!-- only until the app is installed -->
+        <div class="st-row" id="installRow" hidden>
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M12 7v7M9 11l3 3 3-3"/></svg></span>
+            <span class="st-txt"><b data-i18n="push_install_title">Install the app</b><small id="installHint"></small></span>
+            <button type="button" class="att-app-btn" id="installBtn" hidden data-i18n="push_install_btn">Install</button>
+            <span class="att-app-ok" id="installOk" hidden>✓</span>
+        </div>
+            </div>
+        </div>
+    </div>
     <script>
     (function () {
         // unread count from the notification list kept on this phone (js/notification.js)
@@ -245,7 +260,7 @@ function syncDarkUI(isDark) {
 
 syncDarkUI(document.documentElement.getAttribute("data-theme") === "dark");
 
-document.querySelector("label").addEventListener("click", function (e) {
+darkToggle.closest("label").addEventListener("click", function (e) {
     e.preventDefault();
     const isDark = document.documentElement.getAttribute("data-theme") === "dark";
     setTheme(isDark ? "light" : "dark");
@@ -547,6 +562,34 @@ function goBack() {
             showToast(translations.toast_backup_ok[lang].replace("{n}", n.toLocaleString(lang === "id" ? "id-ID" : "en-US")), "success");
         });
     });
+})();
+
+// "Tampilan & aplikasi": open / close the sheet, and keep the row's hint up to date
+(function () {
+    const ID = () => getLang() === "id";
+    const wrap = document.getElementById("lookSheet");
+    function hint() {
+        const dark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.getElementById("lookTitle").textContent = ID() ? "Tampilan & aplikasi" : "Display & app";
+        document.getElementById("lookSheetTitle").textContent = ID() ? "Tampilan & aplikasi" : "Display & app";
+        document.getElementById("lookHint").textContent = (dark ? (ID() ? "Mode gelap" : "Dark mode") : (ID() ? "Mode terang" : "Light mode")) + " · " + (ID() ? "Bahasa Indonesia" : "English");
+    }
+    function open() {
+        wrap.hidden = false;
+        document.documentElement.classList.add("tc-sheet-open");
+        requestAnimationFrame(function () { requestAnimationFrame(function () { wrap.classList.add("in"); }); });
+    }
+    function close() {
+        wrap.classList.remove("in");
+        document.documentElement.classList.remove("tc-sheet-open");
+        setTimeout(function () { wrap.hidden = true; hint(); }, 220);
+    }
+    document.getElementById("lookRow").addEventListener("click", open);
+    wrap.addEventListener("click", function (e) { if (e.target === wrap) close(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !wrap.hidden) close(); });
+    document.getElementById("darkModeToggle").closest("label").addEventListener("click", function () { setTimeout(hint, 50); });
+    ["langIdBtn", "langEnBtn"].forEach(function (id) { document.getElementById(id).addEventListener("click", function () { setTimeout(hint, 50); }); });
+    hint();
 })();
 </script>
 

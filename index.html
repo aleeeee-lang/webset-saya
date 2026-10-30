@@ -258,7 +258,7 @@ function renderHomeSpp(record, dueInfo) {
     if (!hint) return;
     if (status === "notdue") {
         hint.textContent = dueInfo.next
-            ? homeT("v3_spp_hint_notdue") + dayMonthLabel(new Date(dueInfo.next + "T00:00:00"))
+            ? homeT("v3_spp_hint_notdue") + (function (d) { return d.getDate() + " " + monthNameOf(d.getMonth()).slice(0, 3); })(new Date(dueInfo.next + "T00:00:00"))   // short month: stays on one line
             : homeT("v3_spp_hint_notdue_none");
     } else hint.textContent = homeT("v3_spp_hint_" + status);
 }

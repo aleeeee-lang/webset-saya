@@ -38,7 +38,7 @@
     async function today(ids) {
         var out = {};
         if (!ids || !ids.length) return out;
-        var r = await supabaseClient.from("attendance").select("id, user_id, status, time, method").eq("date", localDateStr()).in("user_id", ids);
+        var r = await supabaseClient.from("attendance").select("id, user_id, status, time, method, photo_url").eq("date", localDateStr()).in("user_id", ids);
         ((r && r.data) || []).forEach(function (a) { out[a.user_id] = a; });
         return out;
     }

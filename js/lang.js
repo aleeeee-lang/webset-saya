@@ -1165,6 +1165,7 @@ Object.assign(translations, {
     notif_exam_today: { en: "Exam today:", id: "Hari ini ujian:" },
     notif_exam_tomorrow: { en: "Exam tomorrow:", id: "Besok ujian:" },
     notif_exam_soon: { en: "Exam in {n} days:", id: "{n} hari lagi ujian:" },
+    toast_att_device_in_use: { en: "This phone is already used to check in for another student. Check in from your own phone.", id: "HP ini sudah dipakai absen akun siswa lain. Absen pakai HP kamu sendiri ya." },
     notif_spp_today: { en: "SPP is due today:", id: "Hari ini jatuh tempo SPP:" },
     notif_spp_tomorrow: { en: "SPP is due tomorrow:", id: "Besok jatuh tempo SPP:" },
     notif_spp_soon: { en: "SPP is due in {n} days:", id: "{n} hari lagi jatuh tempo SPP:" },

@@ -4948,3 +4948,11 @@ html[data-theme="dark"] .jr-av.pfp,html[data-theme="dark"] .jr-av.pfp.sm{backgro
 html[data-theme="dark"] .jr-bar.st-alpa .jr-fill,html[data-theme="dark"] .jr-bar.st-alpa .jr-track{fill:#EF4444}
 html[data-theme="dark"] .jr-bar.st-sakit .jr-fill,html[data-theme="dark"] .jr-bar.st-sakit .jr-track{fill:#60A5FA}
 html[data-theme="dark"] .jr-bar.st-izin .jr-fill,html[data-theme="dark"] .jr-bar.st-izin .jr-track{fill:#F59E0B}
+/* teacher class list: today's check-in photo */
+.tc-row .tc-pic{width:34px;height:34px;border-radius:50%;margin:0;cursor:zoom-in;box-shadow:0 0 0 2px #fff,0 0 0 3px #E4E7EE}
+.tc-row .tc-pic + .tc-pill,.tc-row .tc-pic + span{margin-left:0}
+.tc-pic-view{position:fixed;inset:0;z-index:1200;background:rgba(10,12,24,.82);display:flex;align-items:center;justify-content:center;padding:24px}
+.tc-pic-view figure{margin:0;max-width:420px;width:100%;text-align:center}
+.tc-pic-view img{width:100%;max-height:70vh;object-fit:contain;border-radius:20px;background:#111}
+.tc-pic-view figcaption{margin-top:12px;color:#fff;font-size:14px;font-weight:600}
+html[data-theme="dark"] .tc-row .tc-pic{box-shadow:0 0 0 2px #121212,0 0 0 3px #2C2C2E}

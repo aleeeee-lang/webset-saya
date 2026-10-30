@@ -1,3 +1,16 @@
+// A random id for this phone (kept in the browser), sent with every check-in so one phone
+// can only check in for one student account.
+function attDeviceId() {
+    try {
+        let id = localStorage.getItem("att-device-id");
+        if (!id) {
+            id = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+            localStorage.setItem("att-device-id", id);
+        }
+        return id;
+    } catch (e) { return null; }
+}
+
 /* =========================================================
    ATTENDANCE
    SAVE ATTENDANCE
@@ -335,9 +348,17 @@ async function saveAttendance() {
 
                 ...fpFields,
 
-                ...qrFields
+                ...qrFields,
+
+                // this phone's id: one phone can only check in for one student (attendance_device_lock.sql)
+                device_id: attDeviceId()
             };
-    const { error } = await supabaseClient.from("attendance").insert([row]);
+    let { error } = await supabaseClient.from("attendance").insert([row]);
+    // the device column isn't there yet (SQL not run): send without it
+    if (error && /device_id/i.test(error.message || "") && !/ATT_DEVICE/.test(error.message || "")) {
+        delete row.device_id;
+        ({ error } = await supabaseClient.from("attendance").insert([row]));
+    }
 
 
     // =========================
@@ -352,9 +373,9 @@ async function saveAttendance() {
         );
 
         // the server's own checks (attendance_rules.sql) answer with a short code
-        const code = ["ATT_QR_EXPIRED", "ATT_QR_NO_SCHOOL", "ATT_QR_INVALID", "ATT_PHOTO_NEEDED", "ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
+        const code = ["ATT_QR_EXPIRED", "ATT_QR_NO_SCHOOL", "ATT_QR_INVALID", "ATT_PHOTO_NEEDED", "ATT_ALREADY", "ATT_DAY_CLOSED", "ATT_NOT_OPEN_YET", "ATT_CLOSED", "ATT_NO_LOCATION", "ATT_LOCATION_WEAK", "ATT_TOO_FAR", "ATT_FP_INVALID", "ATT_FP_PHOTO", "ATT_DEVICE_IN_USE"].find(function (c) { return (error.message || "").indexOf(c) !== -1; });
         const msgKey = { ATT_QR_EXPIRED: "qr_expired", ATT_QR_NO_SCHOOL: "qr_no_school", ATT_QR_INVALID: "qr_invalid", ATT_PHOTO_NEEDED: "toast_face_photo_needed", ATT_ALREADY: "toast_att_already", ATT_DAY_CLOSED: "toast_att_day_closed", ATT_NOT_OPEN_YET: "toast_att_not_open", ATT_CLOSED: "toast_att_closed",
-                         ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid", ATT_FP_PHOTO: "fp_snap_failed" }[code];
+                         ATT_NO_LOCATION: "toast_att_loc_failed", ATT_LOCATION_WEAK: "toast_att_loc_weak", ATT_TOO_FAR: "toast_att_too_far_srv", ATT_FP_INVALID: "toast_att_fp_invalid", ATT_FP_PHOTO: "fp_snap_failed", ATT_DEVICE_IN_USE: "toast_att_device_in_use" }[code];
         if (code === "ATT_FP_INVALID" && typeof attFpUsed === "function") attFpUsed();
         showToast(msgKey ? translations[msgKey][getLang()] : "Attendance failed to save: " + error.message, "error");
 

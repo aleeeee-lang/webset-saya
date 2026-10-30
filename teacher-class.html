@@ -83,8 +83,42 @@ function render() {
     const box = document.getElementById("tcList");
     if (!list.length) { box.innerHTML = '<div class="tc-empty">' + (needle ? L("Tidak ada siswa bernama itu", "No student by that name") : L("Belum ada siswa di kelas ini", "No students in this class yet")) + '</div>'; return; }
     const chev = '<svg class="tc-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-    box.innerHTML = list.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${mine ? (dayOff && !rec[s.id] ? '<span class="tc-pill">' + L("Libur", "Day off") + '</span>' : TC.badge(rec[s.id], leave[s.id])) : chev}</a>`).join("");
+    box.innerHTML = list.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${mine && rec[s.id] && rec[s.id].photo_url ? `<span class="aa-pic tc-pic" role="button" tabindex="0" aria-label="${escapeHTML(L("Foto absen ", "Check-in photo ") + (s.name || ""))}" data-p="${escapeHTML(rec[s.id].photo_url)}" data-n="${escapeHTML(s.name || "")}"></span>` : ""}${mine ? (dayOff && !rec[s.id] ? '<span class="tc-pill">' + L("Libur", "Day off") + '</span>' : TC.badge(rec[s.id], leave[s.id])) : chev}</a>`).join("");
+    signPics();
 }
+
+// today's check-in photo next to each name (homeroom): tap to see it big - a different face
+// means someone else checked in for that student. Private files, 1-hour links.
+const picCache = {};
+async function signPics() {
+    const els = Array.from(document.querySelectorAll(".tc-pic[data-p]"));
+    const need = Array.from(new Set(els.map(e => e.dataset.p).filter(p => !picCache[p])));
+    if (need.length) {
+        const bucket = supabaseClient.storage.from("attendance-photos");
+        try {
+            const { data } = await bucket.createSignedUrls(need, 3600);
+            (data || []).forEach(x => { if (x && x.signedUrl && x.path) picCache[x.path] = x.signedUrl; });
+        } catch (e) {}
+    }
+    els.forEach(e => { const u = picCache[e.dataset.p]; if (u) e.style.backgroundImage = "url('" + u.replace(/'/g, "%27") + "')"; else e.remove(); });
+}
+function showPic(el) {
+    const u = picCache[el.dataset.p];
+    if (!u) return;
+    const w = document.createElement("div");
+    w.className = "tc-pic-view";
+    w.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure>';
+    w.querySelector("img").src = u;
+    w.querySelector("figcaption").textContent = el.dataset.n + " · " + L("foto absen hari ini", "today's check-in photo");
+    w.addEventListener("click", function () { w.remove(); });
+    document.body.appendChild(w);
+}
+document.getElementById("tcList").addEventListener("click", function (e) {
+    const p = e.target.closest(".tc-pic");
+    if (!p) return;
+    e.preventDefault(); e.stopPropagation();
+    showPic(p);
+}, true);
 
 document.getElementById("tcClasses").addEventListener("click", function (e) {
     const b = e.target.closest("button[data-c]");

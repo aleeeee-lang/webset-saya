@@ -4887,3 +4887,5 @@ html[data-theme="dark"] .tx-filter-menu .filter-option{color:#e5e7eb}
 html[data-theme="dark"] .tx-filter-menu .filter-option:hover{background:#1c1c1c}
 html[data-theme="dark"] .tx-filter-menu .filter-option.selected{background:#2a3a12;color:#d9f99d}
 .my-attendance-section-header .tx-filter-menu span{letter-spacing:normal;color:inherit;font-size:13px}
+.my-attendance-section-header.tx-head{margin-bottom:6px}
+#historyList .history-card,#personalHistoryList .history-card{padding:12px 14px}

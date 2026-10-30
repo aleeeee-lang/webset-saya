@@ -10,16 +10,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261031i">
+<link rel="stylesheet" href="style.css?v=20261031j">
 <script>
 // old links (search results, notifications) opened a student here: that page is its own now
 (function () { var s = new URLSearchParams(location.search).get("student"); if (s) location.replace("teacher-student.html?id=" + encodeURIComponent(s)); })();
 </script>
-<script src="js/theme.js?v=20261031i"></script>
-<script src="js/lang.js?v=20261031i"></script>
-<script src="js/toast.js?v=20261031i"></script>
-<script src="js/fit.js?v=20261031i" defer></script>
-<script src="js/champs.js?v=20261031i"></script>
+<script src="js/theme.js?v=20261031j"></script>
+<script src="js/lang.js?v=20261031j"></script>
+<script src="js/toast.js?v=20261031j"></script>
+<script src="js/fit.js?v=20261031j" defer></script>
+<script src="js/champs.js?v=20261031j"></script>
 </head>
 
 <body class="v2-page">
@@ -27,7 +27,7 @@
 <div class="v3-home tc-home">
 
     <header class="v2-hero-top v3-top">
-        <span class="v2-av-wrap"><a href="settings.html" class="v2-avatar" id="tcAvatar" aria-label="Saya">?</a><a href="settings.html?photo=1" class="av-cam-badge v2-av-plus" aria-label="Ganti foto profil"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a></span>
+        <span class="v2-av-wrap"><a href="settings.html" class="v2-avatar" id="tcAvatar" aria-label="Saya">?</a><a href="settings.html?photo=1" data-att-photo class="av-cam-badge v2-av-plus" aria-label="Ganti foto profil"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a></span>
         <div class="v2-hero-who">
             <span id="tcRole">&nbsp;</span>
             <strong id="tcName">&nbsp;</strong>
@@ -84,13 +84,14 @@
 </div>
 
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261031i"></script>
+<script src="js/nav.js?v=20261031j"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261031i"></script>
-<script src="js/auth.js?v=20261031i"></script>
-<script src="js/notification.js?v=20261031i"></script>
-<script src="js/teacher-core.js?v=20261031i"></script>
+<script src="js/supabase.js?v=20261031j"></script>
+<script src="js/auth.js?v=20261031j"></script>
+<script src="js/photo.js?v=20261031j"></script>
+<script src="js/notification.js?v=20261031j"></script>
+<script src="js/teacher-core.js?v=20261031j"></script>
 
 <script>
 const L = TC.L;
@@ -170,7 +171,7 @@ window.addEventListener("tabshow", function () { if (ctx) { loadClass(); loadLea
 start();
 </script>
 
-<script src="js/live-sessions.js?v=20261031i"></script>
+<script src="js/live-sessions.js?v=20261031j"></script>
 <script>if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));</script>
 </body>
 </html>

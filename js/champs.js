@@ -98,6 +98,7 @@
             '<div class="jr-chart-foot"><span><i class="jr-dot"></i>' + esc(L("Hadir per hari", "Present per day")) + '</span><span><i class="jr-line"></i><em>' + cnt(L("Rata-rata ", "Average ") + Math.round(avg * 100) + "%") + '</em></span></div>';
     }
 
+    var TROPHY = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg>';
     var GO = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 
     // banner for an achievement that is still being celebrated (show_until in the future)
@@ -120,7 +121,7 @@
     function banner(a, map) {
         if (a.kind === "rank") {
             var names = Array.isArray(a.details) ? a.details.map(function (d) { return MEDAL[(d.rank || 1) - 1] + " " + esc(d.name); }).join(" &nbsp;") : esc(a.title);
-            return '<a class="jr-banner rank" href="juara.html#award"><span class="jr-banner-ic">🏆</span><span class="jr-banner-text"><small>' +
+            return '<a class="jr-banner rank" href="juara.html#award"><span class="jr-banner-ic">' + TROPHY + '</span><span class="jr-banner-text"><small>' +
                 esc(L("Juara kelas ", "Class champions · ") + (a.class || "") + (a.period ? " · " + a.period : "")) + '</small><b>' + names + '</b></span>' + GO + '</a>';
         }
         return '<a class="jr-banner" href="juara.html#award">' + awardFace(a, map) + '<span class="jr-banner-text"><small>' +
@@ -171,7 +172,7 @@
             var rows = rankAttendance(r[1].data), top = rows.filter(function (x) { return x.rnk && x.rnk <= 3; }).slice(0, 3);
             var mine = rows.find(function (x) { return x.user_id === uid; });
             var days = (r[2] && !r[2].error && r[2].data) || [];
-            html += '<section class="jr-home"><a class="jr-home-head" href="juara.html#att"><span class="jr-home-ic">🏆</span><span class="jr-home-title"><b>' +
+            html += '<section class="jr-home"><a class="jr-home-head" href="juara.html#att"><span class="jr-home-ic">' + TROPHY + '</span><span class="jr-home-title"><b>' +
                 esc(L("Juara kehadiran", "Attendance champions")) + '</b><small>' + esc(L("Kelas ", "Class ") + cls + " · " + m.label) + '</small></span>' +
                 (mine && mine.rnk ? '<span class="jr-home-me">' + esc(L("Kamu ", "You ")) + '#<span data-count>' + mine.rnk + '</span></span>' : '') + GO + '</a>' +
                 (top.length ? '<div class="jr-home-top">' + top.map(function (x, i) {

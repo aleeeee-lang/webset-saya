@@ -453,7 +453,7 @@ button.filter-select {
 }
 
 .savings-balance-card.personal {
-    background: linear-gradient(135deg, #15803D, #2dd4a7);
+    background: #14162B;
     box-shadow: 0 10px 30px rgba(20,22,43, .25);
 }
 
@@ -626,12 +626,12 @@ button.filter-select {
 /* PERSONAL SAVINGS GREEN THEME */
 
 #personalTabContent .savings-form-icon {
-    background: #e5faf3;
+    background: #EEF7D4;
     color: #15803D;
 }
 
 #personalTabContent .savings-submit-btn {
-    background: linear-gradient(135deg, #15803D, #2dd4a7);
+    background: #14162B;
     box-shadow: 0 8px 20px rgba(20,22,43, .22);
 }
 
@@ -1490,8 +1490,8 @@ html[data-theme="dark"] .savings-form-icon {
 }
 
 html[data-theme="dark"] #personalTabContent .savings-form-icon {
-    background: #123524;
-    color: #4ade80;
+    background: #1F2A14;
+    color: #4ADE80;
 }
 
 html[data-theme="dark"] #sppTabContent .savings-form-icon {
@@ -1499,6 +1499,7 @@ html[data-theme="dark"] #sppTabContent .savings-form-icon {
     color: #4ADE80;
 }
 
+html[data-theme="dark"] #personalTabContent .savings-submit-btn,
 html[data-theme="dark"] #sppTabContent .savings-submit-btn {
     background: #262628;
     box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
@@ -1556,7 +1557,7 @@ html[data-theme="dark"] .savings-tab-btn[data-tab="spp"].active {
 }
 
 html[data-theme="dark"] .savings-balance-card.spp {
-    background: linear-gradient(135deg, #0a6d63, #15968a) !important;
+    background: #262628 !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .4) !important;
 }
 .app-toast-info { background: #334155; }
@@ -3019,8 +3020,8 @@ html[data-theme="dark"] .attendance-page .submit-button[data-needs].is-ready{bac
 /* buttons that are always usable: no "disabled" look in dark mode */
 html[data-theme="dark"] .attendance-page .submit-button:not([data-needs]):not(.bc-next):not(.bc-send):not(.pay-save){background:#F2F2F2!important;color:#111!important}
 .savings-submit-btn[data-needs],.login-btn[data-needs]{transition:background .2s,color .2s,box-shadow .2s}
-.savings-submit-btn[data-needs].is-waiting,.login-btn[data-needs].is-waiting{background:#E6E8EF!important;color:#6B7088!important;box-shadow:none!important;transform:none!important}
-html[data-theme="dark"] .savings-submit-btn[data-needs].is-waiting{background:#26262A!important;color:#A1A1AA!important}
+.savings-submit-btn[data-needs]:not(.is-ready),.login-btn[data-needs]:not(.is-ready){background:#E6E8EF!important;color:#6B7088!important;box-shadow:none!important;transform:none!important}
+html[data-theme="dark"] .savings-submit-btn[data-needs]:not(.is-ready){background:#26262A!important;color:#A1A1AA!important}
 .attendance-page .bc-keep-note{margin:-4px 0 10px;font-size:12px;color:#8A8FA8!important}
 .bc-del{flex-shrink:0;width:36px;height:36px;border-radius:10px;border:none;background:transparent;color:#B0B3C2;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s}
 .bc-del:hover,.bc-del:focus-visible{background:#FEE2E2;color:#DC2626}

@@ -14,6 +14,7 @@
         for (var i = 0; i < btns.length; i++) {
             var b = btns[i];
             if (b.disabled && b.classList.contains("is-ready")) continue;   // busy saving: keep look
+            if (b.offsetParent === null) continue;   // on a tab that isn't shown: its fields look "hidden", don't judge yet
             var ok = b.getAttribute("data-needs").split(",").every(function (id) { return filled(document.getElementById(id.trim())); });
             b.classList.toggle("is-ready", ok);
             b.classList.toggle("is-waiting", !ok);

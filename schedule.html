@@ -15,6 +15,7 @@
 <script src="js/toast.js?v=20261031m"></script>
 <script src="js/fit.js?v=20261031m" defer></script>
 <script src="js/lessons.js?v=20261031m"></script>
+<script src="js/tasks-core.js?v=20261031m"></script>
 </head>
 
 <body class="v2-page">
@@ -33,6 +34,9 @@
     </header>
 
     <section class="lsn-now" id="lsnNow" aria-live="polite"></section>
+
+    <!-- students: their open tasks, right under the lesson that is on now / next (moved here from the home page) -->
+    <a href="tasks.html" class="v2-taskcard lsn-tasks" id="lsnTasks" hidden></a>
 
     <nav class="lsn-days" id="lsnDays" role="tablist" aria-label="Days"></nav>
 
@@ -220,10 +224,35 @@ async function init() {
     } else {
         sub.textContent = (me && me.class) || "-";
         lessons = me && me.class ? await fetchLessons({ cls: me.class }) : [];
+        loadLsnTasks(user.id, (me && me.class) || "");
     }
     if (!availableDays().includes(selectedDay)) selectedDay = 1;
     renderAll();
     startTick();
+}
+
+async function loadLsnTasks(uid, cls) {
+    try {
+        const res = await Tasks.fetchMine(supabaseClient, uid, cls);
+        if (res.error) return;
+        const open = res.tasks.filter(function (t) { return !t.done; });
+        const el = document.getElementById("lsnTasks");
+        if (!el) return;
+        if (!open.length) { el.hidden = true; return; }
+        const lang = getLang(), T = function (k) { return translations[k] ? translations[k][lang] : k; };
+        const late = open.filter(function (t) { return Tasks.bucket(t) === "late"; });
+        const soon = open.filter(function (t) { const b = Tasks.bucket(t); return b === "today" || b === "tomorrow"; });
+        const next = open.filter(function (t) { return Tasks.bucket(t) !== "late"; })[0] || late[0];
+        const d = Tasks.dueLabel(next);
+        const chips = (late.length ? '<span class="late">' + T("home_tasks_late").replace("{n}", late.length) + '</span>' : '') +
+            (soon.length ? '<span class="soon">' + T("home_tasks_due").replace("{n}", soon.length) + '</span>' : '');
+        el.className = "v2-taskcard lsn-tasks" + (late.length ? " has-late" : "");
+        el.innerHTML = '<div class="v2-taskcard-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><b>' + open.length + '</b></div>' +
+            '<div class="v2-taskcard-body"><div class="v2-taskcard-head"><strong>' + T("home_tasks_title") + '</strong>' + chips + '</div>' +
+            '<small>' + T("home_tasks_next") + ' <b>' + Lessons.esc(next.title) + '</b> · ' + Lessons.esc(d.when) + '</small></div>' +
+            '<span class="v2-lesson-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>';
+        el.hidden = false;
+    } catch (e) {}
 }
 
 function startTick() {

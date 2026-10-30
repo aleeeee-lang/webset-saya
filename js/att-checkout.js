@@ -97,7 +97,15 @@
             window.dispatchEvent(new Event("resize"));   // repaint the fingerprint panel text
         }
         summary();
+        // remember today's finished state so the page opens straight on it next time
+        // (no camera / fingerprint screen flashing up while the check-in is looked up)
+        try {
+            if (st.mode === "done" && st.row) localStorage.setItem(CACHE, JSON.stringify({ day: localDateStr(), uid: st.user && st.user.id, row: st.row, sched: st.sched }));
+            else if (st.loaded) localStorage.removeItem(CACHE);
+        } catch (e) {}
     }
+
+    var CACHE = "att-snap:co-state";   // "att-snap:" is wiped on log out (js/swipe.js)
 
     async function load() {
         var user = await requireLogin();
@@ -108,7 +116,8 @@
         var ckey = attClassKey(prof);
         var day = localDateStr();
         var r = await supabaseClient.from("attendance").select("*").eq("user_id", user.id).eq("date", day).maybeSingle();
-        if (r.error || !r.data) { st.mode = ""; st.row = null; apply(); return; }
+        if (r.error) return;
+        if (!r.data) { st.mode = ""; st.row = null; st.loaded = true; apply(); return; }
         st.row = r.data;
         var rules = ckey ? await attDayRules(ckey) : null;
         st.sched = rules && rules.schedule ? rules.schedule : null;
@@ -116,6 +125,7 @@
         var coOn = row.status === "Hadir" && s && s.checkout_start && ("checkout_time" in row);
         var closed = coOn && s.checkout_end && nowHM() > hm(s.checkout_end);
         st.mode = coOn && !row.checkout_time && !closed ? "out" : "done";
+        st.loaded = true;
         apply();
     }
 
@@ -185,6 +195,10 @@
             c.id = "coCard"; c.className = "co-card"; c.hidden = true;
             head.insertAdjacentElement("afterend", c);
         }
+        try {
+            var c = JSON.parse(localStorage.getItem(CACHE) || "null");
+            if (c && c.day === localDateStr() && c.row) { st.row = c.row; st.sched = c.sched || null; st.mode = "done"; apply(); }
+        } catch (e) {}
         load();
         setInterval(function () { if (st.mode) { syncEarly(); summary(); } }, 30000);
     });

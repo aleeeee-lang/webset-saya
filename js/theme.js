@@ -54,9 +54,9 @@ window.attSnapGhost = function (href, label) {
     g.className = "att-swipe-ghost";
     g.setAttribute("aria-hidden", "true");
     var snap = null;
-    // the check-in page changes the moment you check in (and has a live camera): never show an old picture of it
-    if (href === "attendance.html") { try { localStorage.removeItem("att-snap:attendance.html"); } catch (e) {} }
-    else try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
+    try { snap = JSON.parse(localStorage.getItem("att-snap:" + href) || "null"); } catch (e) {}
+    // the check-in page: only a picture of today's "checked in" state counts (js/swipe.js)
+    if (snap && href === "attendance.html" && !snap.done) snap = null;
     if (snap && (!snap.t || new Date(snap.t).toDateString() !== new Date().toDateString())) snap = null;
     if (snap && (snap.v || "") !== window.attAppVer()) snap = null;
     // saved in the other colour mode (light <-> dark): charts and inline colours would be wrong
@@ -74,7 +74,9 @@ window.attSnapGhost = function (href, label) {
     } else {
         inner.className += " att-swipe-skel";
         var esc = String(label || "").replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
-        inner.innerHTML = '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + esc + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
+        inner.innerHTML = href === "attendance.html"
+            ? '<div class="sk-title">' + esc + '</div><div class="sk-card"></div>'
+            : '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + esc + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
     }
     g.appendChild(inner);
     g._hasSnap = !!(snap && snap.html);
@@ -231,7 +233,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261030d";
+    w.src = "js/swipe.js?v=20261030e";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -239,7 +241,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261030d";
+    s.src = "js/sidebar.js?v=20261030e";
     s.defer = true;
     document.head.appendChild(s);
 })();
@@ -267,4 +269,15 @@ function setTheme(theme) {
     }
     if (document.readyState === "complete") setTimeout(check, 400);
     else window.addEventListener("load", function () { setTimeout(check, 400); });
+})();
+
+// The check-in page, already done today: hide the camera / fingerprint screen from the very
+// first paint instead of flashing it until the check-in is looked up (js/att-checkout.js)
+(function () {
+    if ((location.pathname.split("/").pop() || "") !== "attendance.html") return;
+    try {
+        var c = JSON.parse(localStorage.getItem("att-snap:co-state") || "null"), n = new Date();
+        var day = n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
+        if (c && c.day === day) document.documentElement.classList.add("att-co-done");
+    } catch (e) {}
 })();

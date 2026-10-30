@@ -171,6 +171,17 @@
 
     function clean(root) { window.attSnapClean(root); }
 
+    // leave out what isn't on screen (hidden by a class on <html>, which the picture doesn't carry)
+    function dropHidden(orig, copy) {
+        var oc = orig.children, cc = copy.children;
+        if (oc.length !== cc.length) return;
+        for (var i = oc.length - 1; i >= 0; i--) {
+            var t = oc[i].tagName;
+            if (t === "SCRIPT" || t === "VIDEO" || t === "CANVAS" || getComputedStyle(oc[i]).display === "none" || oc[i].hidden) cc[i].remove();
+            else if (oc[i].children.length) dropHidden(oc[i], cc[i]);
+        }
+    }
+
     // drop everything below the first screens: the swipe only ever shows the top of a page
     function trim(orig, copy, limit) {
         var oc = orig.children, cc = copy.children;
@@ -190,9 +201,14 @@
         return !n || (!n.inflight && (!n.ever || Date.now() - n.quietAt > 300));
     }
     function saveSnapshot() {
-        if (!navLinks() || !settled() || /attendance\.html$/.test(location.pathname)) return;
+        if (!navLinks() || !settled()) return;
+        // the check-in page: only its final state of the day ("you've checked in"), never the
+        // camera / fingerprint screen, which is gone the moment you check in
+        var isAtt = /attendance\.html$/.test(location.pathname);
+        if (isAtt && !document.documentElement.classList.contains("att-co-done")) return;
         try {
             var c = document.body.cloneNode(true);
+            if (isAtt) dropHidden(document.body, c);
             trim(document.body, c, window.innerHeight * 1.3);
             clean(c);
             var html = c.innerHTML;
@@ -202,7 +218,7 @@
                 html: html, cls: document.body.className, bg: cs.backgroundColor,
                 pad: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(" "),
                 theme: document.documentElement.getAttribute("data-theme") || "light", t: Date.now(),
-                v: window.attAppVer ? window.attAppVer() : ""
+                v: window.attAppVer ? window.attAppVer() : "", done: isAtt || undefined
             }));
         } catch (e) {}
     }

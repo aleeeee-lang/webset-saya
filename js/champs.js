@@ -142,7 +142,7 @@
         var jobs = [
             supabaseClient.from("achievements").select("*").gt("show_until", now.toISOString()).order("created_at", { ascending: false }).limit(4),
             cls ? supabaseClient.rpc("champ_attendance", { target_class: cls, d_from: m.from, d_to: m.to }) : Promise.resolve({ data: null }),
-            cls ? supabaseClient.rpc("champ_daily", { target_class: cls, d_from: m.from, d_to: m.to }) : Promise.resolve({ data: null }),
+            cls && !opt.noChart ? supabaseClient.rpc("champ_daily", { target_class: cls, d_from: m.from, d_to: m.to }) : Promise.resolve({ data: null }),
             now.getDate() <= 7 ? supabaseClient.rpc("champ_classes", { d_from: month(-1).from, d_to: month(-1).to }) : Promise.resolve({ data: null })
         ];
         var r;
@@ -178,7 +178,7 @@
                 (top.length ? '<div class="jr-home-top">' + top.map(function (x, i) {
                     return '<div class="jr-home-pos r' + x.rnk + (x.user_id === uid ? " me" : "") + '">' + av(x.name, x.avatar_url, "sm") + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
                 }).join("") + '</div>' : '<p class="jr-muted">' + esc(L("Juara muncul setelah ada yang absen bulan ini.", "Champions show up once people check in this month.")) + '</p>') +
-                (days.length ? '<div class="jr-home-chart">' + dailyChart(days, { height: 78 }) + '</div>' : '') + '</section>';
+                (days.length && !opt.noChart ? '<div class="jr-home-chart">' + dailyChart(days, { height: 78 }) + '</div>' : '') + '</section>';
         }
         // the card usually sits below the fold: hold its animations until it scrolls into view
         el.innerHTML = html.replace(/data-count>/g, "data-count-later>");

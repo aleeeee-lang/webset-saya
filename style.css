@@ -4814,3 +4814,17 @@ html[data-theme="dark"] button.filter-select span:not(.filter-dot),html[data-the
 html[data-theme="dark"] #holidayList span[style*="background:#d0d0d0"]{color:#3A3D52!important}
 
 .jr-home-pos.r1{background:#FFF6D9;box-shadow:inset 0 0 0 1px #F6E3A1}.jr-home-pos.r2{background:#F1F3F7;box-shadow:inset 0 0 0 1px #E1E5EE}.jr-home-pos.r3{background:#FCEEE4;box-shadow:inset 0 0 0 1px #F3D7C3}.jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}html[data-theme="dark"] .jr-home-pos.r1{background:#2E2714;box-shadow:inset 0 0 0 1px #4A3F1C}html[data-theme="dark"] .jr-home-pos.r2{background:#26272B;box-shadow:inset 0 0 0 1px #3A3B40}html[data-theme="dark"] .jr-home-pos.r3{background:#2D2019;box-shadow:inset 0 0 0 1px #4A3326}html[data-theme="dark"] .jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}
+
+/* home: my money card (below the champions) */
+.hm-money{text-decoration:none;color:inherit}
+.hm-money[hidden]{display:none!important}
+.hm-money-ic{background:#EEF7D4!important;color:#3F6212!important}
+.hm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hm-cell{display:flex;flex-direction:column;gap:3px;padding:10px;border-radius:16px;background:#F7F8FB;min-width:0}
+.hm-cell small{font-size:11px;color:#8A8FA8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-cell b{font-size:13.5px;color:#14162B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-spp.approved{color:#15803D}.hm-spp.pending{color:#B45309}.hm-spp.unpaid,.hm-spp.rejected{color:#B91C1C}
+html[data-theme="dark"] .hm-money-ic{background:#1F2A14!important;color:#C6F432!important}
+html[data-theme="dark"] .hm-cell{background:#2C2C2E}
+html[data-theme="dark"] .hm-cell b{color:#F2F2F2}
+html[data-theme="dark"] .hm-spp.approved{color:#4ADE80}html[data-theme="dark"] .hm-spp.pending{color:#FCD34D}html[data-theme="dark"] .hm-spp.unpaid,html[data-theme="dark"] .hm-spp.rejected{color:#FCA5A5}

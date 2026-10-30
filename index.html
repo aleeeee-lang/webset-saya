@@ -93,6 +93,20 @@
 
         <div class="jr-home-wrap" id="homeChamps" hidden></div>
 
+        <!-- my money at a glance (the class chart lives on the Champions page) -->
+        <a class="jr-home hm-money" id="homeMoney" href="history.html" hidden>
+            <span class="jr-home-head">
+                <span class="jr-home-ic hm-money-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg></span>
+                <span class="jr-home-title"><b id="hmTitle">Keuanganmu</b><small id="hmSub"></small></span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+            <span class="hm-grid">
+                <span class="hm-cell"><small id="hmSchoolL">Sekolah</small><b id="hmSchool">–</b></span>
+                <span class="hm-cell"><small id="hmPersonalL">Pribadi</small><b id="hmPersonal">–</b></span>
+                <span class="hm-cell"><small id="hmSppL">SPP</small><b id="hmSpp" class="hm-spp">–</b></span>
+            </span>
+        </a>
+
         <div class="v2-agenda v3-agenda" id="homeAgenda"></div>
         </div>
 
@@ -248,6 +262,37 @@ function renderHomeSpp(record) {
     if (hint) hint.textContent = homeT("v3_spp_hint_" + status);
 }
 
+// savings balances + this month's SPP (the same numbers as the Money page)
+async function loadHomeMoney(uid, sppRecord) {
+    const box = document.getElementById("homeMoney");
+    if (!box) return;
+    const ID = getLang() === "id", L = function (a, b) { return ID ? a : b; };
+    document.getElementById("hmTitle").textContent = L("Keuanganmu", "Your money");
+    document.getElementById("hmSchoolL").textContent = L("Sekolah", "School");
+    document.getElementById("hmPersonalL").textContent = L("Pribadi", "Personal");
+    document.getElementById("hmSppL").textContent = "SPP " + monthNameOf(attNow().getMonth());
+    const bal = function (r) {
+        if (!r || r.error || !r.data) return null;
+        return r.data.reduce(function (s, i) { return s + (i.type === "tarik" ? -1 : 1) * Number(i.amount || 0); }, 0);
+    };
+    let r;
+    try {
+        r = await Promise.all([
+            supabaseClient.from("savings").select("type, amount").eq("student_id", uid),
+            supabaseClient.from("personal_savings").select("type, amount").eq("student_id", uid)
+        ]);
+    } catch (e) { return; }
+    const a = bal(r[0]), b = bal(r[1]);
+    document.getElementById("hmSchool").textContent = a == null ? "–" : formatRupiah(a);
+    document.getElementById("hmPersonal").textContent = b == null ? "–" : formatRupiah(b);
+    const st = sppRecord ? sppRecord.status : "unpaid";
+    const sp = document.getElementById("hmSpp");
+    sp.textContent = homeT(st === "pending" ? "v3_spp_pending" : "tile_spp_" + st);
+    sp.className = "hm-spp " + st;
+    document.getElementById("hmSub").textContent = (a != null || b != null) ? L("Total tabungan ", "Total savings ") + formatRupiah((a || 0) + (b || 0)) : "";
+    box.hidden = false;
+}
+
 function renderHomeAgenda(events) {
     const box = document.getElementById("homeAgenda");
     if (!events.length) return;
@@ -376,7 +421,8 @@ async function loadHome() {
 
     if (profile.class) loadHomeLesson(profile.class);
     loadHomeTasks(user.id, profile.class || "");
-    if (window.Champs) Champs.home(document.getElementById("homeChamps"), { userId: user.id, cls: profile.class || "", onlyClass: profile.class || "" });
+    if (window.Champs) Champs.home(document.getElementById("homeChamps"), { userId: user.id, cls: profile.class || "", onlyClass: profile.class || "", noChart: true });
+    loadHomeMoney(user.id, results[3].data);
 
     let schedule = null;
     if (profile.class) {

@@ -248,19 +248,25 @@ function attDayOpen(dateStr, rules) {
 async function attCountable(user, attendanceData, period, profileOverride) {
     period = period || {};
     var all = attendanceData || [];
-    if (!user) return { rows: all, autoAlpa: 0 };
+    if (!user) return { rows: all, autoAlpa: 0, missingDates: [] };
     // a parent passes the child's profile; everyone else uses their own
     var profile = profileOverride || await attMyProfile(user.id);
     var ckey = attClassKey(profile);
     var rules = await attDayRules(ckey);
     var rows = all.filter(function (r) { return attDayOpen(r.date, rules); });
     var schedule = rules.schedule;
-    if (!profile || !ckey || !schedule || !schedule.active_days || !schedule.active_days.length) return { rows: rows, autoAlpa: 0 };
+    if (!profile || !ckey) return { rows: rows, autoAlpa: 0, missingDates: [] };
+    // the admin hasn't set check-in hours for this class yet: still count missed days,
+    // using Monday-Friday as school days (a day counts once it is over)
+    if (!schedule || !schedule.active_days || !schedule.active_days.length) {
+        schedule = { active_days: [1, 2, 3, 4, 5], end_time: null };
+        rules = { schedule: schedule, agenda: rules.agenda };
+    }
 
     var dates = all.map(function (a) { return a.date; }).sort();
     var first = dates.length ? dates[0] : null;
     var anchor = period.start && first ? (period.start > first ? period.start : first) : (period.start || first);
-    if (!anchor) return { rows: rows, autoAlpa: 0 };
+    if (!anchor) return { rows: rows, autoAlpa: 0, missingDates: [] };
     var start = new Date(anchor + "T00:00:00");
     var now = attNow();
     var today = new Date(now); today.setHours(0, 0, 0, 0);
@@ -288,15 +294,15 @@ async function attCountable(user, attendanceData, period, profileOverride) {
     end.setDate(end.getDate() - (includeToday ? 0 : 1));
     if (period.end) { var pe = new Date(period.end + "T00:00:00"); if (pe < end) end = pe; }
     if (profile.status === "inactive" && profile.left_date) { var ld = new Date(profile.left_date + "T00:00:00"); if (ld < end) end = ld; }
-    if (end < start) return { rows: rows, autoAlpa: 0 };
+    if (end < start) return { rows: rows, autoAlpa: 0, missingDates: [] };
 
     var recorded = new Set(all.map(function (a) { return a.date; }));
-    var missing = 0;
+    var missingDates = [];
     for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         var ds = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-        if (!recorded.has(ds) && attDayOpen(ds, rules)) missing++;
+        if (!recorded.has(ds) && attDayOpen(ds, rules)) missingDates.push(ds);
     }
-    return { rows: rows, autoAlpa: missing };
+    return { rows: rows, autoAlpa: missingDates.length, missingDates: missingDates };
 }
 
 // older callers: just the number of auto-Alpa days

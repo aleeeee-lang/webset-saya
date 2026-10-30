@@ -10,13 +10,13 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#14162B">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=20261027p">
-<script src="js/theme.js?v=20261027p"></script>
-<script src="js/lang.js?v=20261027p"></script>
-<script src="js/toast.js?v=20261027p"></script>
-<script src="js/fit.js?v=20261027p" defer></script>
-<script src="js/transition.js?v=20261027p"></script>
-<script src="js/scroll-pop.js?v=20261027p"></script>
+<link rel="stylesheet" href="style.css?v=20261030a">
+<script src="js/theme.js?v=20261030a"></script>
+<script src="js/lang.js?v=20261030a"></script>
+<script src="js/toast.js?v=20261030a"></script>
+<script src="js/fit.js?v=20261030a" defer></script>
+<script src="js/transition.js?v=20261030a"></script>
+<script src="js/scroll-pop.js?v=20261030a"></script>
 </head>
 
 <body class="v2-page">
@@ -137,14 +137,14 @@
 
 <!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav" id="mainNav"></nav>
-<script src="js/nav.js?v=20261027p"></script>
+<script src="js/nav.js?v=20261030a"></script>
 
 
 <!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=20261027p"></script>
-<script src="js/auth.js?v=20261027p"></script>
-<script src="js/my-notes.js?v=20261027p"></script>
+<script src="js/supabase.js?v=20261030a"></script>
+<script src="js/auth.js?v=20261030a"></script>
+<script src="js/my-notes.js?v=20261030a"></script>
 
 <script>
 function tr(key) {
@@ -269,6 +269,7 @@ function renderQuickStats(data) {
 
     const now = attNow();
     const activeDays = data.filter(function (item) {
+        if (item.auto) return false;
         const d = new Date(item.date + "T00:00:00");
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     }).length;
@@ -360,7 +361,7 @@ function showHolidayInfo(dateKey) {
         const rec = myAttendanceData.find(function (r) { return r.date === dateKey; });
         if (rec) {
             const sk = { Hadir: "status_present", Izin: "status_permission", Sakit: "status_sick", Alpa: "status_absent" }[rec.status];
-            info.push({ text: (sk ? tr(sk) : rec.status) + (rec.time ? " · " + String(rec.time).slice(0, 5) : ""), dot: String(rec.status || "").toLowerCase() });
+            info.push({ text: (sk ? tr(sk) : rec.status) + (rec.time ? " · " + String(rec.time).slice(0, 5) : "") + (rec.auto ? " · " + (getLang() === "id" ? "tidak absen" : "no check-in") : ""), dot: String(rec.status || "").toLowerCase() });
         }
         if (holidaySet.has(dateKey)) info.push({ text: label ? typeLabel + " — " + label : typeLabel, dot: type });
         AttNotes.open(dateKey, { info: info, onChange: function () { AttNotes.mark(document.getElementById("myCalendarDays")); } });
@@ -428,18 +429,21 @@ async function loadMyAttendance() {
         return;
     }
 
-    myAttendanceData = data;
     calendarViewYear = attNow().getFullYear();
     calendarViewMonth = attNow().getMonth();
     markCalendarArrow(null);
 
     // a check-in on a closed day (holiday) doesn't count towards the score
     const counted = await attCountable(await requireLogin(), data, {});
-    renderScore(counted.rows);
-    renderQuickStats(counted.rows);
+    // school days with no check-in at all count as Alpa (nothing is written to the database)
+    const autoRows = (counted.missingDates || []).map(function (d) { return { date: d, status: "Alpa", auto: true }; });
+    const scored = counted.rows.concat(autoRows);
+    myAttendanceData = data.concat(autoRows);
+    renderScore(scored);
+    renderQuickStats(scored);
     await loadHolidays();
     renderCalendar();
-    renderInsight(data);
+    renderInsight(scored);
     if (window.AttNotes) AttNotes.load().then(function () { AttNotes.mark(document.getElementById("myCalendarDays")); });
 }
 

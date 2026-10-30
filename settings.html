@@ -33,7 +33,7 @@
                 <div id="avatarPreview" style="width:56px;height:56px;border-radius:50%;background:#9aa5b1;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer" onclick="openPhotoMenu()"><svg viewBox="0 0 24 24" width="60%" height="60%" fill="#ffffff"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg></div>
                 <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" style="display:none">
                 <input type="file" id="avatarCamera" accept="image/*" capture="user" style="display:none">
-                <span class="av-cam-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="av-cam-badge" role="button" aria-label="Ganti foto profil" onclick="openPhotoMenu()" style="pointer-events:auto;cursor:pointer"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
             </div>
             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
                 <span style="font-size:14px;color:#20243a" id="settingsName">-</span>
@@ -316,6 +316,11 @@ async function loadAccountInfo() {
             profile.role === "admin" ? translations.label_admin[getLang()] : (profile.class || "-");
 
         renderAvatarPreview(profile.name, profile.avatar_url);
+        // opened from the "+" on a profile photo elsewhere: go straight to the photo menu
+        if (/[?&]photo=1/.test(location.search)) {
+            history.replaceState(history.state, "", location.pathname + location.hash);
+            setTimeout(openPhotoMenu, 250);
+        }
 
         if (profile.role === "admin") {
             document.getElementById("adminSettingsSection").style.display = "block";

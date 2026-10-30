@@ -4917,3 +4917,5 @@ html[data-theme="dark"] .ps-del h2{color:#f2f2f7}
 html[data-theme="dark"] .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #000}
 .v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #14162B}
 html[data-theme="dark"] .v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #121212}
+.v2-av-wrap .v2-av-plus{pointer-events:auto;cursor:pointer;text-decoration:none}
+.v2-av-wrap .v2-av-plus::before{content:"";position:absolute;inset:-10px}

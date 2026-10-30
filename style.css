@@ -4819,12 +4819,10 @@ html[data-theme="dark"] #holidayList span[style*="background:#d0d0d0"]{color:#3A
 .hm-money{text-decoration:none;color:inherit}
 .hm-money[hidden]{display:none!important}
 .hm-money-ic{background:#EEF7D4!important;color:#3F6212!important}
-.hm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hm-money.one .hm-grid{grid-template-columns:1fr}.hm-cell[hidden]{display:none!important}
 .hm-cell{display:flex;flex-direction:column;gap:3px;padding:10px;border-radius:16px;background:#F7F8FB;min-width:0}
 .hm-cell small{font-size:11px;color:#8A8FA8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hm-cell b{font-size:13.5px;color:#14162B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hm-spp.approved{color:#15803D}.hm-spp.pending{color:#B45309}.hm-spp.unpaid,.hm-spp.rejected{color:#B91C1C}
 html[data-theme="dark"] .hm-money-ic{background:#1F2A14!important;color:#C6F432!important}
 html[data-theme="dark"] .hm-cell{background:#2C2C2E}
 html[data-theme="dark"] .hm-cell b{color:#F2F2F2}
-html[data-theme="dark"] .hm-spp.approved{color:#4ADE80}html[data-theme="dark"] .hm-spp.pending{color:#FCD34D}html[data-theme="dark"] .hm-spp.unpaid,html[data-theme="dark"] .hm-spp.rejected{color:#FCA5A5}

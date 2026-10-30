@@ -101,9 +101,8 @@
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
             </span>
             <span class="hm-grid">
-                <span class="hm-cell"><small id="hmSchoolL">Sekolah</small><b id="hmSchool">–</b></span>
-                <span class="hm-cell"><small id="hmPersonalL">Pribadi</small><b id="hmPersonal">–</b></span>
-                <span class="hm-cell"><small id="hmSppL">SPP</small><b id="hmSpp" class="hm-spp">–</b></span>
+                <span class="hm-cell" id="hmSchoolC"><small id="hmSchoolL">Sekolah</small><b id="hmSchool">–</b></span>
+                <span class="hm-cell" id="hmPersonalC"><small id="hmPersonalL">Pribadi</small><b id="hmPersonal">–</b></span>
             </span>
         </a>
 
@@ -262,19 +261,14 @@ function renderHomeSpp(record) {
     if (hint) hint.textContent = homeT("v3_spp_hint_" + status);
 }
 
-// savings balances + this month's SPP (the same numbers as the Money page)
-async function loadHomeMoney(uid, sppRecord) {
+// savings the student actually uses (school, personal or both) - same numbers as the Money page
+async function loadHomeMoney(uid) {
     const box = document.getElementById("homeMoney");
     if (!box) return;
     const ID = getLang() === "id", L = function (a, b) { return ID ? a : b; };
     document.getElementById("hmTitle").textContent = L("Keuanganmu", "Your money");
-    document.getElementById("hmSchoolL").textContent = L("Sekolah", "School");
-    document.getElementById("hmPersonalL").textContent = L("Pribadi", "Personal");
-    document.getElementById("hmSppL").textContent = "SPP " + monthNameOf(attNow().getMonth());
-    const bal = function (r) {
-        if (!r || r.error || !r.data) return null;
-        return r.data.reduce(function (s, i) { return s + (i.type === "tarik" ? -1 : 1) * Number(i.amount || 0); }, 0);
-    };
+    document.getElementById("hmSchoolL").textContent = L("Tabungan sekolah", "School savings");
+    document.getElementById("hmPersonalL").textContent = L("Tabungan pribadi", "Personal savings");
     let r;
     try {
         r = await Promise.all([
@@ -282,15 +276,21 @@ async function loadHomeMoney(uid, sppRecord) {
             supabaseClient.from("personal_savings").select("type, amount").eq("student_id", uid)
         ]);
     } catch (e) { return; }
+    // null = not used (no transactions yet, or couldn't load)
+    const bal = function (x) {
+        if (!x || x.error || !x.data || !x.data.length) return null;
+        return x.data.reduce(function (s, i) { return s + (i.type === "tarik" ? -1 : 1) * Number(i.amount || 0); }, 0);
+    };
     const a = bal(r[0]), b = bal(r[1]);
-    document.getElementById("hmSchool").textContent = a == null ? "–" : formatRupiah(a);
-    document.getElementById("hmPersonal").textContent = b == null ? "–" : formatRupiah(b);
-    const st = sppRecord ? sppRecord.status : "unpaid";
-    const sp = document.getElementById("hmSpp");
-    sp.textContent = homeT(st === "pending" ? "v3_spp_pending" : "tile_spp_" + st);
-    sp.className = "hm-spp " + st;
-    document.getElementById("hmSub").textContent = (a != null || b != null) ? L("Total tabungan ", "Total savings ") + formatRupiah((a || 0) + (b || 0)) : "";
-    box.hidden = false;
+    document.getElementById("hmSchoolC").hidden = a == null;
+    document.getElementById("hmPersonalC").hidden = b == null;
+    if (a != null) document.getElementById("hmSchool").textContent = formatRupiah(a);
+    if (b != null) document.getElementById("hmPersonal").textContent = formatRupiah(b);
+    document.getElementById("hmSub").textContent = a != null && b != null
+        ? L("Total tabungan ", "Total savings ") + formatRupiah(a + b)
+        : L("Saldo tabunganmu", "Your savings balance");
+    box.classList.toggle("one", (a == null) !== (b == null));
+    box.hidden = a == null && b == null;
 }
 
 function renderHomeAgenda(events) {
@@ -422,7 +422,7 @@ async function loadHome() {
     if (profile.class) loadHomeLesson(profile.class);
     loadHomeTasks(user.id, profile.class || "");
     if (window.Champs) Champs.home(document.getElementById("homeChamps"), { userId: user.id, cls: profile.class || "", onlyClass: profile.class || "", noChart: true });
-    loadHomeMoney(user.id, results[3].data);
+    loadHomeMoney(user.id);
 
     let schedule = null;
     if (profile.class) {

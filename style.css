@@ -4925,3 +4925,4 @@ html[data-theme="dark"] .v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5
 .spp-status-badge.notdue{color:#475569;background:#EEF2F6}
 .v2-tile-status.notdue,.v3-tile .v2-tile-status.notdue{color:#475569;background:#EEF2F6}
 html[data-theme="dark"] .spp-status-badge.notdue,html[data-theme="dark"] .v3-tile .v2-tile-status.notdue,html[data-theme="dark"] .v2-tile-status.notdue{color:#CBD5E1;background:rgba(148,163,184,.15)}
+.v3-tile .v2-tile-status.notdue{max-width:100%;box-sizing:border-box;white-space:normal}

@@ -366,6 +366,35 @@ async function fetchExamReminders(userId) {
     } catch (e) { /* calendar not available */ }
 }
 
+// ===== SPP reminders (academic calendar, type "spp"), students only: 3 days before, the day before, on the day =====
+// (skipped once that month's proof is sent or approved). Replaces the SPP line that used to sit on the home page.
+async function fetchSppReminders(userId) {
+    if (typeof supabaseClient === "undefined") return;
+    try {
+        const now = new Date();
+        const iso = function (d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+        const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const to = new Date(today0); to.setDate(to.getDate() + 3);
+        const { data, error } = await supabaseClient.from("holidays").select("id,date,label,type").eq("type", "spp").gte("date", iso(today0)).lte("date", iso(to)).order("date");
+        if (error || !data || !data.length) return;
+        const { data: paid } = await supabaseClient.from("spp_payments").select("period,status").eq("user_id", userId).in("status", ["pending", "approved"]);
+        const paidPeriods = (paid || []).map(function (p) { return p.period; });
+        const seen = loadTaskReminded(userId), lang = getLang();
+        data.forEach(function (h) {
+            if (paidPeriods.indexOf(h.date.slice(0, 7)) !== -1) return;
+            const d = new Date(h.date + "T00:00:00");
+            const dd = Math.round((d - today0) / 86400000);
+            const stage = dd <= 0 ? "h0" : dd === 1 ? "h1" : "h3";
+            const key = "spp:" + h.id + ":" + stage;
+            if (seen.indexOf(key) !== -1) return;
+            const label = translations[stage === "h0" ? "notif_spp_today" : stage === "h1" ? "notif_spp_tomorrow" : "notif_spp_soon"][lang].replace("{n}", dd);
+            addNotification(userId, "💳 " + label + (h.label ? " " + h.label : ""));
+            seen.unshift(key);
+        });
+        saveTaskReminded(userId, seen);
+    } catch (e) { /* calendar or spp table not available */ }
+}
+
 function subscribeTaskNotifications(userId, userClass) {
     if (typeof supabaseClient === "undefined" || !userClass) return;
     supabaseClient
@@ -413,20 +442,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         subscribeAttendanceNotifications(user.id);
 
-        let userClass = null;
+        let userClass = null, userRole = null;
         if (typeof supabaseClient !== "undefined") {
             const { data: profile } = await supabaseClient
                 .from("profiles")
-                .select("class")
+                .select("class, role")
                 .eq("id", user.id)
                 .single();
             userClass = profile ? profile.class : null;
+            userRole = profile ? profile.role : null;
         }
 
         await fetchRecentBroadcasts(user.id, userClass);
         subscribeBroadcastNotifications(user.id, userClass);
         await fetchTaskReminders(user.id, userClass);
         await fetchExamReminders(user.id);
+        if (userRole === "murid") await fetchSppReminders(user.id);
         subscribeTaskNotifications(user.id, userClass);
 
         if (hasUnreadNotifications(user.id)) {

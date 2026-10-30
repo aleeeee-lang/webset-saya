@@ -108,7 +108,6 @@
             </div>
         </div>
 
-        <div class="v2-agenda v3-agenda" id="homeAgenda"></div>
         </div>
 
     </main>
@@ -369,7 +368,7 @@ document.querySelector("#homeMoney .jr-home-head").addEventListener("click", fun
 
 function renderHomeAgenda(events) {
     const box = document.getElementById("homeAgenda");
-    if (!events.length) return;
+    if (!box || !events.length) return;   // the agenda left the home page (SPP etc. now arrive as notifications)
     const shown = events.slice(0, window.innerWidth >= 1024 ? 3 : 1);
     box.innerHTML = shown.map(function (e) {
         const d = new Date(e.date + "T00:00:00");

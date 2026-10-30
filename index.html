@@ -23,7 +23,6 @@
     >
 <script src="js/theme.js?v=20261031n"></script>
     <script src="js/lang.js?v=20261031n"></script>
-<script src="js/lessons.js?v=20261031n"></script>
 <script src="js/tasks-core.js?v=20261031n"></script>
 <script src="js/champs.js?v=20261031n"></script>
     <script src="js/toast.js?v=20261031n"></script>
@@ -70,10 +69,6 @@
     <main class="v2-home-main">
 
         <div class="v2-home-left">
-        <h2 class="v3-h" id="homeTodayHead" data-i18n="v3_today" hidden>Hari ini</h2>
-        <div class="v3-today" id="homeToday">
-            <a href="schedule.html" class="v2-lesson" id="homeLesson" hidden></a>
-        </div>
 
         <div class="v2-bento v3-bento">
             <a href="my-attendance.html" class="v2-tile v3-tile">
@@ -380,40 +375,6 @@ function renderHomeAgenda(events) {
     box.querySelectorAll(".v2-agenda-text strong").forEach(function (el, i) { el.textContent = shown[i].label || homeT("type_holiday"); });
 }
 
-let homeLessons = [];
-async function loadHomeLesson(cls) {
-    try {
-        const { data, error } = await supabaseClient.from("class_schedules").select("*").eq("class", cls);
-        if (error) return;
-        homeLessons = data || [];
-        renderHomeLesson();
-        setInterval(renderHomeLesson, 60000);
-    } catch (e) {}
-}
-// "Hari ini" is only a heading for the lesson / task cards: hide it when neither is shown
-function syncTodayHead() {
-    const h = document.getElementById("homeTodayHead");
-    if (h) h.hidden = document.getElementById("homeLesson").hidden;   // tasks moved to the schedule page
-}
-function renderHomeLesson() {
-    const el = document.getElementById("homeLesson");
-    if (!el || !homeLessons.length) return;
-    const st = Lessons.status(homeLessons), x = st.current || st.next;
-    if (!x) { el.hidden = true; syncTodayHead(); return; }
-    const lang = getLang(), T = function (k) { return translations[k] ? translations[k][lang] : k; };
-    let label;
-    if (st.current) label = '<span class="v2-lesson-tag live"><i></i>' + T("home_lesson_now") + '</span>';
-    else if (st.nextDay === st.day) label = '<span class="v2-lesson-tag">' + T("home_lesson_next") + ' · ' + T("lsn_in").replace("{t}", Lessons.minutesLabel(Lessons.toMin(x.start_time) - st.minute)) + '</span>';
-    else label = '<span class="v2-lesson-tag">' + T("home_lesson_next") + ' · ' + Lessons.dayName(st.nextDay) + '</span>';
-    const meta = [x.room, x.teacher_name].filter(Boolean).map(Lessons.esc).join(" · ");
-    el.className = "v2-lesson t-" + Lessons.tone(x.subject);
-    el.innerHTML = '<div class="v2-lesson-time"><b>' + Lessons.fmt(x.start_time) + '</b><small>' + Lessons.fmt(x.end_time) + '</small></div>' +
-        '<div class="v2-lesson-body">' + label + '<strong>' + Lessons.esc(x.subject) + '</strong>' + (meta ? '<small>' + meta + '</small>' : '') + '</div>' +
-        '<span class="v2-lesson-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>';
-    el.hidden = false;
-    syncTodayHead();
-}
-
 async function loadHome() {
     renderHomeHeader();
     // admins get their own home (js/admin-home.js): switch before anything student-only shows
@@ -468,7 +429,6 @@ async function loadHome() {
     else attSppDue(profile.created_at).then(function (d) { renderHomeSpp(null, d); });
     renderHomeAgenda(events);
 
-    if (profile.class) loadHomeLesson(profile.class);
     if (window.Champs) Champs.home(document.getElementById("homeChamps"), { userId: user.id, cls: profile.class || "", onlyClass: profile.class || "", noChart: true });
     loadHomeMoney(user.id);
 

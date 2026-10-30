@@ -312,7 +312,7 @@ function hmQuickSave() {
         '<label class="tc-field"><span>' + esc(L("Jumlah", "Amount")) + '</span><div class="hm-amt"><b>Rp</b><input name="amount" type="text" inputmode="numeric" placeholder="10.000" autocomplete="off"></div></label>' +
         '<div class="hm-quick">' + [5000, 10000, 20000, 50000].map(function (n) { return '<button type="button" data-n="' + n + '">' + esc(formatRupiah(n).replace(/^Rp\s?/, "")) + '</button>'; }).join("") + '</div>' +
         '<label class="tc-field"><span>' + esc(L("Catatan", "Note")) + ' <i>' + esc(L("(opsional)", "(optional)")) + '</i></span><input name="note" type="text" placeholder="' + esc(L("misal: uang saku sisa", "e.g. leftover pocket money")) + '" autocomplete="off"></label>' +
-        '<div class="tc-sheet-act"><button type="submit" class="tc-btn solid">' + esc(homeT("type_setor")) + '</button></div></form></div>';
+        '<div class="tc-sheet-act"><button type="submit" class="tc-btn solid hm-go is-waiting" disabled>' + esc(homeT("btn_add_transaction")) + '</button></div></form></div>';
     document.body.appendChild(wrap);
     document.documentElement.classList.add("tc-sheet-open");
     requestAnimationFrame(function () { wrap.classList.add("in"); });
@@ -325,13 +325,15 @@ function hmQuickSave() {
         document.documentElement.classList.remove("tc-sheet-open");
         setTimeout(function () { wrap.remove(); }, 220);
     }
-    amt.addEventListener("input", function () { show(digits()); });
+    // the button stays grey until there is an amount
+    const ready = function () { const ok = !!digits(); btn.classList.toggle("is-waiting", !ok); if (!busy) btn.disabled = !ok; };
+    amt.addEventListener("input", function () { show(digits()); ready(); });
     wrap.addEventListener("click", function (e) {
         if (e.target === wrap) return close();
         const sb = e.target.closest(".hm-seg button");
-        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("active", x === sb); }); btn.textContent = type === "tarik" ? homeT("type_tarik") : homeT("type_setor"); }
+        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("active", x === sb); }); }
         const q = e.target.closest(".hm-quick button");
-        if (q) show(Number(q.dataset.n));
+        if (q) { show(Number(q.dataset.n)); ready(); }
     });
     document.addEventListener("keydown", function esc2(e) { if (e.key === "Escape") { document.removeEventListener("keydown", esc2); close(); } });
     form.addEventListener("submit", async function (e) {
@@ -343,7 +345,7 @@ function hmQuickSave() {
         busy = true; btn.disabled = true;
         const note = form.querySelector('input[name="note"]').value.trim();
         const { error } = await supabaseClient.from("personal_savings").insert({ student_id: hmUid, type: type, amount: n, note: note || null });
-        busy = false; btn.disabled = false;
+        busy = false; ready();
         if (error) { showToast(L("Gagal menyimpan: ", "Couldn't save: ") + error.message, "error"); return; }
         showToast(homeT(type === "tarik" ? "type_tarik" : "type_setor") + " " + formatRupiah(n) + L(" berhasil", " done"), "success");
         close();

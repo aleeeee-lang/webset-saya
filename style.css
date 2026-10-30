@@ -3373,17 +3373,7 @@ html:has(.att-tabswipe) body{overflow-x:clip}
 .att-tabswipe-on .jr-pod .jr-step,.att-tabswipe-on .jr-bar rect,.att-tabswipe-on .jr-meter i,.att-tabswipe-on .jr-hbar-track i,.att-tabswipe-on .jr-pod .jr-av,.att-tabswipe-on .jr-pod .jr-medal{animation:none!important}
 /* first visit: no snapshot yet */
 .att-swipe-skel{padding:22px 20px!important;display:flex;flex-direction:column;gap:14px}
-.att-swipe-skel .sk-head{display:flex;align-items:center;gap:12px}
-.att-swipe-skel .sk-head b{width:44px;height:44px;border-radius:14px;background:#E3E5EE}
-.att-swipe-skel .sk-head i{flex:1;height:14px;border-radius:8px;background:#E3E5EE;max-width:160px}
-.att-swipe-skel .sk-title{font:800 26px 'Plus Jakarta Sans',sans-serif;color:#14162B;margin:6px 2px}
-.att-swipe-skel .sk-card{height:86px;border-radius:22px;background:#fff}
-.att-swipe-skel .sk-card.big{height:180px;background:#E9EBF3}
-.att-swipe-skel .sk-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 html[data-theme="dark"] .att-swipe-ghost{background:#000;color:#EDEDED}
-html[data-theme="dark"] .att-swipe-skel .sk-head b,html[data-theme="dark"] .att-swipe-skel .sk-head i,html[data-theme="dark"] .att-swipe-skel .sk-card.big{background:#1C1C1E}
-html[data-theme="dark"] .att-swipe-skel .sk-card{background:#161618}
-html[data-theme="dark"] .att-swipe-skel .sk-title{color:#EDEDED}
 /* home hero while today's status loads: placeholder lines instead of a wrong sentence */
 .v2-hero-title:empty{height:2.1em;position:relative}
 .v2-hero-title:empty::before,.v2-hero-title:empty::after{content:"";position:absolute;left:0;height:.78em;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.16),rgba(255,255,255,.08));background-size:200% 100%;animation:attShimmer 1.2s linear infinite}

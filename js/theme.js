@@ -72,11 +72,8 @@ window.attSnapGhost = function (href, label) {
         if (snap.cls) inner.className += " " + snap.cls.replace(/\bhas-side\b/g, "");
         inner.style.padding = snap.pad || "";
     } else {
+        // nothing saved yet: just the page colour (no title or boxes that then jump to the real page)
         inner.className += " att-swipe-skel";
-        var esc = String(label || "").replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
-        inner.innerHTML = href === "attendance.html"
-            ? '<div class="sk-title">' + esc + '</div><div class="sk-card"></div>'
-            : '<div class="sk-head"><b></b><i></i></div><div class="sk-title">' + esc + '</div><div class="sk-card big"></div><div class="sk-row"><div class="sk-card"></div><div class="sk-card"></div></div><div class="sk-card"></div><div class="sk-card"></div>';
     }
     g.appendChild(inner);
     g._hasSnap = !!(snap && snap.html);

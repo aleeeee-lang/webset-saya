@@ -39,7 +39,9 @@
     set("att-bn-depth", String(depth));
 
     // opened straight on a page that isn't Home (a link, a notification): back goes to Home first
-    if (depth === 0 && !isHome(page)) {
+    // (not on the login pages: after logging in they are swapped for Home, which then leaves the app)
+    var OUTSIDE = ["login.html", "reset-password.html"];
+    if (depth === 0 && !isHome(page) && OUTSIDE.indexOf(page) === -1) {
         try { history.pushState({ attDepth: 1, attGuard: 1 }, ""); } catch (e) {}
         depth = 1; set("att-bn-depth", "1");
         window.addEventListener("popstate", function (e) {

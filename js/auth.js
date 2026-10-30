@@ -41,9 +41,25 @@ function attMyProfile(uid) {
     return _attProfP;
 }
 
+// Going to the login page never leaves the old account's pages behind in "back":
+// step back to the first page of this visit and swap it for the login page (js/backnav.js),
+// so after logging in again, back on Home leaves the app instead of showing old pages.
+function attToLogin(q) {
+    var url = "login.html" + (q || "");
+    var d = 0;
+    try { d = (history.state && typeof history.state.attDepth === "number") ? history.state.attDepth : 0; } catch (e) {}
+    try { sessionStorage.setItem("att-bn-rep", "login.html"); } catch (e) {}
+    if (d > 0 && window.self === window.top) {
+        try { sessionStorage.setItem("att-bn-pending", url); sessionStorage.setItem("att-bn-depth", "0"); } catch (e) {}
+        history.go(-d);
+        setTimeout(function () { location.replace(url); }, 1500);   // in case the first page can't be shown again
+        return;
+    }
+    location.replace(url);
+}
 function _attGoLogin(q) {
     try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
-    window.location.href = "login.html" + (q || "");
+    attToLogin(q);
 }
 
 function requireLogin() {
@@ -58,7 +74,7 @@ function requireLogin() {
         if (!user) {
             const { data, error } = await supabaseClient.auth.getUser();
             if (error || !data.user) {
-                window.location.href = "login.html";
+                attToLogin();
                 return null;
             }
             user = data.user;
@@ -115,7 +131,7 @@ async function logoutUser() {
 
     try { localStorage.removeItem("attendreem-profile"); localStorage.removeItem("attendreem-weakpw"); if (window.attSwipePurge) window.attSwipePurge(); } catch (e) {}
 
-    window.location.href = "login.html";
+    attToLogin();
 
 }
 

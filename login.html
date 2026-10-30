@@ -296,15 +296,10 @@ async function loginUser() {
         return;
     }
 
-    if (profile.role === "admin") {
-        window.location.href = "index.html";
-    } else if (profile.role === "orangtua") {
-        window.location.href = "parent.html";
-    } else if (profile.role === "guru") {
-        window.location.href = "teacher.html";
-    } else {
-        window.location.href = "index.html";
-    }
+    // replace the login page with Home (it becomes the first page): back on Home then leaves the app
+    const home = profile.role === "orangtua" ? "parent.html" : profile.role === "guru" ? "teacher.html" : "index.html";
+    try { sessionStorage.setItem("att-bn-rep", home); sessionStorage.setItem("att-bn-depth", "0"); } catch (e) {}
+    window.location.replace(home);
 
 }
 

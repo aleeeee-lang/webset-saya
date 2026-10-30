@@ -38,10 +38,10 @@
 
     // round profile picture; falls back to initials when there is no photo (or it fails to load)
     var PERSON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg>';
-    function av(name, url, cls) {
+    function av(name, url, cls, person) {
         var u = url && typeof safeURL === "function" ? safeURL(url) : "";
-        // no photo: a plain person silhouette (like WhatsApp), not initials
-        return '<span class="jr-av pfp' + (cls ? " " + cls : "") + '" aria-label="' + esc(initials(name)) + '">' + PERSON_SVG +
+        // person: no photo shows a plain silhouette (like WhatsApp) - used on the home card; elsewhere initials
+        return '<span class="jr-av' + (person ? " pfp" : "") + (cls ? " " + cls : "") + '"' + (person ? ' aria-label="' + esc(initials(name)) + '"' : '') + '>' + (person ? PERSON_SVG : esc(initials(name))) +
             (u && u !== "#" ? '<img src="' + u + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>';
     }
     function initials(name) {
@@ -179,7 +179,7 @@
                 (mine && mine.rnk ? '<span class="jr-home-me">' + esc(L("Kamu ", "You ")) + '#<span data-count>' + mine.rnk + '</span></span>' : '') + GO + '</a>' +
                 (top.length ? '<div class="jr-home-top">' + top.map(function (x, i) {   // podium: #1 always in the middle column, #2 left, #3 right (also with only 1 or 2 champions)
 
-                    return '<div class="jr-home-pos r' + x.rnk + (x.user_id === uid ? " me" : "") + '" style="grid-column:' + [2, 1, 3][i] + ';grid-row:1">' + av(x.name, x.avatar_url, "sm") + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
+                    return '<div class="jr-home-pos r' + x.rnk + (x.user_id === uid ? " me" : "") + '" style="grid-column:' + [2, 1, 3][i] + ';grid-row:1">' + av(x.name, x.avatar_url, "sm", true) + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
                 }).join("") + [0, 1, 2].slice(top.length).map(function (i) {   // places nobody holds yet: an empty box that fills in once someone gets there
                     return '<div class="jr-home-pos empty" style="grid-column:' + [2, 1, 3][i] + ';grid-row:1"><span class="jr-av sm jr-av-empty">' + (i + 1) + '</span><span class="jr-home-name"><b>' + esc(L("Belum ada", "No one yet")) + '</b><small>&nbsp;</small></span></div>';
                 }).join("") + '</div>' : '<p class="jr-muted">' + esc(L("Juara muncul setelah ada yang absen bulan ini.", "Champions show up once people check in this month.")) + '</p>') +

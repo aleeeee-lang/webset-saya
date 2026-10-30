@@ -4927,3 +4927,10 @@ html[data-theme="dark"] .v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5
 html[data-theme="dark"] .spp-status-badge.notdue,html[data-theme="dark"] .v3-tile .v2-tile-status.notdue,html[data-theme="dark"] .v2-tile-status.notdue{color:#CBD5E1;background:rgba(148,163,184,.15)}
 .v3-tile .v2-tile-status.notdue{max-width:100%;box-sizing:border-box;white-space:normal}
 .lsn-tasks{margin:12px 0 4px}.lsn-tasks[hidden]{display:none}
+/* home champions: an empty place (no one has reached it yet) */
+.jr-home-pos.empty{background:transparent;box-shadow:none;border:1.5px dashed #D8DCE6}
+.jr-home-pos.empty .jr-home-name b{color:#A0A6B8;font-weight:600}
+.jr-av-empty{background:#F1F3F7;color:#A0A6B8}
+html[data-theme="dark"] .jr-home-pos.empty{border-color:#3A3B40}
+html[data-theme="dark"] .jr-home-pos.empty .jr-home-name b{color:#6B6F7B}
+html[data-theme="dark"] .jr-av-empty{background:#26272B;color:#6B6F7B}

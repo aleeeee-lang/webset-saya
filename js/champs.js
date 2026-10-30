@@ -178,6 +178,8 @@
                 (top.length ? '<div class="jr-home-top">' + top.map(function (x, i) {   // podium: #1 always in the middle column, #2 left, #3 right (also with only 1 or 2 champions)
 
                     return '<div class="jr-home-pos r' + x.rnk + (x.user_id === uid ? " me" : "") + '" style="grid-column:' + [2, 1, 3][i] + ';grid-row:1">' + av(x.name, x.avatar_url, "sm") + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
+                }).join("") + [0, 1, 2].slice(top.length).map(function (i) {   // places nobody holds yet: an empty box that fills in once someone gets there
+                    return '<div class="jr-home-pos empty" style="grid-column:' + [2, 1, 3][i] + ';grid-row:1"><span class="jr-av sm jr-av-empty">' + (i + 1) + '</span><span class="jr-home-name"><b>' + esc(L("Belum ada", "No one yet")) + '</b><small>&nbsp;</small></span></div>';
                 }).join("") + '</div>' : '<p class="jr-muted">' + esc(L("Juara muncul setelah ada yang absen bulan ini.", "Champions show up once people check in this month.")) + '</p>') +
                 (days.length && !opt.noChart ? '<div class="jr-home-chart">' + dailyChart(days, { height: 78 }) + '</div>' : '') + '</section>';
         }

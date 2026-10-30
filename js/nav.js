@@ -18,7 +18,7 @@
     var I = {
         home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
         cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-        fp: '<g transform="translate(12 12) scale(1.08) translate(-12 -12)"><path vector-effect="non-scaling-stroke" d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path vector-effect="non-scaling-stroke" d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path vector-effect="non-scaling-stroke" d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path vector-effect="non-scaling-stroke" d="M2 12a10 10 0 0 1 18-6"/><path vector-effect="non-scaling-stroke" d="M2 16h.01"/><path vector-effect="non-scaling-stroke" d="M21.8 16c.2-2 .131-5.354 0-6"/><path vector-effect="non-scaling-stroke" d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path vector-effect="non-scaling-stroke" d="M8.65 22c.21-.66.45-1.32.57-2"/><path vector-effect="non-scaling-stroke" d="M9 6.8a6 6 0 0 1 9 5.2v2"/></g>',
+        fp: '<g transform="translate(12 12) scale(1) translate(-12 -12)"><path vector-effect="non-scaling-stroke" d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path vector-effect="non-scaling-stroke" d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path vector-effect="non-scaling-stroke" d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path vector-effect="non-scaling-stroke" d="M2 12a10 10 0 0 1 18-6"/><path vector-effect="non-scaling-stroke" d="M2 16h.01"/><path vector-effect="non-scaling-stroke" d="M21.8 16c.2-2 .131-5.354 0-6"/><path vector-effect="non-scaling-stroke" d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path vector-effect="non-scaling-stroke" d="M8.65 22c.21-.66.45-1.32.57-2"/><path vector-effect="non-scaling-stroke" d="M9 6.8a6 6 0 0 1 9 5.2v2"/></g>',
         money: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/>',
         me: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         check: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/>',
@@ -58,7 +58,8 @@
     nav.style.setProperty("--n", items.length);
     nav.innerHTML = items.map(function (it) {
         var on = it[0] === page || (it[5] || []).indexOf(page) !== -1;
-        var svg = '<svg viewBox="0 0 24 24" width="' + (it[6] ? 26 : 24) + '" height="' + (it[6] ? 26 : 24) + '" fill="none" stroke="currentColor" stroke-width="' + (on || it[6] ? 2 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[it[1]] + '</svg>';
+        var sz = it[6] ? 26 : it[1] === "fp" ? 32 : 24;   // the check-in fingerprint stands out a little
+        var svg = '<svg viewBox="0 0 24 24" width="' + sz + '" height="' + sz + '" fill="none" stroke="currentColor" stroke-width="' + (on || it[6] ? 2 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[it[1]] + '</svg>';
         var label = id ? it[2] : it[3];
         if (it[6]) return '<a href="' + it[0] + '" class="v3-fab' + (on ? ' active' : '') + '" aria-label="' + label + '"' + (on ? ' aria-current="page"' : '') + '><span>' + svg + '</span></a>';
         return '<a href="' + it[0] + '" aria-label="' + label + '"' + (on ? ' class="active" aria-current="page"' : '') + '><span>' + svg + '</span><small>' + label + '</small></a>';

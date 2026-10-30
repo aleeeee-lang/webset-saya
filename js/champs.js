@@ -69,23 +69,32 @@
     function dailyChart(days, opts) {
         opts = opts || {};
         if (!days.length) return '<p class="jr-muted">' + esc(L("Belum ada data absen bulan ini.", "No attendance this month yet.")) + '</p>';
-        var W = 320, H = opts.height || 120, pad = 18, n = days.length;
-        var gap = Math.max(2, Math.min(8, 60 / n)), bw = Math.min(26, Math.max(4, (W - gap * (n - 1)) / n));
+        // drawn at its real proportions (no stretching): round pills on a soft track, the day
+        // number under each one, faint 50% / 100% guides and a dashed class average
+        var W = 320, H = (opts.height || 120) + 10, top = 6, bottom = 18, n = days.length;
+        var area = H - top - bottom;
+        var gap = Math.max(5, Math.min(12, 120 / n)), bw = Math.min(11, Math.max(4, (W - gap * (n - 1)) / n));
         var x0 = Math.max(0, (W - (bw * n + gap * (n - 1))) / 2);
         var today = iso(attNow());
+        var avg = days.reduce(function (s, d) { return s + (d.total ? d.hadir / d.total : 0); }, 0) / n;
+        var yOf = function (p) { return top + area - p * area; };
+        var guides = [1, 0.5].map(function (p) { return '<line class="jr-guide" x1="0" x2="' + W + '" y1="' + yOf(p).toFixed(1) + '" y2="' + yOf(p).toFixed(1) + '"></line>'; }).join("");
+        var r = (bw / 2).toFixed(1);
         var bars = days.map(function (d, i) {
             var pct = d.total ? d.hadir / d.total : 0;
-            var h = Math.max(3, Math.round(pct * (H - pad)));
-            var x = x0 + i * (bw + gap), y = H - pad - h;
+            var h = pct > 0 ? Math.max(bw, pct * area) : 0;
+            var x = x0 + i * (bw + gap), y = top + area - h;
             var dd = Number(String(d.day).slice(8, 10));
-            var lab = (n <= 12 || i % Math.ceil(n / 8) === 0 || i === n - 1) ? '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + dd + '</text>' : '';
-            return '<g class="jr-bar' + (String(d.day) === today ? ' today' : '') + '"><title>' + esc(dd + " " + MON[lk()][Number(String(d.day).slice(5, 7)) - 1] + ": " + Math.round(pct * 100) + "% (" + d.hadir + "/" + d.total + ")") + '</title>' +
-                '<rect x="' + x.toFixed(1) + '" y="' + y + '" width="' + bw.toFixed(1) + '" height="' + h + '" rx="' + Math.min(4, bw / 2).toFixed(1) + '" style="--h:' + h + 'px"></rect></g>' + lab;
+            var isToday = String(d.day) === today;
+            var cls = "jr-bar" + (isToday ? " today" : pct < 0.75 ? " low" : "");
+            var lab = (n <= 12 || i % Math.ceil(n / 8) === 0 || i === n - 1 || isToday) ? '<text class="' + (isToday ? "today" : "") + '" x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + dd + '</text>' : '';
+            return '<g class="' + cls + '"><title>' + esc(dd + " " + MON[lk()][Number(String(d.day).slice(5, 7)) - 1] + ": " + Math.round(pct * 100) + "% (" + d.hadir + "/" + d.total + ")") + '</title>' +
+                '<rect class="jr-track" x="' + x.toFixed(1) + '" y="' + top + '" width="' + bw.toFixed(1) + '" height="' + area + '" rx="' + r + '"></rect>' +
+                (h ? '<rect class="jr-fill" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="' + r + '"></rect>' : '') + '</g>' + lab;
         }).join("");
-        var avg = days.reduce(function (s, d) { return s + (d.total ? d.hadir / d.total : 0); }, 0) / n;
-        var ay = H - pad - Math.round(avg * (H - pad));
-        return '<svg class="jr-chart" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="' + esc(L("Kehadiran kelas per hari", "Class attendance per day")) + '">' +
-            '<line class="jr-avg" x1="0" x2="' + W + '" y1="' + ay + '" y2="' + ay + '"></line>' + bars + '</svg>' +
+        var ay = yOf(avg).toFixed(1);
+        return '<svg class="jr-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(L("Kehadiran kelas per hari", "Class attendance per day")) + '">' +
+            guides + bars + '<line class="jr-avg" x1="0" x2="' + W + '" y1="' + ay + '" y2="' + ay + '"></line></svg>' +
             '<div class="jr-chart-foot"><span><i class="jr-dot"></i>' + esc(L("Hadir per hari", "Present per day")) + '</span><span><i class="jr-line"></i><em>' + cnt(L("Rata-rata ", "Average ") + Math.round(avg * 100) + "%") + '</em></span></div>';
     }
 

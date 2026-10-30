@@ -495,7 +495,7 @@ function renderPersonalHistory() {
     const typeValue = selectedPersonalType;
 
     let filtered = allPersonalData.filter(function (item) {
-        return typeValue === "all" || item.type === typeValue;
+        return !item.hidden && (typeValue === "all" || item.type === typeValue);
     });
 
     const totalSetor = allPersonalData.filter(i => i.type === "setor").reduce((sum, i) => sum + Number(i.amount), 0);
@@ -621,19 +621,53 @@ async function addPersonalTransaction() {
     await loadPersonalSavings();
 }
 
-async function deletePersonalTransaction(id) {
-    const lang = getLang();
-    if (!confirm(translations.confirm_delete_transaction[lang])) return;
-
-    const { error } = await supabaseClient.from("personal_savings").delete().eq("id", id);
-
-    if (error) {
-        showToast(translations.toast_transaction_failed[lang] + error.message, "error");
-        return;
+// Delete asks how: just remove it from the history (balance stays), or undo it (balance goes back)
+function deletePersonalTransaction(id) {
+    const item = allPersonalData.find(function (x) { return String(x.id) === String(id); });
+    if (!item) return;
+    const id_ = getLang() === "id";
+    const L = function (a, b) { return id_ ? a : b; };
+    const isSetor = item.type === "setor";
+    const back = isSetor
+        ? L("Saldo berkurang " + formatRupiah(item.amount) + ", seperti sebelum setoran ini.", "Balance goes down " + formatRupiah(item.amount) + ", as before this deposit.")
+        : L("Saldo bertambah " + formatRupiah(item.amount) + ", seperti sebelum penarikan ini.", "Balance goes up " + formatRupiah(item.amount) + ", as before this withdrawal.");
+    const wrap = document.createElement("div");
+    wrap.className = "tc-sheet-wrap";
+    wrap.innerHTML = '<div class="tc-sheet ps-del" role="dialog" aria-modal="true">' +
+        '<div class="tc-sheet-grip"></div>' +
+        '<h2>' + L("Hapus transaksi", "Delete transaction") + '</h2>' +
+        '<p class="tc-sheet-sub">' + (isSetor ? tr("type_setor") : tr("type_tarik")) + ' ' + formatRupiah(item.amount) + (item.note ? ' · ' + escapeHTML(item.note) : '') + '</p>' +
+        '<button type="button" class="ps-del-opt" data-act="hide"><strong>' + L("Hapus dari riwayat saja", "Remove from history only") + '</strong><small>' + L("Saldo tetap, transaksi cuma hilang dari daftar.", "Balance stays the same; it just disappears from the list.") + '</small></button>' +
+        '<button type="button" class="ps-del-opt danger" data-act="undo"><strong>' + L("Hapus & kembalikan saldo", "Delete & restore balance") + '</strong><small>' + back + '</small></button>' +
+        '<button type="button" class="ps-del-cancel" data-act="cancel">' + L("Batal", "Cancel") + '</button>' +
+        '</div>';
+    document.body.appendChild(wrap);
+    document.documentElement.classList.add("tc-sheet-open");
+    requestAnimationFrame(function () { requestAnimationFrame(function () { wrap.classList.add("in"); }); });
+    function close() {
+        wrap.classList.remove("in");
+        document.documentElement.classList.remove("tc-sheet-open");
+        setTimeout(function () { wrap.remove(); }, 220);
     }
-
-    showToast(translations.toast_transaction_deleted[lang], "success");
-    await loadPersonalSavings();
+    wrap.addEventListener("click", async function (e) {
+        if (e.target === wrap) return close();
+        const b = e.target.closest("[data-act]");
+        if (!b) return;
+        const act = b.dataset.act;
+        if (act === "cancel") return close();
+        wrap.querySelectorAll("button").forEach(function (x) { x.disabled = true; });
+        const lang = getLang();
+        const res = act === "hide"
+            ? await supabaseClient.rpc("hide_personal_saving", { p_id: id })
+            : await supabaseClient.from("personal_savings").delete().eq("id", id);
+        close();
+        if (res.error) {
+            showToast(translations.toast_transaction_failed[lang] + res.error.message, "error");
+            return;
+        }
+        showToast(act === "hide" ? L("Transaksi dihapus dari riwayat. Saldo tetap.", "Removed from history. Balance unchanged.") : L("Transaksi dihapus. Saldo dikembalikan.", "Transaction deleted. Balance restored."), "success");
+        await loadPersonalSavings();
+    });
 }
 
 document.getElementById("personalStatusSelectBtn").addEventListener("click", function (e) {

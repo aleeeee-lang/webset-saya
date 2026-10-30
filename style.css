@@ -4896,3 +4896,18 @@ html[data-theme="dark"] .tx-filter-menu .filter-option.selected{background:#2a3a
 html[data-theme="dark"] #historyList:not(:empty),html[data-theme="dark"] #personalHistoryList:not(:empty){background:#121212;box-shadow:none;border:1px solid #242424}
 html[data-theme="dark"] #historyList .history-card,html[data-theme="dark"] #personalHistoryList .history-card{background:transparent}
 html[data-theme="dark"] #historyList .history-date-group+.history-date-group .history-card,html[data-theme="dark"] #personalHistoryList .history-date-group+.history-date-group .history-card{border-top-color:#242424}
+/* personal savings: delete options sheet */
+.ps-del h2{margin:0;font-size:19px}
+.ps-del .tc-sheet-sub{margin-bottom:14px}
+.ps-del-opt{width:100%;display:block;text-align:left;margin:0 0 10px;padding:14px 16px;border:1px solid #e6e8ee;border-radius:16px;background:#fff;font-family:inherit;cursor:pointer}
+.ps-del-opt strong{display:block;font-size:15px;color:#14162B}
+.ps-del-opt small{display:block;margin-top:3px;font-size:12px;color:#7a7f93;line-height:1.4}
+.ps-del-opt.danger strong{color:#dc2626}
+.ps-del-opt:disabled{opacity:.6}
+.ps-del-cancel{width:100%;margin-top:4px;padding:13px;border:none;border-radius:14px;background:#f1f2f6;color:#14162B;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+html[data-theme="dark"] .ps-del-opt{background:#1d1d1f;border-color:#2c2c2e}
+html[data-theme="dark"] .ps-del-opt strong{color:#f2f2f7}
+html[data-theme="dark"] .ps-del-opt.danger strong{color:#f87171!important}
+html[data-theme="dark"] .ps-del-opt small{color:#a1a1aa}
+html[data-theme="dark"] .ps-del-cancel{background:#2c2c2e;color:#f2f2f7}
+html[data-theme="dark"] .ps-del h2{color:#f2f2f7}

@@ -4831,9 +4831,13 @@ html[data-theme="dark"] .hm-cell b{color:#F2F2F2}
 .hm-cell{text-decoration:none;color:inherit;border:none;font:inherit;text-align:left;cursor:pointer;position:relative;transition:transform .12s}
 .hm-cell:active{transform:scale(.97)}
 .hm-seg{flex:1 1 100%}
-.hm-amt{display:flex;align-items:center;gap:8px}
-.hm-amt b{font-size:15px;color:#8A8FA8}
-.hm-amt input{flex:1;font-size:20px!important;font-weight:800!important}
+/* "Rp" sits inside the amount box, a little smaller than the number */
+.hm-amt{display:flex;align-items:center;gap:6px;min-height:54px;padding:0 14px;border-radius:14px;border:1.5px solid #E4E6EC;background:#F8F9FB;box-sizing:border-box}
+.hm-amt:focus-within{border-color:#14162B;background:#fff}
+.hm-amt b{font-size:14px;font-weight:700;color:#8A8FA8;flex:none}
+.tc-field .hm-amt input{flex:1;min-width:0;min-height:0;padding:0;border:none!important;background:transparent!important;font-size:20px!important;font-weight:800!important}
+html[data-theme="dark"] .hm-amt{border-color:#2C2C2E;background:#1C1C1E}
+html[data-theme="dark"] .hm-amt:focus-within{border-color:#C6F432;background:#1C1C1E}
 .hm-quick{flex:1 1 100%;display:flex;gap:8px;flex-wrap:wrap;margin-top:-4px}
 .hm-quick button{flex:1;min-width:0;height:36px;border:none;border-radius:12px;background:#F1F3F7;color:#14162B;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 html[data-theme="dark"] .hm-quick button{background:#2C2C2E;color:#F2F2F2}

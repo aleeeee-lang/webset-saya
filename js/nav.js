@@ -18,7 +18,7 @@
     var I = {
         home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
         cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-        fp: '<g transform="translate(12 12) scale(1) translate(-12 -12)"><path vector-effect="non-scaling-stroke" d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path vector-effect="non-scaling-stroke" d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path vector-effect="non-scaling-stroke" d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path vector-effect="non-scaling-stroke" d="M2 12a10 10 0 0 1 18-6"/><path vector-effect="non-scaling-stroke" d="M2 16h.01"/><path vector-effect="non-scaling-stroke" d="M21.8 16c.2-2 .131-5.354 0-6"/><path vector-effect="non-scaling-stroke" d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path vector-effect="non-scaling-stroke" d="M8.65 22c.21-.66.45-1.32.57-2"/><path vector-effect="non-scaling-stroke" d="M9 6.8a6 6 0 0 1 9 5.2v2"/></g>',
+        fp: '<path d="M5.18 2.94A15.05 15.05 0 0 1 19.20 2.94"/><path d="M2.14 9.02A12.76 12.76 0 0 1 22.23 9.02"/><path d="M3.78 20.00C2.98 18.13 2.84 16.26 3.08 14.39A9.21 9.21 0 0 1 21.30 14.86C21.30 16.96 19.66 18.60 17.33 18.60C15.69 18.60 14.76 17.43 14.06 16.03C13.36 14.63 12.66 13.46 11.39 13.46C10.09 13.46 9.43 14.86 9.43 17.20C9.43 20.47 11.95 23.04 15.69 23.74"/><path d="M9.38 23.27C7.28 21.17 6.35 18.83 6.35 16.26A5.93 5.93 0 0 1 18.12 15.56"/><path d="M12.19 15.56C12.19 19.07 14.76 21.21 19.66 21.21"/>',
         money: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/>',
         me: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         check: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/>',

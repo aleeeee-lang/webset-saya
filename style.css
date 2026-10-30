@@ -3286,7 +3286,7 @@ html.att-noanim .v2-week-fill,html.att-noanim .kas-progress span{transition:none
 .jr-home-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .jr-home-pos{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:16px;background:#F7F8FB;text-align:center;min-width:0;position:relative}
 .jr-home-pos.me{background:#F6FDE4;box-shadow:inset 0 0 0 1px #DDF5A0}
-.jr-home-medal{position:absolute;top:6px;left:8px;font-size:15px}
+/* home top 3: no medal, the card colour shows the place (gold / silver / bronze) */.jr-home-pos.r1{background:#FFF6D9;box-shadow:inset 0 0 0 1px #F6E3A1}.jr-home-pos.r2{background:#F1F3F7;box-shadow:inset 0 0 0 1px #E1E5EE}.jr-home-pos.r3{background:#FCEEE4;box-shadow:inset 0 0 0 1px #F3D7C3}.jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}html[data-theme="dark"] .jr-home-pos.r1{background:#2E2714;box-shadow:inset 0 0 0 1px #4A3F1C}html[data-theme="dark"] .jr-home-pos.r2{background:#26272B;box-shadow:inset 0 0 0 1px #3A3B40}html[data-theme="dark"] .jr-home-pos.r3{background:#2D2019;box-shadow:inset 0 0 0 1px #4A3326}html[data-theme="dark"] .jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}
 .jr-home-name{display:flex;flex-direction:column;gap:1px;min-width:0;max-width:100%}
 .jr-home-name b{font-size:12.5px;color:#14162B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jr-home-name small{font-size:11px;color:#8A8FA8}
@@ -4812,3 +4812,5 @@ html[data-theme="dark"] .lv-hint{color:#9A9A9F}
 /* dark mode: the type picker text (Jadwal absen -> hari libur) was nearly invisible */
 html[data-theme="dark"] button.filter-select span:not(.filter-dot),html[data-theme="dark"] .filter-select span:not(.filter-dot){color:#EDEDED!important}
 html[data-theme="dark"] #holidayList span[style*="background:#d0d0d0"]{color:#3A3D52!important}
+
+.jr-home-pos.r1{background:#FFF6D9;box-shadow:inset 0 0 0 1px #F6E3A1}.jr-home-pos.r2{background:#F1F3F7;box-shadow:inset 0 0 0 1px #E1E5EE}.jr-home-pos.r3{background:#FCEEE4;box-shadow:inset 0 0 0 1px #F3D7C3}.jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}html[data-theme="dark"] .jr-home-pos.r1{background:#2E2714;box-shadow:inset 0 0 0 1px #4A3F1C}html[data-theme="dark"] .jr-home-pos.r2{background:#26272B;box-shadow:inset 0 0 0 1px #3A3B40}html[data-theme="dark"] .jr-home-pos.r3{background:#2D2019;box-shadow:inset 0 0 0 1px #4A3326}html[data-theme="dark"] .jr-home-pos.me{box-shadow:inset 0 0 0 2px #C6F432}

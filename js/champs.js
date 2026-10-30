@@ -175,7 +175,7 @@
                 esc(L("Juara kehadiran", "Attendance champions")) + '</b><small>' + esc(L("Kelas ", "Class ") + cls + " · " + m.label) + '</small></span>' +
                 (mine && mine.rnk ? '<span class="jr-home-me">' + esc(L("Kamu ", "You ")) + '#<span data-count>' + mine.rnk + '</span></span>' : '') + GO + '</a>' +
                 (top.length ? '<div class="jr-home-top">' + top.map(function (x, i) {
-                    return '<div class="jr-home-pos' + (x.user_id === uid ? " me" : "") + '"><span class="jr-home-medal">' + MEDAL[x.rnk - 1] + '</span>' + av(x.name, x.avatar_url, "sm") + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
+                    return '<div class="jr-home-pos r' + x.rnk + (x.user_id === uid ? " me" : "") + '">' + av(x.name, x.avatar_url, "sm") + '<span class="jr-home-name"><b>' + esc(x.name || "-") + '</b><small><span data-count>' + x.hadir + '</span>' + esc(L(" hari", " days")) + '</small></span></div>';
                 }).join("") + '</div>' : '<p class="jr-muted">' + esc(L("Juara muncul setelah ada yang absen bulan ini.", "Champions show up once people check in this month.")) + '</p>') +
                 (days.length ? '<div class="jr-home-chart">' + dailyChart(days, { height: 78 }) + '</div>' : '') + '</section>';
         }

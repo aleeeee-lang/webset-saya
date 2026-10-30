@@ -115,7 +115,7 @@
 
         <!-- HISTORY LIST -->
 
-       <section class="history-list" id="historyList" style="gap:12px"></section>
+       <section class="history-list" id="historyList"></section>
 
 <section class="history-empty" id="historyEmpty" style="display:none">
     <div class="history-empty-icon">
@@ -229,7 +229,7 @@
 
         <!-- HISTORY LIST -->
 
-       <section class="history-list" id="personalHistoryList" style="gap:12px"></section>
+       <section class="history-list" id="personalHistoryList"></section>
 
 <section class="history-empty" id="personalHistoryEmpty" style="display:none">
     <div class="history-empty-icon personal">
@@ -412,8 +412,14 @@ function renderHistory() {
 
     emptyEl.style.display = "none";
 
+    const todayStr = new Date().toDateString();
+
     listEl.innerHTML = filtered.map(function (item) {
         const d = new Date(item.created_at);
+        const isToday = d.toDateString() === todayStr;
+        const label = isToday
+            ? tr("label_today")
+            : dayMonthLabel(d).toUpperCase();
 
         const isSetor = item.type === "setor";
         const typeLabel = isSetor ? tr("type_setor") : tr("type_tarik");
@@ -421,10 +427,11 @@ function renderHistory() {
 
         return `
             <div class="history-date-group">
+                <p class="history-date">${label}</p>
                 <div class="history-card">
                     <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
                     <div class="history-content">
-                        <strong>${typeLabel}<em style="font-style:normal;font-weight:500;font-size:12px;color:#999;margin-left:8px">${txTime(d)}</em></strong>
+                        <strong>${typeLabel}</strong>
                         <span>${dayMonthYearLabel(d)}</span>
                         <small>${escapeHTML(item.note || "-")}</small>
                     </div>
@@ -517,8 +524,14 @@ function renderPersonalHistory() {
 
     emptyEl.style.display = "none";
 
+    const todayStr = new Date().toDateString();
+
     listEl.innerHTML = filtered.map(function (item) {
         const d = new Date(item.created_at);
+        const isToday = d.toDateString() === todayStr;
+        const label = isToday
+            ? tr("label_today")
+            : dayMonthLabel(d).toUpperCase();
 
         const isSetor = item.type === "setor";
         const typeLabel = isSetor ? tr("type_setor") : tr("type_tarik");
@@ -526,10 +539,11 @@ function renderPersonalHistory() {
 
         return `
             <div class="history-date-group">
+                <p class="history-date">${label}</p>
                 <div class="history-card">
                     <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
                     <div class="history-content">
-                        <strong>${typeLabel}<em style="font-style:normal;font-weight:500;font-size:12px;color:#999;margin-left:8px">${txTime(d)}</em></strong>
+                        <strong>${typeLabel}</strong>
                         <span>${dayMonthYearLabel(d)}</span>
                         <small>${escapeHTML(item.note || "-")}</small>
                     </div>
@@ -734,10 +748,6 @@ function renderSpp() {
 function markTxFilter(dd, btn, opt) {
     document.querySelectorAll("#" + dd + " .filter-option").forEach(function (b) { b.classList.toggle("selected", b === opt); });
     document.getElementById(btn).classList.toggle("on", opt.dataset.value !== "all");
-}
-
-function txTime(d) {
-    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
 }
 
 function renderSppHistory() {

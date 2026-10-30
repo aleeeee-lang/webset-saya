@@ -4911,3 +4911,9 @@ html[data-theme="dark"] .ps-del-opt.danger strong{color:#f87171!important}
 html[data-theme="dark"] .ps-del-opt small{color:#a1a1aa}
 html[data-theme="dark"] .ps-del-cancel{background:#2c2c2e;color:#f2f2f7}
 html[data-theme="dark"] .ps-del h2{color:#f2f2f7}
+/* own profile photo: the same lime "+" badge as on the settings page */
+.v2-av-wrap{position:relative;display:inline-flex;flex-shrink:0}
+.v2-av-wrap .v2-av-plus{width:18px;height:18px;right:-4px;bottom:-4px;box-shadow:0 0 0 2.5px #F2F2F7}
+html[data-theme="dark"] .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #000}
+.v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #14162B}
+html[data-theme="dark"] .v2-my-hero .v2-av-wrap .v2-av-plus{box-shadow:0 0 0 2.5px #121212}

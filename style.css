@@ -4888,4 +4888,11 @@ html[data-theme="dark"] .tx-filter-menu .filter-option:hover{background:#1c1c1c}
 html[data-theme="dark"] .tx-filter-menu .filter-option.selected{background:#2a3a12;color:#d9f99d}
 .my-attendance-section-header .tx-filter-menu span{letter-spacing:normal;color:inherit;font-size:13px}
 .my-attendance-section-header.tx-head{margin-bottom:6px}
-#historyList .history-card,#personalHistoryList .history-card{padding:10px 14px}
+/* savings history: one card, rows split by a thin line */
+#historyList:not(:empty),#personalHistoryList:not(:empty){background:#fff;border-radius:18px;box-shadow:0 5px 20px rgba(0,0,0,.05);overflow:hidden}
+#historyList .history-card,#personalHistoryList .history-card{padding:12px 14px;background:transparent;border-radius:0;box-shadow:none}
+#historyList .history-card:hover,#personalHistoryList .history-card:hover{transform:none;box-shadow:none}
+#historyList .history-date-group+.history-date-group .history-card,#personalHistoryList .history-date-group+.history-date-group .history-card{border-top:1px solid #eef0f4}
+html[data-theme="dark"] #historyList:not(:empty),html[data-theme="dark"] #personalHistoryList:not(:empty){background:#121212;box-shadow:none;border:1px solid #242424}
+html[data-theme="dark"] #historyList .history-card,html[data-theme="dark"] #personalHistoryList .history-card{background:transparent}
+html[data-theme="dark"] #historyList .history-date-group+.history-date-group .history-card,html[data-theme="dark"] #personalHistoryList .history-date-group+.history-date-group .history-card{border-top-color:#242424}

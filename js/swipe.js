@@ -322,7 +322,7 @@
                     anim = spring(from, -dir * W, v, apply, function () {
                         try { sessionStorage.setItem("att-swiped", "1"); sessionStorage.setItem("att-swiped-anim", "1"); } catch (e) {}
                         saveSnapshot();
-                        location.href = href;
+                        if (window.attNavGo) window.attNavGo(href); else location.href = href;
                     }, 2);
                 } else {
                     anim = spring(from, 0, from !== x ? v * 0.28 : v, apply, reset);

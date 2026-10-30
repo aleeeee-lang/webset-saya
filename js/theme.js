@@ -219,6 +219,13 @@ function setTheme(theme) {
     document.head.appendChild(f);
 })();
 
+// Back button like an app: tabs -> Home -> leave; sub-pages -> their tab (loaded on every page)
+(function () {
+    var a = document.createElement("script");
+    a.src = "js/backnav.js?v=" + (window.attAppVer ? window.attAppVer() : "1");
+    document.head.appendChild(a);
+})();
+
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");

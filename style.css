@@ -4843,3 +4843,6 @@ html[data-theme="dark"] .hm-amt:focus-within{border-color:#C6F432;background:#1C
 html[data-theme="dark"] .hm-quick button{background:#2C2C2E;color:#F2F2F2}
 .hm-seg{flex:1 1 100%}
 .tc-btn.hm-go{transition:background .2s,color .2s}.tc-btn.hm-go.is-waiting{background:#E6E8EF!important;border-color:#E6E8EF!important;color:#6B7088!important}html[data-theme="dark"] .tc-btn.hm-go.is-waiting{background:#26262A!important;border-color:#26262A!important;color:#A1A1AA!important}
+/* back arrow: a little closer to the title, and level with the title line when a subtitle sits under it */
+.v3-head > .v2-back.v3-back{margin-right:-6px}
+.v3-head:has(h1 + p:not([hidden]), h1 + small:not([hidden])) > .v2-back.v3-back{align-self:flex-start;margin-top:-3px}

@@ -4837,4 +4837,4 @@ html[data-theme="dark"] .hm-cell b{color:#F2F2F2}
 .hm-quick{flex:1 1 100%;display:flex;gap:8px;flex-wrap:wrap;margin-top:-4px}
 .hm-quick button{flex:1;min-width:0;height:36px;border:none;border-radius:12px;background:#F1F3F7;color:#14162B;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 html[data-theme="dark"] .hm-quick button{background:#2C2C2E;color:#F2F2F2}
-.hm-seg button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.hm-seg{flex:1 1 100%}

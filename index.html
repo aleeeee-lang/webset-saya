@@ -308,7 +308,7 @@ function hmQuickSave() {
         '<div class="tc-sheet-grip"></div><h2>' + esc(L("Tabungan pribadi", "Personal savings")) + '</h2>' +
         '<p class="tc-sheet-sub">' + esc(L("Saldo sekarang ", "Balance now ") + formatRupiah(hmPersonalBal)) + '</p>' +
         '<form novalidate>' +
-        '<div class="tc-seg hm-seg" data-name="type"><button type="button" data-v="setor" class="on"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>' + esc(homeT("type_setor")) + '</button><button type="button" data-v="tarik"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>' + esc(homeT("type_tarik")) + '</button></div>' +
+        '<div class="type-toggle hm-seg" data-name="type"><button type="button" data-v="setor" class="type-toggle-btn setor active"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>' + esc(homeT("type_setor")) + '</button><button type="button" data-v="tarik" class="type-toggle-btn tarik"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>' + esc(homeT("type_tarik")) + '</button></div>' +
         '<label class="tc-field"><span>' + esc(L("Jumlah", "Amount")) + '</span><div class="hm-amt"><b>Rp</b><input name="amount" type="text" inputmode="numeric" placeholder="10.000" autocomplete="off"></div></label>' +
         '<div class="hm-quick">' + [5000, 10000, 20000, 50000].map(function (n) { return '<button type="button" data-n="' + n + '">' + esc(formatRupiah(n).replace(/^Rp\s?/, "")) + '</button>'; }).join("") + '</div>' +
         '<label class="tc-field"><span>' + esc(L("Catatan", "Note")) + ' <i>' + esc(L("(opsional)", "(optional)")) + '</i></span><input name="note" type="text" placeholder="' + esc(L("misal: uang saku sisa", "e.g. leftover pocket money")) + '" autocomplete="off"></label>' +
@@ -329,9 +329,9 @@ function hmQuickSave() {
     wrap.addEventListener("click", function (e) {
         if (e.target === wrap) return close();
         const sb = e.target.closest(".hm-seg button");
-        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("on", x === sb); }); btn.textContent = type === "tarik" ? homeT("type_tarik") : homeT("type_setor"); }
+        if (sb) { type = sb.dataset.v; wrap.querySelectorAll(".hm-seg button").forEach(function (x) { x.classList.toggle("active", x === sb); }); btn.textContent = type === "tarik" ? homeT("type_tarik") : homeT("type_setor"); }
         const q = e.target.closest(".hm-quick button");
-        if (q) { show(Number(q.dataset.n)); amt.focus(); }
+        if (q) show(Number(q.dataset.n));
     });
     document.addEventListener("keydown", function esc2(e) { if (e.key === "Escape") { document.removeEventListener("keydown", esc2); close(); } });
     form.addEventListener("submit", async function (e) {
@@ -349,7 +349,6 @@ function hmQuickSave() {
         close();
         loadHomeMoney(hmUid);
     });
-    setTimeout(function () { try { amt.focus({ preventScroll: true }); } catch (err) {} }, 260);
 }
 document.getElementById("hmPersonalC").addEventListener("click", hmQuickSave);
 

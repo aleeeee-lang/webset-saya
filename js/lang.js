@@ -1376,3 +1376,32 @@ document.addEventListener("DOMContentLoaded", applyLang);
     mo.observe(document.documentElement, { childList: true, subtree: true });
     document.addEventListener("DOMContentLoaded", function () { mo.disconnect(); });
 })();
+
+// Is this month's SPP actually due yet for this student?
+// The due date is the "SPP" date the admin puts on the academic calendar for the month.
+// - a due date this month: due once that day has come, unless the student joined after it
+// - no due date this month: due as before, except in the student's first month
+// Returns { due, next } - next is the coming SPP date (YYYY-MM-DD) when it isn't due yet.
+async function attSppDue(createdAt) {
+    var today = localDateStr();
+    var monthStart = today.slice(0, 8) + "01";
+    var joined = createdAt ? localDateStr(new Date(new Date(createdAt).getTime() + (attNow().getTime() - Date.now()))) : "";
+    var evs = [];
+    try {
+        var r = await supabaseClient.from("holidays").select("date").eq("type", "spp").gte("date", monthStart).order("date", { ascending: true }).limit(6);
+        evs = (r.data || []).map(function (e) { return e.date; });
+    } catch (e) {}
+    var thisMonth = evs.filter(function (d) { return d.slice(0, 7) === today.slice(0, 7); })[0] || null;
+    var nextDate = evs.filter(function (d) { return d >= today; })[0] || null;
+    var due;
+    if (thisMonth) due = today >= thisMonth && !(joined && joined > thisMonth);
+    else due = !(joined && joined >= monthStart);
+    return { due: due, next: due ? null : nextDate };
+}
+var _attSppT = {
+    tile_spp_notdue: { en: "Not due yet", id: "Belum jatuh tempo" },
+    v3_spp_hint_notdue: { en: "Due ", id: "Jatuh tempo " },
+    v3_spp_hint_notdue_none: { en: "Nothing to pay yet", id: "Belum ada tagihan" },
+    badge_spp_notdue: { en: "Not Due Yet", id: "Belum Jatuh Tempo" }
+};
+for (var _k in _attSppT) if (typeof translations !== "undefined" && !translations[_k]) translations[_k] = _attSppT[_k];

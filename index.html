@@ -253,15 +253,21 @@ function renderHomeStats(data, autoAlpa) {
     document.getElementById("homeStreakUnit").textContent = homeT("unit_days").toLowerCase();
 }
 
-function renderHomeSpp(record) {
+function renderHomeSpp(record, dueInfo) {
     const now = attNow();
     document.getElementById("homeSppLabel").textContent = "SPP " + monthNameOf(now.getMonth());
-    const status = record ? record.status : "unpaid";
+    let status = record ? record.status : "unpaid";
+    if (!record && dueInfo && !dueInfo.due) status = "notdue";
     const el = document.getElementById("homeSppStatus");
     el.textContent = homeT(status === "pending" ? "v3_spp_pending" : "tile_spp_" + status);
     el.className = "v2-tile-status " + status;
     const hint = document.getElementById("homeSppHint");
-    if (hint) hint.textContent = homeT("v3_spp_hint_" + status);
+    if (!hint) return;
+    if (status === "notdue") {
+        hint.textContent = dueInfo.next
+            ? homeT("v3_spp_hint_notdue") + dayMonthLabel(new Date(dueInfo.next + "T00:00:00"))
+            : homeT("v3_spp_hint_notdue_none");
+    } else hint.textContent = homeT("v3_spp_hint_" + status);
 }
 
 // savings the student actually uses (school, personal or both) - same numbers as the Money page
@@ -471,7 +477,7 @@ async function loadHome() {
     const period = attNow().getFullYear() + "-" + String(attNow().getMonth() + 1).padStart(2, "0");
 
     const results = await Promise.all([
-        supabaseClient.from("profiles").select("name, class, avatar_url").eq("id", user.id).maybeSingle(),
+        supabaseClient.from("profiles").select("name, class, avatar_url, created_at").eq("id", user.id).maybeSingle(),
         getMyAttendance(),
         supabaseClient.from("holidays").select("date,label,type").gte("date", today).order("date", { ascending: true }).limit(5),
         supabaseClient.from("spp_payments").select("status, period").eq("user_id", user.id).eq("period", period).maybeSingle(),
@@ -484,7 +490,9 @@ async function loadHome() {
 
     const attendance = results[1].data || [];
     const events = results[2].data || [];
-    renderHomeSpp(results[3].data);
+    // no payment this month yet: only "not paid" once the SPP date has come (new students aren't billed straight away)
+    if (results[3].data) renderHomeSpp(results[3].data);
+    else attSppDue(profile.created_at).then(function (d) { renderHomeSpp(null, d); });
     renderHomeAgenda(events);
 
     if (profile.class) loadHomeLesson(profile.class);

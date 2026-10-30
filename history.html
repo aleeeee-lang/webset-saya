@@ -702,6 +702,7 @@ let sppLoaded = false;
 let sppProofFile = null;
 let sppPayMethods = [];
 let currentSppRecord = null;
+let sppDueInfo = { due: true, next: null };
 
 function currentSppPeriod() {
     const now = new Date();
@@ -728,7 +729,17 @@ function renderSpp() {
     const infoText = document.getElementById("sppInfoText");
     const submitCard = document.getElementById("sppSubmitCard");
 
-    if (!currentSppRecord) {
+    if (!currentSppRecord && !sppDueInfo.due) {
+        // not billed yet (the SPP date hasn't come, or the student only just joined): can still pay early
+        badge.textContent = tr("badge_spp_notdue");
+        badge.className = "spp-status-badge notdue";
+        infoCard.style.display = "flex";
+        infoTitle.textContent = tr("badge_spp_notdue");
+        infoText.textContent = sppDueInfo.next
+            ? tr("v3_spp_hint_notdue") + dayMonthYearLabel(new Date(sppDueInfo.next + "T00:00:00")) + "."
+            : tr("v3_spp_hint_notdue_none") + ".";
+        submitCard.style.display = "block";
+    } else if (!currentSppRecord) {
         badge.textContent = tr("badge_spp_unpaid");
         badge.className = "spp-status-badge unpaid";
         infoCard.style.display = "none";
@@ -820,7 +831,7 @@ async function loadSpp() {
 
     const [settingsRes, profileRes] = await Promise.all([
         supabaseClient.from("spp_settings").select("*").eq("id", "global").maybeSingle(),
-        supabaseClient.from("profiles").select("spp_custom_amount").eq("id", user.id).maybeSingle()
+        supabaseClient.from("profiles").select("spp_custom_amount, created_at").eq("id", user.id).maybeSingle()
     ]);
     sppPayMethods = (settingsRes.data && settingsRes.data.pay_methods) || [];
 
@@ -842,6 +853,9 @@ async function loadSpp() {
     }
 
     sppData = data || [];
+    sppDueInfo = sppData.some(function (r) { return r.period === currentSppPeriod(); })
+        ? { due: true, next: null }
+        : await attSppDue(profileRes.data ? profileRes.data.created_at : null);
     sppLoaded = true;
     renderSpp();
 }

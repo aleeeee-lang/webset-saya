@@ -4830,7 +4830,6 @@ html[data-theme="dark"] .hm-cell b{color:#F2F2F2}
 /* home money card: the cells are taps now */
 .hm-cell{text-decoration:none;color:inherit;border:none;font:inherit;text-align:left;cursor:pointer;position:relative;transition:transform .12s}
 .hm-cell:active{transform:scale(.97)}
-.hm-plus{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:#C6F432;color:#14162B;display:grid;place-items:center}
 .hm-seg{flex:1 1 100%}
 .hm-amt{display:flex;align-items:center;gap:8px}
 .hm-amt b{font-size:15px;color:#8A8FA8}

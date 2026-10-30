@@ -60,11 +60,11 @@
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg></span>
             <span class="st-txt"><b id="lookTitle">Tampilan &amp; aplikasi</b><small id="lookHint"></small></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </button>
-        <div class="st-row" id="shareGoalsRow" hidden>
-            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>
-            <span class="st-txt"><b data-i18n="set_share_goals">Share learning goals with teacher</b><small data-i18n="set_share_goals_hint">Applies to all goals you made.</small></span>
-            <label class="att-switch"><input type="checkbox" id="shareGoalsToggle"><span></span></label>
-        </div>
+        <!-- students: privacy (sharing learning goals) in its own small sheet -->
+        <button type="button" class="st-row" id="privacyRow" hidden>
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg></span>
+            <span class="st-txt"><b id="privacyTitle">Privasi</b><small id="privacyHint"></small></span><svg class="st-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
         <!-- students: fingerprint check-in -->
         <a href="attendance.html#fpchange" class="st-row" id="fpChangeRow" hidden>
             <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 6h4"/><path d="M9.5 17.5a3.5 3.5 0 0 1 5 0"/><path d="M8.5 14.5a5 5 0 0 1 7 0"/></svg></span>
@@ -87,6 +87,21 @@
             <span class="st-txt"><b data-i18n="btn_logout">Logout</b></span>
         </button>
     </section>
+
+    <!-- the "Privasi" sheet -->
+    <div class="tc-sheet-wrap st-sheet" id="privacySheet" hidden>
+        <div class="tc-sheet" role="dialog" aria-modal="true" aria-labelledby="privacySheetTitle">
+            <div class="tc-sheet-grip"></div>
+            <h2 id="privacySheetTitle">Privasi</h2>
+            <div class="st-list st-in-sheet">
+        <div class="st-row" id="shareGoalsRow">
+            <span class="st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>
+            <span class="st-txt"><b data-i18n="set_share_goals">Share learning goals with teacher</b><small data-i18n="set_share_goals_hint">Applies to all goals you made.</small></span>
+            <label class="att-switch"><input type="checkbox" id="shareGoalsToggle"><span></span></label>
+        </div>
+            </div>
+        </div>
+    </div>
 
     <!-- the "Tampilan & aplikasi" sheet -->
     <div class="tc-sheet-wrap st-sheet" id="lookSheet" hidden>
@@ -308,7 +323,7 @@ async function loadAccountInfo() {
         }
         if (profile.role === "murid") {
             document.getElementById("shareGoalsToggle").checked = !!(user.user_metadata && user.user_metadata.share_goals);
-            document.getElementById("shareGoalsRow").hidden = false;
+            document.getElementById("privacyRow").hidden = false;
             setupFpRows();
         }
         // teachers check in with a fingerprint too (teacher_attendance.sql)
@@ -590,6 +605,24 @@ function goBack() {
     document.getElementById("darkModeToggle").closest("label").addEventListener("click", function () { setTimeout(hint, 50); });
     ["langIdBtn", "langEnBtn"].forEach(function (id) { document.getElementById(id).addEventListener("click", function () { setTimeout(hint, 50); }); });
     hint();
+})();
+
+// "Privasi": the learning-goals switch in a small sheet
+(function () {
+    const ID = () => getLang() === "id";
+    const wrap = document.getElementById("privacySheet"), tg = document.getElementById("shareGoalsToggle");
+    function hint() {
+        document.getElementById("privacyTitle").textContent = ID() ? "Privasi" : "Privacy";
+        document.getElementById("privacySheetTitle").textContent = ID() ? "Privasi" : "Privacy";
+        document.getElementById("privacyHint").textContent = tg.checked ? (ID() ? "Target belajar dibagikan ke guru" : "Learning goals shared with teacher") : (ID() ? "Target belajar hanya untukmu" : "Learning goals only for you");
+    }
+    function open() { wrap.hidden = false; document.documentElement.classList.add("tc-sheet-open"); requestAnimationFrame(function () { requestAnimationFrame(function () { wrap.classList.add("in"); }); }); }
+    function close() { wrap.classList.remove("in"); document.documentElement.classList.remove("tc-sheet-open"); setTimeout(function () { wrap.hidden = true; hint(); }, 220); }
+    document.getElementById("privacyRow").addEventListener("click", open);
+    wrap.addEventListener("click", function (e) { if (e.target === wrap) close(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !wrap.hidden) close(); });
+    tg.addEventListener("change", function () { setTimeout(hint, 50); });
+    hint(); setTimeout(hint, 1500); setTimeout(hint, 4000);   // the switch's saved value arrives after loading
 })();
 </script>
 

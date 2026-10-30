@@ -4940,3 +4940,11 @@ html[data-theme="dark"] .jr-av-empty{background:#26272B;color:#6B6F7B}
 .jr-av.pfp.sm{background:#B7C0CA;color:#fff}
 .jr-pod .jr-av.pfp{background:#B7C0CA;color:#fff}
 html[data-theme="dark"] .jr-av.pfp,html[data-theme="dark"] .jr-av.pfp.sm{background:#4A4D55;color:#C9CDD6}
+/* juara chart: your own non-present days, same colours as the calendar */
+.jr-bar.st-alpa .jr-fill,.jr-bar.st-alpa .jr-track{fill:#DC2626}
+.jr-bar.st-sakit .jr-fill,.jr-bar.st-sakit .jr-track{fill:#60A5FA}
+.jr-bar.st-izin .jr-fill,.jr-bar.st-izin .jr-track{fill:#F59E0B}
+.jr-dot.st-alpa{background:#DC2626}.jr-dot.st-sakit{background:#60A5FA}.jr-dot.st-izin{background:#F59E0B}
+html[data-theme="dark"] .jr-bar.st-alpa .jr-fill,html[data-theme="dark"] .jr-bar.st-alpa .jr-track{fill:#EF4444}
+html[data-theme="dark"] .jr-bar.st-sakit .jr-fill,html[data-theme="dark"] .jr-bar.st-sakit .jr-track{fill:#60A5FA}
+html[data-theme="dark"] .jr-bar.st-izin .jr-fill,html[data-theme="dark"] .jr-bar.st-izin .jr-track{fill:#F59E0B}

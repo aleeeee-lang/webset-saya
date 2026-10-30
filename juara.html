@@ -244,7 +244,24 @@ async function loadAtt() {
         box.innerHTML = '<span class="jr-me-rank">' + (mine.rnk ? '#<span data-count>' + mine.rnk + '</span>' : "–") + '</span><div><b>' + esc(L("Posisi kamu", "Your position")) + '</b><small>' +
             esc(mine.hadir + L(" hari hadir", " days present") + (mine.avg_time ? L(" · rata-rata absen jam ", " · usually checks in at ") + mine.avg_time : "") + L(" · dari ", " · out of ") + attRows.length + L(" siswa", " students")) + '</small></div>';
     } else box.hidden = true;
-    document.getElementById("jrAttChart").innerHTML = C.dailyChart(d.data || []);
+    // students: their own Izin / Sakit / Alpa days stand out in the chart (red / blue / amber, like the calendar)
+    let mineDays = null;
+    if (prof.role === "murid" && cls === prof.class) {
+        const own = await supabaseClient.from("attendance").select("date,status").eq("user_id", me.id).gte("date", m.from).lte("date", m.to);
+        if (!own.error) {
+            const rec = {};
+            (own.data || []).forEach(function (r) { rec[r.date] = r.status; });
+            const first = Object.keys(rec).sort()[0] || null, today = C.iso(attNow());
+            mineDays = {};
+            (d.data || []).forEach(function (x) {
+                const day = String(x.day), s = rec[day];
+                if (s === "Izin" || s === "Sakit" || s === "Alpa") mineDays[day] = s;
+                // a school day before today with no check-in at all counts as Alpa (from your first check-in on)
+                else if (!s && first && day >= first && day < today) mineDays[day] = "Alpa";
+            });
+        }
+    }
+    document.getElementById("jrAttChart").innerHTML = C.dailyChart(d.data || [], { mine: mineDays });
     const list = attRows.filter(function (r) { return r.rnk; }).slice(0, 10);
     document.getElementById("jrAttList").innerHTML = list.length ? list.map(function (r) {
         return row(r.rnk, r.name, r.hadir + L(" hari", " days"), (r.avg_time ? L("rata-rata ", "avg ") + r.avg_time : ""), r.user_id === me.id, r.total ? r.hadir / Math.max(1, r.total) : 0, r.avatar_url);

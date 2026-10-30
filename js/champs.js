@@ -68,6 +68,14 @@
     }
 
     // daily bar chart (SVG) of attendance % per school day; days: [{day, hadir, total}]
+    // legend for the days you weren't present (only the kinds that appear)
+    function mineKey(days, mine) {
+        if (!mine) return "";
+        var seen = {};
+        days.forEach(function (d) { var st = mine[String(d.day)]; if (st) seen[st] = 1; });
+        return [["Izin", L("Izin", "Excused")], ["Sakit", L("Sakit", "Sick")], ["Alpa", L("Alpa", "Absent")]].filter(function (k) { return seen[k[0]]; })
+            .map(function (k) { return '<span><i class="jr-dot st-' + k[0].toLowerCase() + '"></i>' + esc(k[1]) + '</span>'; }).join("");
+    }
     function dailyChart(days, opts) {
         opts = opts || {};
         if (!days.length) return '<p class="jr-muted">' + esc(L("Belum ada data absen bulan ini.", "No attendance this month yet.")) + '</p>';
@@ -88,7 +96,9 @@
             var x = x0 + i * (bw + gap), y = top + area - h;
             var dd = Number(String(d.day).slice(8, 10));
             var isToday = String(d.day) === today;
-            var cls = "jr-bar" + (isToday ? " today" : pct < 0.75 ? " low" : "");
+            // your own day (opts.mine: { "YYYY-MM-DD": "Izin" | "Sakit" | "Alpa" }): coloured like the calendar
+            var st = opts.mine && opts.mine[String(d.day)];
+            var cls = "jr-bar" + (st ? " st-" + st.toLowerCase() : isToday ? " today" : pct < 0.75 ? " low" : "");
             var lab = (n <= 12 || i % Math.ceil(n / 8) === 0 || i === n - 1 || isToday) ? '<text class="' + (isToday ? "today" : "") + '" x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + dd + '</text>' : '';
             return '<g class="' + cls + '"><title>' + esc(dd + " " + MON[lk()][Number(String(d.day).slice(5, 7)) - 1] + ": " + Math.round(pct * 100) + "% (" + d.hadir + "/" + d.total + ")") + '</title>' +
                 '<rect class="jr-track" x="' + x.toFixed(1) + '" y="' + top + '" width="' + bw.toFixed(1) + '" height="' + area + '" rx="' + r + '"></rect>' +
@@ -97,7 +107,7 @@
         var ay = yOf(avg).toFixed(1);
         return '<svg class="jr-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(L("Kehadiran kelas per hari", "Class attendance per day")) + '">' +
             guides + bars + '<line class="jr-avg" x1="0" x2="' + W + '" y1="' + ay + '" y2="' + ay + '"></line></svg>' +
-            '<div class="jr-chart-foot"><span><i class="jr-dot"></i>' + esc(L("Hadir per hari", "Present per day")) + '</span><span><i class="jr-line"></i><em>' + cnt(L("Rata-rata ", "Average ") + Math.round(avg * 100) + "%") + '</em></span></div>';
+            '<div class="jr-chart-foot"><span><i class="jr-dot"></i>' + esc(L("Hadir per hari", "Present per day")) + '</span>' + mineKey(days, opts.mine) + '<span><i class="jr-line"></i><em>' + cnt(L("Rata-rata ", "Average ") + Math.round(avg * 100) + "%") + '</em></span></div>';
     }
 
     var TROPHY = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg>';

@@ -18,7 +18,7 @@
     var I = {
         home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
         cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-        fp: '<path d="M12 11v3"/><path d="M8.5 7.5a5 5 0 0 1 8.5 3.5v2"/><path d="M7 11v2a5 5 0 0 0 1 3"/><path d="M12 6a6.9 6.9 0 0 0-2 .3"/><path d="M15 18a5 5 0 0 0 1-3"/>',
+        fp: '<path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>',
         money: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/>',
         me: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         check: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/>',
@@ -40,7 +40,7 @@
         items = [
             ["teacher.html", "home", "Beranda", "Home", "nav_home", ["index.html", "teacher-leave.html"]],
             ["teacher-class.html", "users", "Kelas", "Classes", "", ["teacher-student.html"]],
-            ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", [], true],
+            ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", []],
             ["schedule.html", "cal", "Jadwal", "Schedule", "", ["calendar.html"]],
             ["settings.html", "me", "Saya", "Me", "nav_my"]
         ];
@@ -48,7 +48,7 @@
         items = [
             ["index.html", "home", "Beranda", "Home", "nav_home"],
             ["schedule.html", "cal", "Jadwal", "Schedule", "", ["calendar.html"]],
-            ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", [], true],
+            ["attendance.html", "fp", "Absen", "Check in", "nav_attendance", []],
             ["history.html", "money", "Uang", "Money", "", ["kas.html"]],
             ["my-attendance.html", "me", "Saya", "Me", "nav_my"]
         ];

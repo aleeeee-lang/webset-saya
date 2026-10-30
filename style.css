@@ -4934,3 +4934,9 @@ html[data-theme="dark"] .spp-status-badge.notdue,html[data-theme="dark"] .v3-til
 html[data-theme="dark"] .jr-home-pos.empty{border-color:#3A3B40}
 html[data-theme="dark"] .jr-home-pos.empty .jr-home-name b{color:#6B6F7B}
 html[data-theme="dark"] .jr-av-empty{background:#26272B;color:#6B6F7B}
+/* champions: no profile photo -> grey circle with a white person (WhatsApp style) */
+.jr-av.pfp{position:relative;overflow:hidden;background:#B7C0CA;color:#fff}
+.jr-av.pfp svg{width:64%;height:64%;margin-top:18%}
+.jr-av.pfp.sm{background:#B7C0CA;color:#fff}
+.jr-pod .jr-av.pfp{background:#B7C0CA;color:#fff}
+html[data-theme="dark"] .jr-av.pfp,html[data-theme="dark"] .jr-av.pfp.sm{background:#4A4D55;color:#C9CDD6}

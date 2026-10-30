@@ -37,9 +37,11 @@
     }
 
     // round profile picture; falls back to initials when there is no photo (or it fails to load)
+    var PERSON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg>';
     function av(name, url, cls) {
         var u = url && typeof safeURL === "function" ? safeURL(url) : "";
-        return '<span class="jr-av' + (cls ? " " + cls : "") + '">' + esc(initials(name)) +
+        // no photo: a plain person silhouette (like WhatsApp), not initials
+        return '<span class="jr-av pfp' + (cls ? " " + cls : "") + '" aria-label="' + esc(initials(name)) + '">' + PERSON_SVG +
             (u && u !== "#" ? '<img src="' + u + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>';
     }
     function initials(name) {

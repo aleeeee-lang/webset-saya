@@ -440,8 +440,8 @@ function renderHistory() {
                 <div class="history-card">
                     <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
                     <div class="history-content">
-                        <strong>${typeLabel}</strong>
-                        <span>${dayMonthYearLabel(d)} · ${txTime(d)}</span>
+                        <strong>${typeLabel}<em style="font-style:normal;font-weight:500;font-size:12px;color:#999;margin-left:8px">${txTime(d)}</em></strong>
+                        <span>${dayMonthYearLabel(d)}</span>
                         <small>${escapeHTML(item.note || "-")}</small>
                     </div>
                     <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
@@ -544,8 +544,8 @@ function renderPersonalHistory() {
                 <div class="history-card">
                     <div class="savings-type-icon ${item.type}">${isSetor ? "+" : "−"}</div>
                     <div class="history-content">
-                        <strong>${typeLabel}</strong>
-                        <span>${dayMonthYearLabel(d)} · ${txTime(d)}</span>
+                        <strong>${typeLabel}<em style="font-style:normal;font-weight:500;font-size:12px;color:#999;margin-left:8px">${txTime(d)}</em></strong>
+                        <span>${dayMonthYearLabel(d)}</span>
                         <small>${escapeHTML(item.note || "-")}</small>
                     </div>
                     <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>

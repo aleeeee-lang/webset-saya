@@ -91,33 +91,25 @@
             </div>
         </section>
 
-        <!-- FILTER -->
-
-     <section class="history-filter-card" style="margin-top:16px">
-
-    <div class="history-status" style="grid-column:1 / -1">
-        <span data-i18n="label_type_filter">TYPE</span>
-
-        <button type="button" class="filter-select" id="statusSelectBtn">
-            <span class="filter-dot all" id="statusSelectDot"></span>
-            <span id="statusSelectLabel" data-i18n="all_types">All Transactions</span>
-            <span class="filter-arrow">⌄</span>
-        </button>
-
-        <div class="filter-dropdown" id="statusDropdown">
-            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
-            <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
-            <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
-        </div>
-    </div>
-
-</section>
+        
 
         <!-- SUMMARY LABEL -->
 
-        <div class="my-attendance-section-header" style="margin-top:20px">
+        <div class="my-attendance-section-header tx-head" style="margin-top:20px">
             <div>
                 <span data-i18n="label_savings_history">TRANSACTION HISTORY</span>
+            </div>
+            <div class="tx-filter">
+                <button type="button" class="tx-filter-btn" id="statusSelectBtn" aria-label="Filter">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                </button>
+                <span id="statusSelectDot" hidden></span><span id="statusSelectLabel" hidden></span>
+                <div class="filter-dropdown tx-filter-menu" id="statusDropdown">
+                    <div class="tx-filter-title">Filter</div>
+                    <button type="button" class="filter-option selected" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
+                    <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
+                    <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
+                </div>
             </div>
         </div>
 
@@ -213,33 +205,25 @@
 
         </section>
 
-        <!-- FILTER -->
-
-     <section class="history-filter-card" style="margin-top:16px">
-
-    <div class="history-status" style="grid-column:1 / -1">
-        <span data-i18n="label_type_filter">TYPE</span>
-
-        <button type="button" class="filter-select" id="personalStatusSelectBtn">
-            <span class="filter-dot all" id="personalStatusSelectDot"></span>
-            <span id="personalStatusSelectLabel" data-i18n="all_types">All Transactions</span>
-            <span class="filter-arrow">⌄</span>
-        </button>
-
-        <div class="filter-dropdown" id="personalStatusDropdown">
-            <button type="button" class="filter-option" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
-            <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
-            <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
-        </div>
-    </div>
-
-</section>
+        
 
         <!-- SUMMARY LABEL -->
 
-        <div class="my-attendance-section-header" style="margin-top:20px">
+        <div class="my-attendance-section-header tx-head" style="margin-top:20px">
             <div>
                 <span data-i18n="label_savings_history">TRANSACTION HISTORY</span>
+            </div>
+            <div class="tx-filter">
+                <button type="button" class="tx-filter-btn" id="personalStatusSelectBtn" aria-label="Filter">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                </button>
+                <span id="personalStatusSelectDot" hidden></span><span id="personalStatusSelectLabel" hidden></span>
+                <div class="filter-dropdown tx-filter-menu" id="personalStatusDropdown">
+                    <div class="tx-filter-title">Filter</div>
+                    <button type="button" class="filter-option selected" data-value="all"><span class="filter-dot all"></span><span data-i18n="all_types">All Transactions</span></button>
+                    <button type="button" class="filter-option" data-value="setor"><span class="filter-dot hadir"></span><span data-i18n="type_setor">Deposit</span></button>
+                    <button type="button" class="filter-option" data-value="tarik"><span class="filter-dot alpa"></span><span data-i18n="type_tarik">Withdrawal</span></button>
+                </div>
             </div>
         </div>
 
@@ -482,6 +466,7 @@ document.querySelectorAll("#statusDropdown .filter-option").forEach(function (bt
             this.querySelector("span:last-child") ? this.textContent.trim() : this.textContent;
         document.getElementById("statusSelectDot").className =
             "filter-dot " + this.querySelector(".filter-dot").className.replace("filter-dot", "").trim();
+        markTxFilter("statusDropdown", "statusSelectBtn", this);
         document.getElementById("statusDropdown").classList.remove("show");
         renderHistory();
     });
@@ -663,6 +648,7 @@ document.querySelectorAll("#personalStatusDropdown .filter-option").forEach(func
             this.querySelector("span:last-child") ? this.textContent.trim() : this.textContent;
         document.getElementById("personalStatusSelectDot").className =
             "filter-dot " + this.querySelector(".filter-dot").className.replace("filter-dot", "").trim();
+        markTxFilter("personalStatusDropdown", "personalStatusSelectBtn", this);
         document.getElementById("personalStatusDropdown").classList.remove("show");
         renderPersonalHistory();
     });
@@ -743,6 +729,11 @@ function renderSpp() {
     });
 
     renderSppHistory();
+}
+
+function markTxFilter(dd, btn, opt) {
+    document.querySelectorAll("#" + dd + " .filter-option").forEach(function (b) { b.classList.toggle("selected", b === opt); });
+    document.getElementById(btn).classList.toggle("on", opt.dataset.value !== "all");
 }
 
 function txTime(d) {

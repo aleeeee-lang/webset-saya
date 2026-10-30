@@ -1531,7 +1531,7 @@ html[data-theme="dark"] .type-toggle-btn {
 }
 
 html[data-theme="dark"] .type-toggle-btn.setor.active {
-    background: #262628;
+    background: linear-gradient(135deg, #15803D, #16A34A);
     color: #fff;
     box-shadow: none;
 }

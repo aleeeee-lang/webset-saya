@@ -257,7 +257,10 @@
         }
         function reset() {
             if (raf) { cancelAnimationFrame(raf); raf = 0; }
-            movers.forEach(function (m) { m.style.transform = ""; m.style.willChange = ""; });
+            movers.forEach(function (m) {
+                m.style.transform = ""; m.style.willChange = "";
+                if (m.dataset.attMinH != null) { m.style.minHeight = m.dataset.attMinH; delete m.dataset.attMinH; }
+            });
             movers = [];
             root.classList.remove("att-swiping");
             if (ghost) { ghost.remove(); ghost = null; }
@@ -300,7 +303,16 @@
                     movers = Array.prototype.filter.call(document.body.children, function (n) {
                         return !/^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(n.tagName) && !n.classList.contains("bottom-nav") && !n.classList.contains("att-swipe-ghost") && !n.classList.contains("v2-side") && !n.classList.contains("v2-search-panel");
                     });
-                    movers.forEach(function (m) { m.style.willChange = "transform"; });
+                    movers.forEach(function (m) {
+                        m.style.willChange = "transform";
+                        // a moving block becomes the frame for "fixed" panels inside it (the check-in
+                        // fingerprint panel, docked above the menu): stretch the block to the bottom of
+                        // the screen for the drag so they stay where they are instead of jumping up
+                        if (m.querySelector && m.querySelector(".v2-fp, .v2-fpchange")) {
+                            var gap = window.innerHeight - m.getBoundingClientRect().bottom;
+                            if (gap > 0) { m.dataset.attMinH = m.style.minHeight || ""; m.style.minHeight = (parseFloat(getComputedStyle(m).height) + gap) + "px"; }
+                        }
+                    });
                     dir = 0;
                     side(d);
                 }

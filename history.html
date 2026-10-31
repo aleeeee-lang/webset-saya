@@ -23,6 +23,7 @@
 
     <script src="js/lang.js?v=20261031w"></script>
     <script src="js/money-input.js?v=20261031w"></script>
+    <script src="js/fin-personal.js?v=20261031w"></script>
 
     <script src="js/toast.js?v=20261031w"></script>
 <script src="js/fit.js?v=20261031w" defer></script>
@@ -154,6 +155,10 @@
             </div>
         </section>
 
+        <!-- this month (spent / received / limit / categories) and the savings goal: js/fin-personal.js -->
+        <section class="pf-card" id="pfMonth" hidden></section>
+        <section class="pf-card" id="pfGoal" hidden></section>
+
         <!-- ADD TRANSACTION -->
 
         <section class="savings-form-card" style="margin-top:16px">
@@ -183,6 +188,8 @@
                         <span data-i18n="type_tarik">Withdrawal</span>
                     </button>
                 </div>
+
+                <div id="pfCats"></div>
 
                 <div>
                     <div class="savings-field-label" data-i18n="label_amount">Amount (Rp)</div>
@@ -491,6 +498,13 @@ let allPersonalData = [];
 let selectedPersonalType = "all";
 let personalLoaded = false;
 
+// "🍜 Jajan & makan · note" under each personal transaction (js/fin-personal.js)
+function pfCatLine(item) {
+    if (!window.PF || !item.category) return escapeHTML(item.note || "-");
+    const c = PF.cat(item.type, item.category);
+    return c[1] + " " + escapeHTML(PF.catLabel(c)) + (item.note ? " · " + escapeHTML(item.note) : "");
+}
+
 function renderPersonalHistory() {
     const typeValue = selectedPersonalType;
 
@@ -531,7 +545,7 @@ function renderPersonalHistory() {
                     <div class="history-content">
                         <strong>${typeLabel}<em style="font-style:normal;font-weight:500;font-size:12px;color:#999;margin-left:8px">${txTime(d)}</em></strong>
                         <span>${dayMonthYearLabel(d)}</span>
-                        <small>${escapeHTML(item.note || "-")}</small>
+                        <small>${pfCatLine(item)}</small>
                     </div>
                     <div class="history-time savings-amount ${item.type}">${sign}${formatRupiah(item.amount)}</div>
                     <button type="button" onclick="deletePersonalTransaction('${item.id}')" style="border:none;background:none;color:#dc3545;font-size:12px;font-weight:600;cursor:pointer;padding:6px" data-i18n="btn_delete">Delete</button>
@@ -559,6 +573,7 @@ async function loadPersonalSavings() {
     allPersonalData = data || [];
     personalLoaded = true;
     renderPersonalHistory();
+    if (window.PF) { PF.render(allPersonalData, window.__pfAfterAdd); window.__pfAfterAdd = false; }
 }
 
 let selectedPersonalFormType = "setor";
@@ -567,6 +582,7 @@ function setPersonalType(type) {
     selectedPersonalFormType = type;
     document.getElementById("personalTypeSetorBtn").classList.toggle("active", type === "setor");
     document.getElementById("personalTypeTarikBtn").classList.toggle("active", type === "tarik");
+    if (window.PF) PF.setType(type);
 }
 
 async function addPersonalTransaction() {
@@ -598,14 +614,13 @@ async function addPersonalTransaction() {
     btn.disabled = true;
     btn.textContent = translations.btn_saving[lang];
 
-    const { error } = await supabaseClient
-        .from("personal_savings")
-        .insert({
-            student_id: user.id,
-            type: type,
-            amount: amount,
-            note: note || null
-        });
+    const tx = { student_id: user.id, type: type, amount: amount, note: note || null, category: window.PF ? PF.category() : null };
+    let { error } = await supabaseClient.from("personal_savings").insert(tx);
+    // the category column isn't there yet (personal_finance.sql not run): save without it
+    if (error && /category/i.test(error.message || "")) {
+        delete tx.category;
+        ({ error } = await supabaseClient.from("personal_savings").insert(tx));
+    }
 
     btn.disabled = false;
     btn.textContent = translations.btn_add_transaction[lang];
@@ -618,6 +633,7 @@ async function addPersonalTransaction() {
     document.getElementById("personalTransactionAmount").value = "";
     document.getElementById("personalTransactionNote").value = "";
     showToast(translations.toast_transaction_added[lang], "success");
+    window.__pfAfterAdd = type === "tarik";
     await loadPersonalSavings();
 }
 

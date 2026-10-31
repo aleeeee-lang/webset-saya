@@ -98,6 +98,7 @@
             var isToday = String(d.day) === today;
             // your own day (opts.mine: { "YYYY-MM-DD": "Izin" | "Sakit" | "Alpa" }): coloured like the calendar
             var st = opts.mine && opts.mine[String(d.day)];
+            if (st) { h = area; y = top; }   // your Izin/Sakit/Alpa day: a full coloured bar that rises like the others
             var cls = "jr-bar" + (st ? " st-" + st.toLowerCase() : isToday ? " today" : pct < 0.75 ? " low" : "");
             var lab = (n <= 12 || i % Math.ceil(n / 8) === 0 || i === n - 1 || isToday) ? '<text class="' + (isToday ? "today" : "") + '" x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + dd + '</text>' : '';
             return '<g class="' + cls + '"><title>' + esc(dd + " " + MON[lk()][Number(String(d.day).slice(5, 7)) - 1] + ": " + Math.round(pct * 100) + "% (" + d.hadir + "/" + d.total + ")") + '</title>' +

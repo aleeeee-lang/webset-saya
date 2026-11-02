@@ -5323,3 +5323,15 @@ html.has-v3nav .qs-back{display:none!important}
   .student-row .student-actions{flex:1 1 100%;justify-content:flex-start!important;padding-left:46px}
   .student-row .student-actions .am-btn{flex:1;padding:8px 4px!important;white-space:nowrap}
 }
+/* Absensi (admin): the counts as one small line of chips (still tap to filter) */
+.aa-stats{display:flex!important;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+.aa-stats .ts-stat{display:inline-flex;align-items:baseline;gap:5px;padding:7px 12px;border-radius:999px;min-width:0;width:auto}
+.aa-stats .ts-stat span{display:inline;font-size:12.5px}
+.aa-stats .ts-stat b{display:inline;margin:0;font-size:14px}
+.aa-stats .ts-stat.on{background:#14162B;border-color:#14162B}
+.aa-stats .ts-stat.on span,.aa-stats .ts-stat.on b{color:#fff}
+html[data-theme="dark"] .aa-stats .ts-stat.on{background:#C6F432;border-color:#C6F432}
+html[data-theme="dark"] .aa-stats .ts-stat.on span,html[data-theme="dark"] .aa-stats .ts-stat.on b{color:#14162B!important}
+.fin-hist{margin-top:14px}
+.fin-hist .fin-hist-body{padding:6px 14px 14px}
+.fin-hist .fin-h{margin-top:4px}

@@ -93,7 +93,9 @@
             '</section>';
     }
 
-    function quick() {
+    // (2026: the four quick buttons are gone - every one of them is in the menu already)
+    function quick() { return ""; }
+    function quickOld() {
         var q = [["admin-broadcast.html", "bell", L("Buat pengumuman", "New announcement")], ["admin-attendance.html", "down", L("Unduh rekap absen", "Download attendance")],
                  ["qr-send.html", "qr", L("Kirim QR absen", "Send check-in QR")], ["admin-schedule.html", "clock", L("Jam absen", "Check-in hours")]];
         return '<div class="ah-quick">' + q.map(function (x) { return '<a href="' + x[0] + '">' + ic(x[1], 20) + '<span>' + esc(x[2]) + '</span></a>'; }).join("") + '</div>';

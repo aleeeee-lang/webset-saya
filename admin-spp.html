@@ -45,8 +45,14 @@
 
     <button type="button" class="fin-remind" id="remindSppBtn" onclick="sendSppReminder()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span id="finRemindT">Ingatkan yang belum bayar</span></button>
 
+    <!-- 2026: history folded away like the settings - the page shows what needs doing first -->
+    <details class="fin-set fin-hist" id="finHist">
+        <summary><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5l3 2"/><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 4v4.5H8"/></svg><span id="finHistT">Riwayat SPP</span><small id="finHistS">Sudah diperiksa</small></summary>
+        <div class="fin-hist-body">
     <div class="tc-head fin-h"><h2 id="finRevH">Sudah diperiksa</h2><a href="#" id="finCsv" onclick="exportSppCsv();return false">CSV</a></div>
     <div class="tc-list" id="sppReviewedList"><div class="tc-empty">&nbsp;</div></div>
+        </div>
+    </details>
 
     <details class="fin-set" id="finSet">
         <summary><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span id="finSetT">Pengaturan SPP</span><small id="finSetS"></small></summary>
@@ -211,6 +217,8 @@ document.getElementById("finTitle").textContent = FL("Keuangan", "Money");
 document.getElementById("finTabSav").textContent = FL("Tabungan", "Savings");
 document.getElementById("finTabKas").textContent = FL("Kas kelas", "Class cash");
 document.getElementById("finRevH").textContent = FL("Sudah diperiksa", "Reviewed");
+document.getElementById("finHistT").textContent = FL("Riwayat SPP", "SPP history");
+document.getElementById("finHistS").textContent = FL("Sudah diperiksa", "Reviewed");
 document.getElementById("finSetT").textContent = FL("Pengaturan SPP", "SPP settings");
 
 function sppDue(s) { return (s.spp_custom_amount !== null && s.spp_custom_amount !== undefined) ? Number(s.spp_custom_amount) : Number(sppAmount || 0); }

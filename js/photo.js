@@ -20,7 +20,7 @@
         if (window.openAvatarCropper && window.attSheet) return Promise.resolve();
         if (!cropLoad) cropLoad = new Promise(function (ok, bad) {
             var s = document.createElement("script");
-            s.src = "js/avatarcrop.js?v=" + (window.attAppVer || Date.now());
+            s.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : Date.now());
             s.onload = ok; s.onerror = bad;
             document.head.appendChild(s);
         });

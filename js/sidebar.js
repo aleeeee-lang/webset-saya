@@ -171,11 +171,27 @@
         paintBio(el);
         var bb = el.querySelector(".v2-side-bio");
         if (bb) bb.addEventListener("click", openBio);
+        var pb = el.querySelector(".v2-side-plus");
+        if (pb) pb.addEventListener("click", function (e) { e.preventDefault(); openPhoto(); });
         loadBio();
         // keep a copy so the next page can draw the menu at once (js/theme.js) - no flash when moving between pages
         try { sessionStorage.setItem("att-side", JSON.stringify({ html: el.innerHTML, admin: role === "admin" })); } catch (e) {}
     }
 
+
+    /* ===== "+" on the photo: change / delete the photo right here (js/photo.js), no page change ===== */
+    var photoLoad = null;
+    function openPhoto() {
+        if (window.attPhotoMenu) { window.attPhotoMenu(); return; }
+        if (!photoLoad) photoLoad = new Promise(function (ok, bad) {
+            var sc = document.createElement("script");
+            sc.src = "js/photo.js?v=" + (window.attAppVer ? window.attAppVer() : Date.now());
+            sc.onload = ok; sc.onerror = bad;
+            document.head.appendChild(sc);
+        });
+        photoLoad.then(function () { if (window.attPhotoMenu) window.attPhotoMenu(); })
+            .catch(function () { photoLoad = null; location.href = "settings.html?photo=1"; });
+    }
 
     /* ===== Bio on the profile card (same as the student page: profiles.bio, max 80) ===== */
     var BIO_MAX = 80;

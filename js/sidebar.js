@@ -169,7 +169,7 @@
             '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
             '<span class="v2-side-who"><b></b><small></small>' +
             '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
-        if (role === "admin" || role === "guru") userCard = "";   // admin / teacher: the photo + name sit on top of the home page instead
+        if (role === "admin" || role === "guru" || role === "orangtua") userCard = "";   // admin / teacher / parent: the photo + name sit on top of the home page instead
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {

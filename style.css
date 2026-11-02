@@ -5164,7 +5164,10 @@ html[data-theme="dark"] .cal-up-row:nth-child(n+3){border-top-color:#242424}
 .cal-up-name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3}
 .cal-up-row{align-items:center}
 /* Laptop: tab bars as compact as on the phone (not stretched across the page) */
-@media (min-width:760px){
-  .tl-tabs,.adm-tabs{width:100%;max-width:520px;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}
-  .tl-tabs a,.fin-tabs a,.adm-tabs a{flex:1 1 0;min-width:0;padding:9px 10px}
-}
+/* admin tab bars look like the student "Uang" tabs: white track, dark pill for the open tab, equal widths */
+.fin-tabs,.adm-tabs{display:flex;gap:4px;padding:4px;background:#fff;border-radius:18px;border:0;width:100%;box-sizing:border-box;overflow-x:auto;scrollbar-width:none}
+.fin-tabs a,.adm-tabs a{flex:1 1 0;min-width:max-content;height:40px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;background:transparent;color:#4A4F6A;font-size:14px;font-weight:600;box-shadow:none;text-decoration:none}
+.fin-tabs a.on,.adm-tabs a.on{background:#14162B;color:#fff;font-weight:700;box-shadow:none}
+html[data-theme="dark"] .fin-tabs,html[data-theme="dark"] .adm-tabs{background:#121212}
+html[data-theme="dark"] .fin-tabs a,html[data-theme="dark"] .adm-tabs a{color:#9A9A9F}
+html[data-theme="dark"] .fin-tabs a.on,html[data-theme="dark"] .adm-tabs a.on{background:#C6F432;color:#14162B}

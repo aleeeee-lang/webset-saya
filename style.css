@@ -5028,3 +5028,11 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 html[data-theme="dark"] .cal-off-head b{color:#EDEDED}
 html[data-theme="dark"] .cal-off-days button{background:#1C1C1E;color:#EDEDED}
 html[data-theme="dark"] .cal-off-days button.on{background:#F87171;color:#14162B}
+/* Kalender: national red dates (national_holidays) like a normal wall calendar */
+.calendar-days .red-day{background:#FEE2E2;color:#B91C1C;font-weight:800}
+.calendar-days .red-num{color:#B91C1C!important}
+.calendar-days .cuti-day{background:#FFF1F2;color:#E11D48;font-weight:700;box-shadow:inset 0 0 0 1.5px #FECDD3}
+.legend.red{background:#DC2626}.legend.cuti{background:#FDA4AF}
+html[data-theme="dark"] .calendar-days .red-day{background:#3B1414;color:#FCA5A5}
+html[data-theme="dark"] .calendar-days .red-num{color:#FCA5A5!important}
+html[data-theme="dark"] .calendar-days .cuti-day{background:#2A1418;color:#FDA4AF;box-shadow:inset 0 0 0 1.5px #4C1D26}

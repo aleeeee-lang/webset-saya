@@ -35,12 +35,14 @@
         var mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (isoDay(now) - 1)), sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
         return Promise.all([
             supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
-            supabaseClient.from("holidays").select("date,attendance_open,type").gte("date", ymd(mon)).lte("date", ymd(sun))
+            supabaseClient.from("holidays").select("date,attendance_open,type").gte("date", ymd(mon)).lte("date", ymd(sun)),
+            supabaseClient.from("national_holidays").select("date").eq("kind", "libur").gte("date", ymd(mon)).lte("date", ymd(sun))
         ]).then(function (r) {
             var off = (r[0] && !r[0].error && r[0].data && r[0].data.weekly_off) || [], open = {}, closed = {};
+            ((r[2] && !r[2].error && r[2].data) || []).forEach(function (n) { closed[isoDay(new Date(n.date + "T00:00:00"))] = true; });
             ((r[1] && r[1].data) || []).forEach(function (h) {
                 var d = isoDay(new Date(h.date + "T00:00:00"));
-                if (h.attendance_open === true) open[d] = true;
+                if (h.attendance_open === true) { open[d] = true; delete closed[d]; }
                 if (h.attendance_open === false || (h.attendance_open == null && (h.type || "holiday") === "holiday")) closed[d] = true;
             });
             WEEK = { off: off.map(Number), open: open, closed: closed };
@@ -53,7 +55,7 @@
     // { current, next, nextDay } for the given moment. nextDay = day number of `next` (may be a later day).
     function status(list, at) {
         at = at || new Date();
-        var d = isoDay(at), m = nowMin(at), today = dayOn(d) ? forDay(list, d) : [], cur = null, nxt = null;
+        var d = isoDay(at), m = nowMin(at), today = dayOn(d) && !(WEEK.closed && WEEK.closed[d]) ? forDay(list, d) : [], cur = null, nxt = null;
         today.forEach(function (x) {
             var s = toMin(x.start_time), e = toMin(x.end_time);
             if (s <= m && m < e) cur = x;

@@ -51,6 +51,8 @@
         <div class="calendar-days" id="calendarDays"></div>
 
         <div class="calendar-legend">
+            <span><i class="legend red"></i><span id="lgRed">Tanggal merah</span></span>
+            <span><i class="legend cuti"></i><span id="lgCuti">Cuti bersama</span></span>
             <span><i class="legend holiday"></i><span data-i18n="type_holiday">Holiday</span></span>
             <span><i class="legend spp"></i><span data-i18n="type_spp">SPP Payment</span></span>
             <span><i class="legend exam"></i><span data-i18n="type_exam">Exam</span></span>
@@ -102,11 +104,17 @@ let calendarViewYear = attNow().getFullYear();
 let calendarViewMonth = attNow().getMonth();
 let allEvents = [];
 let eventByDate = {};
-let weeklyOff = [], isAdmin = false;
+let weeklyOff = [], isAdmin = false, redByDate = {};
 const CL = function (id, en) { return getLang() === "id" ? id : en; };
 function isoOf(key) { return new Date(key + "T00:00:00").getDay() || 7; }
 // a weekly day off, unless the admin opened that date (make-up day)
 function isOffDay(key) { const ev = eventByDate[key]; return weeklyOff.indexOf(isoOf(key)) !== -1 && !(ev && ev.attendance_open === true); }
+// national red dates (national_holidays, from the SKB 3 Menteri): shown for everyone, no admin needed
+async function loadRed() {
+    const r = await supabaseClient.from("national_holidays").select("date,name,kind").order("date");
+    redByDate = {};
+    ((!r.error && r.data) || []).forEach(function (n) { redByDate[n.date] = n; });
+}
 
 const eventTypeMeta = {
     holiday: { labelKey: "type_holiday" },
@@ -163,8 +171,11 @@ function renderCalendar() {
         const ev = eventByDate[key];
 
         let cls = "";
+        const red = redByDate[key];
         if (ev) cls = (ev.type || "holiday") + "-day";
+        else if (red) cls = red.kind === "cuti" ? "cuti-day" : "red-day";
         else if (isOffDay(key)) cls = "holiday-day off-day";
+        if (red && red.kind !== "cuti") cls += " red-num";
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 
         html += `<span class="${cls.trim()}" data-date="${key}" onclick="showEventInfo('${key}')" style="cursor:pointer">${day}</span>`;
@@ -183,7 +194,7 @@ function needSheet() {
     return sheetLoad;
 }
 async function adminDayTap(key) {
-    const ev = eventByDate[key], offDay = weeklyOff.indexOf(isoOf(key)) !== -1;
+    const ev = eventByDate[key], red = redByDate[key] && redByDate[key].kind === "libur", offDay = red || weeklyOff.indexOf(isoOf(key)) !== -1;
     if (!offDay) return false;
     const madeOpen = ev && ev.attendance_open === true && ev.type === "event";
     if (ev && !madeOpen) return false;
@@ -191,7 +202,7 @@ async function adminDayTap(key) {
     const when = new Date(key + "T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { weekday: "long", day: "numeric", month: "long" });
     if (!madeOpen) {
         const ok = await attConfirm({ title: CL("Jadikan hari masuk?", "Make it a school day?"),
-            text: CL(when + " biasanya libur. Kalau dijadikan hari masuk, absen dibuka dan jadwal pelajaran hari itu muncul untuk semua.", when + " is normally a day off. As a school day, check-in opens and that day's lessons show for everyone."),
+            text: CL(when + (red ? " tanggal merah: " + redByDate[key].name : " biasanya libur") + ". Kalau dijadikan hari masuk, absen dibuka dan jadwal pelajaran hari itu muncul untuk semua.", when + " is normally a day off. As a school day, check-in opens and that day's lessons show for everyone."),
             ok: CL("Jadikan hari masuk", "Make school day"), tone: "primary" });
         if (!ok) return true;
         const r = await supabaseClient.from("holidays").insert({ date: key, label: CL("Masuk sekolah", "School day"), type: "event", attendance_open: true });
@@ -227,7 +238,7 @@ document.getElementById("calOffDays").addEventListener("click", async function (
     b.disabled = true;
     const r = await supabaseClient.from("attendance_period_settings").upsert({ id: "global", weekly_off: next, updated_at: new Date().toISOString() }, { onConflict: "id" });
     b.disabled = false;
-    if (r.error) { showToast(/weekly_off/.test(r.error.message || "") ? CL("Jalankan weekly_off.sql dulu di Supabase.", "Run weekly_off.sql in Supabase first.") : CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return; }
+    if (r.error) { showToast(/weekly_off/.test(r.error.message || "") ? CL("Jalankan kalender_libur.sql dulu di Supabase.", "Run kalender_libur.sql in Supabase first.") : CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return; }
     weeklyOff = next;
     renderOffCard(); renderCalendar();
     showToast(next.length ? CL("Libur tiap minggu: ", "Weekly days off: ") + next.map(function (x) { return Lessons.dayName(x); }).join(", ") : CL("Tidak ada libur rutin", "No weekly days off"), "success");
@@ -244,7 +255,10 @@ async function showEventInfo(dateKey) {
             const m = eventTypeMeta[ev.type || "holiday"] || eventTypeMeta.holiday;
             const tl = translations[m.labelKey] ? translations[m.labelKey][lang] : ev.type;
             info.push({ text: ev.label ? tl + " — " + ev.label : tl, dot: ev.type || "holiday" });
-        } else if (isOffDay(dateKey)) info.push({ text: CL("Libur rutin tiap minggu", "Weekly day off"), dot: "holiday" });
+        }
+        const red = redByDate[dateKey];
+        if (red) info.push({ text: (red.kind === "cuti" ? CL("Cuti bersama — ", "Joint leave — ") : CL("Tanggal merah — ", "National holiday — ")) + red.name, dot: red.kind === "cuti" ? "cuti" : "red" });
+        else if (!ev && isOffDay(dateKey)) info.push({ text: CL("Libur rutin tiap minggu", "Weekly day off"), dot: "holiday" });
         AttNotes.open(dateKey, { info: info, onChange: function () { AttNotes.mark(document.getElementById("calendarDays")); } });
         return;
     }
@@ -262,7 +276,8 @@ function renderUpcomingEvents() {
     const container = document.getElementById("upcomingEventsList");
     const todayKey = localDateStr();
 
-    const upcoming = allEvents.filter(function (e) { return e.date >= todayKey; }).slice(0, 15);
+    const nat = Object.keys(redByDate).filter(function (d) { return !eventByDate[d]; }).map(function (d) { const n = redByDate[d]; return { date: d, label: n.name, type: n.kind === "cuti" ? "cuti" : "red", nat: true }; });
+    const upcoming = allEvents.concat(nat).filter(function (e) { return e.date >= todayKey; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 15);
 
     if (upcoming.length === 0) {
         container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_upcoming_events[lang] + "</p>";
@@ -271,7 +286,7 @@ function renderUpcomingEvents() {
 
     container.innerHTML = upcoming.map(function (e) {
         const meta = eventTypeMeta[e.type || "holiday"] || eventTypeMeta.holiday;
-        const typeLabel = translations[meta.labelKey] ? translations[meta.labelKey][lang] : e.type;
+        const typeLabel = e.nat ? (e.type === "cuti" ? CL("Cuti bersama", "Joint leave") : CL("Tanggal merah", "National holiday")) : (translations[meta.labelKey] ? translations[meta.labelKey][lang] : e.type);
         return `
             <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
                 <i class="legend ${e.type || "holiday"}" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></i>
@@ -375,13 +390,15 @@ async function checkUser() {
     const user = await requireLogin();
     if (!user) return;
 
-    const [, set, prof] = await Promise.all([
-        loadEvents(),
+    const [, , set, prof] = await Promise.all([
+        loadEvents(), loadRed(),
         supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
         attMyProfile(user.id)
     ]);
     weeklyOff = ((set && !set.error && set.data && set.data.weekly_off) || []).map(Number);
     isAdmin = !!(prof && prof.role === "admin");
+    document.getElementById("lgRed").textContent = CL("Tanggal merah", "National holiday");
+    document.getElementById("lgCuti").textContent = CL("Cuti bersama", "Joint leave");
     renderOffCard();
     renderCalendar();
     renderUpcomingEvents();

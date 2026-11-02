@@ -66,7 +66,36 @@
         });
         counts(nav);
         addButtons(main);
+        align();
+        window.addEventListener("load", alignSoon);
+        window.addEventListener("resize", alignSoon);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignSoon);
+        new MutationObserver(alignSoon).observe(document.body, { attributes: true, attributeFilter: ["class"] });
     }
+    // every page is built a little differently: put the title and the tabs at exactly the same
+    // spot on all of them, so switching tabs doesn't make anything jump
+    function align() {
+        var main = document.querySelector("main"), nav = document.getElementById("admTabs");
+        var h = main && main.querySelector(".adm-head h1, .adm-head h2");
+        if (!nav || !h) return;
+        nav.style.marginTop = nav.style.marginLeft = nav.style.width = h.style.marginLeft = ""; main.style.marginTop = "";
+        var side = document.body.classList.contains("has-side") && window.innerWidth >= 1024;
+        var y = window.scrollY || 0, top = h.getBoundingClientRect().top + y, want = side ? 28 : 19;
+        if (Math.abs(top - want) > 0.5) main.style.marginTop = (parseFloat(getComputedStyle(main).marginTop) + want - top) + "px";
+        var gap = nav.getBoundingClientRect().top - h.getBoundingClientRect().top, g = side ? 42 : 46;
+        if (Math.abs(gap - g) > 0.5) nav.style.marginTop = (parseFloat(getComputedStyle(nav).marginTop) + g - gap) + "px";
+        if (!side) {   // the same 15px edges on the phone
+            var r = nav.getBoundingClientRect(), b = document.body.getBoundingClientRect();
+            var L0 = b.left + 15, R0 = b.right - 15;
+            if (Math.abs(r.left - L0) > 0.5 || Math.abs(r.right - R0) > 0.5) {
+                nav.style.marginLeft = (parseFloat(getComputedStyle(nav).marginLeft) + L0 - r.left) + "px";
+                nav.style.width = (R0 - L0) + "px";
+            }
+            var dx = b.left + 63 - h.getBoundingClientRect().left;   // the title starts at the same x, next to the back arrow
+            if (Math.abs(dx) > 0.5 && Math.abs(dx) < 10) h.style.marginLeft = (parseFloat(getComputedStyle(h).marginLeft) + dx) + "px";
+        }
+    }
+    function alignSoon() { requestAnimationFrame(align); }
     var ICON = {
         plus: '<path d="M12 5v14M5 12h14"/>',
         up: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',

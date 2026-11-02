@@ -5229,3 +5229,11 @@ html[data-theme="dark"] .adm-add button+button:not(.on),html[data-theme="dark"] 
 html[data-theme="dark"] .jr-tabs{background:#121212}
 html[data-theme="dark"] .jr-tabs button{color:#9A9A9F}
 html[data-theme="dark"] .jr-tabs button.on{background:#C6F432;color:#14162B}
+/* sidebar: the date sits under "Attendreem"; on the admin home (laptop) the photo + name header is gone - the card in the sidebar has it */
+@media (min-width:1024px){
+  .v2-side-brand .v2-side-bt{width:auto;height:auto;border-radius:0;background:none;color:inherit;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.1}
+  .v2-side-bt small{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#6B7088;margin-top:3px;letter-spacing:0}
+  html[data-theme="dark"] .v2-side-bt small{color:#9A9A9F}
+  html.is-admin-home body.has-side .v2-hero-top .v2-av-wrap,html.is-admin-home body.has-side .v2-hero-top .v2-hero-who{display:none!important}
+  html.is-admin-home body.has-side .v2-hero-top{justify-content:flex-end}
+}

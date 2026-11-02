@@ -132,7 +132,12 @@
         var p = profile();
         var role = MENUS[p.role] ? p.role : guessRole();
         var id = lang() === "id";
-        var html = '<div class="v2-side-brand"><img src="favicon.svg?v=7" alt="" width="38" height="38">Attendreem</div>' +
+        // today's date under the name (it used to sit above the name on the home page)
+        var D = id ? "Minggu Senin Selasa Rabu Kamis Jumat Sabtu".split(" ") : "Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" ");
+        var M = id ? "Jan Feb Mar Apr Mei Jun Jul Agu Sep Okt Nov Des".split(" ") : "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+        var now = typeof attNow === "function" ? attNow() : new Date();
+        var today = D[now.getDay()] + ", " + now.getDate() + " " + M[now.getMonth()];
+        var html = '<div class="v2-side-brand"><img src="favicon.svg?v=7" alt="" width="38" height="38"><span class="v2-side-bt">Attendreem<small>' + today + '</small></span></div>' +
             '<div class="v2-side-search"><label>' + ic("search", 2.2) + '<input id="v2SearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="' + (id ? "Cari fitur" + (role === "admin" || role === "guru" ? ", siswa…" : ", nilai…") : "Search features" + (role === "admin" || role === "guru" ? ", students…" : ", scores…")) + '" aria-label="' + (id ? "Cari" : "Search") + '"><kbd>Ctrl K</kbd></label></div>' +
             '@@USER@@<nav class="v2-side-nav" aria-label="Menu">';
         MENUS[role].forEach(function (m) {

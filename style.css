@@ -5314,3 +5314,5 @@ html:not(.has-v3nav) .tc-home{padding-bottom:calc(30px + env(safe-area-inset-bot
   body.has-side .tc-home .tc-tiles6{display:none}
   body.has-side [data-tc-back]{display:none!important}
 }
+/* admin: QR is a bottom-menu page now - no back arrow there (teachers keep it) */
+html.has-v3nav .qs-back{display:none!important}

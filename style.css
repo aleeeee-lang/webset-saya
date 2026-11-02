@@ -5215,3 +5215,7 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
 }
 /* admin tab pages: every title the same size (Lessons and Settings were bigger/bolder) */
 main .adm-head h1,main .adm-head h2{font-family:"Bricolage Grotesque","Plus Jakarta Sans",sans-serif!important;font-size:24px!important;font-weight:700!important;letter-spacing:-0.48px!important;line-height:normal!important}
+/* dark mode: the page-wide text colour (attendance-page *) must not paint the tabs white */
+html[data-theme="dark"] .fin-tabs a,html[data-theme="dark"] .adm-tabs a{color:#9A9A9F!important}
+html[data-theme="dark"] .fin-tabs a.on,html[data-theme="dark"] .adm-tabs a.on{color:#14162B!important}
+html[data-theme="dark"] .adm-tabs a i{color:#fff!important}

@@ -19,7 +19,6 @@
 <script src="js/lang.js?v=20261103i"></script>
 <script src="js/toast.js?v=20261103i"></script>
 <script src="js/fit.js?v=20261103i" defer></script>
-<script src="js/champs.js?v=20261103i"></script>
 </head>
 
 <body class="v2-page">
@@ -46,6 +45,8 @@
         <div class="tc-count"><b id="tcHadir">–</b><span id="tcOf">&nbsp;</span></div>
         <div class="tc-bar"><i id="tcBar"></i></div>
         <div class="tc-chips" id="tcChips"></div>
+        <!-- live recap of the lessons going on now (js/live-sessions.js), only while a lesson runs -->
+        <section id="liveSessions" class="tc-live ls-in" hidden></section>
         <a href="qr-send.html" class="v2-cta tc-cta">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></svg>
             <span id="tcQrLabel">Kirim QR absen</span>
@@ -53,32 +54,15 @@
     </section>
 
     <main class="tc-main">
-
-        <!-- Izin / Sakit waiting (teacher-leave.html, leave_teacher.sql) -->
-        <a href="teacher-leave.html" class="tl-banner" id="tlBanner" hidden>
-            <span class="tl-banner-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg></span>
-            <span class="tl-banner-t"><b id="tlBannerT"></b><small id="tlBannerS"></small></span>
-            <svg class="tl-banner-go" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-        </a>
-
-        <!-- live recap of the lessons going on now (js/live-sessions.js) -->
-        <section id="liveSessions" hidden></section>
-
-        <div class="tc-head" id="tcMissHead" hidden>
-            <h2 id="tcMissTitle">&nbsp;</h2>
-            <a href="teacher-class.html" id="tcAllLink">Lihat semua siswa</a>
-        </div>
-        <div class="tc-list" id="tcMiss" hidden></div>
-
-        <div class="tc-tiles">
-            <a href="tasks.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span id="tcT1">Beri tugas</span></a>
-            <a href="schedule.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span id="tcT2">Jadwal mengajar</span></a>
-            <a href="kas.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span id="tcT3">Kas kelas</span></a>
-            <a href="juara.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 21h7M9.5 17h5l.5 4h-6z"/></svg><span id="tcT4">Juara kelas</span></a>
-        </div>
-
-        <div class="jr-home-wrap" id="teachChamps" hidden></div>
-
+        <!-- everything else is one tap away: six small tiles (2026 "one screen" home) -->
+        <nav class="tc-tiles tc-tiles6" aria-label="Menu">
+            <a href="teacher-class.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.3-5 6.5-5s5.7 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.6 5"/></svg><span id="tcT1"></span></a>
+            <a href="teacher-leave.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg><span id="tcT2"></span><i id="tcLeaveN" hidden></i></a>
+            <a href="tasks.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span id="tcT3"></span></a>
+            <a href="kas.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span id="tcT4"></span></a>
+            <a href="schedule.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span id="tcT5"></span></a>
+            <button type="button" id="tcMore"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg><span id="tcT6"></span></button>
+        </nav>
     </main>
 
 </div>
@@ -96,8 +80,7 @@
 <script>
 const L = TC.L;
 document.getElementById("tcQrLabel").textContent = L("Kirim QR absen", "Send check-in QR");
-document.getElementById("tcAllLink").textContent = L("Lihat semua siswa", "All students");
-[["tcT1", "Beri tugas", "Give a task"], ["tcT2", "Jadwal mengajar", "Teaching schedule"], ["tcT3", "Kas kelas", "Class cash"], ["tcT4", "Juara kelas", "Champions"]].forEach(function (x) { document.getElementById(x[0]).textContent = L(x[1], x[2]); });
+[["tcT1", "Siswa", "Students"], ["tcT2", "Izin", "Leave"], ["tcT3", "Tugas", "Tasks"], ["tcT4", "Kas", "Cash"], ["tcT5", "Jadwal", "Schedule"], ["tcT6", "Lainnya", "More"]].forEach(function (x) { document.getElementById(x[0]).textContent = L(x[1], x[2]); });
 
 let ctx = null;
 
@@ -110,7 +93,6 @@ async function start() {
     else av.textContent = ((p.name || "?").trim().charAt(0) || "?").toUpperCase();
     document.getElementById("tcName").textContent = p.name || "";
     document.getElementById("tcRole").textContent = ctx.homeroom ? L("Wali kelas ", "Homeroom ") + ctx.homeroom : L("Guru", "Teacher");
-    if (window.Champs) Champs.home(document.getElementById("teachChamps"), { userId: ctx.user.id, cls: ctx.homeroom });
     await Promise.all([loadClass(), loadLeaveBanner()]);
 }
 
@@ -121,12 +103,11 @@ async function loadClass() {
         document.getElementById("tcHadir").textContent = ctx.classes.length;
         document.getElementById("tcOf").textContent = " " + L("kelas diajar", ctx.classes.length === 1 ? "class taught" : "classes taught");
         document.querySelector(".tc-bar").hidden = true;
-        document.getElementById("tcAllLink").textContent = L("Lihat kelas", "Classes");
         return;
     }
     const studs = await TC.students([ctx.homeroom]);
     const ids = studs.map(s => s.id);
-    const [rec, leave, rules] = await Promise.all([TC.today(ids), TC.pendingLeave(), attDayRules(ctx.homeroom)]);
+    const [rec, rules] = await Promise.all([TC.today(ids), attDayRules(ctx.homeroom)]);
     // not a school day for this class (weekend / agenda day off): nobody is "missing"
     const today = localDateStr();
     const open = attDayOpen(today, rules);
@@ -141,31 +122,37 @@ async function loadClass() {
     if (miss.length) chips.push('<span class="warn">' + miss.length + " " + L("belum absen", "not checked in") + '</span>');
     document.getElementById("tcChips").innerHTML = chips.join("");
 
-    const head = document.getElementById("tcMissHead"), list = document.getElementById("tcMiss");
-    head.hidden = false; list.hidden = false;
     if (!open) {
         const ag = rules.agenda[today];
         document.getElementById("tcChips").innerHTML = '<span>' + escapeHTML(L("Hari ini libur", "No school today") + (ag && ag.label ? " · " + ag.label : "")) + '</span>';
-        document.getElementById("tcMissTitle").textContent = L("Kelasmu", "Your class");
-        list.innerHTML = '<div class="tc-empty">' + L("Hari ini bukan hari absen untuk kelas ini", "Today isn't a check-in day for this class") + '</div>';
-        return;
+    } else if (studs.length && !miss.length) {
+        document.getElementById("tcChips").innerHTML += '<span class="ok">' + L("Semua sudah tercatat", "Everyone recorded") + '</span>';
     }
-    document.getElementById("tcMissTitle").textContent = studs.length ? L("Belum absen · ", "Not checked in · ") + miss.length : L("Kelasmu", "Your class");
-    if (!studs.length) { list.innerHTML = '<div class="tc-empty">' + L("Belum ada siswa di kelas ini", "No students in this class yet") + '</div>'; return; }
-    if (!miss.length) { list.innerHTML = '<div class="tc-empty ok">' + L("Semua siswa sudah tercatat hari ini", "Everyone is recorded today") + '</div>'; return; }
-    const shown = miss.slice(0, 6);
-    list.innerHTML = shown.map(s => `<a class="tc-row" href="teacher-student.html?id=${encodeURIComponent(s.id)}"><span class="tc-av">${TC.letter(s.name)}</span><b>${escapeHTML(s.name || "-")}</b>${TC.badge(null, leave[s.id])}</a>`).join("") +
-        (miss.length > shown.length ? `<a class="tc-row more" href="teacher-class.html">${L("+" + (miss.length - shown.length) + " siswa lagi", "+" + (miss.length - shown.length) + " more")}</a>` : "");
+    if (!studs.length) document.getElementById("tcChips").innerHTML = '<span>' + L("Belum ada siswa di kelas ini", "No students in this class yet") + '</span>';
 }
 
 async function loadLeaveBanner() {
-    const { data } = await supabaseClient.from("leave_requests").select("name, type").eq("status", "pending").neq("user_id", ctx.user.id).order("created_at", { ascending: false }).limit(50);
-    const b = document.getElementById("tlBanner");
-    if (!data || !data.length) { b.hidden = true; return; }
-    document.getElementById("tlBannerT").textContent = data.length + L(" pengajuan izin menunggu", data.length > 1 ? " leave requests waiting" : " leave request waiting");
-    document.getElementById("tlBannerS").textContent = data.slice(0, 3).map(r => (r.name || "-") + " · " + (r.type === "Sakit" ? L("Sakit", "Sick") : L("Izin", "Leave"))).join(", ") + (data.length > 3 ? "…" : "");
-    b.hidden = false;
+    // waiting leave requests: a small number on the "Izin" tile
+    const { count } = await supabaseClient.from("leave_requests").select("id", { count: "exact", head: true }).eq("status", "pending").neq("user_id", ctx.user.id);
+    const n = document.getElementById("tcLeaveN");
+    n.textContent = count > 99 ? "99+" : (count || "");
+    n.hidden = !count;
 }
+
+// "Lainnya": the rest of the teacher pages in one small sheet
+const MORE = [
+    ["attendance.html", "Absen saya", "My check-in", '<path d="M7 11a5 5 0 0 1 10 0v2a9 9 0 0 1-1.5 5"/><path d="M12 11v3a7 7 0 0 1-2 5"/><path d="M4.5 9a8 8 0 0 1 15 0"/>'],
+    ["juara.html", "Juara", "Champions", '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M9.5 17h5l.5 4h-6z"/>'],
+    ["goals.html", "Target saya", "My goals", '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'],
+    ["calendar.html", "Kalender", "Calendar", '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+    ["information.html", "Informasi", "Information", '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>']
+];
+document.getElementById("tcMore").addEventListener("click", async function () {
+    if (!window.attSheet) await new Promise(function (ok) { const sc = document.createElement("script"); sc.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : Date.now()); sc.onload = ok; sc.onerror = ok; document.head.appendChild(sc); });
+    if (!window.attSheet) { location.href = "calendar.html"; return; }
+    const pick = await attSheet({ title: L("Lainnya", "More"), items: MORE.map(function (m) { return { value: m[0], label: L(m[1], m[2]), icon: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + m[3] + '</svg>' }; }) });
+    if (pick) location.href = pick;
+});
 
 window.addEventListener("tabshow", function () { if (ctx) { loadClass(); loadLeaveBanner(); } });
 start();

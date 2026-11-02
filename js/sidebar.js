@@ -57,19 +57,16 @@
             ["information.html", "info", "Information", "Informasi"],
             ["piket.html", "broom", "Duty Roster", "Piket"]
         ],
+        // same few places as the teacher home (the rest sits behind "Lainnya" there)
         guru: [
-            ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
-            ["teacher-class.html", "users", "Classes", "Kelas & siswa"],
-            ["teacher-leave.html", "doc", "Leave & sick", "Izin & sakit siswa"],
-            ["attendance.html", "checkin", "Check in", "Absen saya"],
-            ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
-            ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
-            ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
-            ["kas.html", "cash", "Class Cash", "Kas kelas"],
-            ["juara.html", "trophy", "Champions", "Juara"],
-            ["goals.html", "target", "My Goals", "Target saya"],
-            ["calendar.html", "cal", "Calendar", "Kalender"],
-            ["information.html", "info", "Information", "Informasi"]
+            ["teacher.html", "home", "Home", "Beranda"],
+            ["teacher-class.html", "users", "Students", "Siswa", "", ["teacher-student.html"]],
+            ["teacher-leave.html", "doc", "Leave", "Izin siswa"],
+            ["tasks.html", "task", "Tasks", "Tugas"],
+            ["kas.html", "cash", "Class cash", "Kas kelas"],
+            ["schedule.html", "book", "Schedule", "Jadwal", "", ["calendar.html", "information.html"]],
+            null,
+            ["attendance.html", "checkin", "My check-in", "Absen saya", "", ["qr-send.html"]]
         ],
         orangtua: [
             ["parent.html", "home", "Parent Portal", "Portal orang tua"],
@@ -93,6 +90,21 @@
         ]
     };
 
+    // every teacher page, for search (the laptop menu shows only a few)
+    var GURU_ALL = [
+        ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
+        ["teacher-class.html", "users", "Classes", "Kelas & siswa"],
+        ["teacher-leave.html", "doc", "Leave & sick", "Izin & sakit siswa"],
+        ["attendance.html", "checkin", "Check in", "Absen saya"],
+        ["qr-send.html", "qr", "Send check-in QR", "Kirim QR absen"],
+        ["schedule.html", "book", "Teaching Schedule", "Jadwal mengajar"],
+        ["tasks.html", "task", "Class Tasks", "Tugas kelas"],
+        ["kas.html", "cash", "Class Cash", "Kas kelas"],
+        ["juara.html", "trophy", "Champions", "Juara"],
+        ["goals.html", "target", "My Goals", "Target saya"],
+        ["calendar.html", "cal", "Calendar", "Kalender"],
+        ["information.html", "info", "Information", "Informasi"]
+    ];
     var ADMIN_ALL = [
             { label: ["General", "Menu umum"] },
             ["index.html", "home", "Home", "Beranda"],
@@ -157,7 +169,7 @@
             '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
             '<span class="v2-side-who"><b></b><small></small>' +
             '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
-        if (role === "admin") userCard = "";   // admin: the card sits on top of the home page instead
+        if (role === "admin" || role === "guru") userCard = "";   // admin / teacher: the photo + name sit on top of the home page instead
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {
@@ -343,7 +355,7 @@
         var id = lang() === "id";
         function featureList() {
             var out = [];
-            (role === "admin" ? ADMIN_ALL : (MENUS[role] || [])).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
+            (role === "admin" ? ADMIN_ALL : role === "guru" ? GURU_ALL : (MENUS[role] || [])).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
                 if (!m || m.label) return;
                 if (out.some(function (o) { return o[0] === m[0]; })) return;
                 out.push(m);
@@ -582,7 +594,7 @@
             }).join("") + '</div>' : "";
             // every menu that is not already in the bottom menu, as a grid
             var inNav = Array.prototype.map.call(document.querySelectorAll(".bottom-nav a[href]"), function (a) { return a.getAttribute("href"); });
-            var all = (MENUS[role] || []).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1 && m[0] !== "dashboard.html"; });
+            var all = (role === "guru" ? GURU_ALL : (MENUS[role] || [])).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1 && m[0] !== "dashboard.html"; });
             if (all.length) {
                 var grid = all.map(function (m) {
                     return '<a class="v3-mtile" href="' + m[0] + '" data-title="' + esc(id ? m[3] : m[2]) + '">' + ic(m[1], 1.8) + '<span>' + esc(id ? m[3] : m[2]) + '</span></a>';

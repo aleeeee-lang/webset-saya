@@ -22,21 +22,16 @@
 
 <main class="my-attendance-main v2-wrap v2-par v3-par">
 
-    <header class="v2-par-head v3-par-head">
+    <!-- one screen (2026): who you are + which child, then today, three numbers and three rows -->
+    <header class="v2-par-head v3-par-head pv-head">
+        <a href="settings.html" class="v2-avatar pv-me" id="parentAv" aria-label="Pengaturan">?</a>
         <div class="v3-par-who">
-            <span data-i18n="page_parent_portal">Parent Portal</span>
-            <h1><span data-i18n="teach_hello">Hello</span>, <span id="parentName">&nbsp;</span></h1>
+            <span id="pWhoLab">&nbsp;</span>
+            <label class="pv-child" id="childSelectCard" hidden><select id="childSelect" aria-label="Anak"></select><svg id="pChildCaret" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></label>
+            <b class="pv-name" id="parentName">&nbsp;</b>
         </div>
         <a href="inbox.html" class="v3-icon" id="notifButton" aria-label="Notifikasi"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="notification-dot" id="notificationDot"></span></a>
-        <a href="settings.html" id="settingsGearBtn" class="v3-icon" aria-label="Pengaturan"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
     </header>
-
-    <!-- CHILD SELECTOR -->
-    <label class="v2-par-child" id="childSelectCard" style="display:none">
-        <span class="v2-par-child-av" id="childInitial">?</span>
-        <select id="childSelect" aria-label="Child"></select>
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-    </label>
 
     <!-- NO CHILDREN LINKED -->
     <section class="history-empty" id="noChildrenCard" style="display:none">
@@ -62,24 +57,26 @@
         </section>
 
         <div class="ts-stats pv-stats" style="--n:3">
-            <a class="ts-stat" href="#pBreak"><span id="pRateLab">Kehadiran</span><b id="pScorePercent">0%</b></a>
-            <a class="ts-stat" href="#pGradesH"><span id="pAvgLab">Rata nilai</span><b id="pDevAverageScore">-</b></a>
-            <div class="ts-stat"><span id="pSppMonthLabel">SPP</span><b id="pSppStatusBadge">-</b><small id="pSppAmount" hidden>Rp0</small></div>
+            <div class="ts-stat"><span id="pRateLab">Kehadiran</span><b id="pScorePercent">0%</b><small class="pv-mini" id="pAlpaMini"></small></div>
+            <div class="ts-stat"><span id="pAvgLab">Rata nilai</span><b id="pDevAverageScore">-</b></div>
+            <button type="button" class="ts-stat pv-spp" id="pSppTile"><span id="pSppMonthLabel">SPP</span><b id="pSppStatusBadge">-</b><small class="pv-mini" id="pSppHow" hidden></small><small id="pSppAmount" hidden>Rp0</small></button>
         </div>
-        <p class="pv-break" id="pBreak"><span class="nw"><span data-i18n="status_present">Present</span> <b id="pHadir">0</b></span> · <span class="nw"><span data-i18n="status_permission">Permission</span> <b id="pIzin">0</b></span> · <span class="nw"><span data-i18n="status_sick">Sick</span> <b id="pSakit">0</b></span> · <span class="nw"><span data-i18n="status_absent">Absent</span> <b id="pAlpa">0</b></span></p>
-        <div hidden><span id="pScoreDesc"></span><div id="pScoreProgressFill"></div><span id="pDevAverageDesc"></span></div>
+        <div hidden><span id="pHadir">0</span><span id="pIzin">0</span><span id="pSakit">0</span><span id="pAlpa">0</span><span id="pScoreDesc"></span><div id="pScoreProgressFill"></div><span id="pDevAverageDesc"></span></div>
 
-        <section class="pay-box" id="pSppPayBox" hidden></section>
+        <div class="pv-rows">
+            <button type="button" class="pv-row" id="pRowGrades"><span class="pv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span class="pv-row-t"><b id="pGradesH">Nilai terbaru</b><small id="pRowGradesS">&nbsp;</small></span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+            <button type="button" class="pv-row" id="pRowAct"><span class="pv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="pv-row-t"><b id="pActH">Catatan dari sekolah</b><small id="pRowActS">&nbsp;</small></span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+            <a href="schedule.html" class="pv-row" id="pLessonsLink"><span class="pv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="pv-row-t"><b id="pLsnT">Jadwal pelajaran</b><small id="pLsnS">&nbsp;</small></span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
 
-        <a href="schedule.html" class="v3-leave-link" id="pLessonsLink"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h6"/></svg><span data-i18n="page_lessons">Lesson schedule</span><svg class="v3-leave-go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
-
-        <h2 class="v3-sec" id="pGradesH">Nilai terbaru</h2>
-        <section class="tc-list" id="pGradesList"></section>
-        <section class="tc-list" id="pGradesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_grades_title">No grades yet</div></section>
-
-        <h2 class="v3-sec" id="pActH">Catatan dari sekolah</h2>
-        <section class="tc-list" id="pActivitiesList"></section>
-        <section class="tc-list" id="pActivitiesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_activities_title">No activities or notes yet</div></section>
+        <!-- opened in a sheet from the rows / the SPP number -->
+        <div hidden id="pStore">
+            <section class="tc-list" id="pGradesList"></section>
+            <section class="tc-list" id="pGradesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_grades_title">No grades yet</div></section>
+            <section class="tc-list" id="pActivitiesList"></section>
+            <section class="tc-list" id="pActivitiesEmpty" style="display:none"><div class="tc-empty" data-i18n="no_activities_title">No activities or notes yet</div></section>
+            <section class="pay-box" id="pSppPayBox" hidden></section>
+        </div>
 
     </div>
 
@@ -107,7 +104,35 @@ document.getElementById("pOutLab").textContent = PL("Pulang", "Out");
 document.getElementById("pRateLab").textContent = PL("Kehadiran", "Attendance");
 document.getElementById("pAvgLab").textContent = PL("Rata nilai", "Avg. grade");
 document.getElementById("pGradesH").textContent = PL("Nilai terbaru", "Latest grades");
-document.getElementById("pActH").textContent = PL("Catatan dari sekolah", "Notes from school");
+document.getElementById("pActH").textContent = PL("Catatan sekolah", "Notes from school");
+document.getElementById("pLsnT").textContent = PL("Jadwal pelajaran", "Lesson schedule");
+document.getElementById("pLsnS").textContent = PL("Pelajaran & kalender sekolah", "Lessons & school calendar");
+document.getElementById("pWhoLab").textContent = PL("Portal orang tua", "Parent portal");
+
+// a small bottom sheet that shows one of the lists kept in #pStore (moved in, moved back on close)
+function pSheet(title, nodes) {
+    const w = document.createElement("div");
+    w.className = "ac-wrap ac-sheet pv-sheet";
+    w.innerHTML = '<div class="ac-card"><div class="ac-sheet-head"><b></b></div><div class="pv-sheet-body"></div><button type="button" class="ac-sheet-cancel"></button></div>';
+    w.querySelector("b").textContent = title;
+    w.querySelector(".ac-sheet-cancel").textContent = PL("Tutup", "Close");
+    const body = w.querySelector(".pv-sheet-body"), store = document.getElementById("pStore");
+    nodes.forEach(function (n) { body.appendChild(n); });
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.classList.add("in"); });
+    function close() {
+        nodes.forEach(function (n) { store.appendChild(n); });
+        w.classList.add("out"); setTimeout(function () { w.remove(); }, 160);
+        document.removeEventListener("keydown", k);
+    }
+    function k(e) { if (e.key === "Escape") close(); }
+    document.addEventListener("keydown", k);
+    w.addEventListener("click", function (e) { if (e.target === w || e.target.closest(".ac-sheet-cancel")) close(); });
+}
+const $ = function (id) { return document.getElementById(id); };
+$("pRowGrades").addEventListener("click", function () { pSheet(PL("Nilai terbaru", "Latest grades"), [$("pGradesList"), $("pGradesEmpty")]); });
+$("pRowAct").addEventListener("click", function () { pSheet(PL("Catatan dari sekolah", "Notes from school"), [$("pActivitiesList"), $("pActivitiesEmpty")]); });
+$("pSppTile").addEventListener("click", function () { if (!$("pSppPayBox").hidden) pSheet(PL("Bayar SPP", "Pay SPP"), [$("pSppPayBox")]); });
 (function () {
     const n = attNow(), D = PL("Minggu Senin Selasa Rabu Kamis Jumat Sabtu", "Sunday Monday Tuesday Wednesday Thursday Friday Saturday").split(" "), M = PL("Jan Feb Mar Apr Mei Jun Jul Agu Sep Okt Nov Des", "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec").split(" ");
     document.getElementById("pTodayLab").textContent = PL("Hari ini · ", "Today · ") + D[n.getDay()] + ", " + n.getDate() + " " + M[n.getMonth()];
@@ -127,7 +152,7 @@ async function checkParent() {
 
     const { data: profile, error } = await supabaseClient
         .from("profiles")
-        .select("role, name")
+        .select("role, name, avatar_url")
         .eq("id", user.id)
         .single();
 
@@ -137,6 +162,9 @@ async function checkParent() {
     }
 
     document.getElementById("parentName").textContent = profile.name || "";
+    const pav = document.getElementById("parentAv");
+    if (profile.avatar_url) pav.innerHTML = '<img src="' + escapeHTML(profile.avatar_url) + '" alt="">';
+    else pav.textContent = ((profile.name || "?").trim().charAt(0) || "?").toUpperCase();
 
     const { data: links } = await supabaseClient
         .from("parent_links")
@@ -167,16 +195,16 @@ async function checkParent() {
         return `<option value="${c.id}">${escapeHTML(c.name)}${c.class ? " · " + c.class : ""}</option>`;
     }).join("");
 
-    document.getElementById("childSelectCard").style.display = "flex";
-    const setInitial = function (id) {
-        const c = myChildren.find(function (x) { return x.id === id; });
-        document.getElementById("childInitial").textContent = c && c.name ? c.name.trim().charAt(0).toUpperCase() : "?";
-    };
-    setInitial(myChildren[0].id);
+    // the child's name sits in the header; a little arrow when there is more than one to pick
+    document.getElementById("pWhoLab").textContent = PL("Orang tua dari", "Parent of");
+    document.getElementById("parentName").hidden = true;
+    document.getElementById("childSelectCard").hidden = false;
+    document.getElementById("pChildCaret").style.display = myChildren.length > 1 ? "" : "none";
+    select.disabled = myChildren.length < 2;
+    select.innerHTML = myChildren.map(function (c) { return `<option value="${c.id}">${escapeHTML(c.name)}</option>`; }).join("");
 
     select.addEventListener("change", function () {
         selectedChildId = this.value;
-        setInitial(this.value);
         loadChildData();
     });
 
@@ -206,6 +234,9 @@ function renderPAttendance(all, autoAlpa, period, counted) {
     document.getElementById("pIzin").textContent = izin;
     document.getElementById("pSakit").textContent = sakit;
     document.getElementById("pAlpa").textContent = alpa;
+    const mini = document.getElementById("pAlpaMini");
+    mini.textContent = total > 0 ? PL("Alpa ", "Absent ") + alpa + (izin + sakit ? " · " + PL("Izin ", "Leave ") + (izin + sakit) : "") : "";
+    mini.className = "pv-mini " + (alpa ? "bad" : "good");
 
     const today = localDateStr();
     const rec = all.find(function (r) { return r.date === today; });
@@ -255,6 +286,10 @@ async function renderPSpp(childId) {
         note: getLang() === "id" ? "Bukti transfer dikirim dari akun anak di menu Tabungan → SPP." : "Send the transfer proof from your child's account (Savings → SPP)."
     });
 
+    const how = document.getElementById("pSppHow");
+    how.hidden = document.getElementById("pSppPayBox").hidden;
+    how.textContent = PL("Cara bayar ›", "How to pay ›");
+    document.getElementById("pSppTile").classList.toggle("tap", !how.hidden);
     const badge = document.getElementById("pSppStatusBadge");
     const st = record ? record.status : "unpaid";
     badge.textContent = { approved: PL("Lunas", "Paid"), pending: PL("Diperiksa", "Checking"), rejected: PL("Ditolak", "Rejected"), unpaid: PL("Belum", "Unpaid") }[st] || tr("badge_spp_" + st);
@@ -278,6 +313,7 @@ async function renderPDevelopment(childId) {
         gradesEmptyEl.style.display = "block";
         document.getElementById("pDevAverageScore").textContent = "-";
         document.getElementById("pDevAverageDesc").textContent = tr("score_no_data");
+        document.getElementById("pRowGradesS").textContent = PL("Belum ada nilai", "No grades yet");
     } else {
         gradesEmptyEl.style.display = "none";
 
@@ -296,6 +332,8 @@ async function renderPDevelopment(childId) {
 
         const sorted = grades.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5);
 
+        const g0 = sorted[0];
+        document.getElementById("pRowGradesS").textContent = (g0.subject || "-") + " · " + g0.score + (grades.length > 1 ? PL(" · lihat semua", " · see all") : "");
         gradesListEl.innerHTML = sorted.map(function (g) {
             const sc = Number(g.score);
             return '<div class="ts-row"><div class="ts-row-t"><b>' + escapeHTML(g.subject || "-") + '</b><small>' + escapeHTML([g.period, g.note].filter(Boolean).join(" · ")) + '</small></div><span class="ts-score ' + (sc >= 85 ? "good" : sc < 70 ? "low" : "") + '">' + escapeHTML(Number.isInteger(sc) ? String(sc) : String(sc).replace(".", getLang() === "id" ? "," : ".")) + '</span></div>';
@@ -308,10 +346,12 @@ async function renderPDevelopment(childId) {
     if (activities.length === 0) {
         actListEl.innerHTML = "";
         actEmptyEl.style.display = "block";
+        document.getElementById("pRowActS").textContent = PL("Belum ada catatan", "No notes yet");
     } else {
         actEmptyEl.style.display = "none";
         const sorted = activities.slice().sort(function (a, b) { return new Date(b.date) - new Date(a.date); }).slice(0, 5);
 
+        document.getElementById("pRowActS").textContent = sorted[0].title || "-";
         actListEl.innerHTML = sorted.map(function (item) {
             return `<div class="ts-row"><span class="pv-ic ${item.type}">${activityTypeIcon[item.type] || "•"}</span><div class="ts-row-t"><b>${escapeHTML(item.title)}</b><small>${tr(activityTypeKeyMap[item.type])} · ${dayMonthYearLabel(new Date(item.date + "T00:00:00"))}${item.description ? " · " + escapeHTML(item.description) : ""}</small></div></div>`;
         }).join("");

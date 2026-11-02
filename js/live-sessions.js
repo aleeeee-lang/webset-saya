@@ -95,8 +95,8 @@
             var ses = d.sessions || [], cls = d.classes || [];
             curStudent = !!d.student;
             // admin home already has attendance per class: only show this box while a lesson is going on
-            var adm = false; try { adm = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role === "admin"; } catch (e) {}
-            if (adm && !ses.length) { el.hidden = true; return; }
+            var adm = false; try { var rl = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role; adm = rl === "admin" || rl === "guru"; } catch (e) {}
+            if (adm && !ses.length) { el.hidden = true; return; }   // (teachers too: their home is one screen)
             var t = (d.now || "").slice(11, 19).replace(/:/g, ".");
             var body = ses.length
                 ? (!curStudent

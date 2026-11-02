@@ -5257,3 +5257,14 @@ html[data-theme="dark"] .jr-tabs button.on{background:#C6F432;color:#14162B}
 html[data-theme="dark"] .sa-btn{background:#242426!important;color:#EDEDED!important}
 html[data-theme="dark"] .sa-btn *{color:#EDEDED!important}
 html[data-theme="dark"] .sa-btn:hover{background:#2C2C2E!important}
+/* teacher home, one screen (2026): six small tiles, the session recap inside the dark box */
+.tc-hero .tc-live{margin:2px 0 0!important}
+.tc-chips span.ok{color:#C6F432}
+.tc-tiles6{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+.tc-tiles6 a,.tc-tiles6 button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;padding:16px 6px;border-radius:20px;background:#fff;border:1px solid #ECEEF2;color:#14162B;font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.tc-tiles6 a:active,.tc-tiles6 button:active{transform:scale(.97)}
+.tc-tiles6 i{position:absolute;top:8px;right:10px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:#F59E0B;color:#fff;font-style:normal;font-size:10.5px;font-weight:800;line-height:18px;text-align:center}
+.tc-tiles6 i[hidden]{display:none}
+html[data-theme="dark"] .tc-tiles6 a,html[data-theme="dark"] .tc-tiles6 button{background:#121212;border-color:#242424;color:#EDEDED}
+@media (min-width:1024px){.tc-tiles6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){ body.has-side .tc-home{max-width:760px;margin-left:auto;margin-right:auto} }

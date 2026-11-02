@@ -5016,3 +5016,15 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 @media (min-width:1024px){
   body.is-admin-side .adm-head>button:first-child,body.is-admin-side .adm-head .v3-back,body.is-admin-side .adm-head .v2-back{display:none!important}
 }
+/* Kalender (admin): weekly days off */
+.cal-off{margin-top:16px}
+.cal-off-head{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.cal-off-head b{font-size:15px;color:#14162B}
+.cal-off-head small{font-size:12.5px;line-height:1.45;color:#8A8FA8}
+.cal-off-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-off-days button{height:40px;border:none;border-radius:12px;background:#F1F2F6;color:#14162B;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.cal-off-days button.on{background:#B91C1C;color:#fff}
+.cal-off-days button:disabled{opacity:.6}
+html[data-theme="dark"] .cal-off-head b{color:#EDEDED}
+html[data-theme="dark"] .cal-off-days button{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .cal-off-days button.on{background:#F87171;color:#14162B}

@@ -60,6 +60,12 @@
 
     </section>
 
+    <!-- admin: weekly days off for the whole school -->
+    <section class="attendance-card cal-off" id="calOffCard" hidden>
+        <div class="cal-off-head"><b id="calOffTitle">Libur tiap minggu</b><small id="calOffHint"></small></div>
+        <div class="cal-off-days" id="calOffDays"></div>
+    </section>
+
     <!-- UPCOMING EVENTS -->
     <section class="attendance-card" style="margin-top:22px">
         <div class="card-label" data-i18n="label_upcoming_events">Upcoming Events</div>
@@ -88,6 +94,7 @@
 <script src="js/supabase.js?v=20261102f"></script>
 <script src="js/auth.js?v=20261102f"></script>
 <script src="js/my-notes.js?v=20261102f"></script>
+<script src="js/lessons.js?v=20261102f"></script>
 
 <script>
 
@@ -95,6 +102,11 @@ let calendarViewYear = attNow().getFullYear();
 let calendarViewMonth = attNow().getMonth();
 let allEvents = [];
 let eventByDate = {};
+let weeklyOff = [], isAdmin = false;
+const CL = function (id, en) { return getLang() === "id" ? id : en; };
+function isoOf(key) { return new Date(key + "T00:00:00").getDay() || 7; }
+// a weekly day off, unless the admin opened that date (make-up day)
+function isOffDay(key) { const ev = eventByDate[key]; return weeklyOff.indexOf(isoOf(key)) !== -1 && !(ev && ev.attendance_open === true); }
 
 const eventTypeMeta = {
     holiday: { labelKey: "type_holiday" },
@@ -152,6 +164,7 @@ function renderCalendar() {
 
         let cls = "";
         if (ev) cls = (ev.type || "holiday") + "-day";
+        else if (isOffDay(key)) cls = "holiday-day off-day";
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 
         html += `<span class="${cls.trim()}" data-date="${key}" onclick="showEventInfo('${key}')" style="cursor:pointer">${day}</span>`;
@@ -162,7 +175,66 @@ function renderCalendar() {
     if (window.AttNotes) AttNotes.mark(box);
 }
 
-function showEventInfo(dateKey) {
+// admin: tap a weekly day off -> make that one date a school day (e.g. make-up Saturday), tap again -> undo
+let sheetLoad = null;
+function needSheet() {
+    if (window.attConfirm) return Promise.resolve();
+    if (!sheetLoad) sheetLoad = new Promise(function (ok, bad) { const sc = document.createElement("script"); sc.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : "1"); sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); });
+    return sheetLoad;
+}
+async function adminDayTap(key) {
+    const ev = eventByDate[key], offDay = weeklyOff.indexOf(isoOf(key)) !== -1;
+    if (!offDay) return false;
+    const madeOpen = ev && ev.attendance_open === true && ev.type === "event";
+    if (ev && !madeOpen) return false;
+    await needSheet();
+    const when = new Date(key + "T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { weekday: "long", day: "numeric", month: "long" });
+    if (!madeOpen) {
+        const ok = await attConfirm({ title: CL("Jadikan hari masuk?", "Make it a school day?"),
+            text: CL(when + " biasanya libur. Kalau dijadikan hari masuk, absen dibuka dan jadwal pelajaran hari itu muncul untuk semua.", when + " is normally a day off. As a school day, check-in opens and that day's lessons show for everyone."),
+            ok: CL("Jadikan hari masuk", "Make school day"), tone: "primary" });
+        if (!ok) return true;
+        const r = await supabaseClient.from("holidays").insert({ date: key, label: CL("Masuk sekolah", "School day"), type: "event", attendance_open: true });
+        if (r.error) { showToast(CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return true; }
+        showToast(CL(when + " jadi hari masuk", when + " is now a school day"), "success");
+    } else {
+        const ok = await attConfirm({ title: CL("Kembalikan jadi libur?", "Back to a day off?"), text: CL(when + " akan libur lagi seperti biasa.", when + " goes back to being a day off."), ok: CL("Jadikan libur", "Make day off") });
+        if (!ok) return true;
+        const r = await supabaseClient.from("holidays").delete().eq("id", ev.id);
+        if (r.error) { showToast(CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return true; }
+        showToast(CL(when + " libur lagi", when + " is a day off again"), "success");
+    }
+    await loadEvents(); renderCalendar(); renderUpcomingEvents();
+    return true;
+}
+
+function renderOffCard() {
+    const card = document.getElementById("calOffCard");
+    if (!isAdmin) { card.hidden = true; return; }
+    card.hidden = false;
+    document.getElementById("calOffTitle").textContent = CL("Libur tiap minggu", "Weekly days off");
+    document.getElementById("calOffHint").textContent = CL("Libur setiap minggu untuk semua kelas. Mau tetap masuk di salah satu tanggalnya? Ketuk tanggal itu di kalender.",
+        "Off every week for every class. Need school on one of those dates? Tap it in the calendar.");
+    document.getElementById("calOffDays").innerHTML = [1, 2, 3, 4, 5, 6, 7].map(function (d) {
+        const on = weeklyOff.indexOf(d) !== -1;
+        return '<button type="button" data-d="' + d + '" class="' + (on ? "on" : "") + '" aria-pressed="' + on + '">' + Lessons.dayShort(d) + '</button>';
+    }).join("");
+}
+document.getElementById("calOffDays").addEventListener("click", async function (e) {
+    const b = e.target.closest("[data-d]");
+    if (!b || b.disabled) return;
+    const d = Number(b.getAttribute("data-d")), next = weeklyOff.indexOf(d) !== -1 ? weeklyOff.filter(function (x) { return x !== d; }) : weeklyOff.concat(d).sort();
+    b.disabled = true;
+    const r = await supabaseClient.from("attendance_period_settings").upsert({ id: "global", weekly_off: next, updated_at: new Date().toISOString() }, { onConflict: "id" });
+    b.disabled = false;
+    if (r.error) { showToast(/weekly_off/.test(r.error.message || "") ? CL("Jalankan weekly_off.sql dulu di Supabase.", "Run weekly_off.sql in Supabase first.") : CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return; }
+    weeklyOff = next;
+    renderOffCard(); renderCalendar();
+    showToast(next.length ? CL("Libur tiap minggu: ", "Weekly days off: ") + next.map(function (x) { return Lessons.dayName(x); }).join(", ") : CL("Tidak ada libur rutin", "No weekly days off"), "success");
+});
+
+async function showEventInfo(dateKey) {
+    if (isAdmin && await adminDayTap(dateKey)) return;
     const lang = getLang();
     const ev = eventByDate[dateKey];
     if (window.AttNotes) {
@@ -172,7 +244,7 @@ function showEventInfo(dateKey) {
             const m = eventTypeMeta[ev.type || "holiday"] || eventTypeMeta.holiday;
             const tl = translations[m.labelKey] ? translations[m.labelKey][lang] : ev.type;
             info.push({ text: ev.label ? tl + " — " + ev.label : tl, dot: ev.type || "holiday" });
-        }
+        } else if (isOffDay(dateKey)) info.push({ text: CL("Libur rutin tiap minggu", "Weekly day off"), dot: "holiday" });
         AttNotes.open(dateKey, { info: info, onChange: function () { AttNotes.mark(document.getElementById("calendarDays")); } });
         return;
     }
@@ -303,7 +375,14 @@ async function checkUser() {
     const user = await requireLogin();
     if (!user) return;
 
-    await loadEvents();
+    const [, set, prof] = await Promise.all([
+        loadEvents(),
+        supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
+        attMyProfile(user.id)
+    ]);
+    weeklyOff = ((set && !set.error && set.data && set.data.weekly_off) || []).map(Number);
+    isAdmin = !!(prof && prof.role === "admin");
+    renderOffCard();
     renderCalendar();
     renderUpcomingEvents();
     if (window.AttNotes) AttNotes.load().then(function () { AttNotes.mark(document.getElementById("calendarDays")); });

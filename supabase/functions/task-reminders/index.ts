@@ -162,7 +162,16 @@ Deno.serve(async (req) => {
     if (!isHoliday) {
       const { data: lessons } = await db.from("class_schedules").select("id,class,start_time,subject,room,teacher_id,teacher_name").eq("day", isoDay);
       const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-      const soonLessons = (lessons ?? []).filter((l: { start_time: string }) => { const d = toMin(l.start_time) - nowMin; return d > 0 && d <= 15; });
+      let soonLessons = (lessons ?? []).filter((l: { start_time: string }) => { const d = toMin(l.start_time) - nowMin; return d > 0 && d <= 15; });
+      // no reminder on a day the class has no school (weekly day off like Saturday, class days, agenda) - att_day_open()
+      if (soonLessons.length) {
+        const shut = new Set<string>();
+        for (const c of [...new Set(soonLessons.map((l: { class: string }) => l.class))]) {
+          const { data: open, error } = await db.rpc("att_day_open", { p_class: c, p_date: todayStr });
+          if (!error && open === false) shut.add(c);
+        }
+        soonLessons = soonLessons.filter((l: { class: string }) => !shut.has(l.class));
+      }
       if (soonLessons.length) {
         const lc = [...new Set(soonLessons.map((l: { class: string }) => l.class))];
         const ids = soonLessons.map((l: { id: string }) => l.id);

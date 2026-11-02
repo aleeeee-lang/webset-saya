@@ -553,7 +553,7 @@ const translations = {
     label_piket_photos_submitted: { en: "Proof photos submitted", id: "Foto bukti yang terkumpul" },
     toast_piket_photo_updated: { en: "Photo updated. Thanks!", id: "Foto berhasil diganti. Terima kasih!" },
 
-    btn_scan_piket: { en: "📷 Scan Duty Paper", id: "📷 Scan Kertas Piket" },
+    btn_scan_piket: { en: "Scan Duty Paper", id: "Scan Kertas Piket" },
     text_scanning_piket: { en: "Reading photo...", id: "Membaca foto..." },
     toast_scan_select_class_day: { en: "Please choose a class and day first before scanning.", id: "Pilih kelas dan hari dulu sebelum scan." },
     toast_scan_matched: { en: "{matched} of {total} names recognized automatically. Please review the checkboxes below before saving.", id: "{matched} dari {total} nama berhasil dikenali otomatis. Cek kembali daftar di bawah sebelum simpan." },

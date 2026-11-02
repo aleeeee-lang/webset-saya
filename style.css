@@ -5190,3 +5190,4 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
 .kas-hero .kas-class option{color:#14162B}
 /* Keuangan > Tabungan on a phone: same side margins as SPP and Kas kelas */
 @media (max-width:1023px){ html.fin-admin main.attendance-page{padding-left:5px!important;padding-right:5px!important} }
+.lsn-view-all{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}

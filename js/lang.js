@@ -981,6 +981,7 @@ Object.assign(translations, {
     lsn_admin_sub: { en: "Weekly lessons for each class", id: "Pelajaran mingguan tiap kelas" },
     lsn_manage: { en: "Manage", id: "Kelola" },
     lsn_view: { en: "View", id: "Lihat" },
+    lsn_view_week: { en: "Weekly schedule", id: "Jadwal mingguan" },
     lsn_now: { en: "Happening now", id: "Sedang berlangsung" },
     lsn_now_short: { en: "Now", id: "Sekarang" },
     lsn_next: { en: "Next", id: "Berikutnya" },

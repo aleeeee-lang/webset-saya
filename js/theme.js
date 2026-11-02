@@ -325,3 +325,38 @@ function setTheme(theme) {
         if (c && c.day === day) document.documentElement.classList.add("att-co-done");
     } catch (e) {}
 })();
+
+// Long history lists (sent announcements, info, reviewed leave, feedback, money history, holidays):
+// show the newest 3, then one "See all (n)" button that opens the rest right there.
+(function () {
+    var LISTS = ["recentBroadcastsList", "infoList", "reviewedLeaveList", "feedbackList", "sppReviewedList",
+        "sppOverrideList", "transactionList", "holidayList"];
+    var SHOW = 3;
+    function L(id, en) { try { return (localStorage.getItem("attendly-lang") || "en") === "id" ? id : en; } catch (e) { return en; } }
+    function setup(el) {
+        if (el._sa) return;
+        el._sa = { open: false };
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "sa-btn";
+        btn.hidden = true;
+        el.insertAdjacentElement("afterend", btn);
+        btn.addEventListener("click", function () {
+            el._sa.open = !el._sa.open;
+            apply();
+            if (!el._sa.open) try { el.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {}
+        });
+        function apply() {
+            var kids = [].slice.call(el.children).filter(function (k) { return !k.classList.contains("tc-empty"); });
+            var more = kids.length > SHOW;
+            kids.forEach(function (k, i) { k.classList.toggle("sa-hide", more && !el._sa.open && i >= SHOW); });
+            btn.hidden = !more;
+            if (more) btn.innerHTML = (el._sa.open ? L("Tampilkan lebih sedikit", "Show less") : L("Lihat semua", "See all") + " (" + kids.length + ")") +
+                '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (el._sa.open ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6") + '"/></svg>';
+        }
+        new MutationObserver(apply).observe(el, { childList: true });
+        apply();
+    }
+    function scan() { LISTS.forEach(function (id) { var el = document.getElementById(id); if (el) setup(el); }); }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", scan); else scan();
+})();

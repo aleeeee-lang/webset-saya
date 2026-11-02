@@ -5249,3 +5249,11 @@ html[data-theme="dark"] .jr-tabs button.on{background:#C6F432;color:#14162B}
   html.is-admin-home body.has-side .v2-hero-who .ah-who-bio:not(.empty):hover{color:#14162B}
   html[data-theme="dark"].is-admin-home body.has-side .v2-hero-who .ah-who-bio:not(.empty):hover{color:#EDEDED}
 }
+/* "See all (n)" under long history lists (js/theme.js) */
+.sa-hide{display:none!important}
+.sa-btn{width:100%;margin-top:10px;height:42px;display:flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:14px;background:#F3F3F7;color:#14162B;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.sa-btn:hover{background:#ECEDF2}
+.sa-btn[hidden]{display:none}
+html[data-theme="dark"] .sa-btn{background:#242426!important;color:#EDEDED!important}
+html[data-theme="dark"] .sa-btn *{color:#EDEDED!important}
+html[data-theme="dark"] .sa-btn:hover{background:#2C2C2E!important}

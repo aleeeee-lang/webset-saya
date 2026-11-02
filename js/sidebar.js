@@ -132,7 +132,7 @@
         var id = lang() === "id";
         var html = '<div class="v2-side-brand"><img src="favicon.svg?v=7" alt="" width="38" height="38">Attendreem</div>' +
             '<div class="v2-side-search"><label>' + ic("search", 2.2) + '<input id="v2SearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="' + (id ? "Cari fitur" + (role === "admin" || role === "guru" ? ", siswa…" : ", nilai…") : "Search features" + (role === "admin" || role === "guru" ? ", students…" : ", scores…")) + '" aria-label="' + (id ? "Cari" : "Search") + '"><kbd>Ctrl K</kbd></label></div>' +
-            '<nav class="v2-side-nav" aria-label="Menu">';
+            '@@USER@@<nav class="v2-side-nav" aria-label="Menu">';
         MENUS[role].forEach(function (m) {
             if (!m) { html += '<div class="v2-side-sep"></div>'; return; }
             if (m.label) { html += '<div class="v2-side-label">' + (id ? m.label[1] : m.label[0]) + '</div>'; return; }
@@ -143,7 +143,9 @@
         var name = p.name || "";
         var sub = p.class || ({ guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent", admin: "Admin", murid: "" })[role] || "";
         var av = p.avatar_url ? '<img src="' + safeURL(p.avatar_url) + '" alt="">' : escapeHTML(name.trim().charAt(0).toUpperCase() || "?");
-        html += '<a href="settings.html" class="v2-side-user' + (page === "settings.html" && role !== "admin" ? " on" : "") + '"><span class="v2-side-av">' + av + '</span><span class="v2-side-who"><b></b><small></small></span>' + ic("menu", 2) + '</a>';
+        // the profile card sits at the top, right above Beranda
+        var userCard = '<a href="settings.html" class="v2-side-user' + (page === "settings.html" && role !== "admin" ? " on" : "") + '"><span class="v2-side-av">' + av + '</span><span class="v2-side-who"><b></b><small></small></span></a>';
+        html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {
             el = document.createElement("aside");

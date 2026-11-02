@@ -34,6 +34,18 @@
             "</article>";
     }
 
+    // many lessons at once: one thin row per class (lowest attendance first); tap a row for its full card
+    function sessionRow(s, isOpen, missOpen) {
+        var pct = s.total ? Math.round(s.hadir / s.total * 100) : 0, key = s.class + "|" + s.start;
+        var tone = pct >= 90 ? "good" : pct >= 75 ? "ok" : "low";
+        return '<div class="ls-r' + (isOpen ? " open" : "") + '" data-key="' + esc(key) + '">' +
+            '<button type="button" class="ls-r-btn" aria-expanded="' + (isOpen ? "true" : "false") + '"><span class="ls-class">' + esc(s.class) + '</span>' +
+            '<span class="ls-r-sub">' + esc(s.subject || "-") + '</span><span class="ls-r-bar ' + tone + '"><i style="width:' + pct + '%"></i></span>' +
+            '<b class="ls-hadir">' + s.hadir + '<small>/' + s.total + '</small></b>' +
+            '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>' +
+            (isOpen ? sessionCard(s, missOpen) : "") + '</div>';
+    }
+
     function classRow(c) {
         var pct = c.total ? Math.round(c.hadir / c.total * 100) : 0;
         return '<div class="ls-row"><span class="ls-class">' + esc(c.class) + '</span><div class="ls-bar"><i style="width:' + pct + '%"></i></div>' +
@@ -45,10 +57,17 @@
         if (!el || typeof supabaseClient === "undefined") return;
         // parents have no class to follow
         try { var pr = JSON.parse(localStorage.getItem("attendreem-profile") || "{}"); if (pr.role === "orangtua") { el.hidden = true; return; } } catch (e) {}
-        var open = {}, last = null, timer = 0, wake = 0, busy = false, prevHadir = {}, active = false;
+        var open = {}, rowOpen = {}, last = null, timer = 0, wake = 0, busy = false, prevHadir = {}, active = false;
         el.classList.add("ls-card");
         el.hidden = true;
         el.addEventListener("click", function (e) {
+            var rb = e.target.closest(".ls-r-btn");
+            if (rb) {
+                var k = rb.parentNode.getAttribute("data-key");
+                rowOpen[k] = !rowOpen[k];
+                if (last) render(last);
+                return;
+            }
             var b = e.target.closest(".ls-more");
             if (!b) return;
             var card = b.closest(".ls-s"), key = card.getAttribute("data-key");
@@ -81,7 +100,10 @@
             if (adm && !ses.length) { el.hidden = true; return; }
             var t = (d.now || "").slice(11, 19).replace(/:/g, ".");
             var body = ses.length
-                ? '<div class="ls-list">' + ses.map(function (s) { return sessionCard(s, open[s.class + "|" + s.start]); }).join("") + "</div>"
+                ? (ses.length > 2
+                    ? '<div class="ls-rows2">' + ses.slice().sort(function (a, b) { return (a.total ? a.hadir / a.total : 1) - (b.total ? b.hadir / b.total : 1); })
+                        .map(function (s) { var k = s.class + "|" + s.start; return sessionRow(s, rowOpen[k], open[k]); }).join("") + "</div>"
+                    : '<div class="ls-list">' + ses.map(function (s) { return sessionCard(s, open[s.class + "|" + s.start]); }).join("") + "</div>")
                 : '<p class="ls-empty">' + esc(curStudent ? L("Tidak ada pelajaran yang sedang berlangsung. Kehadiran kelasmu hari ini:", "No lesson right now. Your class today:")
                                                           : L("Tidak ada pelajaran yang sedang berlangsung. Rekap hari ini per kelas:", "No lesson is going on right now. Today per class:")) + "</p>" +
                   (cls.length ? '<div class="ls-rows">' + cls.map(classRow).join("") + "</div>" : "");
@@ -95,7 +117,7 @@
             ses.forEach(function (s) {
                 var k = s.class + "|" + s.start;
                 if (prevHadir[k] != null && s.hadir > prevHadir[k]) {
-                    var n = el.querySelector('.ls-s[data-key="' + CSS.escape(k) + '"] .ls-hadir');
+                    var n = el.querySelector('[data-key="' + CSS.escape(k) + '"] .ls-hadir');
                     if (n) n.classList.add("bump");
                 }
                 prevHadir[k] = s.hadir;

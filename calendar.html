@@ -35,7 +35,6 @@
 
         <div class="calendar-header">
             <div>
-                <span data-i18n="monthly_overview_label">MONTHLY OVERVIEW</span>
                 <h2 id="calendarMonthLabel">-</h2>
             </div>
             <div class="calendar-nav">
@@ -69,13 +68,9 @@
     </section>
 
     <!-- UPCOMING EVENTS -->
-    <section class="attendance-card" style="margin-top:22px">
-        <div class="card-label" data-i18n="label_upcoming_events">Upcoming Events</div>
-        <div id="upcomingEventsList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
-
-        <button type="button" id="viewAllScheduleBtn" onclick="toggleAllSchedule()" style="width:100%;margin-top:14px;border:1px solid #e2e8f0;background:#fff;border-radius:12px;padding:10px;font-size:13px;font-weight:600;color:#3F6212;cursor:pointer" data-i18n="btn_view_all_schedule">
-            View All Schedule
-        </button>
+    <section class="attendance-card cal-up">
+        <div class="cal-up-head"><span class="card-label" data-i18n="label_upcoming_events">Upcoming Events</span><button type="button" id="viewAllScheduleBtn" class="cal-up-all" onclick="toggleAllSchedule()"></button></div>
+        <div id="upcomingEventsList" class="cal-up-list"></div>
     </section>
 
     <!-- FULL SCHEDULE (ALL EVENTS, GROUPED BY TYPE) -->
@@ -174,7 +169,7 @@ function renderCalendar() {
         const red = redByDate[key];
         if (ev) cls = (ev.type || "holiday") + "-day";
         else if (red) cls = red.kind === "cuti" ? "cuti-day" : "red-day";
-        else if (isOffDay(key)) cls = "holiday-day off-day";
+        else if (isOffDay(key)) cls = "off-day";
         if (red && red.kind !== "cuti") cls += " red-num";
         if (isCurrentMonth && day === todayNum) cls += " today-day";
 
@@ -281,8 +276,7 @@ function renderOffCard() {
     if (!isAdmin) { card.hidden = true; return; }
     card.hidden = false;
     document.getElementById("calOffTitle").textContent = CL("Libur tiap minggu", "Weekly days off");
-    document.getElementById("calOffHint").textContent = CL("Libur setiap minggu untuk semua kelas. Mau tetap masuk di salah satu tanggalnya? Ketuk tanggal itu di kalender.",
-        "Off every week for every class. Need school on one of those dates? Tap it in the calendar.");
+    document.getElementById("calOffHint").textContent = CL("Ketuk tanggalnya di kalender kalau mau tetap masuk.", "Tap a date in the calendar to make it a school day.");
     document.getElementById("calOffDays").innerHTML = [1, 2, 3, 4, 5, 6, 7].map(function (d) {
         const on = weeklyOff.indexOf(d) !== -1;
         return '<button type="button" data-d="' + d + '" class="' + (on ? "on" : "") + '" aria-pressed="' + on + '">' + Lessons.dayShort(d) + '</button>';
@@ -328,53 +322,25 @@ async function showEventInfo(dateKey) {
     showToast(message, "info");
 }
 
+let upAll = false;
 function renderUpcomingEvents() {
     const lang = getLang();
-    const container = document.getElementById("upcomingEventsList");
+    const container = document.getElementById("upcomingEventsList"), btn = document.getElementById("viewAllScheduleBtn");
     const todayKey = localDateStr();
-
     const nat = Object.keys(redByDate).filter(function (d) { return !eventByDate[d]; }).map(function (d) { const n = redByDate[d]; return { date: d, label: n.name, type: n.kind === "cuti" ? "cuti" : "red", nat: true }; });
-    const upcoming = allEvents.concat(nat).filter(function (e) { return e.date >= todayKey; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 15);
-
-    if (upcoming.length === 0) {
-        container.innerHTML = "<p style='color:#888;font-size:13px'>" + translations.text_no_upcoming_events[lang] + "</p>";
-        return;
-    }
-
+    const all = allEvents.concat(nat).filter(function (e) { return e.date >= todayKey; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    const upcoming = upAll ? all.slice(0, 40) : all.slice(0, 3);
+    btn.hidden = all.length <= 3;
+    btn.textContent = upAll ? CL("Tutup", "Less") : CL("Semua", "All") + " (" + all.length + ")";
+    if (!all.length) { container.innerHTML = "<p class='cal-up-none'>" + translations.text_no_upcoming_events[lang] + "</p>"; return; }
     container.innerHTML = upcoming.map(function (e) {
-        const meta = eventTypeMeta[e.type || "holiday"] || eventTypeMeta.holiday;
-        const typeLabel = e.nat ? (e.type === "cuti" ? CL("Cuti bersama", "Joint leave") : CL("Tanggal merah", "National holiday")) : (translations[meta.labelKey] ? translations[meta.labelKey][lang] : e.type);
-        return `
-            <div class="am-row" style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#f8f8ff;border-radius:12px">
-                <i class="legend ${e.type || "holiday"}" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></i>
-                <div style="flex:1;min-width:0">
-                    <strong style="display:block;font-size:13px;color:#20243a">${escapeHTML(e.label || "-")}</strong>
-                    <span style="display:block;margin-top:2px;font-size:12px;color:#888">${dayMonthYearLabel(new Date(e.date + "T00:00:00"))} · ${typeLabel}</span>
-                </div>
-            </div>
-        `;
+        const d = new Date(e.date + "T00:00:00");
+        return '<div class="cal-up-row"><span class="cal-up-date"><b>' + d.getDate() + '</b><small>' + d.toLocaleDateString(lang === "id" ? "id-ID" : "en-US", { month: "short" }) + '</small></span>' +
+            '<i class="legend ' + escapeHTML(e.type || "holiday") + '"></i><span class="cal-up-name">' + escapeHTML(e.label || "-") + '</span></div>';
     }).join("");
 }
 
-let fullScheduleShown = false;
-
-function toggleAllSchedule() {
-    const lang = getLang();
-    const card = document.getElementById("fullScheduleCard");
-    const btn = document.getElementById("viewAllScheduleBtn");
-
-    fullScheduleShown = !fullScheduleShown;
-
-    if (fullScheduleShown) {
-        renderFullSchedule();
-        card.style.display = "block";
-        btn.textContent = translations.btn_hide_all_schedule[lang];
-        card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } else {
-        card.style.display = "none";
-        btn.textContent = translations.btn_view_all_schedule[lang];
-    }
-}
+function toggleAllSchedule() { upAll = !upAll; renderUpcomingEvents(); }
 
 function renderFullSchedule() {
     const lang = getLang();

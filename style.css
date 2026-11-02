@@ -5049,3 +5049,43 @@ html[data-theme="dark"] .calendar-days .cuti-day{background:#2A1418;color:#FDA4A
 .cal-sheet .ac-cancel.cal-rm{color:#B91C1C}
 html[data-theme="dark"] .cal-cls button{background:#1C1C1E;color:#EDEDED}
 html[data-theme="dark"] .cal-cls button.on{background:#C6F432;color:#14162B}
+/* Kalender ringkas */
+.calendar-days .off-day{color:#B0B4C5;font-weight:600}
+html[data-theme="dark"] .calendar-days .off-day{color:#5E5E66}
+.cal-off{margin-top:14px;padding:14px 16px}
+.cal-off-head{flex-direction:row;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.cal-off-head b{font-size:14px;flex-shrink:0}
+.cal-off-head small{font-size:11.5px;text-align:right}
+.cal-off-days button{height:34px;font-size:12.5px;border-radius:10px}
+.cal-up{margin-top:14px;padding:14px 16px}
+.cal-up-head{display:flex;align-items:center;justify-content:space-between}
+.cal-up-head .card-label{margin:0}
+.cal-up-all{border:none;background:none;padding:4px 0;font:inherit;font-size:13px;font-weight:700;color:#3F6212;cursor:pointer}
+.cal-up-all[hidden]{display:none}
+.cal-up-list{display:flex;flex-direction:column;margin-top:6px}
+.cal-up-row{display:flex;align-items:center;gap:12px;padding:9px 0}
+.cal-up-row+.cal-up-row{border-top:1px solid #ECEEF2}
+.cal-up-date{width:34px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.cal-up-date b{font-size:16px;color:#14162B}
+.cal-up-date small{font-size:10.5px;color:#8A8FA8;text-transform:uppercase}
+.cal-up-row .legend{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cal-up-name{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:#20243a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-up-none{color:#888;font-size:13px;margin:8px 0 0}
+html[data-theme="dark"] .cal-up-row+.cal-up-row{border-top-color:#242424}
+html[data-theme="dark"] .cal-up-date b,html[data-theme="dark"] .cal-up-name{color:#EDEDED}
+html[data-theme="dark"] .cal-up-all{color:#C6F432}
+/* Rekap sesi: many lessons -> thin rows */
+.ls-rows2{display:flex;flex-direction:column;background:rgba(255,255,255,.05);border-radius:18px;overflow:hidden}
+.ls-r+.ls-r{border-top:1px solid rgba(255,255,255,.07)}
+.ls-r-btn{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border:none;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.ls-r-btn .ls-class{padding:4px 8px;font-size:11.5px;border-radius:8px;min-width:64px;text-align:center;box-sizing:border-box}
+.ls-r-sub{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-r-bar{width:22%;max-width:120px;height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;flex-shrink:0}
+.ls-r-bar i{display:block;height:100%;border-radius:99px;background:#C6F432}
+.ls-r-bar.ok i{background:#F5C451}.ls-r-bar.low i{background:#FF8A8E}
+.ls-r-btn .ls-hadir{flex-shrink:0;min-width:44px;text-align:right;font-size:15px;color:#fff}
+.ls-r-btn .ls-hadir small{font-size:11.5px;color:#8A8FA8;font-weight:600}
+.ls-r-btn svg{flex-shrink:0;color:#8A8FA8;transition:transform .2s}
+.ls-r.open .ls-r-btn svg{transform:rotate(180deg)}
+.ls-r .ls-s{margin:0 8px 8px;background:rgba(255,255,255,.05)}
+.ls-r .ls-s .ls-s-top{display:none}

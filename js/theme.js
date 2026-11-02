@@ -276,7 +276,7 @@ function setTheme(theme) {
                 if (!nv || nv === window.attAppVer()) return;
                 var key = "att-upd:" + nv;
                 try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) { return; }
-                var save = window.caches ? caches.open("attendreem-files-v1").then(function (c) { return c.put(new Request(href), res); }).catch(function () {}) : Promise.resolve();
+                var save = window.caches ? caches.open("attendreem-files-v2").then(function (c) { return c.put(new Request(href), res); }).catch(function () {}) : Promise.resolve();
                 save.then(function () { location.reload(); });
             });
         }).catch(function () {});

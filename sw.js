@@ -1,13 +1,13 @@
 // Attendreem service worker: makes the app open fast (keeps the app's own files on the phone),
 // shows push notifications and opens the right page when one is tapped.
-var CACHE = "attendreem-files-v1";
+var CACHE = "attendreem-files-v2";
 
 self.addEventListener("install", function () { self.skipWaiting(); });
 self.addEventListener("activate", function (event) {
     event.waitUntil((async function () {
         var names = await caches.keys();
         await Promise.all(names.filter(function (n) { return n.indexOf("attendreem-files-") === 0 && n !== CACHE; }).map(function (n) { return caches.delete(n); }));
-        if (self.registration.navigationPreload) { try { await self.registration.navigationPreload.enable(); } catch (e) {} }
+        if (self.registration.navigationPreload) { try { await self.registration.navigationPreload.disable(); } catch (e) {} }
         await self.clients.claim();
     })());
 });
@@ -35,17 +35,18 @@ async function put(req, res) {
         }
     } catch (e) {}
 }
-// pages: fresh from the internet when it answers quickly, otherwise the copy on the phone
+// pages: always asked fresh from the internet (never the browser's own 10-minute copy, so a new
+// version shows right away); the copy on the phone only when the internet is slow or gone
 async function page(event) {
     var req = event.request;
     var cached = caches.match(req, { ignoreSearch: false });
     var net = (async function () {
-        var res = (event.preloadResponse && await event.preloadResponse) || await fetch(req);
+        var res = await fetch(new Request(req.url, { cache: "no-cache", credentials: "same-origin", redirect: "follow" }));
         put(req, res.clone());
         return res;
     })();
     event.waitUntil(net.then(function () {}, function () {}));
-    var timeout = new Promise(function (r) { setTimeout(function () { r(null); }, 900); });
+    var timeout = new Promise(function (r) { setTimeout(function () { r(null); }, 3000); });
     var first = await Promise.race([net.catch(function () { return null; }), timeout]);
     if (first) return first;
     var c = await cached;

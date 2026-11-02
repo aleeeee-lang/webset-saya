@@ -11,6 +11,26 @@
     var role = "";
     try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
     if (role === "orangtua") { nav.remove(); return; }   // parents have one page, no menu
+    // teachers: no bottom menu either - the home page has every place as a tile; other pages get a back arrow home
+    if (role === "guru") {
+        nav.remove();
+        var pg = (location.pathname.split("/").pop() || "").replace(/[?#].*$/, "");
+        var put = function () {
+            if (pg === "teacher.html" || document.querySelector(".v2-back, .v3-back, [data-tc-back]")) return;
+            var head = document.querySelector("main header, header.v2-head, .v2-head");
+            if (!head) return;
+            var a = document.createElement("a");
+            a.href = "teacher.html";
+            a.className = "v2-back v3-back";
+            a.setAttribute("data-tc-back", "");
+            a.setAttribute("aria-label", "Beranda");
+            a.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+            head.insertBefore(a, head.firstChild);
+            head.classList.add("tc-has-back");
+        };
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", put); else put();
+        return;
+    }
     document.documentElement.classList.add("has-v3nav");
     var id = (typeof getLang === "function" ? getLang() : "id") === "id";
     var page = (location.pathname.split("/").pop() || "index.html").replace(/[?#].*$/, "") || "index.html";

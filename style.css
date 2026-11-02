@@ -5305,3 +5305,7 @@ html[data-theme="dark"] .pv-spp .pv-mini{color:#C6F432}
 @media (min-width:1024px){ body.has-side .v3-par .pv-hero{min-height:0!important;height:auto!important} body.has-side .v3-par .pv-state{margin:4px 0 14px} }
 html[data-theme="dark"] .tc-chips span.warn{color:#FCD34D!important}
 html[data-theme="dark"] .tc-chips span.ok{color:#C6F432!important}
+/* teachers have no bottom menu: less space at the bottom; a back arrow on the other pages */
+html:not(.has-v3nav) .tc-home{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+.tc-has-back{display:flex;align-items:center;gap:8px}
+.tc-has-back>[data-tc-back]{display:flex;align-items:center;justify-content:center;color:inherit;text-decoration:none;flex-shrink:0}

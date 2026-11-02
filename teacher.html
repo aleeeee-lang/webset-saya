@@ -56,10 +56,10 @@
     <main class="tc-main">
         <!-- everything else is one tap away: six small tiles (2026 "one screen" home) -->
         <nav class="tc-tiles tc-tiles6" aria-label="Menu">
+            <a href="attendance.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3a7 7 0 0 1-2 5"/><path d="M7 11a5 5 0 0 1 10 0v2a9 9 0 0 1-1.5 5"/><path d="M4.5 9a8 8 0 0 1 15 0"/><path d="M9.5 15.5A10 10 0 0 1 9 19"/></svg><span id="tcT0"></span></a>
             <a href="teacher-class.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.3-5 6.5-5s5.7 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.6 5"/></svg><span id="tcT1"></span></a>
             <a href="teacher-leave.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg><span id="tcT2"></span><i id="tcLeaveN" hidden></i></a>
             <a href="tasks.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span id="tcT3"></span></a>
-            <a href="kas.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg><span id="tcT4"></span></a>
             <a href="schedule.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span id="tcT5"></span></a>
             <button type="button" id="tcMore"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg><span id="tcT6"></span></button>
         </nav>
@@ -80,7 +80,7 @@
 <script>
 const L = TC.L;
 document.getElementById("tcQrLabel").textContent = L("Kirim QR absen", "Send check-in QR");
-[["tcT1", "Siswa", "Students"], ["tcT2", "Izin", "Leave"], ["tcT3", "Tugas", "Tasks"], ["tcT4", "Kas", "Cash"], ["tcT5", "Jadwal", "Schedule"], ["tcT6", "Lainnya", "More"]].forEach(function (x) { document.getElementById(x[0]).textContent = L(x[1], x[2]); });
+[["tcT0", "Absen saya", "My check-in"], ["tcT1", "Siswa", "Students"], ["tcT2", "Izin", "Leave"], ["tcT3", "Tugas", "Tasks"], ["tcT5", "Jadwal", "Schedule"], ["tcT6", "Lainnya", "More"]].forEach(function (x) { document.getElementById(x[0]).textContent = L(x[1], x[2]); });
 
 let ctx = null;
 
@@ -141,11 +141,12 @@ async function loadLeaveBanner() {
 
 // "Lainnya": the rest of the teacher pages in one small sheet
 const MORE = [
-    ["attendance.html", "Absen saya", "My check-in", '<path d="M7 11a5 5 0 0 1 10 0v2a9 9 0 0 1-1.5 5"/><path d="M12 11v3a7 7 0 0 1-2 5"/><path d="M4.5 9a8 8 0 0 1 15 0"/>'],
+    ["kas.html", "Kas kelas", "Class cash", '<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>'],
     ["juara.html", "Juara", "Champions", '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M9.5 17h5l.5 4h-6z"/>'],
     ["goals.html", "Target saya", "My goals", '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'],
     ["calendar.html", "Kalender", "Calendar", '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
-    ["information.html", "Informasi", "Information", '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>']
+    ["information.html", "Informasi", "Information", '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'],
+    ["settings.html", "Pengaturan", "Settings", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>']
 ];
 document.getElementById("tcMore").addEventListener("click", async function () {
     if (!window.attSheet) await new Promise(function (ok) { const sc = document.createElement("script"); sc.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : Date.now()); sc.onload = ok; sc.onerror = ok; document.head.appendChild(sc); });

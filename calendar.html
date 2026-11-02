@@ -329,8 +329,8 @@ function renderUpcomingEvents() {
     const todayKey = localDateStr();
     const nat = Object.keys(redByDate).filter(function (d) { return !eventByDate[d]; }).map(function (d) { const n = redByDate[d]; return { date: d, label: n.name, type: n.kind === "cuti" ? "cuti" : "red", nat: true }; });
     const all = allEvents.concat(nat).filter(function (e) { return e.date >= todayKey; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-    const upcoming = upAll ? all.slice(0, 40) : all.slice(0, 3);
-    btn.hidden = all.length <= 3;
+    const upcoming = upAll ? all.slice(0, 40) : all.slice(0, 4);
+    btn.hidden = all.length <= 4;
     btn.textContent = upAll ? CL("Tutup", "Less") : CL("Semua", "All") + " (" + all.length + ")";
     if (!all.length) { container.innerHTML = "<p class='cal-up-none'>" + translations.text_no_upcoming_events[lang] + "</p>"; return; }
     container.innerHTML = upcoming.map(function (e) {

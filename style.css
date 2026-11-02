@@ -5196,3 +5196,20 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
 @media (min-width:1024px){ .v2-side .v2-side-user{margin:2px 0 10px!important} }
 /* sidebar: the line between Keuangan and Pengguna a little thicker */
 @media (min-width:1024px){ .v2-side .v2-side-sep{height:2px;border-radius:2px;background:#E2E3EA} html[data-theme="dark"] .v2-side .v2-side-sep{background:#2E2E30} }
+/* sidebar profile card: not a link; "+" on the photo, a pen line for the bio */
+@media (min-width:1024px){
+  .v2-side .v2-side-user{cursor:default}
+  .v2-side-avw{position:relative;flex-shrink:0;display:block}
+  .v2-side-plus{position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:#C6F432;color:#14162B;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2.5px #F3F3F7}
+  .v2-side-plus svg{width:10px;height:10px}
+  .v2-side-bio{display:flex;align-items:center;gap:4px;max-width:100%;margin:3px 0 0;padding:0;border:0;background:none;font:inherit;font-size:11.5px;font-weight:500;color:#4A4F6A;cursor:pointer;text-align:left}
+  .v2-side-bio svg{width:11px;height:11px;flex-shrink:0;opacity:.8}
+  .v2-side-bio span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .v2-side-bio:hover{color:#14162B}
+  .v2-side-bio.empty{align-self:flex-start;height:22px;padding:0 8px;border-radius:999px;background:#E6F7B0;color:#3F6212;font-weight:700}
+  .v2-side-bio.empty:hover{background:#DDF39A;color:#3F6212}
+  html[data-theme="dark"] .v2-side-plus{box-shadow:0 0 0 2.5px #1C1C1E}
+  html[data-theme="dark"] .v2-side-bio{color:#9A9A9F}
+  html[data-theme="dark"] .v2-side-bio:hover{color:#EDEDED}
+  html[data-theme="dark"] .v2-side-bio.empty{background:rgba(198,244,50,.14);color:#C6F432}
+}

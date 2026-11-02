@@ -23,6 +23,8 @@
         log: '<path d="M12 8v5l3 2"/><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 4v4.5H8"/>',
         grad: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
         menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+        plus: '<path d="M12 5v14M5 12h14"/>',
+        pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
         check: '<path d="M5 13l4 4L19 7"/>',
         search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
         star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
@@ -143,8 +145,13 @@
         var name = p.name || "";
         var sub = p.class || ({ guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent", admin: "Admin", murid: "" })[role] || "";
         var av = p.avatar_url ? '<img src="' + safeURL(p.avatar_url) + '" alt="">' : escapeHTML(name.trim().charAt(0).toUpperCase() || "?");
-        // the profile card sits at the top, right above Beranda
-        var userCard = '<a href="settings.html" class="v2-side-user' + (page === "settings.html" && role !== "admin" ? " on" : "") + '"><span class="v2-side-av">' + av + '</span><span class="v2-side-who"><b></b><small></small></span></a>';
+        // the profile card sits at the top, right above Beranda. The card itself is not a link;
+        // the "+" on the photo changes the photo, the pen line writes a short bio (like students have)
+        var bio = sideBio();
+        var userCard = '<div class="v2-side-user"><span class="v2-side-avw"><span class="v2-side-av">' + av + '</span>' +
+            '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
+            '<span class="v2-side-who"><b></b><small></small>' +
+            '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {
@@ -161,10 +168,91 @@
         setupSearch(el, role, oldQ);
         el.querySelector(".v2-side-who b").textContent = name;
         el.querySelector(".v2-side-who small").textContent = sub;
+        paintBio(el);
+        var bb = el.querySelector(".v2-side-bio");
+        if (bb) bb.addEventListener("click", openBio);
+        loadBio();
         // keep a copy so the next page can draw the menu at once (js/theme.js) - no flash when moving between pages
         try { sessionStorage.setItem("att-side", JSON.stringify({ html: el.innerHTML, admin: role === "admin" })); } catch (e) {}
     }
 
+
+    /* ===== Bio on the profile card (same as the student page: profiles.bio, max 80) ===== */
+    var BIO_MAX = 80;
+    function sideBio() { try { return sessionStorage.getItem("att-bio") || ""; } catch (e) { return ""; } }
+    function setSideBio(t) { try { sessionStorage.setItem("att-bio", t || ""); } catch (e) {} }
+    function paintBio(el) {
+        var b = (el || document).querySelector(".v2-side-bio");
+        if (!b) return;
+        var t = sideBio(), id = lang() === "id";
+        b.classList.toggle("empty", !t);
+        b.querySelector("span").textContent = t || (id ? "Tulis bio" : "Add bio");
+        b.title = t || "";
+    }
+    function saveSideCache() {
+        var el = document.getElementById("v2Side");
+        if (!el) return;
+        try { var c = JSON.parse(sessionStorage.getItem("att-side") || "null"); if (c) { c.html = el.innerHTML; sessionStorage.setItem("att-side", JSON.stringify(c)); } } catch (e) {}
+    }
+    var bioLoaded = false;
+    async function loadBio() {
+        if (bioLoaded) return;
+        bioLoaded = true;
+        for (var i = 0; i < 40 && typeof supabaseClient === "undefined"; i++) await new Promise(function (r) { setTimeout(r, 100); });
+        if (typeof supabaseClient === "undefined") { bioLoaded = false; return; }
+        try {
+            var s = await supabaseClient.auth.getSession(), u = s && s.data && s.data.session && s.data.session.user;
+            if (!u) return;
+            var r = await supabaseClient.from("profiles").select("bio").eq("id", u.id).maybeSingle();
+            var t = (r && r.data && r.data.bio != null ? r.data.bio : (u.user_metadata && u.user_metadata.bio)) || "";
+            if (t !== sideBio()) { setSideBio(t); paintBio(); saveSideCache(); }
+        } catch (e) {}
+    }
+    function openBio() {
+        if (typeof supabaseClient === "undefined") return;
+        var id = lang() === "id";
+        var w = document.createElement("div");
+        w.className = "ac-wrap ac-confirm v2-bio-sheet";
+        w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' +
+            '<div class="v2-bio-field"><textarea rows="3" maxlength="' + BIO_MAX + '"></textarea><span class="v2-bio-count"></span></div>' +
+            '<div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+        w.querySelector("b").textContent = "Bio";
+        w.querySelector("small").textContent = id ? "Kalimat singkat tentang kamu: motto, cita-cita, atau apa aja." : "A short line about you: a motto, a goal, anything.";
+        w.querySelector(".ac-cancel").textContent = id ? "Batal" : "Cancel";
+        w.querySelector(".ac-ok").textContent = id ? "Simpan" : "Save";
+        var ta = w.querySelector("textarea"), cnt = w.querySelector(".v2-bio-count"), ok = w.querySelector(".ac-ok");
+        ta.placeholder = id ? "cth. Semangat mengajar setiap hari" : "e.g. Teaching with heart, every day";
+        ta.value = sideBio();
+        function upd() {
+            ta.value = ta.value.replace(/\n+/g, " ");
+            cnt.textContent = ta.value.length + "/" + BIO_MAX;
+            cnt.classList.toggle("near", ta.value.length >= BIO_MAX - 10);
+        }
+        ta.addEventListener("input", upd); upd();
+        document.body.appendChild(w);
+        requestAnimationFrame(function () { w.classList.add("in"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); });
+        function close() { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); }
+        w.addEventListener("click", function (e) { if (e.target === w) close(); });
+        w.querySelector(".ac-cancel").addEventListener("click", close);
+        ta.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); if (e.key === "Enter") { e.preventDefault(); ok.click(); } });
+        ok.addEventListener("click", async function () {
+            var text = ta.value.trim().slice(0, BIO_MAX);
+            if (text === sideBio().trim()) { close(); return; }
+            ok.disabled = true;
+            var err = null;
+            try {
+                var s = await supabaseClient.auth.getSession(), u = s.data.session.user;
+                var r = await supabaseClient.from("profiles").update({ bio: text || null }).eq("id", u.id);
+                err = r.error;
+                if (err && /bio/i.test(err.message || "")) { var r2 = await supabaseClient.auth.updateUser({ data: { bio: text || null } }); err = r2.error; }
+            } catch (e) { err = e; }
+            ok.disabled = false;
+            if (err) { if (window.showToast) showToast((id ? "Gagal menyimpan: " : "Couldn't save: ") + (err.message || ""), "error"); return; }
+            setSideBio(text); paintBio(); saveSideCache();
+            close();
+            if (window.showToast) showToast(id ? "Bio disimpan." : "Bio saved.", "success");
+        });
+    }
 
     /* ===== Search (desktop sidebar + phone sheet) ===== */
     var EXTRA = {

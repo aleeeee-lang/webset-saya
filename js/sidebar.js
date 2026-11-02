@@ -157,6 +157,7 @@
             '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
             '<span class="v2-side-who"><b></b><small></small>' +
             '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
+        if (role === "admin") userCard = "";   // admin: the card sits on top of the home page instead
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {
@@ -171,8 +172,9 @@
         oldQ = oldQ ? oldQ.value : "";
         el.innerHTML = html;
         setupSearch(el, role, oldQ);
-        el.querySelector(".v2-side-who b").textContent = name;
-        el.querySelector(".v2-side-who small").textContent = sub;
+        var whoB = el.querySelector(".v2-side-who b"), whoS = el.querySelector(".v2-side-who small");
+        if (whoB) whoB.textContent = name;
+        if (whoS) whoS.textContent = sub;
         paintBio(el);
         var bb = el.querySelector(".v2-side-bio");
         if (bb) bb.addEventListener("click", openBio);
@@ -203,6 +205,7 @@
     function sideBio() { try { return sessionStorage.getItem("att-bio") || ""; } catch (e) { return ""; } }
     function setSideBio(t) { try { sessionStorage.setItem("att-bio", t || ""); } catch (e) {} }
     function paintBio(el) {
+        try { window.dispatchEvent(new Event("att-bio")); } catch (e) {}
         var b = (el || document).querySelector(".v2-side-bio");
         if (!b) return;
         var t = sideBio(), id = lang() === "id";
@@ -229,6 +232,7 @@
             if (t !== sideBio()) { setSideBio(t); paintBio(); saveSideCache(); }
         } catch (e) {}
     }
+    window.attBio = { text: function () { return sideBio(); }, open: function () { openBio(); } };
     function openBio() {
         if (typeof supabaseClient === "undefined") return;
         var id = lang() === "id";

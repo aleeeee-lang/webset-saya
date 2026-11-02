@@ -139,6 +139,24 @@
         }
         var av = document.getElementById("homeAvatar");
         if (av) av.href = "admin-menu.html";
+        // laptop: this header is the profile card (name, "Admin", bio); the date is in the sidebar
+        var who = document.querySelector(".v2-hero-top .v2-hero-who");
+        if (who && !who.querySelector(".ah-who-role")) {
+            var role = document.createElement("small"); role.className = "ah-who-role"; role.textContent = "Admin";
+            var bio = document.createElement("button"); bio.type = "button"; bio.className = "ah-who-bio";
+            bio.setAttribute("aria-label", L("Ubah bio", "Edit bio"));
+            bio.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span></span>';
+            who.appendChild(role); who.appendChild(bio);
+            var paint = function () {
+                var t = window.attBio ? window.attBio.text() : "";
+                bio.classList.toggle("empty", !t);
+                bio.querySelector("span").textContent = t || L("Tulis bio", "Add bio");
+                bio.title = t || "";
+            };
+            bio.addEventListener("click", function () { if (window.attBio) window.attBio.open(); });
+            window.addEventListener("att-bio", paint);
+            paint();
+        }
         var title = document.getElementById("homeTitle");
         if (title && !title.textContent) { title.textContent = L("Kehadiran hari ini", "Attendance today"); }
         var hero = document.querySelector(".v2-hero");

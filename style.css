@@ -5234,6 +5234,18 @@ html[data-theme="dark"] .jr-tabs button.on{background:#C6F432;color:#14162B}
   .v2-side-brand .v2-side-bt{width:auto;height:auto;border-radius:0;background:none;color:inherit;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.1}
   .v2-side-bt small{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#6B7088;margin-top:3px;letter-spacing:0}
   html[data-theme="dark"] .v2-side-bt small{color:#9A9A9F}
-  html.is-admin-home body.has-side .v2-hero-top .v2-av-wrap,html.is-admin-home body.has-side .v2-hero-top .v2-hero-who{display:none!important}
-  html.is-admin-home body.has-side .v2-hero-top{justify-content:flex-end}
+}
+/* admin home on the laptop: the top of the page is the profile card (photo, name, Admin, bio) - moved out of the sidebar */
+.ah-who-role,.ah-who-bio{display:none}
+@media (min-width:1024px){
+  html.is-admin-home body.has-side #homeGreeting{display:none}
+  html.is-admin-home body.has-side .v2-hero-who .ah-who-role{display:block;font-size:12.5px;font-weight:500;color:#5B6075;margin-top:1px}
+  html.is-admin-home body.has-side .v2-hero-who .ah-who-bio{display:flex;align-items:center;gap:5px;max-width:100%;margin:4px 0 0;padding:0;border:0;background:none;font:inherit;font-size:12.5px;font-weight:500;color:#5B6075;cursor:pointer;text-align:left}
+  .ah-who-bio svg{flex-shrink:0;opacity:.85}
+  .ah-who-bio span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  html.is-admin-home body.has-side .v2-hero-who .ah-who-bio.empty{align-self:flex-start;height:24px;padding:0 9px;border-radius:999px;background:#E6F7B0;color:#3F6212;font-weight:700}
+  html[data-theme="dark"].is-admin-home body.has-side .v2-hero-who .ah-who-role,html[data-theme="dark"].is-admin-home body.has-side .v2-hero-who .ah-who-bio{color:#9A9A9F}
+  html[data-theme="dark"].is-admin-home body.has-side .v2-hero-who .ah-who-bio.empty{background:rgba(198,244,50,.14);color:#C6F432}
+  html.is-admin-home body.has-side .v2-hero-who .ah-who-bio:not(.empty):hover{color:#14162B}
+  html[data-theme="dark"].is-admin-home body.has-side .v2-hero-who .ah-who-bio:not(.empty):hover{color:#EDEDED}
 }

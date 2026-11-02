@@ -5016,3 +5016,6 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 @media (min-width:1024px){
   body.is-admin-side .adm-head>button:first-child,body.is-admin-side .adm-head .v3-back,body.is-admin-side .adm-head .v2-back{display:none!important}
 }
+.lsn-f-hint{margin:0;font-size:12.5px;line-height:1.45;color:#3F6212;background:#F3FBE0;padding:10px 12px;border-radius:12px}
+.lsn-f-hint[hidden]{display:none}
+html[data-theme="dark"] .lsn-f-hint{background:#1F2A10;color:#C6F432}

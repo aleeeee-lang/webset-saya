@@ -179,6 +179,7 @@ function openForm(x) {
         '<label class="lsn-f"><span>' + tr("lsn_f_teacher") + ' <i>' + tr("lsn_optional") + '</i></span><select id="fTeacher"><option value="">' + tr("lsn_f_teacher_none") + '</option>' +
         teachers.map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join("") + '<option value="__other">' + tr("lsn_f_teacher_other") + '</option></select></label>' +
         '<label class="lsn-f" id="fTeacherOtherWrap" hidden><span>' + tr("lsn_f_teacher_name") + '</span><input type="text" id="fTeacherOther" maxlength="60" autocomplete="off"></label>' +
+        '<p class="lsn-f-hint" id="fFollow" hidden></p>' +
         '<p class="lsn-f-warn" id="fWarn" hidden></p>' +
         '</div>' +
         '<div class="ac-actions">' + (editing ? '<button type="button" class="ac-cancel lsn-del-btn">' + tr("btn_delete") + '</button>' : '<button type="button" class="ac-cancel">' + tr("btn_cancel_plain") + '</button>') + '<button type="button" class="ac-ok">' + tr("btn_save_plain") + '</button></div></div>';
@@ -196,7 +197,17 @@ function openForm(x) {
         else if (x.teacher_name) { fTeacher.value = "__other"; fOther.value = x.teacher_name; fOtherWrap.hidden = false; }
     }
     function paintDays() { w.querySelectorAll("[data-d]").forEach(function (b) { b.classList.toggle("on", Number(b.getAttribute("data-d")) === day); }); }
-    paintDays();
+    // Monday leads: changing lesson N on Monday moves lesson N on the other days that still had the same time
+    const LID = getLang() === "id";
+    const slot = editing ? Lessons.forDay(classLessons(), 1).findIndex(function (r) { return r.id === x.id; }) : -1;
+    const fFollow = w.querySelector("#fFollow");
+    function paintFollow() {
+        fFollow.hidden = !(editing && Number(x.day) === 1 && day === 1 && slot >= 0);
+        fFollow.textContent = LID ? "Jam ke-" + (slot + 1) + " di hari lain ikut berubah, kecuali yang jamnya sudah kamu atur sendiri."
+                                  : "Lesson " + (slot + 1) + " on the other days follows, unless you set its time yourself.";
+    }
+    paintDays(); paintFollow();
+    w.querySelector(".lsn-daypick").addEventListener("click", paintFollow);
     w.querySelector(".lsn-daypick").addEventListener("click", function (e) { const b = e.target.closest("[data-d]"); if (b) { day = Number(b.getAttribute("data-d")); paintDays(); } });
     fTeacher.addEventListener("change", function () { fOtherWrap.hidden = fTeacher.value !== "__other"; if (!fOtherWrap.hidden) fOther.focus(); });
     // keep the lesson length when the start time moves
@@ -239,12 +250,31 @@ function openForm(x) {
             : await supabaseClient.from("class_schedules").insert(Object.assign({ created_by: me.id }, row));
         btn.disabled = false;
         if (res.error) return showWarn(tr("toast_save_failed") + res.error.message);
+        let followed = 0;
+        if (editing && Number(x.day) === 1 && day === 1 && slot >= 0 && (hm(x.start_time) !== s || hm(x.end_time) !== e)) followed = await followMonday(x, slot, s, e);
         close();
         selDay = day;
         await loadAll(); render();
-        showToast(tr(editing ? "lsn_saved" : "lsn_added"), "success");
+        showToast(followed ? (LID ? "Tersimpan · jam ke-" + (slot + 1) + " di " + followed + " hari lain ikut diubah" : "Saved · lesson " + (slot + 1) + " moved on " + followed + " other day(s)") : tr(editing ? "lsn_saved" : "lsn_added"), "success");
     });
     function showWarn(t) { warn.textContent = t; warn.hidden = false; }
+}
+
+// the same lesson number on Tue-Sun moves with Monday, but only where it still had Monday's old time
+// (a day whose time the admin changed on its own is left alone) and only when it doesn't bump into another lesson
+async function followMonday(x, slot, s, e) {
+    const hm = function (t) { return t ? String(t).slice(0, 5) : null; };
+    const oldS = hm(x.start_time), oldE = hm(x.end_time), sm = Lessons.toMin(s), em = Lessons.toMin(e);
+    const mine = classLessons(), jobs = [];
+    for (let d = 2; d <= 7; d++) {
+        const list = Lessons.forDay(mine, d), r = list[slot];
+        if (!r || hm(r.start_time) !== oldS || hm(r.end_time) !== oldE) continue;
+        const clash = list.some(function (o) { return o.id !== r.id && Lessons.toMin(o.start_time) < em && sm < Lessons.toMin(o.end_time); });
+        if (clash) continue;
+        jobs.push(supabaseClient.from("class_schedules").update({ start_time: s, end_time: e, updated_at: new Date().toISOString() }).eq("id", r.id));
+    }
+    const res = await Promise.all(jobs);
+    return res.filter(function (r) { return !r.error; }).length;
 }
 
 async function removeLesson(x) {

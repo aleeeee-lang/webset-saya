@@ -1,5 +1,5 @@
 // Admin: related pages shown as one place with tabs at the top (Kelola -> Pengguna / Jadwal /
-// Pesan / Pengaturan & data). Each tab is still its own page; switching replaces the page so
+// Pesan / Pengaturan & data). Big "add" forms fold away behind a small button. Each tab is still its own page; switching replaces the page so
 // "back" always goes straight to Kelola. Only for admins, only on these pages.
 (function () {
     var role = "";
@@ -22,7 +22,8 @@
         { title: L("Pesan", "Messages"), tabs: [
             ["admin-broadcast.html", L("Pengumuman", "Announce")],
             ["admin-leave.html", L("Izin", "Leave"), "leave"],
-            ["admin-feedback.html", L("Saran", "Feedback"), "feedback"]] },
+            ["admin-feedback.html", L("Saran", "Feedback"), "feedback"],
+            ["admin-information.html", L("Info", "Info")]] },
         { title: L("Pengaturan & data", "Settings & data"), tabs: [
             ["settings.html", L("Pengaturan", "Settings")],
             ["admin-audit-log.html", L("Riwayat aktivitas", "Activity log")]] }
@@ -63,6 +64,40 @@
             location.replace(a.getAttribute("href"));
         });
         counts(nav);
+        addButtons(main);
+    }
+    var ICON = {
+        plus: '<path d="M12 5v14M5 12h14"/>',
+        up: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+        x: '<path d="M6 6l12 12M18 6 6 18"/>'
+    };
+    function svg(k) { return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[k] + '</svg>'; }
+    // big "add ..." forms stay folded away behind a small button; the list is what you see first
+    function addButtons(main) {
+        var secs = [].slice.call(main.querySelectorAll("[data-adm-add]"));
+        if (!secs.length) return;
+        var bar = document.createElement("div");
+        bar.className = "adm-add";
+        secs.forEach(function (sec) {
+            var t = sec.getAttribute("data-adm-add").split("|"), label = L(t[0], t[1] || t[0]);
+            var ic = sec.getAttribute("data-adm-ic") || "plus";
+            var b = document.createElement("button");
+            b.type = "button";
+            sec.classList.add("adm-fold");
+            sec.hidden = true;
+            function paint() { b.innerHTML = sec.hidden ? svg(ic) + "<span>" + label + "</span>" : svg("x") + "<span>" + L("Tutup", "Close") + "</span>"; b.classList.toggle("on", !sec.hidden); }
+            b.addEventListener("click", function () {
+                var open = sec.hidden;
+                secs.forEach(function (s) { s.hidden = true; });
+                sec.hidden = !open;
+                bar.querySelectorAll("button").forEach(function (x) { x._paint(); });
+                if (open) { var f = sec.querySelector("input,textarea,select"); if (f) try { f.focus({ preventScroll: true }); } catch (e) {} }
+            });
+            b._paint = paint;
+            paint();
+            bar.appendChild(b);
+        });
+        secs[0].parentNode.insertBefore(bar, secs[0]);
     }
     // unread leave requests / feedback on the Pesan tabs
     async function counts(nav) {

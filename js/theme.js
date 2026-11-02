@@ -229,7 +229,7 @@ function setTheme(theme) {
 // Admin: related pages as one place with tabs on top (only the grouped admin pages)
 (function () {
     var p = location.pathname.split("/").pop();
-    if (!/^(admin-(students|teachers|parents|development|schedule|lessons|piket|broadcast|leave|feedback|audit-log)|calendar|settings)\.html$/.test(p)) return;
+    if (!/^(admin-(students|teachers|parents|development|schedule|lessons|piket|broadcast|leave|feedback|information|audit-log)|calendar|settings)\.html$/.test(p)) return;
     var a = document.createElement("script");
     a.src = "js/admin-tabs.js?v=" + (window.attAppVer ? window.attAppVer() : "1");
     a.defer = true;

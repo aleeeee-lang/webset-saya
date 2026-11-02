@@ -4980,3 +4980,13 @@ html[data-theme="dark"] .am-tx small{color:#8E8E93}
 html[data-theme="dark"] .adm-tabs{background:#1C1C1E}
 html[data-theme="dark"] .adm-tabs a{color:#8E8E93}
 html[data-theme="dark"] .adm-tabs a.on{background:#2C2C2E;color:#EDEDED;box-shadow:none}
+.adm-add{display:flex;gap:8px;margin:0 0 14px}
+.adm-add button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:44px;border:none;border-radius:14px;background:#14162B;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.adm-add button+button{background:#fff;color:#14162B;box-shadow:inset 0 0 0 1.5px #E4E7EE}
+.adm-add button.on{background:#F1F2F6;color:#14162B;box-shadow:none}
+.adm-fold{animation:admFold .22s ease}
+@keyframes admFold{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+html[data-theme="dark"] .adm-add button{background:#C6F432;color:#14162B}
+html[data-theme="dark"] .adm-add button+button{background:#1C1C1E;color:#EDEDED;box-shadow:inset 0 0 0 1.5px #2C2C2E}
+html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
+.adm-fold[hidden]{display:none!important}

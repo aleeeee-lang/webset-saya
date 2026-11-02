@@ -2762,8 +2762,10 @@ html[data-theme="dark"] .v2-par-link svg{color:#C6F432}
 
 /* Laptop: no sliding page transition. Sidebar stays put, the content fades in quickly. */
 @media (min-width:1024px){
-  @view-transition{navigation:none}
-  body.has-side>main,body.has-side>.v2-home{animation:sideContentIn .18s ease-out}
+  /* a quick cross-fade between pages; the side menu stays still */
+  .v2-side{view-transition-name:side-menu}
+  html.vt-forward::view-transition-old(root),html.vt-forward::view-transition-new(root),html.vt-back::view-transition-old(root),html.vt-back::view-transition-new(root),::view-transition-old(root),::view-transition-new(root){animation:none}
+  ::view-transition-group(side-menu){animation:none}
 }
 @keyframes sideContentIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){body.has-side>main,body.has-side>.v2-home{animation:none!important}}

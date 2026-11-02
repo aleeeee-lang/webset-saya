@@ -252,6 +252,36 @@ function setTheme(theme) {
     document.head.appendChild(w);
 })();
 
+// Laptop: draw the side menu from the last page straight away (js/sidebar.js redraws it a moment
+// later), so moving between pages doesn't flash an empty strip and shift the page sideways
+(function () {
+    var page = location.pathname.split("/").pop() || "index.html";
+    if (/^(login|reset-password)\.html$/.test(page) || window.self !== window.top) return;
+    var c = null;
+    try { c = JSON.parse(sessionStorage.getItem("att-side") || "null"); } catch (e) {}
+    if (!c || !c.html) return;
+    function put() {
+        if (!document.body) return false;
+        if (document.getElementById("v2Side")) return true;
+        var el = document.createElement("aside");
+        el.id = "v2Side"; el.className = "v2-side";
+        el.innerHTML = c.html;
+        Array.prototype.forEach.call(el.querySelectorAll(".v2-side-nav a"), function (a) {
+            var on = a.getAttribute("href") === page;
+            a.classList.toggle("on", on);
+            if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+        });
+        document.body.insertBefore(el, document.body.firstChild);
+        document.body.classList.add("has-side");
+        if (c.admin) document.body.classList.add("is-admin-side");
+        return true;
+    }
+    if (!put()) {
+        var mo = new MutationObserver(function () { if (put()) mo.disconnect(); });
+        mo.observe(document.documentElement, { childList: true, subtree: true });
+    }
+})();
+
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");

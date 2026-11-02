@@ -159,6 +159,8 @@
         setupSearch(el, role, oldQ);
         el.querySelector(".v2-side-who b").textContent = name;
         el.querySelector(".v2-side-who small").textContent = sub;
+        // keep a copy so the next page can draw the menu at once (js/theme.js) - no flash when moving between pages
+        try { sessionStorage.setItem("att-side", JSON.stringify({ html: el.innerHTML, admin: role === "admin" })); } catch (e) {}
     }
 
 

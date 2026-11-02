@@ -5144,3 +5144,11 @@ html[data-theme="dark"] .ah-quick a{background:#1C1C1E;color:#EDEDED}
 .ls-c i{background:linear-gradient(90deg,rgba(198,244,50,.12),rgba(198,244,50,.38))}
 .ls-c.ok i{background:linear-gradient(90deg,rgba(251,191,36,.12),rgba(251,191,36,.36))}
 .ls-c.low i{background:linear-gradient(90deg,rgba(248,113,113,.12),rgba(248,113,113,.38))}
+/* solid colours: really red / yellow / green */
+.ls-c i{background:#65A30D}
+.ls-c.ok i{background:#D97706}
+.ls-c.low i{background:#DC2626}
+.ls-c .ls-hadir,.ls-c.ok .ls-hadir,.ls-c.low .ls-hadir{color:#fff}
+.ls-c .ls-hadir small{color:rgba(255,255,255,.7)}
+.ls-c i{background:#16A34A}
+.ls-c.ok i{background:#CA8A04}

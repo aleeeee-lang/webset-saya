@@ -5014,5 +5014,5 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
   body.is-admin-side main.attendance-page,body.is-admin-side main.v2-wrap:not(.v2-home-main){max-width:760px;width:auto;margin-left:auto;margin-right:auto;box-sizing:border-box}
 }
 @media (min-width:1024px){
-  body.is-admin-side .adm-head>button:first-child,body.is-admin-side .adm-head .v3-back,body.is-admin-side .adm-head .v2-back{display:none}
+  body.is-admin-side .adm-head>button:first-child,body.is-admin-side .adm-head .v3-back,body.is-admin-side .adm-head .v2-back{display:none!important}
 }

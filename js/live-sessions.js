@@ -99,7 +99,7 @@
             if (adm && !ses.length) { el.hidden = true; return; }
             var t = (d.now || "").slice(11, 19).replace(/:/g, ".");
             var body = ses.length
-                ? (ses.length > 2
+                ? (!curStudent
                     ? (function () {
                         var sorted = ses.slice().sort(function (a, b) { return (a.total ? a.hadir / a.total : 1) - (b.total ? b.hadir / b.total : 1); });
                         var opened = sorted.filter(function (x) { return rowOpen[x.class + "|" + x.start]; })[0];

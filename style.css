@@ -5316,3 +5316,10 @@ html:not(.has-v3nav) .tc-home{padding-bottom:calc(30px + env(safe-area-inset-bot
 }
 /* admin: QR is a bottom-menu page now - no back arrow there (teachers keep it) */
 html.has-v3nav .qs-back{display:none!important}
+/* student list on a phone: the three buttons go to their own line under the name, so the class / NIS stays readable */
+@media (max-width:640px){
+  .student-row{flex-wrap:wrap}
+  .student-row .student-view{flex:1 1 calc(100% - 56px)}
+  .student-row .student-actions{flex:1 1 100%;justify-content:flex-start!important;padding-left:46px}
+  .student-row .student-actions .am-btn{flex:1;padding:8px 4px!important;white-space:nowrap}
+}

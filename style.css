@@ -5171,3 +5171,10 @@ html[data-theme="dark"] .cal-up-row:nth-child(n+3){border-top-color:#242424}
 html[data-theme="dark"] .fin-tabs,html[data-theme="dark"] .adm-tabs{background:#121212}
 html[data-theme="dark"] .fin-tabs a,html[data-theme="dark"] .adm-tabs a{color:#9A9A9F}
 html[data-theme="dark"] .fin-tabs a.on,html[data-theme="dark"] .adm-tabs a.on{background:#C6F432;color:#14162B}
+/* class pickers (Absensi, Kelas & siswa) look like the other tab bars: white track, dark pill */
+.tc-classes{gap:4px;padding:4px;margin:0 0 12px;background:#fff;border-radius:18px;box-sizing:border-box}
+.tc-classes button{flex:1 0 auto;justify-content:center;height:40px;padding:0 14px;border:0;border-radius:14px;background:transparent;color:#4A4F6A;font-weight:600}
+.tc-classes button.on{background:#14162B;color:#fff;font-weight:700}
+html[data-theme="dark"] .tc-classes{background:#121212}
+html[data-theme="dark"] .tc-classes button{background:transparent;color:#9A9A9F}
+html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}

@@ -53,7 +53,7 @@
         items = [
             ["index.html", "home", "Beranda", "Home", "nav_home"],
             ["admin-attendance.html", "check", "Absensi", "Attendance", ""],
-            ["qr-send.html", "qr", "QR", "QR", "", [], true],
+            ["qr-send.html", "qr", "QR", "QR", "", []],
             ["admin-spp.html", "money", "Keuangan", "Money", "", ["admin-savings.html", "kas.html"]],
             ["admin-menu.html", "grid", "Kelola", "Manage", "", ["settings.html"]]
         ];
@@ -79,7 +79,7 @@
     nav.style.setProperty("--n", items.length);
     nav.innerHTML = items.map(function (it) {
         var on = it[0] === page || (it[5] || []).indexOf(page) !== -1;
-        var sz = it[6] ? 26 : it[1] === "fp" ? 38 : 24;   // the check-in fingerprint stands out a little
+        var sz = it[6] ? 26 : it[1] === "fp" ? 38 : it[1] === "qr" ? 32 : 24;   // the middle button (check-in / QR) stands out a little
         var svg = '<svg viewBox="0 0 24 24" width="' + sz + '" height="' + sz + '" fill="none" stroke="currentColor" stroke-width="' + (on || it[6] ? 2 : 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[it[1]].replace("{fpw}", on ? ".55" : ".3") + '</svg>';
         var label = id ? it[2] : it[3];
         if (it[6]) return '<a href="' + it[0] + '" class="v3-fab' + (on ? ' active' : '') + '" aria-label="' + label + '"' + (on ? ' aria-current="page"' : '') + '><span>' + svg + '</span></a>';

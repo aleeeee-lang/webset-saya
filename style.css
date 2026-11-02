@@ -5188,3 +5188,5 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
 .kas-hero-cls[hidden],.kas-hero-cls:empty{display:none}
 .kas-hero .kas-class{height:32px;border-radius:999px;border:0;background:rgba(198,244,50,.14);color:#C6F432;font-size:12px;font-weight:800;padding:0 10px}
 .kas-hero .kas-class option{color:#14162B}
+/* Keuangan > Tabungan on a phone: same side margins as SPP and Kas kelas */
+@media (max-width:1023px){ html.fin-admin main.attendance-page{padding-left:5px!important;padding-right:5px!important} }

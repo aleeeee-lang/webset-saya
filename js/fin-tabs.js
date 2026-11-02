@@ -5,7 +5,27 @@
     try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
     if (role !== "admin") return;
     var main = document.querySelector("main");
-    if (!main || main.querySelector(".fin-tabs")) return;
+    if (!main) return;
+    // SPP, Tabungan and Kas kelas are built differently: put the title and the tabs at exactly the
+    // same spot on all three, so switching tabs doesn't make them jump up and down
+    function align() {
+        var nav = main.querySelector(".fin-tabs"), h1 = main.querySelector("h1");
+        if (!nav || !h1) return;
+        nav.style.marginTop = ""; main.style.marginTop = "";
+        var side = document.body.classList.contains("has-side") && window.innerWidth >= 1024;
+        var want = side ? 28 : 20, y = window.scrollY || 0;
+        var top = h1.getBoundingClientRect().top + y;
+        if (Math.abs(top - want) > 0.5) main.style.marginTop = (want - top) + "px";
+        var gap = nav.getBoundingClientRect().top - h1.getBoundingClientRect().top;
+        if (Math.abs(gap - 46) > 0.5) nav.style.marginTop = (parseFloat(getComputedStyle(nav).marginTop) + 46 - gap) + "px";
+    }
+    function alignSoon() { requestAnimationFrame(align); }
+    alignSoon();
+    window.addEventListener("load", alignSoon);
+    window.addEventListener("resize", alignSoon);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignSoon);
+    new MutationObserver(alignSoon).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    if (main.querySelector(".fin-tabs")) return;
     var id = (typeof getLang === "function" ? getLang() : "id") === "id";
     var page = (location.pathname.split("/").pop() || "").toLowerCase();
     var tabs = [["admin-spp.html", "SPP", "SPP"], ["admin-savings.html", "Tabungan", "Savings"], ["kas.html", "Kas kelas", "Class cash"]];
@@ -37,4 +57,5 @@
     if (head && head.parentNode === main) head.insertAdjacentElement("afterend", nav);
     else main.insertBefore(nav, main.firstChild);
     document.documentElement.classList.add("fin-admin");
+    alignSoon();
 })();

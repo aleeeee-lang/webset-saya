@@ -562,6 +562,18 @@ function goBack() {
             e.preventDefault();
             if (btn.dataset.busy) return;
             const lang = getLang(), hint = document.getElementById("backupHint");
+            // ask first: one tap shouldn't start a full download right away
+            if (window.attConfirm) {
+                btn.dataset.busy = "1";
+                const go = await attConfirm({
+                    title: lang === "id" ? "Backup semua data?" : "Back up all data?",
+                    text: lang === "id" ? "Semua data sekolah (siswa, guru, absensi, keuangan, dll.) akan diunduh jadi satu file ke perangkat ini. Simpan file itu di tempat yang aman." : "All school data (students, teachers, attendance, money, etc.) will be downloaded as one file to this device. Keep that file somewhere safe.",
+                    ok: lang === "id" ? "Unduh backup" : "Download backup",
+                    tone: "primary"
+                });
+                delete btn.dataset.busy;
+                if (!go) return;
+            }
             btn.dataset.busy = "1"; hint.textContent = translations.set_backup_busy[lang];
             let r;
             try { r = await supabaseClient.rpc("admin_backup"); } catch (e) { r = { error: e }; }

@@ -76,7 +76,22 @@
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
         ],
+        // laptop menu = the same few places as the phone (related pages sit behind tabs)
         admin: [
+            ["index.html", "home", "Home", "Beranda"],
+            ["admin-attendance.html", "checkin", "Attendance", "Absensi"],
+            ["qr-send.html", "qr", "Send QR", "Kirim QR"],
+            ["admin-spp.html", "wallet", "Money", "Keuangan", "", ["admin-savings.html", "kas.html"]],
+            { label: ["Manage", "Kelola"] },
+            ["admin-students.html", "users", "People", "Pengguna", "", ["admin-teachers.html", "admin-parents.html", "admin-development.html"]],
+            ["admin-schedule.html", "cal", "Schedule", "Jadwal", "", ["admin-lessons.html", "admin-piket.html", "calendar.html"]],
+            ["admin-broadcast.html", "msg", "Messages", "Pesan", "", ["admin-leave.html", "admin-feedback.html", "admin-information.html"]],
+            ["juara.html", "trophy", "Champions", "Juara"],
+            ["settings.html", "gear", "Settings & data", "Pengaturan", "", ["admin-audit-log.html"]]
+        ]
+    };
+
+    var ADMIN_ALL = [
             { label: ["General", "Menu umum"] },
             ["index.html", "home", "Home", "Beranda"],
             { label: ["Manage", "Kelola"] },
@@ -100,8 +115,7 @@
             ["admin-piket.html", "broom", "Duty Roster", "Atur piket"],
             ["admin-feedback.html", "msg", "Suggestions", "Saran siswa"],
             ["admin-audit-log.html", "log", "Audit Log", "Log audit"]
-        ]
-    };
+        ];
 
     function lang() { try { return localStorage.getItem("attendly-lang") || "en"; } catch (e) { return "en"; } }
     function profile() { try { return JSON.parse(localStorage.getItem("attendreem-profile") || "{}"); } catch (e) { return {}; } }
@@ -122,7 +136,7 @@
         MENUS[role].forEach(function (m) {
             if (!m) { html += '<div class="v2-side-sep"></div>'; return; }
             if (m.label) { html += '<div class="v2-side-label">' + (id ? m.label[1] : m.label[0]) + '</div>'; return; }
-            var on = m[0] === page;
+            var on = m[0] === page || (m[5] && m[5].indexOf(page) !== -1);
             html += '<a href="' + m[0] + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + ic(m[1]) + '<span>' + (id ? m[3] : m[2]) + '</span></a>';
         });
         html += '</nav>';
@@ -211,7 +225,7 @@
         var id = lang() === "id";
         function featureList() {
             var out = [];
-            (MENUS[role] || []).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
+            (role === "admin" ? ADMIN_ALL : (MENUS[role] || [])).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
                 if (!m || m.label) return;
                 if (out.some(function (o) { return o[0] === m[0]; })) return;
                 out.push(m);

@@ -4994,3 +4994,13 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 .qs-warn span{flex:1}
 .qs-warn a{flex-shrink:0;padding:7px 12px;border-radius:10px;background:#9A5B00;color:#fff;font-weight:700;text-decoration:none;font-size:12.5px}
 .fin-head{margin-bottom:6px}
+/* Laptop: admin home is one simple column, the same order as on the phone */
+@media (min-width:1024px){
+  body.has-side .v2-home.is-admin{display:block;max-width:720px;margin-left:auto;margin-right:auto}
+  body.has-side .v2-home.is-admin .ah{display:block}
+  body.has-side .v2-home.is-admin #ahTodo .ah-card{height:auto}
+  body.has-side .v2-home.is-admin>*{max-width:none;width:auto;margin-left:0;margin-right:0}
+  body.has-side .v2-home.is-admin .v2-hero{margin-bottom:22px}
+  body.has-side .v2-home.is-admin .ah>*+*{margin-top:22px}
+  body.has-side .am-page{max-width:720px;margin-left:auto;margin-right:auto}
+}

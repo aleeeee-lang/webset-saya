@@ -237,7 +237,8 @@ function attDayRules(cls) {
             var a = agenda[h.date] || (agenda[h.date] = { closed: false, open: false, label: "" });
             var on = h.attendance_open === true || h.attendance_open === false ? h.attendance_open : (h.type || "holiday") !== "holiday";
             if (on === false) { a.closed = true; a.label = h.label || a.label; }
-            if (h.attendance_open === true) a.open = true;
+            // a make-up day can be for some classes only (holidays.classes, masuk_per_kelas.sql)
+            if (h.attendance_open === true && (!h.classes || !cls || h.classes.indexOf(cls) !== -1)) a.open = true;
             if (!a.label) a.label = h.label || "";
         });
         var off = (r[2] && !r[2].error && r[2].data && r[2].data.weekly_off) || [];

@@ -107,8 +107,8 @@ async function loadAll() {
 // the days to plan: weekly days off (Kalender) are hidden, unless the admin opened that day this week
 function schoolDays() {
     const days = [1, 2, 3, 4, 5, 6];
-    if (classLessons().some(function (x) { return Number(x.day) === 7; }) || Lessons.week().open[7]) days.push(7);   // Sunday only when used
-    const on = days.filter(Lessons.dayOn);
+    if (classLessons().some(function (x) { return Number(x.day) === 7; }) || Lessons.openFor(7, selClass)) days.push(7);   // Sunday only when used
+    const on = days.filter(function (d) { return Lessons.dayOn(d, selClass); });
     return on.length ? on : days;
 }
 function classLessons() { return all.filter(function (x) { return x.class === selClass; }); }

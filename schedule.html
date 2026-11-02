@@ -64,7 +64,7 @@ const IC = {
 const esc = Lessons.esc;
 function tr(key) { const t = translations[key]; return t ? t[getLang()] : key; }
 
-let role = "murid", lessons = [], selectedDay = Lessons.isoDay(), tick = null, homePage = "index.html";
+let viewClass = "", role = "murid", lessons = [], selectedDay = Lessons.isoDay(), tick = null, homePage = "index.html";
 
 function goBack() {
     if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
@@ -83,7 +83,7 @@ function renderNow() {
     const box = document.getElementById("lsnNow");
     if (!lessons.length) { box.hidden = true; return; }
     box.hidden = false;
-    const st = Lessons.status(lessons);
+    const st = Lessons.status(lessons, undefined, viewClass);
     let html = "";
     if (st.current) {
         const s = Lessons.toMin(st.current.start_time), e = Lessons.toMin(st.current.end_time);
@@ -113,8 +113,8 @@ function renderNow() {
 // weekly days off (Kalender) don't show, unless the admin opened that day this week
 function availableDays() {
     const days = [1, 2, 3, 4, 5, 6];
-    if (lessons.some(function (x) { return Number(x.day) === 7; }) || Lessons.week().open[7]) days.push(7);
-    const on = days.filter(Lessons.dayOn);
+    if (lessons.some(function (x) { return Number(x.day) === 7; }) || Lessons.openFor(7, viewClass)) days.push(7);
+    const on = days.filter(function (d) { return Lessons.dayOn(d, viewClass); });
     return on.length ? on : days;
 }
 
@@ -208,6 +208,7 @@ async function init() {
         const want = new URLSearchParams(location.search).get("child");
         const kid = kids.find(function (k) { return k.id === want; }) || kids[0];
         sub.textContent = kid ? [kid.name, kid.class].filter(Boolean).join(" · ") : "-";
+        viewClass = (kid && kid.class) || "";
         lessons = kid && kid.class ? await fetchLessons({ cls: kid.class }) : [];
     } else if (role === "admin") {
         const all = await fetchLessons({});
@@ -217,7 +218,7 @@ async function init() {
         if (classes.length) {
             sel.hidden = false;
             sel.innerHTML = classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join("");
-            const pick = function () { lessons = all.filter(function (x) { return x.class === sel.value; }); sub.textContent = sel.value; if (!availableDays().includes(selectedDay)) selectedDay = availableDays()[0]; renderAll(); };
+            const pick = function () { lessons = all.filter(function (x) { return x.class === sel.value; }); viewClass = sel.value; sub.textContent = sel.value; if (!availableDays().includes(selectedDay)) selectedDay = availableDays()[0]; renderAll(); };
             sel.addEventListener("change", pick);
             pick();
             startTick();
@@ -226,6 +227,7 @@ async function init() {
         lessons = [];
     } else {
         sub.textContent = (me && me.class) || "-";
+        viewClass = (me && me.class) || "";
         lessons = me && me.class ? await fetchLessons({ cls: me.class }) : [];
         loadLsnTasks(user.id, (me && me.class) || "");
     }

@@ -193,28 +193,85 @@ function needSheet() {
     if (!sheetLoad) sheetLoad = new Promise(function (ok, bad) { const sc = document.createElement("script"); sc.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : "1"); sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); });
     return sheetLoad;
 }
+// the classes of the school (for "which class comes in")
+let classList = null;
+async function loadClassList() {
+    if (classList) return classList;
+    const [a, b] = await Promise.all([
+        supabaseClient.from("profiles").select("class").eq("role", "murid"),
+        supabaseClient.from("attendance_schedules").select("class")
+    ]);
+    const set = new Set();
+    ((a && a.data) || []).concat((b && b.data) || []).forEach(function (r) { if (r.class && r.class !== "Guru") set.add(r.class); });
+    classList = Array.from(set).sort(function (x, y) { return x.localeCompare(y, undefined, { numeric: true }); });
+    return classList;
+}
+// bottom sheet: all classes or pick classes. Resolves { classes: null | [..] } | "remove" | null
+function classSheet(o) {
+    return new Promise(function (done) {
+        let pick = o.selected ? o.selected.slice() : null;   // null = all classes
+        const w = document.createElement("div");
+        w.className = "ac-wrap ac-confirm cal-sheet";
+        w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' +
+            '<div class="cal-who"><span></span><div class="cal-cls"></div></div>' +
+            '<div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+        w.querySelector(".ac-top b").textContent = o.title;
+        w.querySelector(".ac-top small").textContent = o.text;
+        w.querySelector(".cal-who span").textContent = CL("Kelas yang masuk", "Which classes come in");
+        w.querySelector(".ac-cancel").textContent = o.remove ? CL("Jadikan libur", "Make day off") : CL("Batal", "Cancel");
+        if (o.remove) w.querySelector(".ac-cancel").classList.add("cal-rm");
+        w.querySelector(".ac-ok").textContent = o.ok;
+        const box = w.querySelector(".cal-cls"), okBtn = w.querySelector(".ac-ok");
+        function paint() {
+            box.innerHTML = '<button type="button" data-c="" class="' + (pick === null ? "on" : "") + '">' + CL("Semua kelas", "All classes") + '</button>' +
+                o.classes.map(function (c) { return '<button type="button" data-c="' + escapeHTML(c) + '" class="' + (pick && pick.indexOf(c) !== -1 ? "on" : "") + '">' + escapeHTML(c) + '</button>'; }).join("");
+            okBtn.disabled = pick !== null && !pick.length;
+        }
+        paint();
+        box.addEventListener("click", function (e) {
+            const b = e.target.closest("[data-c]");
+            if (!b) return;
+            const c = b.getAttribute("data-c");
+            if (!c) pick = null;
+            else {
+                pick = pick || [];
+                pick = pick.indexOf(c) !== -1 ? pick.filter(function (x) { return x !== c; }) : pick.concat(c);
+                if (pick.length === o.classes.length) pick = null;   // every class picked = all classes
+            }
+            paint();
+        });
+        function close(v) { w.classList.add("out"); setTimeout(function () { w.remove(); }, 160); done(v); }
+        w.addEventListener("click", function (e) { if (e.target === w) close(null); });
+        w.querySelector(".ac-cancel").addEventListener("click", function () { close(o.remove ? "remove" : null); });
+        okBtn.addEventListener("click", function () { close({ classes: pick }); });
+        document.body.appendChild(w);
+        requestAnimationFrame(function () { w.classList.add("in"); });
+    });
+}
 async function adminDayTap(key) {
     const ev = eventByDate[key], red = redByDate[key] && redByDate[key].kind === "libur", offDay = red || weeklyOff.indexOf(isoOf(key)) !== -1;
     if (!offDay) return false;
     const madeOpen = ev && ev.attendance_open === true && ev.type === "event";
     if (ev && !madeOpen) return false;
-    await needSheet();
+    const classes = await loadClassList();
     const when = new Date(key + "T00:00:00").toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { weekday: "long", day: "numeric", month: "long" });
-    if (!madeOpen) {
-        const ok = await attConfirm({ title: CL("Jadikan hari masuk?", "Make it a school day?"),
-            text: CL(when + (red ? " tanggal merah: " + redByDate[key].name : " biasanya libur") + ". Kalau dijadikan hari masuk, absen dibuka dan jadwal pelajaran hari itu muncul untuk semua.", when + " is normally a day off. As a school day, check-in opens and that day's lessons show for everyone."),
-            ok: CL("Jadikan hari masuk", "Make school day"), tone: "primary" });
-        if (!ok) return true;
-        const r = await supabaseClient.from("holidays").insert({ date: key, label: CL("Masuk sekolah", "School day"), type: "event", attendance_open: true });
-        if (r.error) { showToast(CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return true; }
-        showToast(CL(when + " jadi hari masuk", when + " is now a school day"), "success");
-    } else {
-        const ok = await attConfirm({ title: CL("Kembalikan jadi libur?", "Back to a day off?"), text: CL(when + " akan libur lagi seperti biasa.", when + " goes back to being a day off."), ok: CL("Jadikan libur", "Make day off") });
-        if (!ok) return true;
-        const r = await supabaseClient.from("holidays").delete().eq("id", ev.id);
-        if (r.error) { showToast(CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return true; }
-        showToast(CL(when + " libur lagi", when + " is a day off again"), "success");
+    const why = red ? CL(" tanggal merah: " + redByDate[key].name + ".", " is a national holiday: " + redByDate[key].name + ".") : CL(" biasanya libur.", " is normally a day off.");
+    const res = await classSheet({
+        title: madeOpen ? CL("Hari masuk", "School day") : CL("Jadikan hari masuk?", "Make it a school day?"),
+        text: when + why + CL(" Kelas yang dipilih absennya dibuka dan jadwal pelajarannya muncul. Kelas lain tetap libur.", " The chosen classes get check-in and their lessons; other classes stay off."),
+        classes: classes, selected: madeOpen ? (ev.classes || null) : null, remove: madeOpen,
+        ok: madeOpen ? CL("Simpan", "Save") : CL("Jadikan hari masuk", "Make school day")
+    });
+    if (!res) return true;
+    let r;
+    if (res === "remove") r = await supabaseClient.from("holidays").delete().eq("id", ev.id);
+    else {
+        const label = res.classes ? CL("Masuk: ", "School: ") + res.classes.join(", ") : CL("Masuk sekolah", "School day");
+        const row = { date: key, label: label, type: "event", attendance_open: true, classes: res.classes };
+        r = madeOpen ? await supabaseClient.from("holidays").update(row).eq("id", ev.id) : await supabaseClient.from("holidays").insert(row);
     }
+    if (r.error) { showToast(/classes/.test(r.error.message || "") ? CL("Jalankan masuk_per_kelas.sql dulu di Supabase.", "Run masuk_per_kelas.sql in Supabase first.") : CL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error"); return true; }
+    showToast(res === "remove" ? CL(when + " libur lagi", when + " is a day off again") : CL(when + " jadi hari masuk", when + " is now a school day"), "success");
     await loadEvents(); renderCalendar(); renderUpcomingEvents();
     return true;
 }

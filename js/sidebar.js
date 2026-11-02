@@ -82,6 +82,7 @@
             ["admin-attendance.html", "checkin", "Attendance", "Absensi"],
             ["qr-send.html", "qr", "Send QR", "Kirim QR"],
             ["admin-spp.html", "wallet", "Money", "Keuangan", "", ["admin-savings.html", "kas.html"]],
+            null,
             ["admin-students.html", "users", "People", "Pengguna", "", ["admin-teachers.html", "admin-parents.html", "admin-development.html"]],
             ["admin-schedule.html", "cal", "Schedule", "Jadwal", "", ["admin-lessons.html", "admin-piket.html", "calendar.html"]],
             ["admin-broadcast.html", "msg", "Messages", "Pesan", "", ["admin-leave.html", "admin-feedback.html", "admin-information.html"]],

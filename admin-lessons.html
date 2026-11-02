@@ -81,7 +81,7 @@ async function init() {
         supabaseClient.from("profiles").select("id,name").eq("role", "guru").order("name", { ascending: true })
     ]);
     teachers = teachersRes.data || [];
-    await loadAll();
+    await Promise.all([loadAll(), Lessons.loadWeek()]);
     const set = new Set((studentsRes.data || []).map(function (s) { return s.class; }).filter(Boolean));
     all.forEach(function (x) { set.add(x.class); });
     classes = Array.from(set).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
@@ -104,6 +104,13 @@ async function loadAll() {
     document.getElementById("lsnRooms").innerHTML = Array.from(rooms).sort().map(function (s) { return '<option value="' + esc(s) + '">'; }).join("");
 }
 
+// the days to plan: weekly days off (Kalender) are hidden, unless the admin opened that day this week
+function schoolDays() {
+    const days = [1, 2, 3, 4, 5, 6];
+    if (classLessons().some(function (x) { return Number(x.day) === 7; }) || Lessons.week().open[7]) days.push(7);   // Sunday only when used
+    const on = days.filter(Lessons.dayOn);
+    return on.length ? on : days;
+}
 function classLessons() { return all.filter(function (x) { return x.class === selClass; }); }
 
 function render() {
@@ -113,8 +120,8 @@ function render() {
         return '<button type="button" data-class="' + esc(c) + '" class="' + (c === selClass ? "on" : "") + '">' + esc(c) + (n ? '<small>' + n + '</small>' : '') + '</button>';
     }).join("") : '<p class="v2-empty">' + tr("lsn_no_classes") + '</p>';
 
-    const mine = classLessons(), days = [1, 2, 3, 4, 5, 6];
-    if (mine.some(function (x) { return Number(x.day) === 7; }) || selDay === 7) days.push(7);   // Sunday only when used
+    const days = schoolDays(), mine = classLessons();
+    if (days.indexOf(selDay) === -1) selDay = days[0];
     document.getElementById("lsnDays").innerHTML = days.map(function (d) {
         const n = Lessons.forDay(mine, d).length;
         return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === selDay) + '" class="' + (d === selDay ? "on" : "") + (d === 7 && !n ? " faint" : "") + '"><span>' + Lessons.dayShort(d) + '</span><small>' + (n ? n + " " + tr("lsn_count") : "–") + '</small></button>';
@@ -171,7 +178,7 @@ function openForm(x) {
     w.className = "ac-wrap ac-confirm lsn-sheet";
     w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div>' +
         '<div class="lsn-form">' +
-        '<label class="lsn-f"><span>' + tr("lsn_f_day") + '</span><div class="lsn-daypick">' + [1, 2, 3, 4, 5, 6, 7].map(function (d) { return '<button type="button" data-d="' + d + '">' + Lessons.dayShort(d) + '</button>'; }).join("") + '</div></label>' +
+        '<label class="lsn-f"><span>' + tr("lsn_f_day") + '</span><div class="lsn-daypick">' + schoolDays().concat(editing && schoolDays().indexOf(Number(x.day)) === -1 ? [Number(x.day)] : []).map(function (d) { return '<button type="button" data-d="' + d + '">' + Lessons.dayShort(d) + '</button>'; }).join("") + '</div></label>' +
         '<div class="lsn-f-row"><label class="lsn-f"><span>' + tr("lsn_f_start") + '</span><input type="text" class="v2-time" id="fStart"></label>' +
         '<label class="lsn-f"><span>' + tr("lsn_f_end") + '</span><input type="text" class="v2-time" id="fEnd"></label></div>' +
         '<label class="lsn-f"><span>' + tr("lsn_f_subject") + '</span><input type="text" id="fSubject" list="lsnSubjects" maxlength="60" autocomplete="off"></label>' +

@@ -219,6 +219,8 @@ async function _attLoadPeriod() {
  * Same rule as public.att_day_open() in the database (attendance_rules.sql):
  *   - an agenda date switched OFF (or an old "holiday" row)  -> closed
  *   - an agenda date switched ON                             -> open, even on a weekend
+ *   - a national red date (national_holidays)                 -> closed
+ *   - a weekly day off of the school (Kalender)               -> closed
  *   - otherwise the class's active days; no schedule         -> every day allowed
  */
 var _attRulesP = {};
@@ -226,7 +228,9 @@ function attDayRules(cls) {
     var k = cls || "";
     if (!_attRulesP[k]) _attRulesP[k] = Promise.all([
         cls ? supabaseClient.from("attendance_schedules").select("*").eq("class", cls).maybeSingle() : Promise.resolve({ data: null }),
-        supabaseClient.from("holidays").select("*")
+        supabaseClient.from("holidays").select("*"),
+        supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
+        supabaseClient.from("national_holidays").select("date").eq("kind", "libur")
     ]).then(function (r) {
         var agenda = {};
         ((r[1] && r[1].data) || []).forEach(function (h) {
@@ -236,7 +240,10 @@ function attDayRules(cls) {
             if (h.attendance_open === true) a.open = true;
             if (!a.label) a.label = h.label || "";
         });
-        return { schedule: (r[0] && r[0].data) || null, agenda: agenda };
+        var off = (r[2] && !r[2].error && r[2].data && r[2].data.weekly_off) || [];
+        var red = {};
+        ((r[3] && !r[3].error && r[3].data) || []).forEach(function (n) { red[n.date] = true; });
+        return { schedule: (r[0] && r[0].data) || null, agenda: agenda, weeklyOff: off.map(Number), red: red };
     }, function () { return { schedule: null, agenda: {} }; });
     return _attRulesP[k];
 }
@@ -244,6 +251,9 @@ function attDayOpen(dateStr, rules) {
     var a = rules.agenda[dateStr];
     if (a && a.closed) return false;
     if (a && a.open) return true;
+    if (rules.red && rules.red[dateStr]) return false;   // national red date (kalender_libur.sql)
+    var iso0 = new Date(dateStr + "T00:00:00").getDay() || 7;
+    if (rules.weeklyOff && rules.weeklyOff.indexOf(iso0) !== -1) return false;   // weekly day off (kalender_libur.sql)
     var s = rules.schedule;
     if (!s || !s.active_days || !s.active_days.length) return true;
     var d = new Date(dateStr + "T00:00:00"), iso = d.getDay() === 0 ? 7 : d.getDay();

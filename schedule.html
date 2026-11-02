@@ -110,10 +110,12 @@ function renderNow() {
     box.innerHTML = html;
 }
 
+// weekly days off (Kalender) don't show, unless the admin opened that day this week
 function availableDays() {
     const days = [1, 2, 3, 4, 5, 6];
-    if (lessons.some(function (x) { return Number(x.day) === 7; })) days.push(7);
-    return days;
+    if (lessons.some(function (x) { return Number(x.day) === 7; }) || Lessons.week().open[7]) days.push(7);
+    const on = days.filter(Lessons.dayOn);
+    return on.length ? on : days;
 }
 
 function renderDays() {
@@ -188,6 +190,7 @@ async function init() {
     if (!user) return;
     const { data: me } = await supabaseClient.from("profiles").select("role,class,name").eq("id", user.id).maybeSingle();
     role = (me && me.role) || "murid";
+    await Lessons.loadWeek();
     const sub = document.getElementById("lsnSub");
     homePage = role === "guru" ? "teacher.html" : role === "orangtua" ? "parent.html" : role === "admin" ? "settings.html" : "index.html";
 
@@ -214,7 +217,7 @@ async function init() {
         if (classes.length) {
             sel.hidden = false;
             sel.innerHTML = classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join("");
-            const pick = function () { lessons = all.filter(function (x) { return x.class === sel.value; }); sub.textContent = sel.value; renderAll(); };
+            const pick = function () { lessons = all.filter(function (x) { return x.class === sel.value; }); sub.textContent = sel.value; if (!availableDays().includes(selectedDay)) selectedDay = availableDays()[0]; renderAll(); };
             sel.addEventListener("change", pick);
             pick();
             startTick();
@@ -226,7 +229,7 @@ async function init() {
         lessons = me && me.class ? await fetchLessons({ cls: me.class }) : [];
         loadLsnTasks(user.id, (me && me.class) || "");
     }
-    if (!availableDays().includes(selectedDay)) selectedDay = 1;
+    if (!availableDays().includes(selectedDay)) selectedDay = availableDays()[0];
     renderAll();
     startTick();
 }

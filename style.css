@@ -5019,3 +5019,23 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 .lsn-f-hint{margin:0;font-size:12.5px;line-height:1.45;color:#3F6212;background:#F3FBE0;padding:10px 12px;border-radius:12px}
 .lsn-f-hint[hidden]{display:none}
 html[data-theme="dark"] .lsn-f-hint{background:#1F2A10;color:#C6F432}
+/* Kalender (admin): weekly days off */
+.cal-off{margin-top:16px}
+.cal-off-head{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.cal-off-head b{font-size:15px;color:#14162B}
+.cal-off-head small{font-size:12.5px;line-height:1.45;color:#8A8FA8}
+.cal-off-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-off-days button{height:40px;border:none;border-radius:12px;background:#F1F2F6;color:#14162B;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.cal-off-days button.on{background:#B91C1C;color:#fff}
+.cal-off-days button:disabled{opacity:.6}
+html[data-theme="dark"] .cal-off-head b{color:#EDEDED}
+html[data-theme="dark"] .cal-off-days button{background:#1C1C1E;color:#EDEDED}
+html[data-theme="dark"] .cal-off-days button.on{background:#F87171;color:#14162B}
+/* Kalender: national red dates (national_holidays) like a normal wall calendar */
+.calendar-days .red-day{background:#FEE2E2;color:#B91C1C;font-weight:800}
+.calendar-days .red-num{color:#B91C1C!important}
+.calendar-days .cuti-day{background:#FFF1F2;color:#E11D48;font-weight:700;box-shadow:inset 0 0 0 1.5px #FECDD3}
+.legend.red{background:#DC2626}.legend.cuti{background:#FDA4AF}
+html[data-theme="dark"] .calendar-days .red-day{background:#3B1414;color:#FCA5A5}
+html[data-theme="dark"] .calendar-days .red-num{color:#FCA5A5!important}
+html[data-theme="dark"] .calendar-days .cuti-day{background:#2A1418;color:#FDA4AF;box-shadow:inset 0 0 0 1.5px #4C1D26}

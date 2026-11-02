@@ -97,6 +97,7 @@ self.addEventListener("push", function (event) {
     event.waitUntil(self.registration.showNotification(title, {
         body: data.body || "",
         badge: "badge-96.png?v=2",          // small white "A" in the status bar (Android)
+        icon: "notif-blank.png",            // see-through: no picture on the right (Chrome would otherwise draw a grey letter)
         tag: data.tag || undefined,
         renotify: !!data.tag,
         // "Absen sudah dibuka" stays on screen until the student taps or swipes it (not on iPhone)

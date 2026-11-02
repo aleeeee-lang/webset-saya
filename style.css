@@ -5114,3 +5114,16 @@ html.is-admin-home .v2-hero{padding:18px 18px 16px}
 .ah-quick a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:#fff;color:#14162B;text-decoration:none;font-size:11px;font-weight:700;text-align:center;line-height:1.25}
 html[data-theme="dark"] .ah-quick a{background:#1C1C1E;color:#EDEDED}
 @media (min-width:1024px){ body.has-side .v2-home.is-admin #ahQuick{display:none} }
+/* Rekap sesi: two classes per line, the class box is the bar */
+.ls-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+@media (min-width:1024px){.ls-grid2{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ls-c{position:relative;overflow:hidden;display:flex;align-items:center;gap:6px;min-width:0;padding:8px 10px;border:none;border-radius:12px;background:rgba(255,255,255,.07);color:#fff;font:inherit;text-align:left;cursor:pointer}
+.ls-c i{position:absolute;left:0;top:0;bottom:0;background:rgba(198,244,50,.28);transition:width .5s}
+.ls-c.ok i{background:rgba(245,196,81,.3)}.ls-c.low i{background:rgba(255,138,142,.3)}
+.ls-c.open{box-shadow:inset 0 0 0 1.5px #C6F432}
+.ls-c-name{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;font-size:12.5px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-c-name small{font-size:11px;font-weight:600;color:#C9CBDA;overflow:hidden;text-overflow:ellipsis}
+.ls-c .ls-hadir{position:relative;flex-shrink:0;font-size:14px;font-weight:800}
+.ls-c .ls-hadir small{font-size:10.5px;color:#C9CBDA;font-weight:600}
+.ls-open1{margin-top:8px}
+.ls-open1 .ls-s{background:rgba(255,255,255,.05)}

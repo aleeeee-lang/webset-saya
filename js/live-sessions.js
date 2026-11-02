@@ -35,15 +35,13 @@
     }
 
     // many lessons at once: one thin row per class (lowest attendance first); tap a row for its full card
-    function sessionRow(s, isOpen, missOpen) {
+    // many lessons at once: two classes per line; the class box fills up with its attendance (the bar is the box)
+    function sessionRow(s, isOpen) {
         var pct = s.total ? Math.round(s.hadir / s.total * 100) : 0, key = s.class + "|" + s.start;
         var tone = pct >= 90 ? "good" : pct >= 75 ? "ok" : "low";
-        return '<div class="ls-r' + (isOpen ? " open" : "") + '" data-key="' + esc(key) + '">' +
-            '<button type="button" class="ls-r-btn" aria-expanded="' + (isOpen ? "true" : "false") + '"><span class="ls-class">' + esc(s.class) + '</span>' +
-            '<span class="ls-r-sub">' + esc(s.subject || "-") + '</span><span class="ls-r-bar ' + tone + '"><i style="width:' + pct + '%"></i></span>' +
-            '<b class="ls-hadir">' + s.hadir + '<small>/' + s.total + '</small></b>' +
-            '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>' +
-            (isOpen ? sessionCard(s, missOpen) : "") + '</div>';
+        return '<button type="button" class="ls-c ' + tone + (isOpen ? " open" : "") + '" data-key="' + esc(key) + '" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
+            '<i style="width:' + pct + '%"></i><span class="ls-c-name">' + esc(s.class) + '<small>' + esc(s.subject || "-") + '</small></span>' +
+            '<b class="ls-hadir">' + s.hadir + '<small>/' + s.total + '</small></b></button>';
     }
 
     function classRow(c) {
@@ -61,10 +59,11 @@
         el.classList.add("ls-card");
         el.hidden = true;
         el.addEventListener("click", function (e) {
-            var rb = e.target.closest(".ls-r-btn");
+            var rb = e.target.closest(".ls-c");
             if (rb) {
-                var k = rb.parentNode.getAttribute("data-key");
-                rowOpen[k] = !rowOpen[k];
+                var k = rb.getAttribute("data-key"), was = rowOpen[k];
+                rowOpen = {};                      // one open at a time
+                if (!was) rowOpen[k] = true;
                 if (last) render(last);
                 return;
             }
@@ -101,8 +100,12 @@
             var t = (d.now || "").slice(11, 19).replace(/:/g, ".");
             var body = ses.length
                 ? (ses.length > 2
-                    ? '<div class="ls-rows2">' + ses.slice().sort(function (a, b) { return (a.total ? a.hadir / a.total : 1) - (b.total ? b.hadir / b.total : 1); })
-                        .map(function (s) { var k = s.class + "|" + s.start; return sessionRow(s, rowOpen[k], open[k]); }).join("") + "</div>"
+                    ? (function () {
+                        var sorted = ses.slice().sort(function (a, b) { return (a.total ? a.hadir / a.total : 1) - (b.total ? b.hadir / b.total : 1); });
+                        var opened = sorted.filter(function (x) { return rowOpen[x.class + "|" + x.start]; })[0];
+                        return '<div class="ls-grid2">' + sorted.map(function (x) { return sessionRow(x, rowOpen[x.class + "|" + x.start]); }).join("") + "</div>" +
+                            (opened ? '<div class="ls-open1">' + sessionCard(opened, open[opened.class + "|" + opened.start]) + "</div>" : "");
+                    })()
                     : '<div class="ls-list">' + ses.map(function (s) { return sessionCard(s, open[s.class + "|" + s.start]); }).join("") + "</div>")
                 : '<p class="ls-empty">' + esc(curStudent ? L("Tidak ada pelajaran yang sedang berlangsung. Kehadiran kelasmu hari ini:", "No lesson right now. Your class today:")
                                                           : L("Tidak ada pelajaran yang sedang berlangsung. Rekap hari ini per kelas:", "No lesson is going on right now. Today per class:")) + "</p>" +

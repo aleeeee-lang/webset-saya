@@ -5222,3 +5222,10 @@ html[data-theme="dark"] .adm-tabs a i{color:#fff!important}
 /* dark mode: dark text on the lime "add" buttons (the page-wide white text rule was winning) */
 html[data-theme="dark"] .adm-add button:first-child:not(.on),html[data-theme="dark"] .adm-add button:first-child:not(.on) *{color:#14162B!important}
 html[data-theme="dark"] .adm-add button+button:not(.on),html[data-theme="dark"] .adm-add button+button:not(.on) *,html[data-theme="dark"] .adm-add button.on,html[data-theme="dark"] .adm-add button.on *{color:#EDEDED!important}
+/* Juara tabs: same look as the other tab bars (white track; active navy, lime in dark mode) */
+.jr-tabs{border-radius:18px;padding:4px;gap:4px}
+.jr-tabs button{border-radius:14px;font-size:14px;font-weight:600;color:#4A4F6A}
+.jr-tabs button.on{background:#14162B;color:#fff;font-weight:700}
+html[data-theme="dark"] .jr-tabs{background:#121212}
+html[data-theme="dark"] .jr-tabs button{color:#9A9A9F}
+html[data-theme="dark"] .jr-tabs button.on{background:#C6F432;color:#14162B}

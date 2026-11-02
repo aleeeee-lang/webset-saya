@@ -159,6 +159,7 @@
             tzInit();
             if (!(await load())) return;
             $("locCard").hidden = false;
+            if (location.hash === "#locCard") setTimeout(function () { try { $("locCard").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 150);
             $("locEnabled").addEventListener("change", syncUI);
             $("locRadius").addEventListener("input", syncUI);
             $("locLat").addEventListener("input", syncUI);

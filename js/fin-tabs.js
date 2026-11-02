@@ -17,6 +17,23 @@
         return '<a href="' + t[0] + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + (id ? t[1] : t[2]) + '</a>';
     }).join("");
     var head = main.querySelector(".attendance-intro, .v2-head, header");
+    // one place, one title: every tab says "Keuangan" and has no back button (it's a bottom-menu page)
+    if (head) {
+        var title = id ? "Keuangan" : "Money";
+        if (head.classList.contains("attendance-intro")) {
+            var h = document.createElement("header");
+            h.className = "v2-head v3-head fin-head";
+            h.innerHTML = "<h1></h1>";
+            h.firstChild.textContent = title;
+            head.replaceWith(h);
+            head = h;
+        } else {
+            var t = head.querySelector("h1, h2");
+            if (t) { t.removeAttribute("data-i18n"); t.textContent = title; }
+            var back = head.querySelector(".v2-back, .v3-back");
+            if (back) back.remove();
+        }
+    }
     if (head && head.parentNode === main) head.insertAdjacentElement("afterend", nav);
     else main.insertBefore(nav, main.firstChild);
     document.documentElement.classList.add("fin-admin");

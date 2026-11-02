@@ -81,8 +81,8 @@ async function qsInit() {
     const user = await requireLogin();
     if (!user) return;
     document.getElementById("qsTitle").textContent = L("Kirim QR absen", "Send check-in QR");
-    document.getElementById("qsHint").textContent = L("Setiap siswa di kelas ini dapat QR-nya sendiri lewat notifikasi dan di halaman Absen → QR. QR hanya bisa dipakai di area sekolah, sekali, dan hilang saat waktunya habis.",
-        "Every student of the class gets their own QR as a notification and on Check in → QR. It only works inside the school area, once, and disappears when the time is over.");
+    document.getElementById("qsHint").textContent = L("Tiap siswa dapat QR sendiri. Cuma bisa dipakai sekali, di area sekolah.",
+        "Every student gets their own QR. It works once, inside the school area.");
     document.getElementById("qsClassLabel").textContent = L("Kelas", "Class");
     document.getElementById("qsDurLabel").textContent = L("Berlaku selama", "Open for");
     document.getElementById("qsSend").textContent = L("Kirim QR ke siswa", "Send QR to students");
@@ -114,7 +114,9 @@ async function qsInit() {
     if (!loc || loc.lat == null || loc.lng == null) {
         const w = document.getElementById("qsNoLoc");
         w.hidden = false;
-        w.textContent = L("Lokasi sekolah belum diatur, jadi siswa belum bisa absen pakai QR. Atur dulu di Kelola Jadwal → Lokasi absen.", "The school location isn't set, so students can't check in with the QR yet. Set it in Schedule → Check-in location.");
+        w.innerHTML = '<span></span><a href="admin-schedule.html#locCard"></a>';
+        w.firstChild.textContent = L("Lokasi sekolah belum diatur, jadi QR belum bisa dipakai.", "The school location isn't set, so the QR can't be used yet.");
+        w.lastChild.textContent = L("Atur lokasi", "Set location");
     }
 
     document.querySelectorAll("#qsDur button").forEach(function (b) {

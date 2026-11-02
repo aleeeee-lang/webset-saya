@@ -1239,7 +1239,7 @@ Object.assign(translations, {
     qr_hint: { en: "This QR is yours only. A quick photo is taken as proof.", id: "QR ini khusus untukmu. Foto singkat diambil sebagai bukti." },
     qr_invalid: { en: "This QR isn't yours or can't be used.", id: "QR ini bukan milikmu atau tidak bisa dipakai." },
     qr_expired: { en: "The QR has expired. Ask your teacher to send it again.", id: "QR sudah tidak berlaku. Minta guru mengirim ulang." },
-    qr_no_school: { en: "The school location isn't set yet. Ask the admin to set it in Kelola Jadwal.", id: "Lokasi sekolah belum diatur. Minta admin mengaturnya di Kelola Jadwal." },
+    qr_no_school: { en: "The school location isn't set yet. Ask the admin to set it in Manage → Schedule.", id: "Lokasi sekolah belum diatur. Minta admin mengaturnya di Kelola → Jadwal." },
     menu_qr_send: { en: "Send check-in QR", id: "Kirim QR absen" },
     toast_pick_status_first: { en: "Pick today's status first (Hadir, Izin, Sakit or Alpa).", id: "Pilih status hari ini dulu (Hadir, Izin, Sakit, atau Alpa)." },
     toast_reason_needed: { en: "Write your reason first.", id: "Tulis alasanmu dulu ya." },

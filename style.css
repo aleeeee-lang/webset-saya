@@ -4990,3 +4990,7 @@ html[data-theme="dark"] .adm-add button{background:#C6F432;color:#14162B}
 html[data-theme="dark"] .adm-add button+button{background:#1C1C1E;color:#EDEDED;box-shadow:inset 0 0 0 1.5px #2C2C2E}
 html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
 .adm-fold[hidden]{display:none!important}
+.qs-warn{display:flex;align-items:center;gap:10px}
+.qs-warn span{flex:1}
+.qs-warn a{flex-shrink:0;padding:7px 12px;border-radius:10px;background:#9A5B00;color:#fff;font-weight:700;text-decoration:none;font-size:12.5px}
+.fin-head{margin-bottom:6px}

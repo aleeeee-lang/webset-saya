@@ -56,8 +56,9 @@
             ["admin-feedback.html", L("Saran baru dari siswa", "New suggestions"), n(p.feedback)]
         ];
         var all0 = items.every(function (x) { return !x[2]; });
-        return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2>' +
-            (all0 ? '<span class="ah-done">' + ic("ok", 14) + esc(L("Semua beres", "All clear")) + '</span>' : '') + '</div>' +
+        if (all0) return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2><span class="ah-done">' + ic("ok", 14) + esc(L("Semua beres", "All clear")) + '</span></div>';
+        items = items.filter(function (x) { return x[2]; });
+        return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2></div>' +
             '<div class="tc-list ah-todo2">' + items.map(function (x) {
                 return '<a class="tc-row" href="' + x[0] + '"><span class="ah-n' + (x[2] ? " has" : "") + '">' + fmt(x[2]) + '</span><b>' + esc(x[1]) + '</b>' + ic("go", 18) + '</a>';
             }).join("") + '</div>';

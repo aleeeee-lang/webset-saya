@@ -5178,3 +5178,5 @@ html[data-theme="dark"] .fin-tabs a.on,html[data-theme="dark"] .adm-tabs a.on{ba
 html[data-theme="dark"] .tc-classes{background:#121212}
 html[data-theme="dark"] .tc-classes button{background:transparent;color:#9A9A9F}
 html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
+.tc-classes{width:100%;align-self:stretch}
+.tc-classes button{flex:1 1 0;min-width:max-content}

@@ -95,7 +95,8 @@ self.addEventListener("push", function (event) {
     var title = data.title || "Attendreem";
     event.waitUntil(self.registration.showNotification(title, {
         body: data.body || "",
-        badge: "badge-96.png",
+        badge: "badge-96.png?v=2",          // small white "A" in the status bar (Android)
+        icon: "favicon.png?v=4",            // the colourful app icon next to the message
         tag: data.tag || undefined,
         renotify: !!data.tag,
         // "Absen sudah dibuka" stays on screen until the student taps or swipes it (not on iPhone)

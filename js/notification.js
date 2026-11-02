@@ -359,7 +359,7 @@ async function fetchExamReminders(userId) {
             const key = "exam:" + h.id + ":" + stage;
             if (seen.indexOf(key) !== -1) return;
             const label = translations[stage === "h0" ? "notif_exam_today" : stage === "h1" ? "notif_exam_tomorrow" : "notif_exam_soon"][lang].replace("{n}", dd);
-            addNotification(userId, "📝 " + label + " " + (h.label || ""));
+            addNotification(userId, label + " " + (h.label || ""));
             seen.unshift(key);
         });
         saveTaskReminded(userId, seen);
@@ -388,7 +388,7 @@ async function fetchSppReminders(userId) {
             const key = "spp:" + h.id + ":" + stage;
             if (seen.indexOf(key) !== -1) return;
             const label = translations[stage === "h0" ? "notif_spp_today" : stage === "h1" ? "notif_spp_tomorrow" : "notif_spp_soon"][lang].replace("{n}", dd);
-            addNotification(userId, "💳 " + label + (h.label ? " " + h.label : ""));
+            addNotification(userId, label + (h.label ? " " + h.label : ""));
             seen.unshift(key);
         });
         saveTaskReminded(userId, seen);

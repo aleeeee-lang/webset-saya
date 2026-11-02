@@ -191,7 +191,7 @@ Deno.serve(async (req) => {
             if (noLessons.has(p.id) || sentSet.has(l.id + ":" + p.id)) continue;
             msgs.push({
               user: p.id,
-              title: "📚 " + at + " · " + l.subject,
+              title: at + " · " + l.subject,
               body: p.teacher
                 ? "Kamu mengajar " + l.class + where + " — mulai " + mins + " menit lagi"
                 : "Mulai " + mins + " menit lagi" + where + (l.teacher_name ? " · " + l.teacher_name : ""),
@@ -228,7 +228,7 @@ Deno.serve(async (req) => {
         const left = close ? Math.max(5, toMin(close) - nowMin) : 120;
         for (const st of (studs ?? []) as { id: string; status: string | null }[]) {
           if (st.status === "inactive" || skip.has(st.id) || noAttOpen.has(st.id)) continue;
-          msgs.push({ user: st.id, title: "🔔 Absen sudah dibuka", body: "Absen dibuka" + until + ". Tempel sidik jari atau pakai QR dari guru.", url: "attendance.html", tag: "attopen-" + todayStr, ttl: left * 60 });
+          msgs.push({ user: st.id, title: "Absen sudah dibuka", body: "Absen dibuka" + until + ". Tempel sidik jari atau pakai QR dari guru.", url: "attendance.html", tag: "attopen-" + todayStr, ttl: left * 60 });
           openLog.push({ class: s.class, day: todayStr, user_id: st.id });
         }
       }
@@ -248,9 +248,9 @@ Deno.serve(async (req) => {
           const firstDay = !keys.has(prev + "|" + (e.label ?? ""));
           const name = e.label || "Ujian";
           const wd = DAYN[new Date(e.date + "T00:00:00Z").getUTCDay()];
-          if (dd === 0 && hour >= 6) due.push({ e, stage: "h0", title: "📝 Hari ini ujian: " + name, body: "Semangat! Cek lagi alat tulis dan jadwalnya ya." });
-          else if (firstDay && dd === 1 && hour >= 17) due.push({ e, stage: "h1", title: "📝 Besok ujian: " + name, body: "Jangan lupa siapin alat tulis dan istirahat yang cukup." });
-          else if (firstDay && dd === 3 && hour >= 17) due.push({ e, stage: "h3", title: "📝 3 hari lagi: " + name, body: "Mulai " + wd + ". Yuk mulai belajar dari sekarang!" });
+          if (dd === 0 && hour >= 6) due.push({ e, stage: "h0", title: "Hari ini ujian: " + name, body: "Semangat! Cek lagi alat tulis dan jadwalnya ya." });
+          else if (firstDay && dd === 1 && hour >= 17) due.push({ e, stage: "h1", title: "Besok ujian: " + name, body: "Jangan lupa siapin alat tulis dan istirahat yang cukup." });
+          else if (firstDay && dd === 3 && hour >= 17) due.push({ e, stage: "h3", title: "3 hari lagi: " + name, body: "Mulai " + wd + ". Yuk mulai belajar dari sekarang!" });
         }
         if (due.length) {
           const ids = due.map((d) => d.e.id);
@@ -301,7 +301,7 @@ Deno.serve(async (req) => {
         if (t.class && new Date(t.created_at).getTime() > now.getTime() - 30 * 60_000) {
           stage = "new"; title = "Tugas baru" + (t.subject ? " · " + t.subject : ""); body = t.title + " — deadline " + whenLabel(due, now);
         } else if (left <= H) {
-          stage = "soon"; title = "⏰ 1 jam lagi deadline!"; body = subj + t.title;
+          stage = "soon"; title = "1 jam lagi deadline!"; body = subj + t.title;
         } else if (dd === 0 && hour >= 6) {
           stage = "h0"; title = "Hari ini deadline: " + t.title; body = subj + "jam " + hhmm(due);
         } else if (dd === 1 && hour >= 17) {

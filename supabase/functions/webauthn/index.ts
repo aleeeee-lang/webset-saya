@@ -117,12 +117,12 @@ Deno.serve(async (req) => {
     const hasPush = new Set((subs ?? []).map((r: { user_id: string }) => r.user_id));
     const fpOff = new Set((prefs ?? []).filter((r: { admin_fp?: boolean }) => r.admin_fp === false).map((r: { user_id: string }) => r.user_id));
     for (const a of admins ?? []) {
-      if (hasPush.has(a.id) && !fpOff.has(a.id)) rows.push({ user_id: a.id, title: "👆 Sidik jari · Ganti HP", body: who + " mendaftarkan HP baru untuk absen sidik jari.", url: isTeacher ? "admin-teachers.html" : "admin-students.html", tag: "admin-fp-" + changeId });
+      if (hasPush.has(a.id) && !fpOff.has(a.id)) rows.push({ user_id: a.id, title: "Sidik jari · Ganti HP", body: who + " mendaftarkan HP baru untuk absen sidik jari.", url: isTeacher ? "admin-teachers.html" : "admin-students.html", tag: "admin-fp-" + changeId });
     }
     for (const p of isTeacher ? [] : parents ?? []) {
-      if (hasPush.has(p.parent_id)) rows.push({ user_id: p.parent_id, title: "👆 HP sidik jari anak diganti", body: (prof.name ?? "Anak Anda") + " mendaftarkan HP baru untuk absen sidik jari.", url: "parent.html", tag: "fp-" + changeId });
+      if (hasPush.has(p.parent_id)) rows.push({ user_id: p.parent_id, title: "HP sidik jari anak diganti", body: (prof.name ?? "Anak Anda") + " mendaftarkan HP baru untuk absen sidik jari.", url: "parent.html", tag: "fp-" + changeId });
     }
-    if (hasPush.has(user.id)) rows.push({ user_id: user.id, title: "👆 HP sidik jarimu diganti", body: "Kalau ini bukan kamu, segera lapor ke admin.", url: "attendance.html", tag: "fp-" + changeId });
+    if (hasPush.has(user.id)) rows.push({ user_id: user.id, title: "HP sidik jarimu diganti", body: "Kalau ini bukan kamu, segera lapor ke admin.", url: "attendance.html", tag: "fp-" + changeId });
     if (rows.length) await db.from("push_queue").insert(rows);
   };
 

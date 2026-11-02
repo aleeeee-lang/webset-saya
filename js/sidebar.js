@@ -57,21 +57,15 @@
             ["information.html", "info", "Information", "Informasi"],
             ["piket.html", "broom", "Duty Roster", "Piket"]
         ],
-        // same few places as the teacher home (the rest sits behind "Lainnya" there)
+        // same six places as the teacher home on the phone; "Lainnya" opens the rest in a small sheet
         guru: [
             ["teacher.html", "home", "Home", "Beranda"],
+            ["attendance.html", "checkin", "My check-in", "Absen saya", "", ["qr-send.html"]],
             ["teacher-class.html", "users", "Students", "Siswa", "", ["teacher-student.html"]],
             ["teacher-leave.html", "doc", "Leave", "Izin siswa"],
             ["tasks.html", "task", "Tasks", "Tugas"],
-            ["kas.html", "cash", "Class cash", "Kas kelas"],
             ["schedule.html", "book", "Schedule", "Jadwal"],
-            null,
-            ["attendance.html", "checkin", "My check-in", "Absen saya", "", ["qr-send.html"]],
-            ["juara.html", "trophy", "Champions", "Juara"],
-            ["goals.html", "target", "My goals", "Target saya"],
-            ["calendar.html", "cal", "Calendar", "Kalender"],
-            ["information.html", "info", "Information", "Informasi"],
-            ["settings.html", "gear", "Settings", "Pengaturan"]
+            ["#lainnya", "grid", "More", "Lainnya", "", ["kas.html", "juara.html", "goals.html", "calendar.html", "information.html", "settings.html"]]
         ],
         orangtua: [
             ["parent.html", "home", "Parent Portal", "Portal orang tua"],
@@ -189,6 +183,8 @@
         oldQ = oldQ ? oldQ.value : "";
         el.innerHTML = html;
         setupSearch(el, role, oldQ);
+        var more = el.querySelector('a[href="#lainnya"]');
+        if (more) more.addEventListener("click", function (e) { e.preventDefault(); openMore(); });
         var whoB = el.querySelector(".v2-side-who b"), whoS = el.querySelector(".v2-side-who small");
         if (whoB) whoB.textContent = name;
         if (whoS) whoS.textContent = sub;
@@ -202,6 +198,33 @@
         try { sessionStorage.setItem("att-side", JSON.stringify({ html: el.innerHTML, admin: role === "admin" })); } catch (e) {}
     }
 
+
+    /* ===== Teacher "Lainnya": the rest of the pages in a small sheet (same list as the home page) ===== */
+    var MORE_GURU = [
+        ["kas.html", "cash", "Class cash", "Kas kelas"],
+        ["juara.html", "trophy", "Champions", "Juara"],
+        ["goals.html", "target", "My goals", "Target saya"],
+        ["calendar.html", "cal", "Calendar", "Kalender"],
+        ["information.html", "info", "Information", "Informasi"],
+        ["settings.html", "gear", "Settings", "Pengaturan"]
+    ];
+    var sheetLoad = null;
+    function openMore() {
+        var id = lang() === "id";
+        function go() {
+            if (!window.attSheet) { location.href = "settings.html"; return; }
+            attSheet({ title: id ? "Lainnya" : "More", items: MORE_GURU.map(function (m) { return { value: m[0], label: id ? m[3] : m[2], icon: ic(m[1], 1.9) }; }) })
+                .then(function (v) { if (v) location.href = v; });
+        }
+        if (window.attSheet) return go();
+        if (!sheetLoad) sheetLoad = new Promise(function (ok) {
+            var sc = document.createElement("script");
+            sc.src = "js/avatarcrop.js?v=" + (window.attAppVer ? window.attAppVer() : Date.now());
+            sc.onload = ok; sc.onerror = ok;
+            document.head.appendChild(sc);
+        });
+        sheetLoad.then(go);
+    }
 
     /* ===== "+" on the photo: change / delete the photo right here (js/photo.js), no page change ===== */
     var photoLoad = null;

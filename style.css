@@ -5133,3 +5133,14 @@ html[data-theme="dark"] .ah-quick a{background:#1C1C1E;color:#EDEDED}
 .ls-c-name{font-size:12px;font-weight:700}
 .ls-c .ls-hadir{font-size:12px}
 .ls-c .ls-hadir small{font-size:10px}
+/* nicer colours for the class boxes */
+.ls-c{background:#23263F}
+.ls-c i{background:linear-gradient(90deg,rgba(198,244,50,.18),rgba(198,244,50,.42));box-shadow:inset -2px 0 0 #C6F432}
+.ls-c.ok i{background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(251,191,36,.4));box-shadow:inset -2px 0 0 #FBBF24}
+.ls-c.low i{background:linear-gradient(90deg,rgba(248,113,113,.16),rgba(248,113,113,.4));box-shadow:inset -2px 0 0 #F87171}
+.ls-c .ls-hadir{color:#C6F432}.ls-c.ok .ls-hadir{color:#FCD34D}.ls-c.low .ls-hadir{color:#FCA5A5}
+.ls-c .ls-hadir small{color:#8E92AE}
+.ls-c i,.ls-c.ok i,.ls-c.low i{box-shadow:none}
+.ls-c i{background:linear-gradient(90deg,rgba(198,244,50,.12),rgba(198,244,50,.38))}
+.ls-c.ok i{background:linear-gradient(90deg,rgba(251,191,36,.12),rgba(251,191,36,.36))}
+.ls-c.low i{background:linear-gradient(90deg,rgba(248,113,113,.12),rgba(248,113,113,.38))}

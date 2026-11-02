@@ -505,7 +505,7 @@ const translations = {
     label_agenda_att: { en: "Student check-in", id: "Absen siswa" },
     agenda_att_on: { en: "On", id: "On" },
     agenda_att_off: { en: "Off", id: "Off" },
-    agenda_att_hint_on: { en: "Students can check in on this date and it counts as a school day, even on a weekend.", id: "Siswa bisa absen di tanggal ini dan dihitung hari sekolah, walaupun hari libur akhir pekan." },
+    agenda_att_hint_on: { en: "Check-in goes on as usual on this date (following the class schedule, so not on a day off like Sunday).", id: "Absen tetap jalan seperti biasa di tanggal ini (ikut jadwal kelas, jadi hari libur seperti Minggu tetap tidak ada absen)." },
     agenda_att_hint_off: { en: "Nobody can check in on this date and it is not counted (no Alpa).", id: "Siswa tidak bisa absen di tanggal ini dan hari ini tidak dihitung (tidak ada Alpa)." },
     agenda_att_follow: { en: "Follows schedule", id: "Ikut jadwal" },
     toast_agenda_att_on: { en: "Check-in opened for this date.", id: "Absen dibuka untuk tanggal ini." },

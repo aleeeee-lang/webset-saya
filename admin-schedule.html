@@ -419,7 +419,9 @@ document.addEventListener("DOMContentLoaded", function () {
 async function setAgendaAtt(id, on, input) {
     const lang = getLang();
     input.disabled = true;
-    const { error } = await supabaseClient.from("holidays").update({ attendance_open: on }).eq("id", id);
+    const h0 = allHolidays.find(function (x) { return x.id === id; });
+    const val = on ? ((h0 && (h0.type || "holiday") === "holiday") ? true : null) : false;   // same rule as when adding
+    const { error } = await supabaseClient.from("holidays").update({ attendance_open: val }).eq("id", id);
     input.disabled = false;
     if (error) {
         input.checked = !on;
@@ -427,9 +429,9 @@ async function setAgendaAtt(id, on, input) {
         return;
     }
     const h = allHolidays.find(function (x) { return x.id === id; });
-    if (h) h.attendance_open = on;
+    if (h) h.attendance_open = val;
     const lbl = input.closest(".agenda-att-mini").querySelector("em");
-    if (lbl) lbl.textContent = translations[on ? "agenda_att_on" : "agenda_att_off"][lang];
+    if (lbl) lbl.textContent = translations[val === null ? "agenda_att_follow" : on ? "agenda_att_on" : "agenda_att_off"][lang];
     showToast(translations[on ? "toast_agenda_att_on" : "toast_agenda_att_off"][lang], "success");
 }
 
@@ -538,7 +540,11 @@ async function addHoliday() {
     btn.disabled = true;
     btn.textContent = translations.btn_saving[lang];
 
-    const attOpen = document.getElementById("holidayAttOpen").checked;
+    // "on" for an event (exam, SPP, ...) means "check-in goes on as usual": store nothing, so the
+    // class schedule still decides (no check-in on a Sunday just because the SPP date is on it).
+    // Only a holiday that stays open needs an explicit "open"; "off" always closes the day.
+    const attSwitch = document.getElementById("holidayAttOpen").checked;
+    const attOpen = attSwitch ? (type === "holiday" ? true : null) : false;
     let { error } = await supabaseClient
         .from("holidays")
         .insert({ date: date, label: label, type: type, attendance_open: attOpen });

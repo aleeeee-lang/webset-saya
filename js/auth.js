@@ -109,6 +109,18 @@ function requireLogin() {
 
 async function logoutUser() {
 
+    // ask first: one tap shouldn't log you out right away
+    if (window.attConfirm) {
+        const id = (typeof getLang === "function" ? getLang() : "id") === "id";
+        const ok = await attConfirm({
+            title: id ? "Keluar dari akun?" : "Log out?",
+            text: id ? "Kamu perlu masuk lagi dengan email dan kata sandi untuk memakai aplikasi." : "You'll need to sign in again with your email and password to use the app.",
+            ok: id ? "Keluar" : "Log out",
+            cancel: id ? "Batal" : "Cancel"
+        });
+        if (!ok) return;
+    }
+
     const {
         error
     } = await supabaseClient.auth.signOut();

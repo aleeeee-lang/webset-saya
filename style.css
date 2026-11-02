@@ -5213,3 +5213,5 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
   html[data-theme="dark"] .v2-side-bio:hover{color:#EDEDED}
   html[data-theme="dark"] .v2-side-bio.empty{background:rgba(198,244,50,.14);color:#C6F432}
 }
+/* admin tab pages: every title the same size (Lessons and Settings were bigger/bolder) */
+main .adm-head h1,main .adm-head h2{font-family:"Bricolage Grotesque","Plus Jakarta Sans",sans-serif!important;font-size:24px!important;font-weight:700!important;letter-spacing:-0.48px!important;line-height:normal!important}

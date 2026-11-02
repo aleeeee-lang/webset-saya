@@ -247,7 +247,7 @@ function setTheme(theme) {
 // Instagram-style swiping between bottom-menu pages and in-page tabs (phones)
 (function () {
     var w = document.createElement("script");
-    w.src = "js/swipe.js?v=20261102r";
+    w.src = "js/swipe.js?v=20261102s";
     w.defer = true;
     document.head.appendChild(w);
 })();
@@ -255,7 +255,7 @@ function setTheme(theme) {
 // Desktop sidebar (loaded on every page that includes theme.js)
 (function () {
     var s = document.createElement("script");
-    s.src = "js/sidebar.js?v=20261102r";
+    s.src = "js/sidebar.js?v=20261102s";
     s.defer = true;
     document.head.appendChild(s);
 })();

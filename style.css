@@ -5194,3 +5194,5 @@ html[data-theme="dark"] .tc-classes button.on{background:#C6F432;color:#14162B}
 
 /* sidebar: profile card on top (above Beranda), no menu icon */
 @media (min-width:1024px){ .v2-side .v2-side-user{margin:2px 0 10px!important} }
+/* sidebar: the line between Keuangan and Pengguna a little thicker */
+@media (min-width:1024px){ .v2-side .v2-side-sep{height:2px;border-radius:2px;background:#E2E3EA} html[data-theme="dark"] .v2-side .v2-side-sep{background:#2E2E30} }

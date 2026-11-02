@@ -226,6 +226,16 @@ function setTheme(theme) {
     document.head.appendChild(a);
 })();
 
+// Admin: related pages as one place with tabs on top (only the grouped admin pages)
+(function () {
+    var p = location.pathname.split("/").pop();
+    if (!/^(admin-(students|teachers|parents|development|schedule|lessons|piket|broadcast|leave|feedback|audit-log)|calendar|settings)\.html$/.test(p)) return;
+    var a = document.createElement("script");
+    a.src = "js/admin-tabs.js?v=" + (window.attAppVer ? window.attAppVer() : "1");
+    a.defer = true;
+    document.head.appendChild(a);
+})();
+
 // Numbers count up, charts grow (loaded on every page)
 (function () {
     var a = document.createElement("script");

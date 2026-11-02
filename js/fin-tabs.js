@@ -20,11 +20,21 @@
         if (Math.abs(gap - 46) > 0.5) nav.style.marginTop = (parseFloat(getComputedStyle(nav).marginTop) + 46 - gap) + "px";
     }
     function alignSoon() { requestAnimationFrame(align); }
-    alignSoon();
+    align();                                   // before the first paint: no visible move
     window.addEventListener("load", alignSoon);
     window.addEventListener("resize", alignSoon);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignSoon);
     new MutationObserver(alignSoon).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    // the other two tabs are opened quietly in the background (Chrome), so a tap switches at once
+    try {
+        if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules") && !document.getElementById("finPrerender")) {
+            var others = ["admin-spp.html", "admin-savings.html", "kas.html"].filter(function (h) { return h !== (location.pathname.split("/").pop() || ""); });
+            var sr = document.createElement("script");
+            sr.type = "speculationrules"; sr.id = "finPrerender";
+            sr.textContent = JSON.stringify({ prerender: [{ source: "list", urls: others, eagerness: "eager" }] });
+            document.head.appendChild(sr);
+        }
+    } catch (e) {}
     if (main.querySelector(".fin-tabs")) return;
     var id = (typeof getLang === "function" ? getLang() : "id") === "id";
     var page = (location.pathname.split("/").pop() || "").toLowerCase();

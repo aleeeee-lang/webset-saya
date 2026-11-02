@@ -64,9 +64,14 @@
             ["teacher-leave.html", "doc", "Leave", "Izin siswa"],
             ["tasks.html", "task", "Tasks", "Tugas"],
             ["kas.html", "cash", "Class cash", "Kas kelas"],
-            ["schedule.html", "book", "Schedule", "Jadwal", "", ["calendar.html", "information.html"]],
+            ["schedule.html", "book", "Schedule", "Jadwal"],
             null,
-            ["attendance.html", "checkin", "My check-in", "Absen saya", "", ["qr-send.html"]]
+            ["attendance.html", "checkin", "My check-in", "Absen saya", "", ["qr-send.html"]],
+            ["juara.html", "trophy", "Champions", "Juara"],
+            ["goals.html", "target", "My goals", "Target saya"],
+            ["calendar.html", "cal", "Calendar", "Kalender"],
+            ["information.html", "info", "Information", "Informasi"],
+            ["settings.html", "gear", "Settings", "Pengaturan"]
         ],
         orangtua: [
             ["parent.html", "home", "Parent Portal", "Portal orang tua"],

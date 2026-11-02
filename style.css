@@ -5165,6 +5165,6 @@ html[data-theme="dark"] .cal-up-row:nth-child(n+3){border-top-color:#242424}
 .cal-up-row{align-items:center}
 /* Laptop: tab bars as compact as on the phone (not stretched across the page) */
 @media (min-width:760px){
-  .tl-tabs,.adm-tabs{width:fit-content;max-width:100%}
-  .tl-tabs a,.fin-tabs a,.adm-tabs a{flex:0 0 auto;padding:8px 18px}
+  .tl-tabs,.adm-tabs{width:100%;max-width:520px;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}
+  .tl-tabs a,.fin-tabs a,.adm-tabs a{flex:1 1 0;min-width:0;padding:9px 10px}
 }

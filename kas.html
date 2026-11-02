@@ -26,14 +26,12 @@
         <button type="button" class="v2-back v3-back" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
         <div class="lsn-head-text">
             <h1 data-i18n="kas_title">Class Cash</h1>
-            <p class="v2-head-sub" id="kasSub">&nbsp;</p>
         </div>
-        <select id="kasClass" class="kas-class" hidden aria-label="Class"></select>
     </header>
 
     <!-- balance -->
     <section class="kas-hero" id="kasHero">
-        <span class="kas-hero-label" data-i18n="kas_balance">Cash balance</span>
+        <div class="kas-hero-top"><span class="kas-hero-label" data-i18n="kas_balance">Cash balance</span><span class="kas-hero-cls" id="kasSub"></span><select id="kasClass" class="kas-class" hidden aria-label="Class"></select></div>
         <strong class="kas-hero-big" id="kasBalance">Rp0</strong>
         <div class="kas-hero-row">
             <div><small data-i18n="kas_in_month">In this month</small><b class="in" id="kasInMonth">+Rp0</b></div>
@@ -187,7 +185,7 @@ async function init() {
     }
     classes = Array.from(set).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
     if (!classes.length) {
-        document.getElementById("kasSub").textContent = L("Belum ada kelas.", "No class yet.");
+        document.getElementById("kasHero").hidden = true;
         document.getElementById("kasList").innerHTML = emptyHTML(L("Belum ada kelas", "No class yet"), L("Kas kelas muncul setelah kamu masuk ke sebuah kelas.", "Class cash shows up once you're in a class."));
         return;
     }
@@ -233,7 +231,9 @@ async function load() {
 
 // ---------- render ----------
 function render() {
-    document.getElementById("kasSub").textContent = L("Kelas ", "Class ") + cls + (canManage && prof.role === "murid" ? " · " + L("Kamu bendahara", "You're the treasurer") : "");
+    const sub = document.getElementById("kasSub");
+    sub.textContent = cls + (canManage && prof.role === "murid" ? " · " + L("Bendahara", "Treasurer") : "");
+    sub.hidden = !document.getElementById("kasClass").hidden;   // several classes: the picker shows the class
     let bal = 0, inM = 0, outM = 0;
     const ym = iso(new Date()).slice(0, 7);
     entries.forEach(function (x) {

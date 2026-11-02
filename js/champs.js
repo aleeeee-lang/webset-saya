@@ -156,7 +156,7 @@
             supabaseClient.from("achievements").select("*").gt("show_until", now.toISOString()).order("created_at", { ascending: false }).limit(4),
             cls ? supabaseClient.rpc("champ_attendance", { target_class: cls, d_from: m.from, d_to: m.to }) : Promise.resolve({ data: null }),
             cls && !opt.noChart ? supabaseClient.rpc("champ_daily", { target_class: cls, d_from: m.from, d_to: m.to }) : Promise.resolve({ data: null }),
-            now.getDate() <= 7 ? supabaseClient.rpc("champ_classes", { d_from: month(-1).from, d_to: month(-1).to }) : Promise.resolve({ data: null })
+            Promise.resolve({ data: null })   // "most diligent class" banner: removed from the home page (still on juara.html#class)
         ];
         var r;
         try { r = await Promise.all(jobs); } catch (e) { return; }
@@ -168,17 +168,6 @@
         if (opt.onlyClass != null) awards = awards.filter(function (a) { return a.kind !== "rank" || a.class === opt.onlyClass; });
         var faces = await avatars(awards);
         html += awards.map(function (a) { return banner(a, faces); }).join("");
-
-        // 2) most diligent class of last month (first week of the month)
-        var cl = (r[3] && !r[3].error && r[3].data) || [];
-        if (cl.length) {
-            var best = cl.map(function (x) { return { c: x.class, rate: x.total ? x.hadir / x.total : 0, h: x.hadir }; })
-                .sort(function (a, b) { return b.rate - a.rate || b.h - a.h; })[0];
-            var lm = month(-1);
-            html += '<a class="jr-banner crown' + (best.c === cls ? " mine" : "") + '" href="juara.html#class"><span class="jr-banner-ic">👑</span><span class="jr-banner-text"><small>' +
-                esc(L("Kelas paling rajin · ", "Most diligent class · ") + lm.label) + '</small><b>' + esc(best.c) + (best.c === cls ? ' <i>' + esc(L("Kelasmu!", "Your class!")) + '</i>' : '') + '</b><em>' +
-                cnt(Math.round(best.rate * 100) + "% " + L("kehadiran", "attendance")) + '</em></span>' + GO + '</a>';
-        }
 
         // 3) attendance champions - every day
         if (cls && r[1] && !r[1].error && r[1].data) {

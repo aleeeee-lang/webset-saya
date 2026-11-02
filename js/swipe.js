@@ -166,6 +166,8 @@
             var hp = (a.getAttribute("href") || "").split(/[?#]/)[0];
             if (hp === page || (page === "" && hp === "index.html")) idx = i;
         });
+        // a page that sits behind a menu button (Kas kelas / Tabungan under Keuangan, the Kelola pages): that button's place
+        if (idx < 0) links.forEach(function (a, i) { if (a.getAttribute("aria-current") === "page") idx = i; });
         return idx < 0 ? null : { links: links, idx: idx };
     }
 
@@ -289,11 +291,16 @@
         (window.requestIdleCallback || function (f) { return setTimeout(f, 1200); })(warm);
         // the whole screen takes the swipe, also the empty part below a short page
         // (that part is outside <body>, so listening on <body> missed it)
+        var lastT = null;
         gesture(document.documentElement, {
             enabled: function () { return !committing && !document.querySelector(".att-tabswipe-on") && !document.documentElement.classList.contains("tc-sheet-open") && (active || !!refresh()); },
-            skip: function (t) { return !!(t.closest && t.closest("[data-swipe-tabs]")); },
+            // inside tabs (Kas kelas, Juara...): the tabs take the swipe while there is a tab on that side;
+            // past the first / last tab the whole page moves to the next menu page
+            skip: function (t) { lastT = t; return false; },
             start: function (d) {
                 if (committing) return false;
+                var ta = lastT && lastT.closest && lastT.closest("[data-swipe-tabs]");
+                if (ta && ta._swipeHasNb && ta._swipeHasNb(d)) return false;
                 if (window.attArriveDone) window.attArriveDone();
                 if (anim) { anim.stop(); base = anim.x; anim = null; }   // caught while springing back
                 else base = 0;
@@ -366,6 +373,7 @@
         if (!area) return;
         area.setAttribute("data-swipe-tabs", "");
         area.classList.add("att-tabswipe");
+        area._swipeHasNb = function (d) { var ks = cfg.keys(), i = ks.indexOf(cfg.current()); return i >= 0 && ks[i + d] != null; };
         var cur = null, nb = null, dir = 0, W = 0, keys = [], ci = -1;
         var pend = null, raf = 0, x = 0, base = 0, anim = null, active = false, committing = false;
         function vis(px) { return nb && ((dir === 1 && px <= 0) || (dir === -1 && px >= 0)) ? px : rubber(px); }
@@ -414,6 +422,7 @@
             enabled: function () { return !committing; },
             start: function (d) {
                 if (committing) return false;
+                if (!active && !anim && !area._swipeHasNb(d)) return false;   // no tab on that side: let the page swipe
                 if (anim) { anim.stop(); base = anim.x; anim = null; } else base = 0;
                 if (!active) {
                     keys = cfg.keys(); var k = cfg.current(); ci = keys.indexOf(k);

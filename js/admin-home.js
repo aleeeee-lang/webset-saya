@@ -49,19 +49,17 @@
         box.hidden = false;
     }
 
+    // inside the dark box: only what's waiting, as small links; nothing waiting = one small line
     function todo(p) {
         var items = [
-            ["admin-leave.html", L("Pengajuan izin menunggu", "Leave requests waiting"), n(p.leave)],
-            ["admin-spp.html", L("Bukti SPP perlu dicek", "SPP proofs to check"), n(p.spp)],
-            ["admin-feedback.html", L("Saran baru dari siswa", "New suggestions"), n(p.feedback)]
-        ];
-        var all0 = items.every(function (x) { return !x[2]; });
-        if (all0) return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2><span class="ah-done">' + ic("ok", 14) + esc(L("Semua beres", "All clear")) + '</span></div>';
-        items = items.filter(function (x) { return x[2]; });
-        return '<div class="tc-head"><h2>' + esc(L("Perlu ditindak", "To do")) + '</h2></div>' +
-            '<div class="tc-list ah-todo2">' + items.map(function (x) {
-                return '<a class="tc-row" href="' + x[0] + '"><span class="ah-n' + (x[2] ? " has" : "") + '">' + fmt(x[2]) + '</span><b>' + esc(x[1]) + '</b>' + ic("go", 18) + '</a>';
-            }).join("") + '</div>';
+            ["admin-leave.html", L("izin menunggu", "leave waiting"), n(p.leave)],
+            ["admin-spp.html", L("bukti SPP", "SPP proofs"), n(p.spp)],
+            ["admin-feedback.html", L("saran baru", "new feedback"), n(p.feedback)]
+        ].filter(function (x) { return x[2]; });
+        if (!items.length) return '<p class="ah-in-ok">' + ic("ok", 14) + esc(L("Semua beres, tidak ada yang perlu ditindak", "All clear, nothing to do")) + '</p>';
+        return '<div class="ah-in-todo">' + items.map(function (x) {
+            return '<a href="' + x[0] + '"><b>' + fmt(x[2]) + '</b>' + esc(x[1]) + ic("go", 14) + '</a>';
+        }).join("") + '</div>';
     }
 
     var showAllClasses = false;
@@ -98,7 +96,7 @@
     function quick() {
         var q = [["admin-broadcast.html", "bell", L("Buat pengumuman", "New announcement")], ["admin-attendance.html", "down", L("Unduh rekap absen", "Download attendance")],
                  ["qr-send.html", "qr", L("Kirim QR absen", "Send check-in QR")], ["admin-schedule.html", "clock", L("Jam absen", "Check-in hours")]];
-        return '<div class="tc-tiles">' + q.map(function (x) { return '<a href="' + x[0] + '">' + ic(x[1], 24) + '<span>' + esc(x[2]) + '</span></a>'; }).join("") + '</div>';
+        return '<div class="ah-quick">' + q.map(function (x) { return '<a href="' + x[0] + '">' + ic(x[1], 20) + '<span>' + esc(x[2]) + '</span></a>'; }).join("") + '</div>';
     }
 
     var last = null, mounted = false;
@@ -107,7 +105,12 @@
         hero(d);
         var box = document.getElementById("ahMain");
         if (!mounted) {
-            box.innerHTML = '<div id="ahTodo"></div><section id="liveSessions" hidden></section><div id="ahClassWrap"></div><div id="ahWatch"></div><div id="ahQuick">' + quick() + '</div>';
+            var hb = document.getElementById("ahHero");
+            var more = document.createElement("div");
+            more.id = "ahHeroMore"; more.className = "ah-in";
+            more.innerHTML = '<div id="ahTodo"></div><section id="liveSessions" class="ls-in" hidden></section>';
+            hb.parentNode.insertBefore(more, hb.nextSibling);
+            box.innerHTML = '<div id="ahQuick">' + quick() + '</div><div id="ahClassWrap"></div><div id="ahWatch"></div>';
             if (window.LiveSessions) LiveSessions.mount(document.getElementById("liveSessions"));
             mounted = true;
         }

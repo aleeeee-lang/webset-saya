@@ -5089,3 +5089,28 @@ html[data-theme="dark"] .cal-up-all{color:#C6F432}
 .ls-r.open .ls-r-btn svg{transform:rotate(180deg)}
 .ls-r .ls-s{margin:0 8px 8px;background:rgba(255,255,255,.05)}
 .ls-r .ls-s .ls-s-top{display:none}
+/* Beranda admin: one dark box holds today, what's waiting and the lessons going on; smaller */
+html.is-admin-home .v2-hero{padding:18px 18px 16px}
+.ah-lab{font-size:13px;margin-bottom:4px}
+.ah-hero .ah-num{margin-bottom:10px}
+.ah-hero .ah-num b{font-size:38px}
+.ah-hero .ah-num span{font-size:15px}
+.ah-hero .ah-bar{height:6px;margin-bottom:10px}
+.ah-sub{gap:6px}
+.ah-sub div{border-radius:12px;padding:7px 10px}
+.ah-sub span{font-size:11px}
+.ah-sub b{font-size:16px}
+.ah-in{display:flex;flex-direction:column;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
+.ah-in-ok{display:flex;align-items:center;gap:6px;margin:0;font-size:12.5px;font-weight:700;color:#C6F432}
+.ah-in-todo{display:flex;flex-wrap:wrap;gap:6px}
+.ah-in-todo a{display:inline-flex;align-items:center;gap:6px;padding:7px 10px 7px 8px;border-radius:999px;background:#C6F432;color:#14162B;font-size:12.5px;font-weight:700;text-decoration:none}
+.ah-in-todo a b{min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#14162B;color:#C6F432;font-size:11.5px;display:inline-flex;align-items:center;justify-content:center}
+/* live lessons inside the dark box: no second big box */
+#liveSessions.ls-in{background:none!important;padding:0!important;margin:0!important;box-shadow:none!important;border-radius:0!important}
+#liveSessions.ls-in .ls-head b{font-size:14px}
+#liveSessions.ls-in .ls-head small{font-size:11.5px}
+#liveSessions.ls-in .ls-rows2,#liveSessions.ls-in .ls-s{background:rgba(255,255,255,.05)}
+.ah-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.ah-quick a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:#fff;color:#14162B;text-decoration:none;font-size:11px;font-weight:700;text-align:center;line-height:1.25}
+html[data-theme="dark"] .ah-quick a{background:#1C1C1E;color:#EDEDED}
+@media (min-width:1024px){ body.has-side .v2-home.is-admin #ahQuick{display:none} }

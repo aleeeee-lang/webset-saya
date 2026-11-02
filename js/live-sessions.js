@@ -39,8 +39,8 @@
     function sessionRow(s, isOpen) {
         var pct = s.total ? Math.round(s.hadir / s.total * 100) : 0, key = s.class + "|" + s.start;
         var tone = pct >= 90 ? "good" : pct >= 75 ? "ok" : "low";
-        return '<button type="button" class="ls-c ' + tone + (isOpen ? " open" : "") + '" data-key="' + esc(key) + '" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
-            '<i style="width:' + pct + '%"></i><span class="ls-c-name">' + esc(s.class) + '<small>' + esc(s.subject || "-") + '</small></span>' +
+        return '<button type="button" class="ls-c ' + tone + (isOpen ? " open" : "") + '" data-key="' + esc(key) + '" title="' + esc(s.subject || "") + '" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
+            '<i style="width:' + pct + '%"></i><span class="ls-c-name">' + esc(s.class) + '</span>' +
             '<b class="ls-hadir">' + s.hadir + '<small>/' + s.total + '</small></b></button>';
     }
 

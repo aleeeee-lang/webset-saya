@@ -5127,3 +5127,9 @@ html[data-theme="dark"] .ah-quick a{background:#1C1C1E;color:#EDEDED}
 .ls-c .ls-hadir small{font-size:10.5px;color:#C9CBDA;font-weight:600}
 .ls-open1{margin-top:8px}
 .ls-open1 .ls-s{background:rgba(255,255,255,.05)}
+/* smaller class boxes: one thin line each (subject shows when opened) */
+.ls-grid2{gap:5px}
+.ls-c{padding:5px 9px;border-radius:9px;gap:4px}
+.ls-c-name{font-size:12px;font-weight:700}
+.ls-c .ls-hadir{font-size:12px}
+.ls-c .ls-hadir small{font-size:10px}

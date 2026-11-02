@@ -5004,3 +5004,15 @@ html[data-theme="dark"] .adm-add button.on{background:#2C2C2E;color:#EDEDED}
   body.has-side .v2-home.is-admin .ah>*+*{margin-top:22px}
   body.has-side .am-page{max-width:720px;margin-left:auto;margin-right:auto}
 }
+/* Laptop admin: nothing twice - the sidebar already has search and every shortcut */
+@media (min-width:1024px){
+  body.has-side .v2-home.is-admin #ahQuick{display:none}
+  body.has-side.is-admin-side [data-v3-search]{display:none}
+}
+/* Laptop admin: every page the same width, in the middle */
+@media (min-width:1024px){
+  body.is-admin-side main.attendance-page,body.is-admin-side main.v2-wrap:not(.v2-home-main){max-width:760px;width:auto;margin-left:auto;margin-right:auto;box-sizing:border-box}
+}
+@media (min-width:1024px){
+  body.is-admin-side .adm-head>button:first-child,body.is-admin-side .adm-head .v3-back,body.is-admin-side .adm-head .v2-back{display:none}
+}

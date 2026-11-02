@@ -82,7 +82,6 @@
             ["admin-attendance.html", "checkin", "Attendance", "Absensi"],
             ["qr-send.html", "qr", "Send QR", "Kirim QR"],
             ["admin-spp.html", "wallet", "Money", "Keuangan", "", ["admin-savings.html", "kas.html"]],
-            { label: ["Manage", "Kelola"] },
             ["admin-students.html", "users", "People", "Pengguna", "", ["admin-teachers.html", "admin-parents.html", "admin-development.html"]],
             ["admin-schedule.html", "cal", "Schedule", "Jadwal", "", ["admin-lessons.html", "admin-piket.html", "calendar.html"]],
             ["admin-broadcast.html", "msg", "Messages", "Pesan", "", ["admin-leave.html", "admin-feedback.html", "admin-information.html"]],
@@ -151,6 +150,7 @@
             el.className = "v2-side";
             document.body.insertBefore(el, document.body.firstChild);
             document.body.classList.add("has-side");
+            if (role === "admin") document.body.classList.add("is-admin-side");
         }
         var oldQ = document.getElementById("v2SearchInput");
         oldQ = oldQ ? oldQ.value : "";

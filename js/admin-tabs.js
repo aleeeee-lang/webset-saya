@@ -41,6 +41,7 @@
         var h = head && head.querySelector("h1, h2");
         if (h) { h.removeAttribute("data-i18n"); h.textContent = group.title; }
         if (head && head.classList.contains("attendance-intro")) head.style.marginBottom = "14px";
+        if (head) head.classList.add("adm-head");
         var nav = document.createElement("nav");
         nav.id = "admTabs";
         nav.className = "adm-tabs";

@@ -108,7 +108,7 @@
     <section class="attendance-card loc-card" id="autoCard">
         <div class="loc-head">
             <div style="flex:1;min-width:0">
-                <div class="card-label" style="margin:0" id="autoTitle">Jam otomatis dari jadwal pelajaran</div>
+                <div class="card-label" style="margin:0" id="autoTitle">Jam otomatis</div>
                 <p class="loc-hint" id="autoHint"></p>
             </div>
             <label class="att-switch"><input type="checkbox" id="autoHours" checked><span></span></label>
@@ -949,12 +949,11 @@ function goBack() {
 (function () {
     const AL = (id, en) => getLang() === "id" ? id : en;
     const box = document.getElementById("autoHours"), hint = document.getElementById("autoHint");
-    document.getElementById("autoTitle").textContent = AL("Jam otomatis dari jadwal pelajaran", "Automatic hours from the timetable");
+    document.getElementById("autoTitle").textContent = AL("Jam otomatis", "Automatic hours");
     function paint() {
         hint.textContent = box.checked
-            ? AL("Nyala. Kelas yang jam absennya belum diatur: absen masuk dibuka 30 menit sebelum pelajaran pertama sampai 15 menit setelahnya, absen pulang 10 menit setelah pelajaran terakhir.",
-                 "On. Classes without set hours: check-in opens 30 min before the first lesson until 15 min after it starts, check-out for 10 min after the last lesson.")
-            : AL("Mati. Kelas yang jam absennya belum diatur bisa absen kapan saja.", "Off. Classes without set hours can check in any time.");
+            ? AL("Ikut pelajaran pertama & terakhir", "Follows the first & last lesson")
+            : AL("Mati", "Off");
     }
     paint();
     (async function load() {

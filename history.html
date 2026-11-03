@@ -168,7 +168,7 @@
         <!-- Monthly must-pay list: the student writes them once, ticks them off each month -->
         <section class="pf-month pf-bills" id="pfBills">
             <div class="pf-month-top">
-                <div><span id="pfBillsLab">Bayar tiap bulan</span><b id="pfBillsSum">Rp0</b></div>
+                <div><span id="pfBillsLab">Tagihan bulanan</span><b id="pfBillsSum">Rp0</b></div>
                 <button type="button" class="pf-limit-btn" id="pfBillAdd"></button>
             </div>
             <div class="pf-bar" id="pfBillBarWrap" hidden><i id="pfBillBar"></i></div>
@@ -523,9 +523,9 @@ const PF = (function () {
     const PL = (a, b) => getLang() === "id" ? a : b;
     const I = d => '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
     const CATS = [
-        ["makan", "Makan & jajan", "Food & snacks", '<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 1-3 3.2-3 6v4h3v8"/>'],
+        ["makan", "Makan", "Food", '<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 1-3 3.2-3 6v4h3v8"/>'],
         ["transport", "Transport", "Transport", '<rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 11h16M8 17v3M16 17v3"/><circle cx="8" cy="14" r=".6"/><circle cx="16" cy="14" r=".6"/>'],
-        ["pulsa", "Pulsa & data", "Phone & data", '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/>'],
+        ["pulsa", "Pulsa", "Phone", '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/>'],
         ["sekolah", "Sekolah", "School", '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>'],
         ["belanja", "Belanja", "Shopping", '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'],
         ["lainnya", "Lainnya", "Other", '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>']
@@ -548,10 +548,10 @@ const PF = (function () {
         const by = {};
         out.forEach(r => { const k = r.category || "lainnya"; by[k] = (by[k] || 0) + Number(r.amount || 0); });
         const top = Object.keys(by).sort((a, b) => by[b] - by[a]).slice(0, 3);
-        document.getElementById("pfCats").innerHTML = top.map(k => '<div class="pf-cat"><i style="background:' + (COLORS[k] || "#94A3B8") + '"></i><span>' + escapeHTML(name(k)) + '</span><b>' + formatRupiah(by[k]) + '</b></div>').join("");
+        document.getElementById("pfCats").innerHTML = top.map(k => '<span class="pf-cat"><i style="background:' + (COLORS[k] || "#94A3B8") + '"></i>' + escapeHTML(name(k)) + ' <b>' + formatRupiah(by[k]) + '</b></span>').join("");
         // the limit
         const btn = document.getElementById("pfLimitBtn"), wrap = document.getElementById("pfBarWrap"), note = document.getElementById("pfLimitNote");
-        btn.textContent = limit ? PL("Batas ", "Limit ") + formatRupiah(limit) : PL("+ Atur batas", "+ Set limit");
+        btn.textContent = limit ? PL("Batas ", "Limit ") + formatRupiah(limit) : PL("+ Batas", "+ Limit");
         wrap.hidden = note.hidden = !limit;
         if (limit) {
             const pct = Math.min(100, Math.round(spent / limit * 100));
@@ -580,13 +580,13 @@ const PF = (function () {
         const done = bills.filter(b => on.includes(b.i));
         const doneSum = done.reduce((a, b) => a + Number(b.a || 0), 0);
         document.getElementById("pfBillsLab").textContent = bills.length
-            ? PL("Bayar tiap bulan · " + done.length + "/" + bills.length + " lunas", "Monthly bills · " + done.length + "/" + bills.length + " paid")
-            : PL("Bayar tiap bulan", "Monthly bills");
+            ? PL("Tagihan · " + done.length + "/" + bills.length + " lunas", "Bills · " + done.length + "/" + bills.length + " paid")
+            : PL("Tagihan bulanan", "Monthly bills");
         document.getElementById("pfBillsSum").textContent = bills.length ? formatRupiah(total - doneSum) : PL("Belum ada", "None yet");
         document.getElementById("pfBillsSum").classList.toggle("pf-none", !bills.length);
         document.getElementById("pfBillAdd").textContent = PL("+ Tambah", "+ Add");
         const wrap = document.getElementById("pfBillBarWrap");
-        wrap.hidden = !bills.length;
+        wrap.hidden = true;
         if (bills.length) { const bar = document.getElementById("pfBillBar"); bar.style.width = (total ? Math.round(doneSum / total * 100) : 0) + "%"; }
         document.getElementById("pfBillList").innerHTML = bills.map(b => {
             const ok = on.includes(b.i);
@@ -614,7 +614,7 @@ const PF = (function () {
         w.querySelector(".ac-cancel").textContent = PL("Batal", "Cancel");
         w.querySelector(".ac-ok").textContent = PL("Simpan", "Save");
         const nm = w.querySelector(".pf-in-name"), am = w.querySelector(".pf-in-amt");
-        if (nm) { nm.placeholder = PL("misal: SPP pondok, kos, cicilan", "e.g. rent, phone plan"); nm.value = o.name || ""; }
+        if (nm) { nm.placeholder = PL("Nama, misal: Kos", "Name, e.g. Rent"); nm.value = o.name || ""; }
         am.placeholder = "50.000";
         am.value = o.amount ? Number(o.amount).toLocaleString("id-ID") : "";
         am.addEventListener("input", function () { const n = Number(am.value.replace(/\D/g, "")); am.value = n ? n.toLocaleString("id-ID") : ""; });
@@ -623,7 +623,7 @@ const PF = (function () {
         const close = () => { w.classList.add("out"); setTimeout(() => w.remove(), 160); };
         w.addEventListener("click", e => { if (e.target === w) close(); });
         w.querySelector(".ac-cancel").addEventListener("click", close);
-        if (o.del) { const d = w.querySelector(".pf-del"); d.textContent = PL("Hapus dari daftar", "Remove from list"); d.addEventListener("click", () => { close(); o.del(); }); }
+        if (o.del) { const d = w.querySelector(".pf-del"); d.textContent = PL("Hapus", "Remove"); d.addEventListener("click", () => { close(); o.del(); }); }
         w.querySelector(".ac-ok").addEventListener("click", function () {
             const n = nm ? nm.value.trim() : null, a = Number(am.value.replace(/\D/g, "")) || 0;
             if (nm && (!n || !a)) { (n ? am : nm).focus(); return; }
@@ -631,12 +631,12 @@ const PF = (function () {
         });
     }
     function addBill() {
-        formSheet({ title: PL("Pembayaran wajib", "Monthly bill"), sub: PL("Tulis sekali, nanti tinggal centang tiap bulan.", "Write it once, tick it off every month."), name: "", amount: 0,
+        formSheet({ title: PL("Tagihan baru", "New bill"), name: "", amount: 0,
             save: (n, a) => { bills.push({ i: Date.now().toString(36), n: n, a: a }); saveBills(); drawBills(); } });
     }
     function editBill(id) {
         const b = bills.find(x => x.i === id); if (!b) return;
-        formSheet({ title: PL("Ubah pembayaran", "Edit bill"), name: b.n, amount: b.a,
+        formSheet({ title: PL("Ubah tagihan", "Edit bill"), name: b.n, amount: b.a,
             save: (n, a) => { b.n = n; b.a = a; saveBills(); drawBills(); },
             del: () => { bills = bills.filter(x => x.i !== id); const k = mKey(); paid[k] = (paid[k] || []).filter(x => x !== id); saveBills(); drawBills(); } });
     }
@@ -650,8 +650,8 @@ const PF = (function () {
         const w = document.createElement("div");
         w.className = "ac-wrap ac-confirm";
         w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div><div class="savings-amount-field"><span class="rp-prefix">Rp</span><input type="text" inputmode="numeric" class="am-field pf-limit-in" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;font-size:16px"></div><div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
-        w.querySelector("b").textContent = PL("Batas belanja sebulan", "Monthly spending limit");
-        w.querySelector("small").textContent = PL("Kosongkan untuk mematikan batas.", "Leave empty to turn it off.");
+        w.querySelector("b").textContent = PL("Batas sebulan", "Monthly limit");
+        w.querySelector("small").textContent = PL("Kosongkan untuk mematikan.", "Leave empty to turn off.");
         w.querySelector(".ac-cancel").textContent = PL("Batal", "Cancel");
         w.querySelector(".ac-ok").textContent = PL("Simpan", "Save");
         const inp = w.querySelector("input");

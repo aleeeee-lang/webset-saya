@@ -5340,3 +5340,8 @@ html[data-theme="dark"] .aa-stats .ts-stat.on span,html[data-theme="dark"] .aa-s
 #remindSppBtn{margin:-4px 0 0!important}
 #finHist{margin-top:-4px!important}
 #finSet{margin-top:-4px!important}
+/* Absensi (admin): date, classes, counts, search and the list sit close together (10px) */
+main.aa-page{row-gap:10px!important}
+main.aa-page>.aa-date,main.aa-page>#aaClasses,main.aa-page>#aaStats,main.aa-page>.aa-tools,main.aa-page>#aaList{margin-top:0!important;margin-bottom:0!important}
+main.aa-page>.aa-head{margin-bottom:4px!important}
+.aa-stats .ts-stat{align-items:center!important;justify-content:center;height:34px;padding:0 12px!important;box-sizing:border-box}.aa-stats .ts-stat span,.aa-stats .ts-stat b{margin:0!important;line-height:1}

@@ -5345,3 +5345,13 @@ main.aa-page{row-gap:10px!important}
 main.aa-page>.aa-date,main.aa-page>#aaClasses,main.aa-page>#aaStats,main.aa-page>.aa-tools,main.aa-page>#aaList{margin-top:0!important;margin-bottom:0!important}
 main.aa-page>.aa-head{margin-bottom:4px!important}
 .aa-stats .ts-stat{align-items:center!important;justify-content:center;height:34px;padding:0 12px!important;box-sizing:border-box}.aa-stats .ts-stat span,.aa-stats .ts-stat b{margin:0!important;line-height:1}
+/* Absen: Kamera / Sidik jari / QR switch in the same look as the other tab bars */
+.v2-method{display:flex!important;gap:4px;padding:4px;border-radius:18px;background:#fff}
+.v2-method button{flex:1 1 0;height:40px;border-radius:14px;font-size:14px;font-weight:600;color:#4A4F6A}
+.v2-method button[hidden]{display:none}
+.v2-method button.on{background:#14162B;color:#fff;font-weight:700}
+.v2-method button.on svg{color:#C6F432}
+html[data-theme="dark"] .v2-method{background:#121212}
+html[data-theme="dark"] .v2-method button{color:#9A9A9F}
+html[data-theme="dark"] .v2-method button.on{background:#C6F432;color:#14162B!important}
+html[data-theme="dark"] .v2-method button.on svg{color:#14162B}

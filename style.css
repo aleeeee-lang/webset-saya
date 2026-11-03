@@ -5335,3 +5335,8 @@ html[data-theme="dark"] .aa-stats .ts-stat.on span,html[data-theme="dark"] .aa-s
 .fin-hist{margin-top:14px}
 .fin-hist .fin-hist-body{padding:6px 14px 14px}
 .fin-hist .fin-h{margin-top:4px}
+/* SPP (admin): the blocks under "Bukti perlu dicek" sit close together (the page's 14px gap, minus 4 = 10px) */
+#sppPendingList{margin-bottom:0!important}
+#remindSppBtn{margin:-4px 0 0!important}
+#finHist{margin-top:-4px!important}
+#finSet{margin-top:-4px!important}

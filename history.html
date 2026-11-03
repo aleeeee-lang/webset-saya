@@ -157,12 +157,14 @@
         <!-- THIS MONTH: spent, by kind, and an optional monthly limit (pf-* , 2026) -->
         <section class="pf-month" id="pfMonth">
             <div class="pf-month-top">
-                <div><span id="pfMonthLab">Keluar bulan ini</span><b id="pfSpent">Rp0</b></div>
+                <div><span id="pfMonthLab">Bulan ini</span><b id="pfSpent">Rp0</b></div>
                 <button type="button" class="pf-limit-btn" id="pfLimitBtn"></button>
             </div>
+            <div class="pf-io"><span id="pfIn">Masuk Rp0</span><span id="pfOut">Keluar Rp0</span></div>
             <div class="pf-bar" id="pfBarWrap" hidden><i id="pfBar"></i></div>
             <p class="pf-limit-note" id="pfLimitNote" hidden></p>
             <div class="pf-cats" id="pfCats"></div>
+            <div class="pf-extra" id="pfExtra"></div>
         </section>
 
         <!-- Monthly must-pay list: the student writes them once, ticks them off each month -->
@@ -540,10 +542,31 @@ const PF = (function () {
     }
     function month(rows) {
         const now = new Date(), key = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+        const pd = new Date(now.getFullYear(), now.getMonth() - 1, 1), prevKey = pd.getFullYear() + "-" + String(pd.getMonth() + 1).padStart(2, "0");
+        const sum = (k, t) => rows.filter(r => r.type === t && String(r.created_at || "").slice(0, 7) === k).reduce((a, r) => a + Number(r.amount || 0), 0);
         const out = rows.filter(r => r.type === "tarik" && String(r.created_at || "").slice(0, 7) === key);
-        const spent = out.reduce((a, r) => a + Number(r.amount || 0), 0);
-        document.getElementById("pfMonthLab").textContent = PL("Keluar bulan ini", "Spent this month");
-        document.getElementById("pfSpent").textContent = formatRupiah(spent);
+        const spent = sum(key, "tarik"), got = sum(key, "setor"), left = got - spent;
+        const signed = v => (v > 0 ? "+" : v < 0 ? "-" : "") + formatRupiah(Math.abs(v));
+        const mName = now.toLocaleDateString(getLang() === "id" ? "id-ID" : "en-US", { month: "long" });
+        document.getElementById("pfMonthLab").textContent = PL("Sisa bulan ini · ", "Left this month · ") + mName;
+        const big = document.getElementById("pfSpent");
+        big.textContent = signed(left);
+        big.className = left > 0 ? "pf-pos" : left < 0 ? "pf-neg" : "";
+        document.getElementById("pfIn").innerHTML = PL("Masuk", "In") + " <b>" + formatRupiah(got) + "</b>";
+        document.getElementById("pfOut").innerHTML = PL("Keluar", "Out") + " <b>" + formatRupiah(spent) + "</b>";
+        // small extra lines: last month, and what is left after the unticked bills
+        const ex = [];
+        const prevGot = sum(prevKey, "setor"), prevSpent = sum(prevKey, "tarik");
+        if (prevGot || prevSpent) {
+            const pl = prevGot - prevSpent;
+            ex.push('<p><span>' + PL("Bulan lalu", "Last month") + '</span><b class="' + (pl < 0 ? "pf-neg" : "pf-pos") + '">' + signed(pl) + '</b></p>');
+        }
+        const unpaid = bills.filter(b => !(paid[mKey()] || []).includes(b.i)).reduce((a, b) => a + Number(b.a || 0), 0);
+        if (unpaid) {
+            const after = left - unpaid;
+            ex.push('<p><span>' + PL("Setelah bayar tagihan", "After unpaid bills") + '</span><b class="' + (after < 0 ? "pf-neg" : "pf-pos") + '">' + signed(after) + '</b></p>');
+        }
+        document.getElementById("pfExtra").innerHTML = ex.join("");
         // by kind: the biggest three
         const by = {};
         out.forEach(r => { const k = r.category || "lainnya"; by[k] = (by[k] || 0) + Number(r.amount || 0); });
@@ -560,7 +583,7 @@ const PF = (function () {
             const lvl = spent > limit ? "over" : pct >= 80 ? "near" : "";
             bar.className = lvl; note.className = "pf-limit-note " + lvl;
             note.textContent = spent > limit ? PL("Lewat batas " + formatRupiah(spent - limit), "Over the limit by " + formatRupiah(spent - limit))
-                : PL("Sisa " + formatRupiah(limit - spent), formatRupiah(limit - spent) + " left");
+                : PL("Batas tinggal " + formatRupiah(limit - spent), formatRupiah(limit - spent) + " under the limit");
         }
     }
     // ---- monthly bills: [{i,n,a}] + which ones are ticked this month, saved on the account
@@ -593,6 +616,7 @@ const PF = (function () {
             return '<div class="pf-bill' + (ok ? " ok" : "") + '" data-i="' + b.i + '"><button type="button" class="pf-tick" data-tick aria-label="' + PL("Tandai lunas", "Mark paid") + '">' + (ok ? CHK : "") + '</button>' +
                 '<button type="button" class="pf-bill-body" data-edit><span>' + escapeHTML(b.n) + '</span><b>' + formatRupiah(b.a) + '</b></button></div>';
         }).join("");
+        if (personalLoaded) month(allPersonalData);
         if (bills.length) {
             const left = PL(bills.length === done.length ? "Semua sudah lunas bulan ini" : "sisa yang belum dibayar", bills.length === done.length ? "All paid this month" : "still to pay");
             document.getElementById("pfBillsSum").setAttribute("data-sub", left);

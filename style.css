@@ -4795,3 +4795,16 @@ html[data-theme="dark"] .pf-tick{border-color:#3A3A3C}
 html[data-theme="dark"] .pf-bill.ok .pf-tick{background:#C6F432;border-color:#C6F432;color:#14162B!important}
 html[data-theme="dark"] .pf-bill.ok .pf-tick *{color:#14162B!important}
 html[data-theme="dark"] .pf-del{background:#2A1515;color:#FF8A80!important}
+/* Personal month card: left this month, in/out, extra lines */
+.pf-month-top b.pf-pos{color:#15803D}.pf-month-top b.pf-neg{color:#B42318}
+.pf-io{display:flex;gap:16px;margin-top:6px;font-size:12.5px;font-weight:600;color:#5B6075}
+.pf-io b{font-weight:800;color:#14162B}
+.pf-extra:empty{display:none}
+.pf-extra{margin-top:10px;padding-top:10px;border-top:1px solid #F1F2F6;display:flex;flex-direction:column;gap:6px}
+.pf-extra p{margin:0;display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:600;color:#5B6075}
+.pf-extra b{font-weight:800}.pf-extra b.pf-pos{color:#15803D}.pf-extra b.pf-neg{color:#B42318}
+html[data-theme="dark"] .pf-io,html[data-theme="dark"] .pf-extra p span{color:#9A9A9F!important}
+html[data-theme="dark"] .pf-io b{color:#EDEDED!important}
+html[data-theme="dark"] .pf-extra{border-color:#242424}
+html[data-theme="dark"] .pf-month-top b.pf-pos,html[data-theme="dark"] .pf-extra b.pf-pos{color:#C6F432!important}
+html[data-theme="dark"] .pf-month-top b.pf-neg,html[data-theme="dark"] .pf-extra b.pf-neg{color:#FF8A80!important}

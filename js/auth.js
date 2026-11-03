@@ -241,7 +241,8 @@ function attDayRules(cls) {
         cls ? supabaseClient.from("attendance_schedules").select("*").eq("class", cls).maybeSingle() : Promise.resolve({ data: null }),
         supabaseClient.from("holidays").select("*"),
         supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
-        supabaseClient.from("national_holidays").select("date").eq("kind", "libur")
+        supabaseClient.from("national_holidays").select("date").eq("kind", "libur"),
+        cls ? supabaseClient.from("class_schedules").select("day,start_time,end_time").eq("class", cls) : Promise.resolve({ data: null })
     ]).then(function (r) {
         var agenda = {};
         ((r[1] && r[1].data) || []).forEach(function (h) {
@@ -255,9 +256,34 @@ function attDayRules(cls) {
         var off = (r[2] && !r[2].error && r[2].data && r[2].data.weekly_off) || [];
         var red = {};
         ((r[3] && !r[3].error && r[3].data) || []).forEach(function (n) { red[n.date] = true; });
-        return { schedule: (r[0] && r[0].data) || null, agenda: agenda, weeklyOff: off.map(Number), red: red };
+        return { schedule: (r[0] && r[0].data) || attAutoSchedule(cls, (r[4] && !r[4].error && r[4].data) || []), agenda: agenda, weeklyOff: off.map(Number), red: red };
     }, function () { return { schedule: null, agenda: {} }; });
     return _attRulesP[k];
+}
+// The admin hasn't set check-in hours for this class: follow today's lessons instead
+// (same rule as public.att_window() in jam_otomatis.sql):
+//   check-in  - 30 min before the first lesson until 15 min after it starts
+//   check-out - from the end of the last lesson, for 10 min
+//   school days - the days that have lessons
+function attAutoSchedule(cls, lessons) {
+    if (!cls || !lessons || !lessons.length) return null;
+    function mm(t) { var a = String(t || "").split(":").map(Number); return a[0] * 60 + (a[1] || 0); }
+    function hm(m) { m = Math.max(0, Math.min(1439, m)); return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0") + ":00"; }
+    var days = {}, now = typeof attNow === "function" ? attNow() : new Date(), iso = now.getDay() || 7;
+    lessons.forEach(function (l) {
+        var d = Number(l.day); if (!d) return;
+        var x = days[d] || (days[d] = { first: 1e9, last: -1 });
+        x.first = Math.min(x.first, mm(l.start_time));
+        x.last = Math.max(x.last, mm(l.end_time || l.start_time));
+    });
+    var list = Object.keys(days).map(Number).sort();
+    if (!list.length) return null;
+    var t = days[iso];
+    return {
+        class: cls, auto: true, active_days: list, late_mode: "block", late_end_time: null,
+        start_time: t ? hm(t.first - 30) : null, end_time: t ? hm(t.first + 15) : null,
+        checkout_start: t ? hm(t.last) : null, checkout_end: t ? hm(t.last + 10) : null
+    };
 }
 function attDayOpen(dateStr, rules) {
     var a = rules.agenda[dateStr];

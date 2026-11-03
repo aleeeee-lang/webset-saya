@@ -240,7 +240,7 @@ function attDayRules(cls) {
     if (!_attRulesP[k]) _attRulesP[k] = Promise.all([
         cls ? supabaseClient.from("attendance_schedules").select("*").eq("class", cls).maybeSingle() : Promise.resolve({ data: null }),
         supabaseClient.from("holidays").select("*"),
-        supabaseClient.from("attendance_period_settings").select("weekly_off").eq("id", "global").maybeSingle(),
+        supabaseClient.from("attendance_period_settings").select("*").eq("id", "global").maybeSingle(),
         supabaseClient.from("national_holidays").select("date").eq("kind", "libur"),
         cls ? supabaseClient.from("class_schedules").select("day,start_time,end_time").eq("class", cls) : Promise.resolve({ data: null })
     ]).then(function (r) {
@@ -256,7 +256,9 @@ function attDayRules(cls) {
         var off = (r[2] && !r[2].error && r[2].data && r[2].data.weekly_off) || [];
         var red = {};
         ((r[3] && !r[3].error && r[3].data) || []).forEach(function (n) { red[n.date] = true; });
-        return { schedule: (r[0] && r[0].data) || attAutoSchedule(cls, (r[4] && !r[4].error && r[4].data) || []), agenda: agenda, weeklyOff: off.map(Number), red: red };
+        // automatic hours can be switched off by the admin (attendance_period_settings.auto_hours, jam_otomatis_saklar.sql)
+        var autoOn = !(r[2] && r[2].data && r[2].data.auto_hours === false);
+        return { schedule: (r[0] && r[0].data) || (autoOn ? attAutoSchedule(cls, (r[4] && !r[4].error && r[4].data) || []) : null), agenda: agenda, weeklyOff: off.map(Number), red: red };
     }, function () { return { schedule: null, agenda: {} }; });
     return _attRulesP[k];
 }

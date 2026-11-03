@@ -104,6 +104,17 @@
         </div>
     </section>
 
+    <!-- automatic hours from the lesson timetable (jam_otomatis.sql, switch: jam_otomatis_saklar.sql) -->
+    <section class="attendance-card loc-card" id="autoCard">
+        <div class="loc-head">
+            <div style="flex:1;min-width:0">
+                <div class="card-label" style="margin:0" id="autoTitle">Jam otomatis dari jadwal pelajaran</div>
+                <p class="loc-hint" id="autoHint"></p>
+            </div>
+            <label class="att-switch"><input type="checkbox" id="autoHours" checked><span></span></label>
+        </div>
+    </section>
+
     <!-- EDIT SCHEDULE -->
     <section class="attendance-card">
 
@@ -933,6 +944,39 @@ function goBack() {
     }
 }
 
+
+// "Jam otomatis": on = classes without hours follow their first / last lesson
+(function () {
+    const AL = (id, en) => getLang() === "id" ? id : en;
+    const box = document.getElementById("autoHours"), hint = document.getElementById("autoHint");
+    document.getElementById("autoTitle").textContent = AL("Jam otomatis dari jadwal pelajaran", "Automatic hours from the timetable");
+    function paint() {
+        hint.textContent = box.checked
+            ? AL("Nyala. Kelas yang jam absennya belum diatur: absen masuk dibuka 30 menit sebelum pelajaran pertama sampai 15 menit setelahnya, absen pulang 10 menit setelah pelajaran terakhir.",
+                 "On. Classes without set hours: check-in opens 30 min before the first lesson until 15 min after it starts, check-out for 10 min after the last lesson.")
+            : AL("Mati. Kelas yang jam absennya belum diatur bisa absen kapan saja.", "Off. Classes without set hours can check in any time.");
+    }
+    paint();
+    (async function load() {
+        for (let i = 0; i < 40 && typeof supabaseClient === "undefined"; i++) await new Promise(r => setTimeout(r, 100));
+        const r = await supabaseClient.from("attendance_period_settings").select("*").eq("id", "global").maybeSingle();
+        box.checked = !(r.data && r.data.auto_hours === false);
+        paint();
+    })();
+    box.addEventListener("change", async function () {
+        const on = box.checked;
+        box.disabled = true;
+        const r = await supabaseClient.from("attendance_period_settings").upsert({ id: "global", auto_hours: on, updated_at: new Date().toISOString() }, { onConflict: "id" });
+        box.disabled = false;
+        if (r.error) {
+            box.checked = !on; paint();
+            showToast(/auto_hours/.test(r.error.message || "") ? AL("Jalankan jam_otomatis_saklar.sql dulu di Supabase.", "Run jam_otomatis_saklar.sql in Supabase first.") : AL("Gagal menyimpan: ", "Save failed: ") + r.error.message, "error");
+            return;
+        }
+        paint();
+        showToast(on ? AL("Jam otomatis dinyalakan.", "Automatic hours on.") : AL("Jam otomatis dimatikan.", "Automatic hours off."), "success");
+    });
+})();
 </script>
 
 </body>

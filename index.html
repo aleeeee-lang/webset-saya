@@ -434,7 +434,8 @@ async function loadHome() {
 
     let schedule = null;
     if (profile.class) {
-        const res = await supabaseClient.from("attendance_schedules").select("*").eq("class", profile.class).maybeSingle();
+        // the admin's hours, or (not set) the ones that follow today's lessons (js/auth.js attAutoSchedule)
+        const res = { data: (await attDayRules(profile.class)).schedule };
         schedule = res.data || null;
     }
     const todayRecord = attendance.find(function (r) { return r.date === today; }) || null;

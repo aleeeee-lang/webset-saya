@@ -4742,3 +4742,36 @@ html[data-theme="dark"] .kas-seg,html[data-theme="dark"] .tl-tabs{background:#12
 html[data-theme="dark"] .kas-seg button,html[data-theme="dark"] .tl-tabs button{color:#9A9A9F!important;background:transparent}
 html[data-theme="dark"] .kas-seg button.on,html[data-theme="dark"] .tl-tabs button.on{background:#C6F432!important;color:#14162B!important}
 .kas-seg{background:#F3F3F7}
+/* Personal money (Uang -> Pribadi): this month, by kind, optional limit; kind chips when spending */
+.pf-month{margin-top:12px;padding:16px;border-radius:20px;background:#fff;border:1px solid #ECEEF2}
+.pf-month-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.pf-month-top span{display:block;font-size:12.5px;font-weight:600;color:#5B6075}
+.pf-month-top b{display:block;margin-top:2px;font-size:22px;font-weight:800;color:#14162B}
+.pf-limit-btn{flex-shrink:0;border:0;border-radius:999px;padding:7px 12px;background:#F3F3F7;color:#14162B;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.pf-bar{height:8px;margin-top:12px;border-radius:8px;background:#F1F2F6;overflow:hidden}
+.pf-bar[hidden]{display:none}
+.pf-bar i{display:block;height:100%;width:0;border-radius:8px;background:#16A34A;transition:width .4s}
+.pf-bar i.near{background:#F59E0B}.pf-bar i.over{background:#DC2626}
+.pf-limit-note{margin:6px 0 0;font-size:12.5px;font-weight:700;color:#15803D}
+.pf-limit-note[hidden]{display:none}
+.pf-limit-note.near{color:#B45309}.pf-limit-note.over{color:#B42318}
+.pf-cats{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.pf-cats:empty{display:none}
+.pf-cat{display:flex;align-items:center;gap:8px;font-size:13px;color:#14162B}
+.pf-cat i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pf-cat span{flex:1;min-width:0;color:#4A4F6A;font-weight:600}
+.pf-cat b{font-weight:800}
+.pf-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pf-pick button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;color:#14162B;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.pf-pick button.on{background:#14162B;border-color:#14162B;color:#fff}
+.pf-pick button.on svg{color:#C6F432}
+#pfCatPick[hidden]{display:none}
+html[data-theme="dark"] .pf-month{background:#121212;border-color:#242424}
+html[data-theme="dark"] .pf-month-top span,html[data-theme="dark"] .pf-cat span{color:#9A9A9F!important}
+html[data-theme="dark"] .pf-month-top b,html[data-theme="dark"] .pf-cat,html[data-theme="dark"] .pf-cat b{color:#EDEDED!important}
+html[data-theme="dark"] .pf-limit-btn{background:#1C1C1E;color:#EDEDED!important}
+html[data-theme="dark"] .pf-bar{background:#242426}
+html[data-theme="dark"] .pf-pick button{background:#121212;border-color:#2C2C2E;color:#EDEDED!important}
+html[data-theme="dark"] .pf-pick button *{color:inherit!important}
+html[data-theme="dark"] .pf-pick button.on{background:#C6F432;border-color:#C6F432;color:#14162B!important}
+html[data-theme="dark"] .pf-pick button.on svg{color:#14162B!important}

@@ -154,6 +154,17 @@
             </div>
         </section>
 
+        <!-- THIS MONTH: spent, by kind, and an optional monthly limit (pf-* , 2026) -->
+        <section class="pf-month" id="pfMonth">
+            <div class="pf-month-top">
+                <div><span id="pfMonthLab">Keluar bulan ini</span><b id="pfSpent">Rp0</b></div>
+                <button type="button" class="pf-limit-btn" id="pfLimitBtn"></button>
+            </div>
+            <div class="pf-bar" id="pfBarWrap" hidden><i id="pfBar"></i></div>
+            <p class="pf-limit-note" id="pfLimitNote" hidden></p>
+            <div class="pf-cats" id="pfCats"></div>
+        </section>
+
         <!-- ADD TRANSACTION -->
 
         <section class="savings-form-card" style="margin-top:16px">
@@ -182,6 +193,11 @@
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         <span data-i18n="type_tarik">Withdrawal</span>
                     </button>
+                </div>
+
+                <div id="pfCatPick" hidden>
+                    <div class="savings-field-label" id="pfCatLab">Untuk apa?</div>
+                    <div class="pf-pick" id="pfPick"></div>
                 </div>
 
                 <div>
@@ -491,6 +507,97 @@ let allPersonalData = [];
 let selectedPersonalType = "all";
 let personalLoaded = false;
 
+// Personal money, kept simple: what the spending was for, how much went out this month,
+// and an optional monthly limit (saved on the student's own account).
+const PF = (function () {
+    const PL = (a, b) => getLang() === "id" ? a : b;
+    const I = d => '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+    const CATS = [
+        ["makan", "Makan & jajan", "Food & snacks", '<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 1-3 3.2-3 6v4h3v8"/>'],
+        ["transport", "Transport", "Transport", '<rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 11h16M8 17v3M16 17v3"/><circle cx="8" cy="14" r=".6"/><circle cx="16" cy="14" r=".6"/>'],
+        ["pulsa", "Pulsa & data", "Phone & data", '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/>'],
+        ["sekolah", "Sekolah", "School", '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>'],
+        ["belanja", "Belanja", "Shopping", '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'],
+        ["lainnya", "Lainnya", "Other", '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>']
+    ];
+    const COLORS = { makan: "#F59E0B", transport: "#0EA5E9", pulsa: "#8B5CF6", sekolah: "#16A34A", belanja: "#EC4899", lainnya: "#94A3B8" };
+    let pick = "lainnya", limit = 0;
+    try { limit = Number(localStorage.getItem("att-pf-limit") || 0) || 0; } catch (e) {}
+    function name(k) { const c = CATS.find(x => x[0] === k) || CATS[CATS.length - 1]; return PL(c[1], c[2]); }
+    function drawPick() {
+        const box = document.getElementById("pfPick");
+        box.innerHTML = CATS.map(c => '<button type="button" data-k="' + c[0] + '" class="' + (c[0] === pick ? "on" : "") + '">' + I(c[3]) + '<span>' + PL(c[1], c[2]) + '</span></button>').join("");
+    }
+    function month(rows) {
+        const now = new Date(), key = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+        const out = rows.filter(r => r.type === "tarik" && String(r.created_at || "").slice(0, 7) === key);
+        const spent = out.reduce((a, r) => a + Number(r.amount || 0), 0);
+        document.getElementById("pfMonthLab").textContent = PL("Keluar bulan ini", "Spent this month");
+        document.getElementById("pfSpent").textContent = formatRupiah(spent);
+        // by kind: the biggest three
+        const by = {};
+        out.forEach(r => { const k = r.category || "lainnya"; by[k] = (by[k] || 0) + Number(r.amount || 0); });
+        const top = Object.keys(by).sort((a, b) => by[b] - by[a]).slice(0, 3);
+        document.getElementById("pfCats").innerHTML = top.map(k => '<div class="pf-cat"><i style="background:' + (COLORS[k] || "#94A3B8") + '"></i><span>' + escapeHTML(name(k)) + '</span><b>' + formatRupiah(by[k]) + '</b></div>').join("");
+        // the limit
+        const btn = document.getElementById("pfLimitBtn"), wrap = document.getElementById("pfBarWrap"), note = document.getElementById("pfLimitNote");
+        btn.textContent = limit ? PL("Batas ", "Limit ") + formatRupiah(limit) : PL("+ Atur batas", "+ Set limit");
+        wrap.hidden = note.hidden = !limit;
+        if (limit) {
+            const pct = Math.min(100, Math.round(spent / limit * 100));
+            const bar = document.getElementById("pfBar");
+            bar.style.width = pct + "%";
+            const lvl = spent > limit ? "over" : pct >= 80 ? "near" : "";
+            bar.className = lvl; note.className = "pf-limit-note " + lvl;
+            note.textContent = spent > limit ? PL("Lewat batas " + formatRupiah(spent - limit), "Over the limit by " + formatRupiah(spent - limit))
+                : PL("Sisa " + formatRupiah(limit - spent), formatRupiah(limit - spent) + " left");
+        }
+    }
+    async function setLimit() {
+        const w = document.createElement("div");
+        w.className = "ac-wrap ac-confirm";
+        w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div><div class="savings-amount-field"><span class="rp-prefix">Rp</span><input type="text" inputmode="numeric" class="am-field pf-limit-in" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;font-size:16px"></div><div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+        w.querySelector("b").textContent = PL("Batas belanja sebulan", "Monthly spending limit");
+        w.querySelector("small").textContent = PL("Kosongkan untuk mematikan batas.", "Leave empty to turn it off.");
+        w.querySelector(".ac-cancel").textContent = PL("Batal", "Cancel");
+        w.querySelector(".ac-ok").textContent = PL("Simpan", "Save");
+        const inp = w.querySelector("input");
+        inp.value = limit ? limit.toLocaleString("id-ID") : "";
+        inp.addEventListener("input", function () { const n = Number(inp.value.replace(/\D/g, "")); inp.value = n ? n.toLocaleString("id-ID") : ""; });
+        document.body.appendChild(w);
+        requestAnimationFrame(() => { w.classList.add("in"); inp.focus(); });
+        const close = () => { w.classList.add("out"); setTimeout(() => w.remove(), 160); };
+        w.addEventListener("click", e => { if (e.target === w) close(); });
+        w.querySelector(".ac-cancel").addEventListener("click", close);
+        w.querySelector(".ac-ok").addEventListener("click", async function () {
+            limit = Number(inp.value.replace(/\D/g, "")) || 0;
+            try { localStorage.setItem("att-pf-limit", String(limit)); } catch (e) {}
+            try { await supabaseClient.auth.updateUser({ data: { pf_limit: limit || null } }); } catch (e) {}
+            close();
+            month(allPersonalData);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("pfCatLab").textContent = PL("Untuk apa?", "What for?");
+        drawPick();
+        document.getElementById("pfPick").addEventListener("click", function (e) {
+            const b = e.target.closest("[data-k]"); if (!b) return;
+            pick = b.dataset.k; drawPick();
+        });
+        document.getElementById("pfLimitBtn").addEventListener("click", setLimit);
+        // the limit follows the account across phones
+        (async function () {
+            for (let i = 0; i < 40 && typeof supabaseClient === "undefined"; i++) await new Promise(r => setTimeout(r, 100));
+            try {
+                const { data } = await supabaseClient.auth.getUser();
+                const v = data && data.user && data.user.user_metadata ? Number(data.user.user_metadata.pf_limit || 0) : null;
+                if (v !== null && v !== limit) { limit = v; try { localStorage.setItem("att-pf-limit", String(v)); } catch (e) {} if (personalLoaded) month(allPersonalData); }
+            } catch (e) {}
+        })();
+    });
+    return { name: name, month: month, get pick() { return pick; } };
+})();
+
 function renderPersonalHistory() {
     const typeValue = selectedPersonalType;
 
@@ -505,6 +612,7 @@ function renderPersonalHistory() {
     document.getElementById("personalBalance").textContent = formatRupiah(balance);
     document.getElementById("personalTotalSetor").textContent = formatRupiah(totalSetor);
     document.getElementById("personalTotalTarik").textContent = formatRupiah(totalTarik);
+    PF.month(allPersonalData);
 
     const listEl = document.getElementById("personalHistoryList");
     const emptyEl = document.getElementById("personalHistoryEmpty");
@@ -521,7 +629,7 @@ function renderPersonalHistory() {
         const d = new Date(item.created_at);
 
         const isSetor = item.type === "setor";
-        const typeLabel = isSetor ? tr("type_setor") : tr("type_tarik");
+        const typeLabel = isSetor ? tr("type_setor") : (item.category ? PF.name(item.category) : tr("type_tarik"));
         const sign = isSetor ? "+" : "-";
 
         return `
@@ -567,6 +675,7 @@ function setPersonalType(type) {
     selectedPersonalFormType = type;
     document.getElementById("personalTypeSetorBtn").classList.toggle("active", type === "setor");
     document.getElementById("personalTypeTarikBtn").classList.toggle("active", type === "tarik");
+    document.getElementById("pfCatPick").hidden = type !== "tarik";
 }
 
 async function addPersonalTransaction() {
@@ -598,14 +707,14 @@ async function addPersonalTransaction() {
     btn.disabled = true;
     btn.textContent = translations.btn_saving[lang];
 
-    const { error } = await supabaseClient
-        .from("personal_savings")
-        .insert({
-            student_id: user.id,
-            type: type,
-            amount: amount,
-            note: note || null
-        });
+    const row = { student_id: user.id, type: type, amount: amount, note: note || null };
+    if (type === "tarik") row.category = PF.pick;
+    let { error } = await supabaseClient.from("personal_savings").insert(row);
+    // personal_finance.sql not run yet: save without the category
+    if (error && row.category && /category/i.test(error.message || "")) {
+        delete row.category;
+        ({ error } = await supabaseClient.from("personal_savings").insert(row));
+    }
 
     btn.disabled = false;
     btn.textContent = translations.btn_add_transaction[lang];

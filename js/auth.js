@@ -6,7 +6,6 @@ var _attUserP = null, _attProfP = null, _attPeriodP = null;
 // Student-only pages have nothing for an admin (no own check-in, savings, leave, goals...):
 // send them to the admin page that does the same job.
 var ATT_ADMIN_PAGE = {
-    "dashboard.html": "index.html",
     "history.html": "admin-savings.html",
     "my-attendance.html": "admin-attendance.html",
     "leave.html": "admin-leave.html",

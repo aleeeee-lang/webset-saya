@@ -331,7 +331,6 @@
     var KEYS = {
         "index.html": "beranda home utama",
         "attendance.html": "absen absensi hadir kamera foto wajah check in izin sakit",
-        "dashboard.html": "statistik grafik dasbor ringkasan spp",
         "history.html": "tabungan uang saldo nabung savings money",
         "my-attendance.html": "nilai score grade rapor kalender rekap riwayat kegiatan aktivitas",
         "goals.html": "target tujuan goal belajar",
@@ -622,7 +621,7 @@
             }).join("") + '</div>' : "";
             // every menu that is not already in the bottom menu, as a grid
             var inNav = Array.prototype.map.call(document.querySelectorAll(".bottom-nav a[href]"), function (a) { return a.getAttribute("href"); });
-            var all = (role === "guru" ? GURU_ALL : (MENUS[role] || [])).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1 && m[0] !== "dashboard.html"; });
+            var all = (role === "guru" ? GURU_ALL : (MENUS[role] || [])).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1; });
             if (all.length) {
                 var grid = all.map(function (m) {
                     return '<a class="v3-mtile" href="' + m[0] + '" data-title="' + esc(id ? m[3] : m[2]) + '">' + ic(m[1], 1.8) + '<span>' + esc(id ? m[3] : m[2]) + '</span></a>';

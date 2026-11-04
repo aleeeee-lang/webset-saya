@@ -491,10 +491,27 @@
         var tb = document.querySelectorAll("#knStaffTabs [data-tab]");
         tb[0].textContent = PL("Pesanan", "Orders"); tb[1].textContent = PL("Kasir", "Counter"); tb[2].textContent = PL("Barang", "Items"); tb[3].textContent = PL("Laporan", "Report");
         $("knStaffTabs").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (b) staffTab(b.getAttribute("data-tab")); };
+        if (me.role === "koperasi") attCard();
         await loadItems();
         staffTab("orders");
         live("staff", function () { if (!$("knOrders").closest("[data-pane]").hidden) drawOrders(); else drawOrders.call(null); });
         setInterval(function () { if (!document.hidden && !$("knOrders").closest("[data-pane]").hidden) drawOrders(); }, 20000);
+    }
+
+    // canteen staff check in too (group "Kantin", kantin_absen.sql): a small card above the tabs
+    async function attCard() {
+        var a = document.createElement("a");
+        a.href = "attendance.html"; a.className = "kn-att"; a.id = "knAtt";
+        $("knStaffTabs").parentNode.insertBefore(a, $("knStaffTabs"));
+        var day = typeof localDateStr === "function" ? localDateStr() : new Date().toISOString().slice(0, 10);
+        var r = await supabaseClient.from("attendance").select("time,status,checkout_time").eq("user_id", me.id).eq("date", day).maybeSingle();
+        var row = r && r.data, hm = function (t) { return String(t || "").slice(0, 5).replace(":", "."); };
+        var done = !!row, out = row && row.checkout_time;
+        a.classList.toggle("done", done);
+        a.innerHTML = '<span class="kn-att-ic">' + SV(done ? '<path d="M5 12.5l4.5 4.5L19 7.5"/>' : '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', 20) + '</span>' +
+            '<span class="kn-att-t"><b>' + (done ? (row.status === "Hadir" ? PL("Sudah absen ", "Checked in ") + hm(row.time) : row.status) : PL("Absen hari ini", "Check in today")) + '</b>' +
+            '<small>' + (out ? PL("Pulang ", "Out ") + hm(row.checkout_time) : done ? PL("Jangan lupa absen pulang", "Remember to check out") : PL("Belum absen, pencet untuk absen", "Not yet, tap to check in")) + '</small></span>' +
+            SV('<path d="M9 5l7 7-7 7"/>', 18);
     }
 
     // ---------- helpers ----------

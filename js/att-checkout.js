@@ -112,7 +112,7 @@
         if (!user) return;
         st.user = user;
         var prof = await attMyProfile(user.id);
-        if (!prof || (prof.role !== "murid" && prof.role !== "guru")) return;
+        if (!prof || (prof.role !== "murid" && prof.role !== "guru" && prof.role !== "koperasi")) return;
         var ckey = attClassKey(prof);
         var day = localDateStr();
         var r = await supabaseClient.from("attendance").select("*").eq("user_id", user.id).eq("date", day).maybeSingle();

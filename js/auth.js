@@ -16,7 +16,7 @@ var ATT_ADMIN_PAGE = {
 function attAdminRedirect(role) {
     if (role === "koperasi") {
         var pg = (location.pathname.split("/").pop() || "index.html").toLowerCase();
-        if (["kantin.html", "settings.html", "change-password.html", "about.html", "login.html", "reset-password.html"].indexOf(pg) === -1) location.replace("kantin.html");
+        if (["kantin.html", "attendance.html", "settings.html", "change-password.html", "about.html", "login.html", "reset-password.html"].indexOf(pg) === -1) location.replace("kantin.html");
         return;
     }
     if (role !== "admin") return;
@@ -30,7 +30,7 @@ try { attAdminRedirect((JSON.parse(localStorage.getItem("attendreem-profile") ||
 // students their class
 function attClassKey(p) {
     if (!p) return null;
-    return p.role === "guru" ? "Guru" : (p.class || null);
+    return p.role === "guru" ? "Guru" : p.role === "koperasi" ? "Kantin" : (p.class || null);
 }
 
 function attMyProfile(uid) {

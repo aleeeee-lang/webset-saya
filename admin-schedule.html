@@ -622,7 +622,7 @@ async function loadClasses() {
     allClasses = Array.from(new Set(data.map(s => s.class).filter(Boolean))).sort();
 
     const select = document.getElementById("scheduleClassSelect");
-    allClasses = allClasses.filter(function (c) { return c !== "Guru"; });
+    allClasses = allClasses.filter(function (c) { return c !== "Guru" && c !== "Kantin"; });
     allClasses.forEach(function (c) {
         const opt = document.createElement("option");
         opt.value = c;
@@ -634,6 +634,11 @@ async function loadClasses() {
     g.value = "Guru";
     g.textContent = translations.opt_group_teachers[getLang()] + " — " + translations.opt_teacher_hours[getLang()];
     select.appendChild(g);
+    // canteen staff (kantin_absen.sql)
+    const k = document.createElement("option");
+    k.value = "Kantin";
+    k.textContent = getLang() === "id" ? "Petugas kantin — jam absen kantin" : "Canteen staff — canteen hours";
+    select.appendChild(k);
 }
 
 function dayLabelsOf(activeDays, lang) {

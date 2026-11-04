@@ -60,9 +60,10 @@ Deno.serve(async (req) => {
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
   const { data: prof } = await db.from("profiles").select("name, role, class").eq("id", user.id).maybeSingle();
-  // students and teachers check in (teacher_attendance.sql); admins and parents don't
-  if (!prof || (prof.role !== "murid" && prof.role !== "guru")) return reply({ error: "students and teachers only" }, 403);
-  const isTeacher = prof.role === "guru";
+  // students, teachers and canteen staff check in (teacher_attendance.sql, kantin_absen.sql); admins and parents don't
+  if (!prof || (prof.role !== "murid" && prof.role !== "guru" && prof.role !== "koperasi")) return reply({ error: "students and teachers only" }, 403);
+  const isTeacher = prof.role === "guru" || prof.role === "koperasi";
+  const staffLabel = prof.role === "koperasi" ? "Petugas kantin" : "Guru";
 
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch (_) { /* empty */ }
@@ -106,7 +107,7 @@ Deno.serve(async (req) => {
   });
   // notifications go through push_queue (sent right away by the database trigger)
   const notifyChange = async (changeId: string) => {
-    const who = (prof.name ?? (isTeacher ? "Guru" : "Siswa")) + (isTeacher ? " (Guru)" : prof.class ? " (" + prof.class + ")" : "");
+    const who = (prof.name ?? (isTeacher ? staffLabel : "Siswa")) + (isTeacher ? " (" + staffLabel + ")" : prof.class ? " (" + prof.class + ")" : "");
     const rows: { user_id: string; title: string; body: string; url: string; tag: string }[] = [];
     const [{ data: admins }, { data: subs }, { data: prefs }, { data: parents }] = await Promise.all([
       db.from("profiles").select("id").eq("role", "admin"),
@@ -117,7 +118,7 @@ Deno.serve(async (req) => {
     const hasPush = new Set((subs ?? []).map((r: { user_id: string }) => r.user_id));
     const fpOff = new Set((prefs ?? []).filter((r: { admin_fp?: boolean }) => r.admin_fp === false).map((r: { user_id: string }) => r.user_id));
     for (const a of admins ?? []) {
-      if (hasPush.has(a.id) && !fpOff.has(a.id)) rows.push({ user_id: a.id, title: "Sidik jari · Ganti HP", body: who + " mendaftarkan HP baru untuk absen sidik jari.", url: isTeacher ? "admin-teachers.html" : "admin-students.html", tag: "admin-fp-" + changeId });
+      if (hasPush.has(a.id) && !fpOff.has(a.id)) rows.push({ user_id: a.id, title: "Sidik jari · Ganti HP", body: who + " mendaftarkan HP baru untuk absen sidik jari.", url: prof.role === "koperasi" ? "kantin.html" : isTeacher ? "admin-teachers.html" : "admin-students.html", tag: "admin-fp-" + changeId });
     }
     for (const p of isTeacher ? [] : parents ?? []) {
       if (hasPush.has(p.parent_id)) rows.push({ user_id: p.parent_id, title: "HP sidik jari anak diganti", body: (prof.name ?? "Anak Anda") + " mendaftarkan HP baru untuk absen sidik jari.", url: "parent.html", tag: "fp-" + changeId });

@@ -10,17 +10,18 @@
     if (!nav) return;
     var role = "";
     try { role = (JSON.parse(localStorage.getItem("attendreem-profile") || "{}")).role || ""; } catch (e) {}
-    if (role === "orangtua" || role === "koperasi") { nav.remove(); return; }   // parents have one page, no menu
-    // teachers: no bottom menu either - the home page has every place as a tile; other pages get a back arrow home
-    if (role === "guru") {
+    if (role === "orangtua") { nav.remove(); return; }   // parents have one page, no menu
+    // teachers (and canteen staff): no bottom menu either - the home page has every place as a tile; other pages get a back arrow home
+    if (role === "guru" || role === "koperasi") {
         nav.remove();
+        var homePg = role === "koperasi" ? "kantin.html" : "teacher.html";
         var pg = (location.pathname.split("/").pop() || "").replace(/[?#].*$/, "");
         var put = function () {
-            if (pg === "teacher.html" || document.querySelector(".v2-back, .v3-back, [data-tc-back]")) return;
+            if (pg === homePg || document.querySelector(".v2-back, .v3-back, [data-tc-back]")) return;
             var head = document.querySelector("main header, header.v2-head, .v2-head");
             if (!head) return;
             var a = document.createElement("a");
-            a.href = "teacher.html";
+            a.href = homePg;
             a.className = "v2-back v3-back";
             a.setAttribute("data-tc-back", "");
             a.setAttribute("aria-label", "Beranda");

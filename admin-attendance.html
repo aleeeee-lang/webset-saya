@@ -67,7 +67,7 @@ document.getElementById("aaCsvT").textContent = L("Unduh", "Download");
 document.getElementById("aaQ").placeholder = L("Cari nama", "Search name");
 document.getElementById("aaTrendH").textContent = L("Tren 14 hari", "Last 14 days");
 
-let me = null, students = [], teachers = [], recs = {}, scope = "all", day = "", focus = "", q = "", shown = 60;
+let me = null, students = [], teachers = [], canteen = [], recs = {}, scope = "all", day = "", focus = "", q = "", shown = 60;
 let openBy = {};   // class -> is the chosen day a check-in day for it (weekend / agenda day off)
 const DAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const DAY_L = ID ? ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] : DAYS_EN;
@@ -83,14 +83,16 @@ async function start() {
     const prof = await attMyProfile(user.id);
     if (!prof || prof.role !== "admin") { location.replace("index.html"); return; }
     me = user;
-    const [s, t] = await Promise.all([
+    const [s, t, k] = await Promise.all([
         supabaseClient.from("profiles").select("id, name, class, status").eq("role", "murid").order("name", { ascending: true }),
-        supabaseClient.from("profiles").select("id, name, status").eq("role", "guru").order("name", { ascending: true })
+        supabaseClient.from("profiles").select("id, name, status").eq("role", "guru").order("name", { ascending: true }),
+        supabaseClient.from("profiles").select("id, name, status").eq("role", "koperasi").order("name", { ascending: true })
     ]);
+    canteen = ((k.data) || []).filter(x => x.status !== "inactive").map(x => ({ id: x.id, name: x.name, class: "Kantin" }));
     students = ((s.data) || []).filter(x => x.status !== "inactive");
     teachers = ((t.data) || []).filter(x => x.status !== "inactive").map(x => ({ id: x.id, name: x.name, class: "Guru" }));
     const classes = Array.from(new Set(students.map(x => x.class).filter(c => c && c !== "Guru"))).sort((a, b) => a.localeCompare(b, "id", { numeric: true }));
-    const chips = [["all", L("Semua kelas", "All classes")]].concat(classes.map(c => [c, c])).concat(teachers.length ? [["Guru", L("Guru", "Teachers")]] : []);
+    const chips = [["all", L("Semua kelas", "All classes")]].concat(classes.map(c => [c, c])).concat(teachers.length ? [["Guru", L("Guru", "Teachers")]] : []).concat(canteen.length ? [["Kantin", L("Kantin", "Canteen")]] : []);
     document.getElementById("aaClasses").innerHTML = chips.map(c => `<button type="button" role="tab" data-c="${escapeHTML(c[0])}">${escapeHTML(c[1])}</button>`).join("");
     day = new URLSearchParams(location.search).get("date") || localDateStr();
     await loadDay();
@@ -99,6 +101,7 @@ async function start() {
 
 function people() {
     if (scope === "Guru") return teachers;
+    if (scope === "Kantin") return canteen;
     if (scope === "all") return students;
     return students.filter(x => x.class === scope);
 }
@@ -109,7 +112,7 @@ async function loadDay() {
     document.getElementById("aaDate").value = day;
     document.getElementById("aaNext").disabled = day >= localDateStr();
     const { data } = await supabaseClient.from("attendance").select("*").eq("date", day);
-    const keys = Array.from(new Set(students.map(x => x.class).filter(Boolean).concat(teachers.length ? ["Guru"] : [])));
+    const keys = Array.from(new Set(students.map(x => x.class).filter(Boolean).concat(teachers.length ? ["Guru"] : []).concat(canteen.length ? ["Kantin"] : [])));
     const rules = await Promise.all(keys.map(k => attDayRules(k)));
     openBy = {};
     keys.forEach((k, i) => { openBy[k] = attDayOpen(day, rules[i]); });

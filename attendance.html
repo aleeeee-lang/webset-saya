@@ -249,7 +249,7 @@
         function attRolePage(role) {
             if (role === "admin") { location.replace("admin-attendance.html"); return false; }
             if (role === "orangtua") { location.replace("parent.html"); return false; }
-            if (role === "guru") {
+            if (role === "guru" || role === "koperasi") {
                 // teachers check in here too (their menu comes from js/nav.js)
                 document.documentElement.classList.add("att-teacher");
             }

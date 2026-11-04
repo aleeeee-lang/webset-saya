@@ -4996,3 +4996,16 @@ html[data-theme="dark"] .kn-search input{color:#EDEDED!important}
 .kn-search-btn,html[data-theme="dark"] .kn-search-btn{background:none;border:0;width:32px;height:32px}
 .kn-head-r{gap:12px}
 .kn-search-btn,html[data-theme="dark"] .kn-search-btn{width:28px;justify-items:end;margin-right:-2px}
+/* Kantin: staff check-in card */
+.kn-att{display:flex;align-items:center;gap:12px;margin:14px 0 0;padding:12px 14px;border-radius:18px;background:#14162B;color:#fff;text-decoration:none}
+.kn-att-ic{width:38px;height:38px;border-radius:12px;background:#C6F432;color:#14162B;display:grid;place-items:center;flex-shrink:0}
+.kn-att-t{flex:1;min-width:0}.kn-att-t b{display:block;font-size:14.5px}.kn-att-t small{font-size:12.5px;color:#A9ADC4;font-weight:600}
+.kn-att.done{background:#fff;color:#14162B;border:1px solid #ECEEF2}
+.kn-att.done .kn-att-ic{background:#DCFCE7;color:#15803D}.kn-att.done .kn-att-t small{color:#5B6075}
+.kn-att + .kn-tabs{margin-top:12px}
+html[data-theme="dark"] .kn-att{background:#1C1C1E;color:#EDEDED!important}
+html[data-theme="dark"] .kn-att *{color:inherit}
+html[data-theme="dark"] .kn-att-ic,html[data-theme="dark"] .kn-att-ic *{color:#14162B!important}
+html[data-theme="dark"] .kn-att.done{background:#121212;border-color:#242424}
+html[data-theme="dark"] .kn-att.done .kn-att-ic{background:#1E3A1E}html[data-theme="dark"] .kn-att.done .kn-att-ic *{color:#C6F432!important}
+html[data-theme="dark"] .kn-att-t small{color:#9A9A9F!important}

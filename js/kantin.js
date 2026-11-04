@@ -18,6 +18,8 @@
         qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/>',
         cam: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
         file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+        eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+        eyeOff: '<path d="M3 3l18 18"/><path d="M9.9 5.1A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-2.7 3.5M6.7 6.7C4 8.3 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.4 4.4-1"/><path d="M9.9 14.1a3 3 0 0 1 4.2-4.2"/>',
         gal: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/>',
         user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
     };
@@ -449,8 +451,15 @@
         sheet('<div class="ac-top"><b>' + PL("Petugas kantin baru", "New canteen staff") + '</b><small>' + PL("Petugas hanya bisa membuka halaman kantin.", "Staff can only open the canteen page.") + '</small></div>' +
             '<input type="text" class="am-field kn-s-name" style="' + f + '" placeholder="' + PL("Nama", "Name") + '">' +
             '<input type="email" class="am-field kn-s-mail" style="' + f + '" placeholder="Email">' +
-            '<input type="password" class="am-field kn-s-pass" style="' + f + '" placeholder="' + PL("Password (min. 6 huruf)", "Password (min. 6)") + '">' +
+            '<div class="kn-pw"><input type="password" class="am-field kn-s-pass" style="' + f + ';padding-right:46px" autocomplete="new-password" placeholder="' + PL("Password (min. 6 huruf)", "Password (min. 6)") + '"><button type="button" class="kn-eye" aria-label="' + PL("Lihat password", "Show password") + '">' + SV(IC.eye, 20) + '</button></div>' +
             '<div class="ac-actions"><button type="button" class="ac-cancel" data-close>' + PL("Batal", "Cancel") + '</button><button type="button" class="ac-ok kn-s-go">' + PL("Buat akun", "Create") + '</button></div>', function (w, api) {
+            var eye = w.querySelector(".kn-eye"), pw = w.querySelector(".kn-s-pass");
+            eye.onclick = function () {
+                var show = pw.type === "password";
+                pw.type = show ? "text" : "password";
+                eye.innerHTML = SV(show ? IC.eyeOff : IC.eye, 20);
+                eye.setAttribute("aria-label", show ? PL("Sembunyikan password", "Hide password") : PL("Lihat password", "Show password"));
+            };
             w.querySelector(".kn-s-go").onclick = async function () {
                 var btn = this, name = w.querySelector(".kn-s-name").value.trim(), mail = w.querySelector(".kn-s-mail").value.trim(), pass = w.querySelector(".kn-s-pass").value;
                 if (!name || !mail || pass.length < 6) { toast(PL("Isi nama, email, dan password (min. 6)", "Fill in name, email and password"), "error"); return; }

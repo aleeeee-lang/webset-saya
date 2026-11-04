@@ -4976,3 +4976,6 @@ button.kn-photo-pick{width:100%;padding:0;background:none;font:inherit;color:inh
 .kn-photo-pick span.kn-photo-chg{position:absolute;inset:auto 10px 10px auto;display:inline-flex;background:rgba(20,22,43,.82);color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700}
 .kn-sheet .kn-del{border:0;background:none;color:#B42318;font:inherit;font-size:14px;font-weight:700;padding:4px;cursor:pointer;align-self:center}
 html[data-theme="dark"] .kn-sheet .kn-del{background:none;color:#FF8A80!important}
+.kn-pw{position:relative}
+.kn-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;color:#8A8FA8;display:grid;place-items:center;cursor:pointer;padding:0}
+html[data-theme="dark"] .kn-eye{color:#8E8E93!important}

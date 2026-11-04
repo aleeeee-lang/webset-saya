@@ -14,6 +14,11 @@ var ATT_ADMIN_PAGE = {
     "feedback.html": "admin-feedback.html"
 };
 function attAdminRedirect(role) {
+    if (role === "koperasi") {
+        var pg = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+        if (["kantin.html", "settings.html", "change-password.html", "about.html", "login.html", "reset-password.html"].indexOf(pg) === -1) location.replace("kantin.html");
+        return;
+    }
     if (role !== "admin") return;
     var page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
     var to = ATT_ADMIN_PAGE[page];

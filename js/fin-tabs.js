@@ -28,7 +28,7 @@
     // the other two tabs are opened quietly in the background (Chrome), so a tap switches at once
     try {
         if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules") && !document.getElementById("finPrerender")) {
-            var others = ["admin-spp.html", "admin-savings.html", "kas.html"].filter(function (h) { return h !== (location.pathname.split("/").pop() || ""); });
+            var others = ["admin-spp.html", "admin-savings.html", "kas.html", "kantin.html"].filter(function (h) { return h !== (location.pathname.split("/").pop() || ""); });
             var sr = document.createElement("script");
             sr.type = "speculationrules"; sr.id = "finPrerender";
             sr.textContent = JSON.stringify({ prerender: [{ source: "list", urls: others, eagerness: "eager" }] });
@@ -38,7 +38,7 @@
     if (main.querySelector(".fin-tabs")) return;
     var id = (typeof getLang === "function" ? getLang() : "id") === "id";
     var page = (location.pathname.split("/").pop() || "").toLowerCase();
-    var tabs = [["admin-spp.html", "SPP", "SPP"], ["admin-savings.html", "Tabungan", "Savings"], ["kas.html", "Kas kelas", "Class cash"]];
+    var tabs = [["admin-spp.html", "SPP", "SPP"], ["admin-savings.html", "Tabungan", "Savings"], ["kas.html", "Kas kelas", "Class cash"], ["kantin.html", "Kantin", "Canteen"]];
     var nav = document.createElement("nav");
     nav.className = "tl-tabs fin-tabs";
     nav.setAttribute("aria-label", id ? "Keuangan" : "Money");

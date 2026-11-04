@@ -27,6 +27,7 @@
         pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
         check: '<path d="M5 13l4 4L19 7"/>',
         search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+        bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
         star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
         gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
         task: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/>',
@@ -44,6 +45,7 @@
         murid: [
             ["index.html", "home", "Home", "Beranda"],
             ["attendance.html", "checkin", "Check in", "Absensi"],
+            ["kantin.html", "bag", "Canteen", "Kantin"],
             ["history.html", "wallet", "Savings", "Tabungan"],
             ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
             null,
@@ -74,12 +76,16 @@
             ["calendar.html", "cal", "Calendar", "Kalender"],
             ["information.html", "info", "Information", "Informasi"]
         ],
+        koperasi: [
+            ["kantin.html", "bag", "Canteen", "Kantin"],
+            ["settings.html", "gear", "Settings", "Pengaturan"]
+        ],
         // laptop menu = the same few places as the phone (related pages sit behind tabs)
         admin: [
             ["index.html", "home", "Home", "Beranda"],
             ["admin-attendance.html", "checkin", "Attendance", "Absensi"],
             ["qr-send.html", "qr", "Send QR", "Kirim QR"],
-            ["admin-spp.html", "wallet", "Money", "Keuangan", "", ["admin-savings.html", "kas.html"]],
+            ["admin-spp.html", "wallet", "Money", "Keuangan", "", ["admin-savings.html", "kas.html", "kantin.html"]],
             null,
             ["admin-students.html", "users", "People", "Pengguna", "", ["admin-teachers.html", "admin-parents.html", "admin-development.html"]],
             ["admin-schedule.html", "cal", "Schedule", "Jadwal", "", ["admin-lessons.html", "admin-piket.html", "calendar.html"]],
@@ -119,6 +125,7 @@
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],
             ["admin-savings.html", "wallet", "Manage Savings", "Kelola tabungan"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
+            ["kantin.html", "bag", "Canteen", "Kantin"],
             ["juara.html", "trophy", "Champions", "Juara"],
             ["admin-leave.html", "doc", "Leave Requests", "Persetujuan izin"],
             ["admin-development.html", "grad", "Development", "Perkembangan siswa"],
@@ -159,7 +166,7 @@
         });
         html += '</nav>';
         var name = p.name || "";
-        var sub = p.class || ({ guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent", admin: "Admin", murid: "" })[role] || "";
+        var sub = p.class || ({ guru: id ? "Guru" : "Teacher", orangtua: id ? "Orang tua" : "Parent", koperasi: id ? "Petugas kantin" : "Canteen staff", admin: "Admin", murid: "" })[role] || "";
         var av = p.avatar_url ? '<img src="' + safeURL(p.avatar_url) + '" alt="">' : escapeHTML(name.trim().charAt(0).toUpperCase() || "?");
         // the profile card sits at the top, right above Beranda. The card itself is not a link;
         // the "+" on the photo changes the photo, the pen line writes a short bio (like students have)
@@ -168,7 +175,7 @@
             '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
             '<span class="v2-side-who"><b></b><small></small>' +
             '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
-        if (role === "admin" || role === "guru" || role === "orangtua") userCard = "";   // admin / teacher / parent: the photo + name sit on top of the home page instead
+        if (role === "admin" || role === "guru" || role === "orangtua" || role === "koperasi") userCard = "";   // admin / teacher / parent: the photo + name sit on top of the home page instead
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {

@@ -16,7 +16,8 @@
     var TABS = role === "admin" ? ["index.html", "admin-attendance.html", "qr-send.html", "admin-spp.html", "admin-menu.html"]
         : role === "guru" ? ["teacher.html", "teacher-class.html", "attendance.html", "schedule.html", "settings.html"]
         : role === "orangtua" ? ["parent.html"]
-        : ["index.html", "schedule.html", "attendance.html", "history.html", "my-attendance.html"];
+        : role === "koperasi" ? ["kantin.html"]
+        : ["index.html", "kantin.html", "attendance.html", "history.html", "my-attendance.html"];
     var HOME = TABS[0];
     function isHome(p) { return p === HOME || (role === "guru" && p === "index.html"); }
     function isTab(p) { return TABS.indexOf(p) !== -1 || isHome(p); }

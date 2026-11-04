@@ -4829,7 +4829,7 @@ html[data-theme="dark"] .al-row em{color:#14162B!important}
 /* ===== Kantin (kantin.html) ===== */
 .kn-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .kn-sub{margin:2px 0 0;font-size:14px;color:#5B6075}
-.kn-pill{flex-shrink:0;margin-top:10px;background:#fff;border:1px solid #ECEEF2;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;color:#14162B;cursor:default}
+.kn-pill{flex-shrink:0;margin-top:10px;background:#fff;border:1px solid #ECEEF2;border-radius:999px;padding:7px 11px;font-size:12.5px;white-space:nowrap;font-weight:700;color:#14162B;cursor:default}
 .kn-pill[hidden],#knStudent[hidden],#knStaff[hidden],.kn-page [data-pane][hidden],.kn-cart[hidden],#knStaffList[hidden]{display:none!important}
 .kn-tabs{margin:14px 0 12px}
 .kn-payqr,.kn-add{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:16px;padding:13px;margin-bottom:12px;background:#fff;color:#14162B;font:inherit;font-size:14px;font-weight:700;cursor:pointer;border:1px solid #ECEEF2}

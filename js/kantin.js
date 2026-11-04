@@ -85,10 +85,10 @@
             var q = cart[it.id] || 0, out = it.stock <= 0;
             var btn = out ? '' : (q ? '<span class="kn-qty"><button type="button" data-minus="' + it.id + '" aria-label="-">' + SV(IC.minus, 16) + '</button><b>' + q + '</b><button type="button" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 16) + '</button></span>'
                 : '<button type="button" class="kn-plus" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 18) + '</button>');
-            var low = staff && !out && it.stock <= 5;
+            var low = !out && it.stock <= 5;
             return '<div class="kn-food' + (out ? " out" : "") + (q ? " picked" : "") + '"><div class="kn-img">' + photoHTML(it) + btn + '</div>' +
                 '<div class="kn-bd"><p>' + esc(it.name) + '</p><span class="kn-price">' + (out ? PL("Habis", "Sold out") : rp(it.price)) + '</span>' +
-                (staff && !out ? '<small class="' + (low ? "low" : "") + '">' + PL("Stok ", "Stock ") + it.stock + '</small>' : '') + '</div></div>';
+                (!out ? '<small class="' + (low ? "low" : "") + '">' + (staff ? PL("Stok ", "Stock ") : PL("Sisa ", "Left ")) + it.stock + '</small>' : '') + '</div></div>';
         }).join("");
     }
     function bindGrid(box, after) {
@@ -119,7 +119,7 @@
     async function loadBalance() {
         var r = await supabaseClient.from("savings").select("type,amount").eq("student_id", me.id);
         balance = ((r && r.data) || []).reduce(function (a, x) { return a + (x.type === "setor" ? 1 : -1) * Number(x.amount || 0); }, 0);
-        var p = $("knPill"); p.hidden = false; p.textContent = PL("Saldo ", "Balance ") + rp(balance);
+        var p = $("knPill"); p.hidden = false; p.textContent = PL("Saldo sekolah ", "School balance ") + rp(balance);
     }
     function drawStudentMenu() {
         var box = $("knMenu");
@@ -206,7 +206,7 @@
     async function startStudent() {
         mode = "murid";
         $("knStudent").hidden = false;
-        $("knSub").textContent = PL("Pesan sekarang, ambil di kantin", "Order now, pick up at the canteen");
+        $("knSub").textContent = PL("Pesan, ambil di kantin", "Order, pick up at the canteen");
         var tb = document.querySelectorAll("#knStuTabs [data-tab]");
         tb[0].textContent = PL("Menu", "Menu"); tb[1].textContent = PL("Pesananku", "My orders");
         $("knStuTabs").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (b) stuTab(b.getAttribute("data-tab")); };

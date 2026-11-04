@@ -17,6 +17,8 @@
         minus: '<path d="M5 12h14"/>',
         qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/>',
         cam: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+        file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+        gal: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/>',
         user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
     };
     var STATUS = {
@@ -341,14 +343,14 @@
     function itemSheet(it) {
         var blob = null, f = "width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;font-size:16px";
         sheet('<div class="ac-top"><b>' + (it ? PL("Ubah barang", "Edit item") : PL("Barang baru", "New item")) + '</b></div>' +
-            '<label class="kn-photo-pick">' + (it && it.photo ? '<img src="' + esc(it.photo) + '" alt="">' : '<span>' + SV(IC.cam, 28) + '<b>' + PL("Ambil / pilih foto", "Take / choose photo") + '</b></span>') + '<input type="file" accept="image/*" hidden></label>' +
+            '<button type="button" class="kn-photo-pick">' + (it && it.photo ? '<img src="' + esc(it.photo) + '" alt=""><span class="kn-photo-chg">' + PL("Ganti foto", "Change photo") + '</span>' : '<span>' + SV(IC.cam, 28) + '<b>' + PL("Tambah foto", "Add photo") + '</b></span>') + '</button><input type="file" accept="image/*" capture="environment" class="kn-f-cam" hidden><input type="file" accept="image/*" class="kn-f-gal" hidden><input type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif" class="kn-f-file" hidden>' +
             '<div class="savings-field-label">' + PL("Kategori", "Kind") + '</div><div class="kn-catpick">' + CATS.map(function (c) { return '<button type="button" data-k="' + c[0] + '">' + SV(c[2], 18) + '<span>' + c[1] + '</span></button>'; }).join("") + '</div>' +
             '<div class="savings-field-label">' + PL("Nama", "Name") + '</div><input type="text" maxlength="40" class="am-field kn-in-name" style="' + f + '" placeholder="' + PL("misal: Nasi goreng", "e.g. Fried rice") + '">' +
             '<div class="kn-two"><div><div class="savings-field-label">' + PL("Harga", "Price") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-price" style="' + f + '" placeholder="10.000"></div>' +
             '<div><div class="savings-field-label">' + PL("Stok", "Stock") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-stock" style="' + f + '" placeholder="20"></div></div>' +
             (it ? '<div class="kn-item-more"><button type="button" class="kn-hide">' + (it.active ? PL("Sembunyikan dari menu", "Hide from menu") : PL("Tampilkan di menu", "Show on menu")) + '</button><button type="button" class="kn-del">' + PL("Hapus", "Delete") + '</button></div>' : '') +
             '<div class="ac-actions"><button type="button" class="ac-cancel" data-close>' + PL("Batal", "Cancel") + '</button><button type="button" class="ac-ok kn-save">' + PL("Simpan", "Save") + '</button></div>', function (w, api) {
-            var nm = w.querySelector(".kn-in-name"), pr = w.querySelector(".kn-in-price"), stk = w.querySelector(".kn-in-stock"), pick = w.querySelector(".kn-photo-pick"), file = pick.querySelector("input");
+            var nm = w.querySelector(".kn-in-name"), pr = w.querySelector(".kn-in-price"), stk = w.querySelector(".kn-in-stock"), pick = w.querySelector(".kn-photo-pick"), fCam = w.querySelector(".kn-f-cam"), fGal = w.querySelector(".kn-f-gal"), fFile = w.querySelector(".kn-f-file");
             function num(el) { el.addEventListener("input", function () { var n = Number(el.value.replace(/\D/g, "")); el.value = n ? n.toLocaleString("id-ID") : (el.value.replace(/\D/g, "") === "0" ? "0" : ""); }); }
             num(pr); num(stk);
             var cat = (it && it.category) || filter || "makanan", cp = w.querySelector(".kn-catpick");
@@ -356,12 +358,24 @@
             markCat();
             cp.onclick = function (e) { var b = e.target.closest("[data-k]"); if (b) { cat = b.getAttribute("data-k"); markCat(); } };
             if (it) { nm.value = it.name; pr.value = Number(it.price).toLocaleString("id-ID"); stk.value = String(it.stock); }
-            file.onchange = async function () {
-                if (!file.files[0]) return;
-                try { blob = await shrink(file.files[0]); } catch (e) { toast(errMsg(e), "error"); return; }
-                var u = URL.createObjectURL(blob);
-                pick.innerHTML = '<img src="' + u + '" alt="">'; pick.appendChild(file);
+            // tap the photo box: take a new photo or choose one from the gallery
+            pick.onclick = async function () {
+                var v = await attSheet({ title: PL("Foto barang", "Item photo"), items: [
+                    { label: PL("Ambil foto (kamera)", "Take photo"), value: "cam", icon: SV(IC.cam, 20) },
+                    { label: PL("Pilih dari galeri", "Choose from gallery"), value: "gal", icon: SV(IC.gal, 20) },
+                    { label: PL("Pilih dari file", "Choose a file"), value: "file", icon: SV(IC.file, 20) }
+                ] });
+                if (v === "cam") fCam.click(); else if (v === "gal") fGal.click(); else if (v === "file") fFile.click();
             };
+            async function got(inp) {
+                var f0 = inp.files && inp.files[0]; inp.value = "";
+                if (!f0) return;
+                try { blob = await shrink(f0); } catch (e) { toast(errMsg(e), "error"); return; }
+                pick.innerHTML = '<img src="' + URL.createObjectURL(blob) + '" alt=""><span class="kn-photo-chg">' + PL("Ganti foto", "Change photo") + '</span>';
+            }
+            fCam.onchange = function () { got(fCam); };
+            fGal.onchange = function () { got(fGal); };
+            fFile.onchange = function () { got(fFile); };
             var hide = w.querySelector(".kn-hide");
             if (hide) hide.onclick = async function () {
                 var r = await supabaseClient.from("kantin_items").update({ active: !it.active, updated_at: new Date().toISOString() }).eq("id", it.id);

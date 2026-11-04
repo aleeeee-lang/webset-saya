@@ -27,7 +27,7 @@
         pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
         check: '<path d="M5 13l4 4L19 7"/>',
         search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-        bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+        shop: '<path d="M3.5 10 5 4h14l1.5 6"/><path d="M3.5 10a2.8 2.8 0 0 0 5.6 0 2.8 2.8 0 0 0 5.8 0 2.8 2.8 0 0 0 5.6 0"/><path d="M5 12.5V20h14v-7.5"/><path d="M10 20v-4.5h4V20"/>',
         star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
         gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
         task: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/>',
@@ -45,7 +45,7 @@
         murid: [
             ["index.html", "home", "Home", "Beranda"],
             ["attendance.html", "checkin", "Check in", "Absensi"],
-            ["kantin.html", "bag", "Canteen", "Kantin"],
+            ["kantin.html", "shop", "Canteen", "Kantin"],
             ["history.html", "wallet", "Savings", "Tabungan"],
             ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
             null,
@@ -77,7 +77,7 @@
             ["information.html", "info", "Information", "Informasi"]
         ],
         koperasi: [
-            ["kantin.html", "bag", "Canteen", "Kantin"],
+            ["kantin.html", "shop", "Canteen", "Kantin"],
             ["settings.html", "gear", "Settings", "Pengaturan"]
         ],
         // laptop menu = the same few places as the phone (related pages sit behind tabs)
@@ -125,7 +125,7 @@
             ["admin-spp.html", "wallet", "SPP", "Kelola SPP"],
             ["admin-savings.html", "wallet", "Manage Savings", "Kelola tabungan"],
             ["kas.html", "cash", "Class Cash", "Kas kelas"],
-            ["kantin.html", "bag", "Canteen", "Kantin"],
+            ["kantin.html", "shop", "Canteen", "Kantin"],
             ["juara.html", "trophy", "Champions", "Juara"],
             ["admin-leave.html", "doc", "Leave Requests", "Persetujuan izin"],
             ["admin-development.html", "grad", "Development", "Perkembangan siswa"],

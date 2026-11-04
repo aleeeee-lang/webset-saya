@@ -4972,3 +4972,5 @@ html[data-theme="dark"] .kn-photo-pick{border-color:#3A3A3C}
 html[data-theme="dark"] .kn-chips button,html[data-theme="dark"] .kn-catpick button{background:#121212;border-color:#2C2C2E;color:#EDEDED!important}
 html[data-theme="dark"] .kn-chips button *,html[data-theme="dark"] .kn-catpick button *{color:inherit!important}
 html[data-theme="dark"] .kn-chips button.on,html[data-theme="dark"] .kn-catpick button.on{background:#C6F432;border-color:#C6F432;color:#14162B!important}
+button.kn-photo-pick{width:100%;padding:0;background:none;font:inherit;color:inherit}
+.kn-photo-pick span.kn-photo-chg{position:absolute;inset:auto 10px 10px auto;display:inline-flex;background:rgba(20,22,43,.82);color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700}

@@ -5009,3 +5009,20 @@ html[data-theme="dark"] .kn-att-ic,html[data-theme="dark"] .kn-att-ic *{color:#1
 html[data-theme="dark"] .kn-att.done{background:#121212;border-color:#242424}
 html[data-theme="dark"] .kn-att.done .kn-att-ic{background:#1E3A1E}html[data-theme="dark"] .kn-att.done .kn-att-ic *{color:#C6F432!important}
 html[data-theme="dark"] .kn-att-t small{color:#9A9A9F!important}
+/* Kantin: tap an item for a bigger look */
+.kn-food[data-view]{cursor:pointer}
+.kn-view-img{position:relative;aspect-ratio:4/3;border-radius:18px;overflow:hidden;background:#F1F2F6;margin:-4px 0 0}
+.kn-view-img img,.kn-view-img .kn-noimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kn-view-t b{display:block;font-size:20px;font-weight:800;color:#14162B}
+.kn-view-t small{font-size:13px;font-weight:600;color:#5B6075}
+.kn-view-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kn-view-price{font-size:22px;font-weight:800;color:#15803D}.kn-view-price.out{color:#B42318}
+.kn-view-qty{display:flex;align-items:center;gap:4px;background:#F3F3F7;border-radius:999px;padding:4px}
+.kn-view-qty button{width:36px;height:36px;border-radius:50%;border:0;background:#14162B;color:#fff;display:grid;place-items:center;cursor:pointer}
+.kn-view-qty b{min-width:30px;text-align:center;font-size:17px;color:#14162B}
+html[data-theme="dark"] .kn-view-img{background:#1C1C1E}
+html[data-theme="dark"] .kn-view-t b,html[data-theme="dark"] .kn-view-qty b{color:#EDEDED!important}
+html[data-theme="dark"] .kn-view-t small{color:#9A9A9F!important}
+html[data-theme="dark"] .kn-view-price{color:#C6F432!important}html[data-theme="dark"] .kn-view-price.out{color:#FF8A80!important}
+html[data-theme="dark"] .kn-view-qty{background:#2C2C2E}
+html[data-theme="dark"] .kn-view-qty button{background:#C6F432;color:#14162B!important}html[data-theme="dark"] .kn-view-qty button *{color:#14162B!important}

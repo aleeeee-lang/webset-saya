@@ -88,7 +88,7 @@
             var btn = out ? '' : (q ? '<span class="kn-qty"><button type="button" data-minus="' + it.id + '" aria-label="-">' + SV(IC.minus, 16) + '</button><b>' + q + '</b><button type="button" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 16) + '</button></span>'
                 : '<button type="button" class="kn-plus" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 18) + '</button>');
             var low = !out && it.stock <= 5;
-            return '<div class="kn-food' + (out ? " out" : "") + (q ? " picked" : "") + '"><div class="kn-img">' + photoHTML(it) + btn + '</div>' +
+            return '<div class="kn-food' + (out ? " out" : "") + (q ? " picked" : "") + '" data-view="' + it.id + '"><div class="kn-img">' + photoHTML(it) + btn + '</div>' +
                 '<div class="kn-bd"><p>' + esc(it.name) + '</p><span class="kn-price">' + (out ? PL("Habis", "Sold out") : rp(it.price)) + '</span>' +
                 (!out ? '<small class="' + (low ? "low" : "") + '">' + (staff ? PL("Stok ", "Stock ") : PL("Sisa ", "Left ")) + it.stock + '</small>' : '') + '</div></div>';
         }).join("");
@@ -98,7 +98,12 @@
             var ch = e.target.closest("[data-cat]");
             if (ch) { filter = ch.getAttribute("data-cat"); after(); return; }
             var p = e.target.closest("[data-plus]"), m = e.target.closest("[data-minus]");
-            if (!p && !m) return;
+            if (!p && !m) {
+                // tap the card itself: a bigger look at the item
+                var v = e.target.closest("[data-view]");
+                if (v) viewItem(v.getAttribute("data-view"), after);
+                return;
+            }
             var id = (p || m).getAttribute(p ? "data-plus" : "data-minus");
             var it = items.find(function (x) { return x.id === id; }); if (!it) return;
             var q = (cart[id] || 0) + (p ? 1 : -1);
@@ -106,6 +111,28 @@
             cart[id] = Math.max(0, q);
             after();
         };
+    }
+    function viewItem(id, after) {
+        var it = items.find(function (x) { return x.id === id; }); if (!it) return;
+        var out = it.stock <= 0;
+        sheet('<div class="kn-view-img">' + photoHTML(it) + '</div>' +
+            '<div class="kn-view-t"><b>' + esc(it.name) + '</b><small>' + catName(it.category) + (out ? '' : ' · ' + PL("Sisa ", "Left ") + it.stock) + '</small></div>' +
+            '<div class="kn-view-row"><span class="kn-view-price' + (out ? ' out' : '') + '">' + (out ? PL("Habis", "Sold out") : rp(it.price)) + '</span>' +
+            (out ? '' : '<span class="kn-view-qty"><button type="button" data-q="-1" aria-label="-">' + SV(IC.minus, 18) + '</button><b>0</b><button type="button" data-q="1" aria-label="+">' + SV(IC.plus, 18) + '</button></span>') + '</div>' +
+            '<div class="ac-actions' + (out ? ' one' : '') + '">' + (out ? '' : '<button type="button" class="ac-cancel" data-close>' + PL("Tutup", "Close") + '</button>') +
+            '<button type="button" class="ac-ok kn-view-ok"' + (out ? ' data-close' : '') + '>' + (out ? PL("Tutup", "Close") : PL("Tambahkan", "Add")) + '</button></div>', function (w, api) {
+            if (out) return;
+            var q = cart[id] || 0, qb = w.querySelector(".kn-view-qty b");
+            function show() { qb.textContent = q; }
+            show();
+            w.querySelector(".kn-view-qty").onclick = function (e) {
+                var b = e.target.closest("[data-q]"); if (!b) return;
+                var n = q + Number(b.getAttribute("data-q"));
+                if (n > it.stock) { toast(PL("Stok tinggal ", "Only ") + it.stock, "error"); return; }
+                q = Math.max(0, n); show();
+            };
+            w.querySelector(".kn-view-ok").onclick = function () { cart[id] = q; api.close(); after(); };
+        });
     }
     function drawCart(btns) {
         var n = cartCount(), bar = $("knCart");

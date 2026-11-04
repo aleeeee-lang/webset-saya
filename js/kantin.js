@@ -387,6 +387,10 @@
                 if (!(await attConfirm({ title: PL("Hapus ", "Delete ") + it.name + "?", text: PL("Riwayat penjualan tetap tersimpan.", "Past sales stay recorded."), ok: PL("Hapus", "Delete") }))) return;
                 var r = await supabaseClient.from("kantin_items").delete().eq("id", it.id);
                 if (r.error) { toast(errMsg(r.error), "error"); return; }
+                // remove its photo file too
+                var m = it.photo && String(it.photo).match(/\/kantin\/(items\/[^?]+)/);
+                if (m) { try { await supabaseClient.storage.from("kantin").remove([m[1]]); } catch (e) {} }
+                toast(PL("Barang dihapus", "Item deleted"));
                 api.close(); await loadItems(); drawItems();
             };
             w.querySelector(".kn-save").onclick = async function () {

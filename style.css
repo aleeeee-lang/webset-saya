@@ -4974,3 +4974,5 @@ html[data-theme="dark"] .kn-chips button *,html[data-theme="dark"] .kn-catpick b
 html[data-theme="dark"] .kn-chips button.on,html[data-theme="dark"] .kn-catpick button.on{background:#C6F432;border-color:#C6F432;color:#14162B!important}
 button.kn-photo-pick{width:100%;padding:0;background:none;font:inherit;color:inherit}
 .kn-photo-pick span.kn-photo-chg{position:absolute;inset:auto 10px 10px auto;display:inline-flex;background:rgba(20,22,43,.82);color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700}
+.kn-sheet .kn-del{border:0;background:none;color:#B42318;font:inherit;font-size:14px;font-weight:700;padding:4px;cursor:pointer;align-self:center}
+html[data-theme="dark"] .kn-sheet .kn-del{background:none;color:#FF8A80!important}

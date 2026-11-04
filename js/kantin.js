@@ -348,8 +348,8 @@
             '<div class="savings-field-label">' + PL("Nama", "Name") + '</div><input type="text" maxlength="40" class="am-field kn-in-name" style="' + f + '" placeholder="' + PL("misal: Nasi goreng", "e.g. Fried rice") + '">' +
             '<div class="kn-two"><div><div class="savings-field-label">' + PL("Harga", "Price") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-price" style="' + f + '" placeholder="10.000"></div>' +
             '<div><div class="savings-field-label">' + PL("Stok", "Stock") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-stock" style="' + f + '" placeholder="20"></div></div>' +
-            (it ? '<div class="kn-item-more"><button type="button" class="kn-hide">' + (it.active ? PL("Sembunyikan dari menu", "Hide from menu") : PL("Tampilkan di menu", "Show on menu")) + '</button><button type="button" class="kn-del">' + PL("Hapus", "Delete") + '</button></div>' : '') +
-            '<div class="ac-actions"><button type="button" class="ac-cancel" data-close>' + PL("Batal", "Cancel") + '</button><button type="button" class="ac-ok kn-save">' + PL("Simpan", "Save") + '</button></div>', function (w, api) {
+            '<div class="ac-actions"><button type="button" class="ac-cancel" data-close>' + PL("Batal", "Cancel") + '</button><button type="button" class="ac-ok kn-save">' + PL("Simpan", "Save") + '</button></div>' +
+            (it ? '<button type="button" class="kn-del">' + PL("Hapus barang", "Delete item") + '</button>' : ''), function (w, api) {
             var nm = w.querySelector(".kn-in-name"), pr = w.querySelector(".kn-in-price"), stk = w.querySelector(".kn-in-stock"), pick = w.querySelector(".kn-photo-pick"), fCam = w.querySelector(".kn-f-cam"), fGal = w.querySelector(".kn-f-gal"), fFile = w.querySelector(".kn-f-file");
             function num(el) { el.addEventListener("input", function () { var n = Number(el.value.replace(/\D/g, "")); el.value = n ? n.toLocaleString("id-ID") : (el.value.replace(/\D/g, "") === "0" ? "0" : ""); }); }
             num(pr); num(stk);
@@ -376,12 +376,6 @@
             fCam.onchange = function () { got(fCam); };
             fGal.onchange = function () { got(fGal); };
             fFile.onchange = function () { got(fFile); };
-            var hide = w.querySelector(".kn-hide");
-            if (hide) hide.onclick = async function () {
-                var r = await supabaseClient.from("kantin_items").update({ active: !it.active, updated_at: new Date().toISOString() }).eq("id", it.id);
-                if (r.error) { toast(errMsg(r.error), "error"); return; }
-                api.close(); await loadItems(); drawItems();
-            };
             var del = w.querySelector(".kn-del");
             if (del) del.onclick = async function () {
                 if (!(await attConfirm({ title: PL("Hapus ", "Delete ") + it.name + "?", text: PL("Riwayat penjualan tetap tersimpan.", "Past sales stay recorded."), ok: PL("Hapus", "Delete") }))) return;

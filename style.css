@@ -4991,3 +4991,8 @@ html[data-theme="dark"] .kn-eye{color:#8E8E93!important}
 html[data-theme="dark"] .kn-search-btn,html[data-theme="dark"] .kn-search{background:#121212;border-color:#242424}
 html[data-theme="dark"] .kn-search-btn{color:#EDEDED!important}
 html[data-theme="dark"] .kn-search input{color:#EDEDED!important}
+/* Kantin header: balance + search without a box */
+.kn-head-r .kn-pill,html[data-theme="dark"] .kn-head-r .kn-pill{background:none;border:0;padding:0 2px;font-size:15px;font-weight:800}
+.kn-search-btn,html[data-theme="dark"] .kn-search-btn{background:none;border:0;width:32px;height:32px}
+.kn-head-r{gap:12px}
+.kn-search-btn,html[data-theme="dark"] .kn-search-btn{width:28px;justify-items:end;margin-right:-2px}

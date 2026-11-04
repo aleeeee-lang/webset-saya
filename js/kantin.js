@@ -93,6 +93,20 @@
                 (!out ? '<small class="' + (low ? "low" : "") + '">' + (staff ? PL("Stok ", "Stock ") : PL("Sisa ", "Left ")) + it.stock + '</small>' : '') + '</div></div>';
         }).join("");
     }
+    // redraw a grid without the kind chips jumping back to the start
+    function redrawGrid(box, staff) {
+        var old = box.querySelector(".kn-chips"), sl = old ? old.scrollLeft : 0;
+        box.innerHTML = gridHTML(staff);
+        var c = box.querySelector(".kn-chips");
+        if (!c) return;
+        c.scrollLeft = sl;
+        var on = c.querySelector(".on");
+        if (on) {
+            var l = on.offsetLeft - c.offsetLeft, r = l + on.offsetWidth;
+            if (l < c.scrollLeft) c.scrollLeft = l - 16;
+            else if (r > c.scrollLeft + c.clientWidth) c.scrollLeft = r - c.clientWidth + 16;
+        }
+    }
     function bindGrid(box, after) {
         box.onclick = function (e) {
             var ch = e.target.closest("[data-cat]");
@@ -152,7 +166,7 @@
     }
     function drawStudentMenu() {
         var box = $("knMenu");
-        box.innerHTML = gridHTML(false);
+        redrawGrid(box, false);
         bindGrid(box, drawStudentMenu);
         drawCart('<button type="button" class="kn-go" id="knOrderGo">' + PL("Pesan", "Order") + '</button>');
         var go = $("knOrderGo"); if (go) go.onclick = orderSheet;
@@ -293,7 +307,7 @@
     }
     function drawKasir() {
         var box = $("knKasir");
-        box.innerHTML = gridHTML(true);
+        redrawGrid(box, true);
         bindGrid(box, drawKasir);
         drawCart('<button type="button" class="kn-go soft" id="knCash">' + PL("Tunai", "Cash") + '</button><button type="button" class="kn-go" id="knScan">' + PL("Scan QR · Saldo", "Scan QR · Balance") + '</button>');
         var c = $("knCash"); if (c) c.onclick = function () { sell("tunai"); };

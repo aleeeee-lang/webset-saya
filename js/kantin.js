@@ -61,6 +61,8 @@
         return api;
     }
     function photoHTML(it, cls) {
+        // the whole photo shows (no cropping); a soft blurred copy fills the empty sides
+        if (it.photo && !cls) return '<img class="kn-ph-bg" src="' + esc(it.photo) + '" alt="" aria-hidden="true" loading="lazy"><img class="kn-ph" src="' + esc(it.photo) + '" alt="" loading="lazy">';
         return it.photo ? '<img class="' + (cls || "") + '" src="' + esc(it.photo) + '" alt="" loading="lazy">' : '<span class="kn-noimg ' + (cls || "") + '">' + SV(IC.bag, 26) + '</span>';
     }
 

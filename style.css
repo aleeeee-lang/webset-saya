@@ -5026,3 +5026,8 @@ html[data-theme="dark"] .kn-view-t small{color:#9A9A9F!important}
 html[data-theme="dark"] .kn-view-price{color:#C6F432!important}html[data-theme="dark"] .kn-view-price.out{color:#FF8A80!important}
 html[data-theme="dark"] .kn-view-qty{background:#2C2C2E}
 html[data-theme="dark"] .kn-view-qty button{background:#C6F432;color:#14162B!important}html[data-theme="dark"] .kn-view-qty button *{color:#14162B!important}
+/* Kantin: show the whole item photo, blurred copy behind it */
+.kn-img,.kn-view-img{overflow:hidden}
+.kn-img img.kn-ph,.kn-view-img img.kn-ph{object-fit:contain;z-index:1}
+.kn-img img.kn-ph-bg,.kn-view-img img.kn-ph-bg{object-fit:cover;filter:blur(14px) saturate(1.1);transform:scale(1.15);opacity:.85}
+.kn-plus,.kn-qty{z-index:2}

@@ -37,7 +37,7 @@
         ["lainnya", PL("Lainnya", "Other"), '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>']
     ];
     function catName(k) { var c = CATS.find(function (x) { return x[0] === k; }) || CATS[CATS.length - 1]; return c[1]; }
-    var me = null, items = [], cart = {}, mode = "", balance = 0, filter = "";
+    var me = null, items = [], cart = {}, mode = "", balance = 0, filter = "", query = "";
     // filter chips above a grid; only kinds that have items show up
     function chipsHTML() {
         var have = {}; items.forEach(function (x) { if (x.active) have[x.category || "lainnya"] = 1; });
@@ -79,7 +79,9 @@
     function cartCount() { return cartList().reduce(function (a, l) { return a + l.qty; }, 0); }
 
     function gridHTML(staff) {
-        var list = items.filter(function (x) { return x.active && (!filter || (x.category || "lainnya") === filter); });
+        var q = query.trim().toLowerCase();
+        var list = items.filter(function (x) { return x.active && (!filter || (x.category || "lainnya") === filter) && (!q || String(x.name).toLowerCase().indexOf(q) !== -1); });
+        if (!list.length && q) return chipsHTML() + '<div class="kn-empty">' + SV(IC.bag, 28) + '<b>' + PL("Tidak ketemu", "Nothing found") + '</b><small>' + PL("Coba kata lain.", "Try another word.") + '</small></div>';
         if (!list.length) return '<div class="kn-empty">' + SV(IC.bag, 28) + '<b>' + PL("Belum ada barang", "No items yet") + '</b>' + (staff ? '<small>' + PL("Tambah barang di tab Barang.", "Add items in the Items tab.") + '</small>' : '') + '</div>';
         return chipsHTML() + list.map(function (it) {
             var q = cart[it.id] || 0, out = it.stock <= 0;
@@ -119,7 +121,7 @@
     async function loadBalance() {
         var r = await supabaseClient.from("savings").select("type,amount").eq("student_id", me.id);
         balance = ((r && r.data) || []).reduce(function (a, x) { return a + (x.type === "setor" ? 1 : -1) * Number(x.amount || 0); }, 0);
-        var p = $("knPill"); p.hidden = false; p.textContent = PL("Saldo sekolah ", "School balance ") + rp(balance);
+        var p = $("knPill"); p.hidden = false; p.textContent = rp(balance); p.title = PL("Saldo tabungan sekolah", "School savings balance");
     }
     function drawStudentMenu() {
         var box = $("knMenu");
@@ -212,6 +214,13 @@
         $("knStuTabs").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (b) stuTab(b.getAttribute("data-tab")); };
         $("knPayQr").innerHTML = SV(IC.qr, 18) + '<span>' + PL("Bayar di kasir pakai saldo", "Pay at the counter with balance") + '</span>';
         $("knPayQr").onclick = payQr;
+        // search by name: the button next to the balance opens a search line above the menu
+        var sb = $("knSearchBtn"), box = $("knSearch"), si = $("knSearchIn");
+        sb.hidden = false; sb.setAttribute("aria-label", PL("Cari makanan", "Search"));
+        si.placeholder = PL("Cari makanan atau barang", "Search food or items");
+        sb.onclick = function () { stuTab("menu"); box.hidden = !box.hidden; if (!box.hidden) si.focus(); else { query = ""; si.value = ""; drawStudentMenu(); } };
+        $("knSearchX").onclick = function () { box.hidden = true; query = ""; si.value = ""; drawStudentMenu(); };
+        si.oninput = function () { query = si.value; drawStudentMenu(); };
         await Promise.all([loadItems(), loadBalance()]);
         drawStudentMenu();
         if (location.hash === "#pesanan") stuTab("mine");

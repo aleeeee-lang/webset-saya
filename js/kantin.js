@@ -24,7 +24,25 @@
         selesai: [PL("Selesai", "Done"), "done"], ditolak: [PL("Ditolak", "Declined"), "bad"], batal: [PL("Dibatalkan", "Cancelled"), "bad"]
     };
 
-    var me = null, items = [], cart = {}, mode = "", balance = 0;
+    // item kinds (kantin.sql keeps the same list)
+    var CATS = [
+        ["makanan", PL("Makanan", "Food"), '<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 1-3 3.2-3 6v4h3v8"/>'],
+        ["minuman", PL("Minuman", "Drinks"), '<path d="M7 4h10l-1.5 16h-7z"/><path d="M7.5 9h9M12 4l1-2"/>'],
+        ["jajanan", PL("Jajanan", "Snacks"), '<circle cx="12" cy="12" r="8"/><circle cx="9.5" cy="10" r=".9"/><circle cx="14" cy="9.5" r=".9"/><circle cx="13.5" cy="14" r=".9"/><circle cx="9.5" cy="14.5" r=".9"/>'],
+        ["sekolah", PL("Alat sekolah", "School supplies"), '<path d="M15 4l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/>'],
+        ["lainnya", PL("Lainnya", "Other"), '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>']
+    ];
+    function catName(k) { var c = CATS.find(function (x) { return x[0] === k; }) || CATS[CATS.length - 1]; return c[1]; }
+    var me = null, items = [], cart = {}, mode = "", balance = 0, filter = "";
+    // filter chips above a grid; only kinds that have items show up
+    function chipsHTML() {
+        var have = {}; items.forEach(function (x) { if (x.active) have[x.category || "lainnya"] = 1; });
+        var list = CATS.filter(function (c) { return have[c[0]]; });
+        if (list.length < 2) { filter = ""; return ""; }
+        if (filter && !have[filter]) filter = "";
+        return '<div class="kn-chips">' + '<button type="button" data-cat=""' + (filter ? '' : ' class="on"') + '>' + PL("Semua", "All") + '</button>' +
+            list.map(function (c) { return '<button type="button" data-cat="' + c[0] + '"' + (filter === c[0] ? ' class="on"' : '') + '>' + SV(c[2], 16) + '<span>' + c[1] + '</span></button>'; }).join("") + '</div>';
+    }
 
     // ---------- small sheet with custom content ----------
     function sheet(html, onReady) {
@@ -57,9 +75,9 @@
     function cartCount() { return cartList().reduce(function (a, l) { return a + l.qty; }, 0); }
 
     function gridHTML(staff) {
-        var list = items.filter(function (x) { return x.active; });
+        var list = items.filter(function (x) { return x.active && (!filter || (x.category || "lainnya") === filter); });
         if (!list.length) return '<div class="kn-empty">' + SV(IC.bag, 28) + '<b>' + PL("Belum ada barang", "No items yet") + '</b>' + (staff ? '<small>' + PL("Tambah barang di tab Barang.", "Add items in the Items tab.") + '</small>' : '') + '</div>';
-        return list.map(function (it) {
+        return chipsHTML() + list.map(function (it) {
             var q = cart[it.id] || 0, out = it.stock <= 0;
             var btn = out ? '' : (q ? '<span class="kn-qty"><button type="button" data-minus="' + it.id + '" aria-label="-">' + SV(IC.minus, 16) + '</button><b>' + q + '</b><button type="button" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 16) + '</button></span>'
                 : '<button type="button" class="kn-plus" data-plus="' + it.id + '" aria-label="+">' + SV(IC.plus, 18) + '</button>');
@@ -71,6 +89,8 @@
     }
     function bindGrid(box, after) {
         box.onclick = function (e) {
+            var ch = e.target.closest("[data-cat]");
+            if (ch) { filter = ch.getAttribute("data-cat"); after(); return; }
             var p = e.target.closest("[data-plus]"), m = e.target.closest("[data-minus]");
             if (!p && !m) return;
             var id = (p || m).getAttribute(p ? "data-plus" : "data-minus");
@@ -298,7 +318,7 @@
         if (!items.length) { box.innerHTML = '<div class="kn-empty">' + SV(IC.bag, 28) + '<b>' + PL("Belum ada barang", "No items yet") + '</b></div>'; return; }
         box.innerHTML = '<div class="kn-list">' + items.map(function (it) {
             return '<button type="button" class="kn-row' + (it.active ? "" : " off") + '" data-id="' + it.id + '">' + photoHTML(it, "kn-thumb") +
-                '<span class="kn-row-txt"><b>' + esc(it.name) + '</b><small>' + rp(it.price) + (it.active ? "" : " · " + PL("disembunyikan", "hidden")) + '</small></span>' +
+                '<span class="kn-row-txt"><b>' + esc(it.name) + '</b><small>' + catName(it.category) + ' · ' + rp(it.price) + (it.active ? "" : " · " + PL("disembunyikan", "hidden")) + '</small></span>' +
                 '<span class="kn-stock' + (it.stock <= 0 ? " out" : it.stock <= 5 ? " low" : "") + '">' + (it.stock <= 0 ? PL("Habis", "Sold out") : PL("Stok ", "Stock ") + it.stock) + '</span></button>';
         }).join("") + '</div>';
         box.onclick = function (e) { var b = e.target.closest("[data-id]"); if (b) itemSheet(items.find(function (x) { return x.id === b.getAttribute("data-id"); })); };
@@ -322,6 +342,7 @@
         var blob = null, f = "width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;font-size:16px";
         sheet('<div class="ac-top"><b>' + (it ? PL("Ubah barang", "Edit item") : PL("Barang baru", "New item")) + '</b></div>' +
             '<label class="kn-photo-pick">' + (it && it.photo ? '<img src="' + esc(it.photo) + '" alt="">' : '<span>' + SV(IC.cam, 28) + '<b>' + PL("Ambil / pilih foto", "Take / choose photo") + '</b></span>') + '<input type="file" accept="image/*" hidden></label>' +
+            '<div class="savings-field-label">' + PL("Kategori", "Kind") + '</div><div class="kn-catpick">' + CATS.map(function (c) { return '<button type="button" data-k="' + c[0] + '">' + SV(c[2], 18) + '<span>' + c[1] + '</span></button>'; }).join("") + '</div>' +
             '<div class="savings-field-label">' + PL("Nama", "Name") + '</div><input type="text" maxlength="40" class="am-field kn-in-name" style="' + f + '" placeholder="' + PL("misal: Nasi goreng", "e.g. Fried rice") + '">' +
             '<div class="kn-two"><div><div class="savings-field-label">' + PL("Harga", "Price") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-price" style="' + f + '" placeholder="10.000"></div>' +
             '<div><div class="savings-field-label">' + PL("Stok", "Stock") + '</div><input type="text" inputmode="numeric" class="am-field kn-in-stock" style="' + f + '" placeholder="20"></div></div>' +
@@ -330,6 +351,10 @@
             var nm = w.querySelector(".kn-in-name"), pr = w.querySelector(".kn-in-price"), stk = w.querySelector(".kn-in-stock"), pick = w.querySelector(".kn-photo-pick"), file = pick.querySelector("input");
             function num(el) { el.addEventListener("input", function () { var n = Number(el.value.replace(/\D/g, "")); el.value = n ? n.toLocaleString("id-ID") : (el.value.replace(/\D/g, "") === "0" ? "0" : ""); }); }
             num(pr); num(stk);
+            var cat = (it && it.category) || filter || "makanan", cp = w.querySelector(".kn-catpick");
+            function markCat() { cp.querySelectorAll("[data-k]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-k") === cat); }); }
+            markCat();
+            cp.onclick = function (e) { var b = e.target.closest("[data-k]"); if (b) { cat = b.getAttribute("data-k"); markCat(); } };
             if (it) { nm.value = it.name; pr.value = Number(it.price).toLocaleString("id-ID"); stk.value = String(it.stock); }
             file.onchange = async function () {
                 if (!file.files[0]) return;
@@ -355,7 +380,7 @@
                 if (!name) { nm.focus(); return; }
                 if (!pr.value.replace(/\D/g, "")) { pr.focus(); return; }
                 btn.disabled = true;
-                var row = { name: name, price: price, stock: stock, updated_at: new Date().toISOString() };
+                var row = { name: name, price: price, stock: stock, category: cat, updated_at: new Date().toISOString() };
                 if (blob) {
                     var path = "items/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7) + ".jpg";
                     var up = await supabaseClient.storage.from("kantin").upload(path, blob, { contentType: "image/jpeg", upsert: false });

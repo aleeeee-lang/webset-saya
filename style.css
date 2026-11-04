@@ -4959,3 +4959,16 @@ html[data-theme="dark"] .kn-item-more button{background:#2C2C2E;color:#EDEDED!im
 html[data-theme="dark"] .kn-item-more .kn-del{background:#2A1515;color:#FF8A80!important}
 html[data-theme="dark"] .kn-photo-pick{border-color:#3A3A3C}
 @media (min-width:1024px){body.has-side .kn-cart{left:296px;right:40px}}
+/* Kantin: kind chips + kind picker */
+.kn-chips{grid-column:1/-1;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 2px;padding:0 16px 2px}
+.kn-chips::-webkit-scrollbar{display:none}
+.kn-chips button{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;border:1px solid #ECEEF2;background:#fff;color:#14162B;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.kn-chips button.on{background:#14162B;border-color:#14162B;color:#fff}
+@media (min-width:1024px){.kn-chips{margin:0 0 2px;padding:0;flex-wrap:wrap}}
+.kn-catpick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kn-catpick button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;border:1.5px solid #E4E6EC;background:#fff;color:#14162B;font:inherit;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
+.kn-catpick button.on{background:#14162B;border-color:#14162B;color:#fff}
+.kn-catpick button.on svg{color:#C6F432}
+html[data-theme="dark"] .kn-chips button,html[data-theme="dark"] .kn-catpick button{background:#121212;border-color:#2C2C2E;color:#EDEDED!important}
+html[data-theme="dark"] .kn-chips button *,html[data-theme="dark"] .kn-catpick button *{color:inherit!important}
+html[data-theme="dark"] .kn-chips button.on,html[data-theme="dark"] .kn-catpick button.on{background:#C6F432;border-color:#C6F432;color:#14162B!important}

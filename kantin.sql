@@ -1,6 +1,6 @@
 -- Kantin / koperasi (2026-11)
 -- 1. role baru "koperasi" (petugas kantin)
--- 2. tabel barang, pesanan, kode bayar QR
+-- 2. tabel barang (dengan kategori), pesanan, kode bayar QR
 -- 3. fungsi pesan / terima / tolak / siap / kasir (saldo dipotong di sini, bukan dari HP)
 -- 4. tempat foto barang (storage "kantin")
 -- Aman dijalankan ulang.
@@ -23,10 +23,15 @@ create table if not exists public.kantin_items (
     price integer not null check (price between 0 and 10000000),
     stock integer not null default 0 check (stock between 0 and 100000),
     photo text check (photo is null or char_length(photo) <= 300),
+    category text not null default 'lainnya',
     active boolean not null default true,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
+alter table public.kantin_items add column if not exists category text not null default 'lainnya';
+alter table public.kantin_items drop constraint if exists kantin_items_category_check;
+alter table public.kantin_items add constraint kantin_items_category_check
+    check (category in ('makanan','minuman','jajanan','sekolah','lainnya'));
 alter table public.kantin_items enable row level security;
 drop policy if exists kantin_items_read on public.kantin_items;
 create policy kantin_items_read on public.kantin_items for select to authenticated using (active or is_kantin());

@@ -208,7 +208,7 @@
                 </div>
 
                 <div id="pfCatPick" hidden>
-                    <div class="savings-field-label" id="pfCatLab">Untuk apa?</div>
+                    <div class="pf-cat-head"><div class="savings-field-label" id="pfCatLab">Untuk apa?</div><button type="button" class="pf-cat-set" id="pfCatSet"></button></div>
                     <div class="pf-pick" id="pfPick"></div>
                 </div>
 
@@ -532,13 +532,17 @@ const PF = (function () {
         ["belanja", "Belanja", "Shopping", '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'],
         ["lainnya", "Lainnya", "Other", '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>']
     ];
-    const COLORS = { makan: "#F59E0B", transport: "#0EA5E9", pulsa: "#8B5CF6", sekolah: "#16A34A", belanja: "#EC4899", lainnya: "#94A3B8" };
-    let pick = "lainnya", limit = 0;
+    const COLORS = { makan: "#F59E0B", transport: "#0EA5E9", pulsa: "#8B5CF6", sekolah: "#16A34A", belanja: "#EC4899", tagihan: "#EF4444", lainnya: "#94A3B8" };
+    let pick = "lainnya", limit = 0, shown = CATS.map(c => c[0]);
+    try { const sv = JSON.parse(localStorage.getItem("att-pf-cats") || "null"); if (Array.isArray(sv) && sv.length) shown = sv; } catch (e) {}
+    const visible = () => CATS.filter(c => shown.indexOf(c[0]) !== -1);
     try { limit = Number(localStorage.getItem("att-pf-limit") || 0) || 0; } catch (e) {}
-    function name(k) { const c = CATS.find(x => x[0] === k) || CATS[CATS.length - 1]; return PL(c[1], c[2]); }
+    function name(k) { if (k === "tagihan") return PL("Tagihan", "Bill"); const c = CATS.find(x => x[0] === k) || CATS[CATS.length - 1]; return PL(c[1], c[2]); }
     function drawPick() {
         const box = document.getElementById("pfPick");
-        box.innerHTML = CATS.map(c => '<button type="button" data-k="' + c[0] + '" class="' + (c[0] === pick ? "on" : "") + '">' + I(c[3]) + '<span>' + PL(c[1], c[2]) + '</span></button>').join("");
+        const vis = visible();
+        if (!vis.some(c => c[0] === pick)) pick = vis.length ? vis[0][0] : "lainnya";
+        box.innerHTML = vis.map(c => '<button type="button" data-k="' + c[0] + '" class="' + (c[0] === pick ? "on" : "") + '">' + I(c[3]) + '<span>' + PL(c[1], c[2]) + '</span></button>').join("");
     }
     function month(rows) {
         const now = new Date(), key = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
@@ -592,9 +596,29 @@ const PF = (function () {
     const mKey = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
     async function saveBills() {
         const k = mKey(), keep = {}; keep[k] = paid[k] || [];   // only this month's ticks are kept
+        keep.tx = paid.txm === k ? (paid.tx || {}) : {}; keep.txm = k;   // which spending entry each tick made
         paid = keep;
         try { localStorage.setItem("att-pf-bills", JSON.stringify(bills)); localStorage.setItem("att-pf-paid", JSON.stringify(paid)); } catch (e) {}
         try { await supabaseClient.auth.updateUser({ data: { pf_bills: bills, pf_paid: paid } }); } catch (e) {}
+    }
+    const TRASH = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+    // a small yes/no sheet
+    function askYes(title, text, ok) {
+        return new Promise(function (res) {
+            const w = document.createElement("div");
+            w.className = "ac-wrap ac-confirm";
+            w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div><div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok pf-danger"></button></div></div>';
+            w.querySelector("b").textContent = title;
+            if (text) w.querySelector("small").textContent = text; else w.querySelector("small").remove();
+            w.querySelector(".ac-cancel").textContent = PL("Batal", "Cancel");
+            w.querySelector(".ac-ok").textContent = ok;
+            document.body.appendChild(w);
+            requestAnimationFrame(() => w.classList.add("in"));
+            const done = v => { w.classList.add("out"); setTimeout(() => w.remove(), 160); res(v); };
+            w.addEventListener("click", e => { if (e.target === w) done(false); });
+            w.querySelector(".ac-cancel").onclick = () => done(false);
+            w.querySelector(".ac-ok").onclick = () => done(true);
+        });
     }
     const CHK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
     function drawBills() {
@@ -614,7 +638,8 @@ const PF = (function () {
         document.getElementById("pfBillList").innerHTML = bills.map(b => {
             const ok = on.includes(b.i);
             return '<div class="pf-bill' + (ok ? " ok" : "") + '" data-i="' + b.i + '"><button type="button" class="pf-tick" data-tick aria-label="' + PL("Tandai lunas", "Mark paid") + '">' + (ok ? CHK : "") + '</button>' +
-                '<button type="button" class="pf-bill-body" data-edit><span>' + escapeHTML(b.n) + '</span><b>' + formatRupiah(b.a) + '</b></button></div>';
+                '<button type="button" class="pf-bill-body" data-edit><span>' + escapeHTML(b.n) + '</span><b>' + formatRupiah(b.a) + '</b></button>' +
+                '<button type="button" class="pf-bill-del" data-del aria-label="' + PL("Hapus tagihan", "Delete bill") + '">' + TRASH + '</button></div>';
         }).join("");
         if (personalLoaded) month(allPersonalData);
         if (bills.length) {
@@ -664,10 +689,77 @@ const PF = (function () {
             save: (n, a) => { b.n = n; b.a = a; saveBills(); drawBills(); },
             del: () => { bills = bills.filter(x => x.i !== id); const k = mKey(); paid[k] = (paid[k] || []).filter(x => x !== id); saveBills(); drawBills(); } });
     }
-    function tick(id) {
+    // ticking a bill records it as spending (Tarik · Tagihan); unticking takes that entry back out
+    let ticking = false;
+    async function tick(id) {
+        if (ticking) return;
+        const b = bills.find(x => x.i === id); if (!b) return;
         const k = mKey(), on = paid[k] || [];
-        paid[k] = on.includes(id) ? on.filter(x => x !== id) : on.concat(id);
+        if (paid.txm !== k) { paid.tx = {}; paid.txm = k; }
+        paid.tx = paid.tx || {};
+        ticking = true;
+        try {
+            if (on.includes(id)) {
+                const sid = paid.tx[id];
+                if (sid) {
+                    const r = await supabaseClient.from("personal_savings").delete().eq("id", sid);
+                    if (r.error) { showToast(r.error.message, "error"); return; }
+                }
+                delete paid.tx[id];
+                paid[k] = on.filter(x => x !== id);
+            } else {
+                const bal = allPersonalData.reduce((a, r) => a + (r.type === "setor" ? 1 : -1) * Number(r.amount || 0), 0);
+                if (Number(b.a) > bal) { showToast(PL("Saldo pribadi tidak cukup untuk tagihan ini", "Not enough balance for this bill"), "error"); return; }
+                const user = await requireLogin(); if (!user) return;
+                let r = await supabaseClient.from("personal_savings").insert({ student_id: user.id, type: "tarik", amount: Number(b.a), note: PL("Tagihan: ", "Bill: ") + b.n, category: "tagihan" }).select("id").single();
+                if (r.error && /category/i.test(r.error.message || "")) r = await supabaseClient.from("personal_savings").insert({ student_id: user.id, type: "tarik", amount: Number(b.a), note: PL("Tagihan: ", "Bill: ") + b.n }).select("id").single();
+                if (r.error) { showToast(r.error.message, "error"); return; }
+                paid.tx[id] = r.data.id;
+                paid[k] = on.concat(id);
+            }
+            await saveBills();
+            await loadPersonalSavings();
+            drawBills();
+        } finally { ticking = false; }
+    }
+    async function delBill(id) {
+        const b = bills.find(x => x.i === id); if (!b) return;
+        if (!(await askYes(PL("Hapus tagihan " + b.n + "?", "Delete " + b.n + "?"), PL("Catatan yang sudah dibayar tetap ada di riwayat.", "Payments already recorded stay in the history."), PL("Hapus", "Delete")))) return;
+        bills = bills.filter(x => x.i !== id);
+        const k = mKey(); paid[k] = (paid[k] || []).filter(x => x !== id); if (paid.tx) delete paid.tx[id];
         saveBills(); drawBills();
+    }
+
+    // the student chooses which kinds show up when spending
+    function setCats() {
+        let sel = shown.slice();
+        const w = document.createElement("div");
+        w.className = "ac-wrap ac-confirm";
+        w.innerHTML = '<div class="ac-card"><div class="ac-top"><b></b><small></small></div><div class="pf-pick pf-cat-choose"></div><div class="ac-actions"><button type="button" class="ac-cancel"></button><button type="button" class="ac-ok"></button></div></div>';
+        w.querySelector("b").textContent = PL("Pilih kategori", "Choose kinds");
+        w.querySelector("small").textContent = PL("Yang dipilih saja yang muncul waktu Tarik.", "Only these show up when spending.");
+        w.querySelector(".ac-cancel").textContent = PL("Batal", "Cancel");
+        w.querySelector(".ac-ok").textContent = PL("Simpan", "Save");
+        const box = w.querySelector(".pf-cat-choose");
+        function draw() { box.innerHTML = CATS.map(c => '<button type="button" data-k="' + c[0] + '" class="' + (sel.indexOf(c[0]) !== -1 ? "on" : "") + '">' + I(c[3]) + '<span>' + PL(c[1], c[2]) + '</span></button>').join(""); }
+        draw();
+        box.onclick = function (e) {
+            const b = e.target.closest("[data-k]"); if (!b) return;
+            const k = b.dataset.k, i = sel.indexOf(k);
+            if (i !== -1) { if (sel.length === 1) { showToast(PL("Minimal satu kategori", "Keep at least one"), "error"); return; } sel.splice(i, 1); }
+            else sel = CATS.map(c => c[0]).filter(x => x === k || sel.indexOf(x) !== -1);
+            draw();
+        };
+        document.body.appendChild(w);
+        requestAnimationFrame(() => w.classList.add("in"));
+        const close = () => { w.classList.add("out"); setTimeout(() => w.remove(), 160); };
+        w.addEventListener("click", e => { if (e.target === w) close(); });
+        w.querySelector(".ac-cancel").onclick = close;
+        w.querySelector(".ac-ok").onclick = async function () {
+            shown = sel; drawPick(); close();
+            try { localStorage.setItem("att-pf-cats", JSON.stringify(shown)); } catch (e) {}
+            try { await supabaseClient.auth.updateUser({ data: { pf_cats: shown } }); } catch (e) {}
+        };
     }
 
     async function setLimit() {
@@ -696,6 +788,9 @@ const PF = (function () {
     }
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("pfCatLab").textContent = PL("Untuk apa?", "What for?");
+        const cs = document.getElementById("pfCatSet");
+        cs.innerHTML = I('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>') + '<span>' + PL("Atur", "Edit") + '</span>';
+        cs.addEventListener("click", setCats);
         drawPick();
         document.getElementById("pfPick").addEventListener("click", function (e) {
             const b = e.target.closest("[data-k]"); if (!b) return;
@@ -706,7 +801,9 @@ const PF = (function () {
         document.getElementById("pfBillAdd").addEventListener("click", addBill);
         document.getElementById("pfBillList").addEventListener("click", function (e) {
             const row = e.target.closest(".pf-bill"); if (!row) return;
-            if (e.target.closest("[data-tick]")) tick(row.dataset.i); else editBill(row.dataset.i);
+            if (e.target.closest("[data-tick]")) tick(row.dataset.i);
+            else if (e.target.closest("[data-del]")) delBill(row.dataset.i);
+            else editBill(row.dataset.i);
         });
         // the limit follows the account across phones
         (async function () {
@@ -715,6 +812,7 @@ const PF = (function () {
                 const { data } = await supabaseClient.auth.getUser();
                 const v = data && data.user && data.user.user_metadata ? Number(data.user.user_metadata.pf_limit || 0) : null;
                 const md = data && data.user && data.user.user_metadata;
+                if (md && Array.isArray(md.pf_cats) && md.pf_cats.length) { shown = md.pf_cats; try { localStorage.setItem("att-pf-cats", JSON.stringify(shown)); } catch (e) {} drawPick(); }
                 if (md && Array.isArray(md.pf_bills)) { bills = md.pf_bills; paid = md.pf_paid || {}; try { localStorage.setItem("att-pf-bills", JSON.stringify(bills)); localStorage.setItem("att-pf-paid", JSON.stringify(paid)); } catch (e) {} drawBills(); }
                 if (v !== null && v !== limit) { limit = v; try { localStorage.setItem("att-pf-limit", String(v)); } catch (e) {} if (personalLoaded) month(allPersonalData); }
             } catch (e) {}

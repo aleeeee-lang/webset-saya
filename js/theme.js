@@ -330,7 +330,7 @@ function setTheme(theme) {
 // show the newest 3, then one "See all (n)" button that opens the rest right there.
 (function () {
     var LISTS = ["recentBroadcastsList", "infoList", "reviewedLeaveList", "feedbackList", "sppReviewedList",
-        "sppOverrideList", "transactionList", "holidayList"];
+        "sppOverrideList", "transactionList", "holidayList", "personalHistoryList", "pfBillList"];
     var SHOW = 3;
     function L(id, en) { try { return (localStorage.getItem("attendly-lang") || "en") === "id" ? id : en; } catch (e) { return en; } }
     function setup(el) {

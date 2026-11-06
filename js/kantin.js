@@ -17,6 +17,7 @@
         minus: '<path d="M5 12h14"/>',
         qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/>',
         cam: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+        trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
         file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
         eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
         eyeOff: '<path d="M3 3l18 18"/><path d="M9.9 5.1A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-2.7 3.5M6.7 6.7C4 8.3 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.4 4.4-1"/><path d="M9.9 14.1a3 3 0 0 1 4.2-4.2"/>',
@@ -61,8 +62,8 @@
         return api;
     }
     function photoHTML(it, cls) {
-        // the whole photo shows (no cropping); a soft blurred copy fills the empty sides
-        if (it.photo && !cls) return '<img class="kn-ph-bg" src="' + esc(it.photo) + '" alt="" aria-hidden="true" loading="lazy"><img class="kn-ph" src="' + esc(it.photo) + '" alt="" loading="lazy">';
+        // the whole photo shows (no cropping) on a plain background
+        if (it.photo && !cls) return '<img class="kn-ph" src="' + esc(it.photo) + '" alt="" loading="lazy">';
         return it.photo ? '<img class="' + (cls || "") + '" src="' + esc(it.photo) + '" alt="" loading="lazy">' : '<span class="kn-noimg ' + (cls || "") + '">' + SV(IC.bag, 26) + '</span>';
     }
 
@@ -201,13 +202,17 @@
         });
     }
     async function drawMine() {
-        var r = await supabaseClient.from("kantin_orders").select("*").eq("student_id", me.id).order("created_at", { ascending: false }).limit(30);
+        var r = await supabaseClient.from("kantin_orders").select("*").eq("student_id", me.id).eq("student_hidden", false).order("created_at", { ascending: false }).limit(30);
+        // kantin_info.sql not run yet: no hidden column
+        if (r && r.error) r = await supabaseClient.from("kantin_orders").select("*").eq("student_id", me.id).order("created_at", { ascending: false }).limit(30);
         var list = (r && r.data) || [], box = $("knMine");
         if (!list.length) { box.innerHTML = '<div class="kn-empty">' + SV(IC.bag, 28) + '<b>' + PL("Belum ada pesanan", "No orders yet") + '</b></div>'; return; }
         box.innerHTML = list.map(function (o) {
             var st = STATUS[o.status] || [o.status, ""], live = ["baru", "dibuat", "siap"].indexOf(o.status) !== -1;
             var step = { baru: 1, dibuat: 2, siap: 3 }[o.status] || 0;
-            return '<div class="kn-ord' + (live ? " live" : "") + '"><div class="kn-ord-top"><b>#' + esc(o.code) + ' · ' + when(o.created_at) + '</b><span class="kn-badge ' + st[1] + '">' + st[0] + '</span></div>' +
+            var canDel = ["selesai", "ditolak", "batal"].indexOf(o.status) !== -1;
+            return '<div class="kn-ord' + (live ? " live" : "") + '"><div class="kn-ord-top"><b>#' + esc(o.code) + ' · ' + when(o.created_at) + '</b><span class="kn-ord-r"><span class="kn-badge ' + st[1] + '">' + st[0] + '</span>' +
+                (canDel ? '<button type="button" class="kn-ord-del" data-hide="' + o.id + '" aria-label="' + PL("Hapus dari daftar", "Remove") + '">' + SV(IC.trash, 18) + '</button>' : '') + '</span></div>' +
                 (live ? '<div class="kn-steps"><i class="' + (step >= 1 ? "d" : "") + '"></i><i class="' + (step >= 2 ? "d" : "") + '"></i><i class="' + (step >= 3 ? "d" : "") + '"></i></div>' +
                     '<div class="kn-steps-lab"><span>' + PL("Dikirim", "Sent") + '</span><span>' + PL("Dibuat", "Making") + '</span><span>' + PL("Siap diambil", "Ready") + '</span></div>' : '') +
                 '<div class="kn-ord-items">' + itemsLine(o.items) + '</div>' +
@@ -215,6 +220,14 @@
                 (o.status === "baru" ? '<button type="button" class="kn-cancel" data-cancel="' + o.id + '">' + PL("Batalkan pesanan", "Cancel order") + '</button>' : '') + '</div>';
         }).join("");
         box.onclick = async function (e) {
+            var h = e.target.closest("[data-hide]");
+            if (h) {
+                if (!(await attConfirm({ title: PL("Hapus dari daftar?", "Remove from the list?"), text: PL("Cuma hilang dari daftarmu. Saldo dan riwayat tabungan tidak berubah.", "It only leaves your list."), ok: PL("Hapus", "Remove"), cancel: PL("Batal", "Cancel") }))) return;
+                var r3 = await supabaseClient.rpc("kantin_hide", { p_id: h.getAttribute("data-hide") });
+                if (r3.error) { toast(/kantin_hide/.test(r3.error.message || "") ? PL("Jalankan kantin_info.sql dulu", "Run kantin_info.sql first") : errMsg(r3.error), "error"); return; }
+                drawMine();
+                return;
+            }
             var b = e.target.closest("[data-cancel]"); if (!b) return;
             var ok = await attConfirm({ title: PL("Batalkan pesanan?", "Cancel this order?"), ok: PL("Batalkan", "Cancel order"), cancel: PL("Tidak", "No") });
             if (!ok) return;

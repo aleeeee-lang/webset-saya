@@ -5029,5 +5029,21 @@ html[data-theme="dark"] .kn-view-qty button{background:#C6F432;color:#14162B!imp
 /* Kantin: show the whole item photo, blurred copy behind it */
 .kn-img,.kn-view-img{overflow:hidden}
 .kn-img img.kn-ph,.kn-view-img img.kn-ph{object-fit:contain;z-index:1}
-.kn-img img.kn-ph-bg,.kn-view-img img.kn-ph-bg{object-fit:cover;filter:blur(14px) saturate(1.1);transform:scale(1.15);opacity:.85}
 .kn-plus,.kn-qty{z-index:2}
+/* Tagihan: trash */
+.pf-bill-del{flex-shrink:0;width:34px;height:34px;border:0;background:none;color:#A3A7BC;display:grid;place-items:center;cursor:pointer;border-radius:10px;margin-right:-6px}
+.pf-bill-del:active{background:#FEECEC;color:#B42318}
+.ac-ok.pf-danger{background:#DC2626!important;color:#fff!important}
+html[data-theme="dark"] .pf-bill-del{color:#6E6E73!important}
+/* Tarik: choose which kinds show */
+.pf-cat-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pf-cat-head .savings-field-label{margin:0}
+.pf-cat-set{display:inline-flex;align-items:center;gap:5px;border:0;background:#F3F3F7;color:#14162B;border-radius:999px;padding:5px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.pf-cat-set svg{width:15px;height:15px}
+#pfCatPick .pf-pick{margin-top:8px}
+html[data-theme="dark"] .pf-cat-set{background:#1C1C1E;color:#EDEDED!important}
+html[data-theme="dark"] .pf-cat-set *{color:inherit!important}
+.kn-ord-r{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.kn-ord-del{width:32px;height:32px;border:0;background:none;color:#A3A7BC;display:grid;place-items:center;cursor:pointer;border-radius:10px;margin-right:-6px}
+.kn-ord-del:active{background:#FEECEC;color:#B42318}
+html[data-theme="dark"] .kn-ord-del{color:#6E6E73!important}

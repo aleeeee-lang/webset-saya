@@ -42,22 +42,13 @@
     }
 
     var MENUS = {
+        // students: the same few places as the phone menu; "Lainnya" opens the rest in a small sheet
         murid: [
             ["index.html", "home", "Home", "Beranda"],
-            ["attendance.html", "checkin", "Check in", "Absensi"],
+            ["attendance.html", "checkin", "Check in", "Absen", "", ["schedule.html"]],
             ["kantin.html", "shop", "Canteen", "Kantin"],
-            ["history.html", "wallet", "Savings", "Tabungan"],
-            ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
-            null,
-            ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
-            ["tasks.html", "task", "Tasks", "Tugas"],
-            ["kas.html", "cash", "Class Cash", "Kas kelas"],
-            ["juara.html", "trophy", "Champions", "Juara"],
-            ["goals.html", "target", "Learning Goals", "Target belajar"],
-            ["leave.html", "doc", "Leave Request", "Ajukan izin"],
-            ["calendar.html", "cal", "Calendar", "Kalender"],
-            ["information.html", "info", "Information", "Informasi"],
-            ["piket.html", "broom", "Duty Roster", "Piket"]
+            ["history.html", "wallet", "Money", "Uang", "", ["kas.html"]],
+            ["#lainnya", "grid", "More", "Lainnya", "", ["my-attendance.html", "tasks.html", "juara.html", "goals.html", "leave.html", "calendar.html", "information.html", "piket.html", "settings.html"]]
         ],
         // same six places as the teacher home on the phone; "Lainnya" opens the rest in a small sheet
         guru: [
@@ -96,6 +87,36 @@
     };
 
     // every teacher page, for search (the laptop menu shows only a few)
+    var MURID_ALL = [
+            ["index.html", "home", "Home", "Beranda"],
+            ["attendance.html", "checkin", "Check in", "Absensi"],
+            ["kantin.html", "shop", "Canteen", "Kantin"],
+            ["history.html", "wallet", "Savings", "Tabungan"],
+            ["my-attendance.html", "user", "My Attendance", "Absensi Saya"],
+            null,
+            ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
+            ["tasks.html", "task", "Tasks", "Tugas"],
+            ["kas.html", "cash", "Class Cash", "Kas kelas"],
+            ["juara.html", "trophy", "Champions", "Juara"],
+            ["goals.html", "target", "Learning Goals", "Target belajar"],
+            ["leave.html", "doc", "Leave Request", "Ajukan izin"],
+            ["calendar.html", "cal", "Calendar", "Kalender"],
+            ["information.html", "info", "Information", "Informasi"],
+            ["piket.html", "broom", "Duty Roster", "Piket"]
+        ];
+    var MORE_MURID = [
+        ["my-attendance.html", "user", "My attendance", "Absensi saya"],
+        ["schedule.html", "book", "Lessons", "Jadwal pelajaran"],
+        ["tasks.html", "task", "Tasks", "Tugas"],
+        ["kas.html", "cash", "Class cash", "Kas kelas"],
+        ["juara.html", "trophy", "Champions", "Juara"],
+        ["goals.html", "target", "Learning goals", "Target belajar"],
+        ["leave.html", "doc", "Leave request", "Ajukan izin"],
+        ["calendar.html", "cal", "Calendar", "Kalender"],
+        ["information.html", "info", "Information", "Informasi"],
+        ["piket.html", "broom", "Duty roster", "Piket"],
+        ["settings.html", "gear", "Settings", "Pengaturan"]
+    ];
     var GURU_ALL = [
         ["teacher.html", "home", "Teacher Dashboard", "Beranda guru"],
         ["teacher-class.html", "users", "Classes", "Kelas & siswa"],
@@ -175,7 +196,7 @@
             '<a href="settings.html?photo=1" class="v2-side-plus" aria-label="' + (id ? "Ganti foto profil" : "Change profile photo") + '">' + ic("plus", 2.8) + '</a></span>' +
             '<span class="v2-side-who"><b></b><small></small>' +
             '<button type="button" class="v2-side-bio' + (bio ? "" : " empty") + '" aria-label="' + (id ? "Ubah bio" : "Edit bio") + '">' + ic("pen", 2.2) + '<span></span></button></span></div>';
-        if (role === "admin" || role === "guru" || role === "orangtua" || role === "koperasi") userCard = "";   // admin / teacher / parent: the photo + name sit on top of the home page instead
+        if (role === "admin" || role === "guru" || role === "orangtua" || role === "koperasi" || role === "murid") userCard = "";   // admin / teacher / parent: the photo + name sit on top of the home page instead
         html = html.replace("@@USER@@", function () { return userCard; });
         var el = document.getElementById("v2Side");
         if (!el) {
@@ -220,7 +241,7 @@
         var id = lang() === "id";
         function go() {
             if (!window.attSheet) { location.href = "settings.html"; return; }
-            attSheet({ title: id ? "Lainnya" : "More", items: MORE_GURU.map(function (m) { return { value: m[0], label: id ? m[3] : m[2], icon: ic(m[1], 1.9) }; }) })
+            attSheet({ title: id ? "Lainnya" : "More", items: (guessRole() === "murid" ? MORE_MURID : MORE_GURU).map(function (m) { return { value: m[0], label: id ? m[3] : m[2], icon: ic(m[1], 1.9) }; }) })
                 .then(function (v) { if (v) location.href = v; });
         }
         if (window.attSheet) return go();
@@ -389,7 +410,7 @@
         var id = lang() === "id";
         function featureList() {
             var out = [];
-            (role === "admin" ? ADMIN_ALL : role === "guru" ? GURU_ALL : (MENUS[role] || [])).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
+            (role === "admin" ? ADMIN_ALL : role === "guru" ? GURU_ALL : role === "murid" ? MURID_ALL : (MENUS[role] || [])).concat(EXTRA.all, EXTRA[role] || []).forEach(function (m) {
                 if (!m || m.label) return;
                 if (out.some(function (o) { return o[0] === m[0]; })) return;
                 out.push(m);
@@ -628,7 +649,7 @@
             }).join("") + '</div>' : "";
             // every menu that is not already in the bottom menu, as a grid
             var inNav = Array.prototype.map.call(document.querySelectorAll(".bottom-nav a[href]"), function (a) { return a.getAttribute("href"); });
-            var all = (role === "guru" ? GURU_ALL : (MENUS[role] || [])).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1; });
+            var all = (role === "guru" ? GURU_ALL : role === "murid" ? MURID_ALL : (MENUS[role] || [])).filter(function (m) { return m && m.length && inNav.indexOf(m[0]) === -1; });
             if (all.length) {
                 var grid = all.map(function (m) {
                     return '<a class="v3-mtile" href="' + m[0] + '" data-title="' + esc(id ? m[3] : m[2]) + '">' + ic(m[1], 1.8) + '<span>' + esc(id ? m[3] : m[2]) + '</span></a>';

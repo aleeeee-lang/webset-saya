@@ -5047,3 +5047,13 @@ html[data-theme="dark"] .pf-cat-set *{color:inherit!important}
 .kn-ord-del{width:32px;height:32px;border:0;background:none;color:#A3A7BC;display:grid;place-items:center;cursor:pointer;border-radius:10px;margin-right:-6px}
 .kn-ord-del:active{background:#FEECEC;color:#B42318}
 html[data-theme="dark"] .kn-ord-del{color:#6E6E73!important}
+/* Student home on a laptop: one simple column (like the teacher home) */
+@media (min-width:1024px){
+  body.has-side .v2-home:not(.is-admin){display:block;max-width:760px;margin:0 auto}
+  body.has-side .v2-home:not(.is-admin) .v3-top{padding:0 0 4px}
+  body.has-side .v2-home:not(.is-admin) .v3-hero{margin:14px 0 0;min-height:0}
+  body.has-side .v2-home:not(.is-admin) .v2-hero-title{font-size:36px}
+  body.has-side .v2-home:not(.is-admin) .v2-home-main{display:flex;flex-direction:column;gap:14px;padding:14px 0 0}
+  body.has-side .v2-home:not(.is-admin) .v2-home-left{display:contents}
+  body.has-side .v2-home:not(.is-admin) .v2-bento{grid-column:auto;grid-row:auto;height:auto;grid-template-rows:none}
+}
